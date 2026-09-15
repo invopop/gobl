@@ -106,14 +106,6 @@ var unitUNTDIDMap = map[cbc.Key]cbc.Code{
 
 // untdidUnitMap reverses unitUNTDIDMap for constant time lookups. The forward
 // map is one-to-one, so each code resolves to a single unit.
-// unitUNTDIDLossyMap maps units that have no exact UNTDID equivalent to the
-// closest code available. It is only consulted when converting to UNTDID: the
-// codes are broader than the unit they stand in for, so they are left out of
-// the reverse mapping and keep their own unit key.
-var unitUNTDIDLossyMap = map[cbc.Key]cbc.Code{
-	org.UnitSixPack: "NMP", // number of packs, losing the count of six
-}
-
 var untdidUnitMap = func() map[cbc.Code]cbc.Key {
 	m := make(map[cbc.Code]cbc.Key, len(unitUNTDIDMap))
 	for unit, code := range unitUNTDIDMap {
@@ -123,14 +115,9 @@ var untdidUnitMap = func() map[cbc.Code]cbc.Key {
 }()
 
 // UnitToUNTDID converts a GOBL unit key into its corresponding UNTDID unit
-// code. It returns an empty code when the unit has no standard mapping. A unit
-// without an exact equivalent falls back to the closest available code, which
-// UnitFromUNTDID will not convert back into the original key.
+// code. It returns an empty code when the unit has no standard mapping.
 func UnitToUNTDID(unit cbc.Key) cbc.Code {
-	if code, ok := unitUNTDIDMap[unit]; ok {
-		return code
-	}
-	return unitUNTDIDLossyMap[unit]
+	return unitUNTDIDMap[unit]
 }
 
 // UnitFromUNTDID converts a UNTDID unit code into its corresponding GOBL unit

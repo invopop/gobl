@@ -65,19 +65,6 @@ func TestOrgItemNormalize(t *testing.T) {
 		assert.Equal(t, cbc.Code("13"), item.Ext.Get(untdid.ExtKeyUnit))
 	})
 
-	t.Run("keeps a lossy unit across repeated normalization", func(t *testing.T) {
-		// The code is broader than the unit, so normalizing again must not
-		// replace the original key with whatever the code maps back to.
-		item := &org.Item{Unit: org.UnitSixPack}
-		norm.Normalize(item, tax.AddonContext(en16931.V2017))
-		assert.Equal(t, org.UnitSixPack, item.Unit)
-		assert.Equal(t, cbc.Code("NMP"), item.Ext.Get(untdid.ExtKeyUnit))
-
-		norm.Normalize(item, tax.AddonContext(en16931.V2017))
-		assert.Equal(t, org.UnitSixPack, item.Unit)
-		assert.Equal(t, cbc.Code("NMP"), item.Ext.Get(untdid.ExtKeyUnit))
-	})
-
 	t.Run("maintains valid", func(t *testing.T) {
 		item := &org.Item{
 			Unit: org.UnitHour,
