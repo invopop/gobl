@@ -65,6 +65,13 @@ func TestOrgItemNormalize(t *testing.T) {
 		assert.True(t, item.Ext.IsZero())
 	})
 
+	t.Run("never adds the extension", func(t *testing.T) {
+		item := &org.Item{Unit: org.UnitKilogram}
+		norm.Normalize(item, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, org.UnitKilogram, item.Unit)
+		assert.True(t, item.Ext.IsZero(), "a unit with a code is not given one")
+	})
+
 	t.Run("maps the ES portion unit", func(t *testing.T) {
 		item := &org.Item{Unit: org.UnitPortion}
 		norm.Normalize(item, tax.AddonContext(en16931.V2017))
@@ -72,13 +79,13 @@ func TestOrgItemNormalize(t *testing.T) {
 		assert.True(t, item.Ext.IsZero())
 	})
 
-	t.Run("replaces a mapped extension with its unit", func(t *testing.T) {
+	t.Run("resolves a mapped extension to its unit and keeps it", func(t *testing.T) {
 		item := &org.Item{
 			Ext: tax.MakeExtensions().Set(untdid.ExtKeyUnit, "KGM"),
 		}
 		norm.Normalize(item, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, org.UnitKilogram, item.Unit)
-		assert.True(t, item.Ext.IsZero())
+		assert.Equal(t, cbc.Code("KGM"), item.Ext.Get(untdid.ExtKeyUnit))
 	})
 
 	t.Run("keeps an extension GOBL has no unit for", func(t *testing.T) {
@@ -97,7 +104,7 @@ func TestOrgItemNormalize(t *testing.T) {
 		}
 		norm.Normalize(item, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, org.UnitKilogram, item.Unit)
-		assert.True(t, item.Ext.IsZero())
+		assert.Equal(t, cbc.Code("KGM"), item.Ext.Get(untdid.ExtKeyUnit))
 	})
 
 	t.Run("unmapped extension wins over a contradictory unit", func(t *testing.T) {
@@ -111,10 +118,11 @@ func TestOrgItemNormalize(t *testing.T) {
 	})
 
 	t.Run("migrates legacy UNTDID unit", func(t *testing.T) {
+		// The legacy value was a UNTDID code, so it is preserved as one.
 		item := &org.Item{Unit: "KGM"}
 		norm.Normalize(item, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, org.UnitKilogram, item.Unit)
-		assert.True(t, item.Ext.IsZero())
+		assert.Equal(t, cbc.Code("KGM"), item.Ext.Get(untdid.ExtKeyUnit))
 	})
 
 	t.Run("preserves unmapped legacy UNTDID unit", func(t *testing.T) {
@@ -161,7 +169,7 @@ func TestOrgItemNormalize(t *testing.T) {
 }
 
 func TestOrgAttributeNormalize(t *testing.T) {
-	t.Run("replaces a mapped extension with its unit", func(t *testing.T) {
+	t.Run("resolves a mapped extension to its unit and keeps it", func(t *testing.T) {
 		amount := num.MakeAmount(15, 1)
 		a := &org.Attribute{
 			Key:    org.AttributeKeyWeight,
@@ -170,7 +178,7 @@ func TestOrgAttributeNormalize(t *testing.T) {
 		}
 		norm.Normalize(a, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, org.UnitKilogram, a.Unit)
-		assert.True(t, a.Ext.IsZero())
+		assert.Equal(t, cbc.Code("KGM"), a.Ext.Get(untdid.ExtKeyUnit))
 	})
 
 	t.Run("keeps an extension GOBL has no unit for", func(t *testing.T) {

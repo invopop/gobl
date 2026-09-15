@@ -122,18 +122,17 @@ func UnitKey(code cbc.Code) cbc.Key {
 	return unitKeys[code]
 }
 
-// NormalizeUnit resolves a unit and its extensions so that the two never state
-// the same thing twice. A code that GOBL has a key for is replaced by that key
-// and the extension dropped, leaving the extension to carry only the codes GOBL
-// cannot express. When both are given the extension wins, as it comes from the
-// document format itself rather than the GOBL vocabulary.
-func NormalizeUnit(unit cbc.Key, ext tax.Extensions) (cbc.Key, tax.Extensions) {
-	code := ext.Get(ExtKeyUnit)
-	if code == cbc.CodeEmpty {
-		return unit, ext
+// NormalizeUnit returns the unit a document should carry alongside its
+// extensions. The untdid-unit extension determines the unit whenever it is
+// set, as it comes from the document format itself rather than the GOBL
+// vocabulary, and leaves the unit empty for a code GOBL cannot express.
+//
+// The extension is never added nor removed: a document that carries one keeps
+// it alongside the unit it resolves to, and a document without one is not
+// given one just because its unit has a code.
+func NormalizeUnit(unit cbc.Key, ext tax.Extensions) cbc.Key {
+	if code := ext.Get(ExtKeyUnit); code != cbc.CodeEmpty {
+		return UnitKey(code)
 	}
-	if key := UnitKey(code); key != cbc.KeyEmpty {
-		return key, ext.Delete(ExtKeyUnit)
-	}
-	return cbc.KeyEmpty, ext
+	return unit
 }

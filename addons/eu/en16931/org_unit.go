@@ -12,7 +12,7 @@ import (
 )
 
 func normalizeOrgItem(item *org.Item) {
-	item.Unit, item.Ext = untdid.NormalizeUnit(item.Unit, item.Ext)
+	item.Unit = untdid.NormalizeUnit(item.Unit, item.Ext)
 	// BR-23 requires a unit of measure on every line, so stand in the generic
 	// unit when the document gives neither a key nor a code.
 	if item.Unit == cbc.KeyEmpty && !item.Ext.Has(untdid.ExtKeyUnit) {
@@ -21,7 +21,7 @@ func normalizeOrgItem(item *org.Item) {
 }
 
 func normalizeOrgAttribute(a *org.Attribute) {
-	a.Unit, a.Ext = untdid.NormalizeUnit(a.Unit, a.Ext)
+	a.Unit = untdid.NormalizeUnit(a.Unit, a.Ext)
 }
 
 func orgItemRules() *rules.Set {
