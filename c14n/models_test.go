@@ -235,9 +235,7 @@ func TestStringMarshalJSON(t *testing.T) {
 	})
 
 	t.Run("with replacement character", func(t *testing.T) {
-		// U+FFFD is a valid code point, emitted by senders whose own encoding
-		// conversion already mangled the text. The document still has to
-		// digest, so it is kept as content.
+		// Valid content: senders emit it when their own encoding already failed.
 		s := c14n.String("Premi\uFFFDre v\uFFFDrification")
 		d, err := s.MarshalJSON()
 		require.NoError(t, err)
