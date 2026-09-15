@@ -187,6 +187,10 @@ This file is generated from the change files in the [changes](./changes) directo
 
 - `cbc.Code`: maximum length increased from 64 to 128 characters.
 
+### Added
+
+- `regimes/is`: New tax regime for Iceland (VSK/VAT with 24% standard and 11% reduced rates, kennitala tax ID and organization identity validation with MOD-11 checksum, and an example invoice).
+
 ## [v0.502.1] - 2026-07-02
 
 ### Removed
@@ -225,6 +229,7 @@ This file is generated from the change files in the [changes](./changes) directo
 - `regimes/br`: Party address country is now inferred automatically from tax ID or identities.
 - `addons/br/nfe`: Allow foreign customers to provide an identity (e.g. a passport) alternatively to a tax ID.
 - `addons/br/nfe`: Supplier and customer addresses now require the `country` field, as mandated by the NF-e spec.
+
 
 ### Changed
 
