@@ -1,0 +1,138 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "36abc2d7ac5c5b7275f13e3017462262b2cdf061eec73ca7d20b72763b8218a7"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ZA",
+		"uuid": "019035bd-4524-73ab-bf44-6037841ce6a1",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "001",
+		"issue_date": "2026-06-15",
+		"currency": "ZAR",
+		"supplier": {
+			"name": "Highveld Trading (Pty) Ltd",
+			"tax_id": {
+				"country": "ZA",
+				"code": "4123456789"
+			},
+			"identities": [
+				{
+					"type": "CIPC",
+					"code": "2015/123456/07"
+				}
+			],
+			"addresses": [
+				{
+					"num": "44",
+					"street": "Rivonia Road",
+					"locality": "Sandton",
+					"region": "Gauteng",
+					"code": "2196",
+					"country": "ZA"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.co.za"
+				}
+			]
+		},
+		"customer": {
+			"name": "Table Mountain Distributors CC",
+			"tax_id": {
+				"country": "ZA",
+				"code": "4987654321"
+			},
+			"addresses": [
+				{
+					"num": "12",
+					"street": "Long Street",
+					"locality": "Cape Town",
+					"region": "Western Cape",
+					"code": "8001",
+					"country": "ZA"
+				}
+			],
+			"emails": [
+				{
+					"addr": "accounts@example.co.za"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "15",
+				"item": {
+					"name": "Consulting services",
+					"price": "850.00",
+					"unit": "h"
+				},
+				"sum": "12750.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "15%"
+					}
+				],
+				"total": "12750.00"
+			},
+			{
+				"i": 2,
+				"quantity": "100",
+				"item": {
+					"name": "Maize meal (zero-rated basic foodstuff)",
+					"price": "25.00"
+				},
+				"sum": "2500.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "zero",
+						"percent": "0%"
+					}
+				],
+				"total": "2500.00"
+			}
+		],
+		"totals": {
+			"sum": "15250.00",
+			"total": "15250.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "12750.00",
+								"percent": "15%",
+								"amount": "1912.50"
+							},
+							{
+								"key": "zero",
+								"base": "2500.00",
+								"percent": "0%",
+								"amount": "0.00"
+							}
+						],
+						"amount": "1912.50"
+					}
+				],
+				"sum": "1912.50"
+			},
+			"tax": "1912.50",
+			"total_with_tax": "17162.50",
+			"payable": "17162.50"
+		}
+	}
+}
