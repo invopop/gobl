@@ -196,6 +196,95 @@
           }
         }
       ]
+    },
+    {
+      "key": "co-dian-item-identification",
+      "name": {
+        "en": "Item Identification Standard",
+        "es": "Estándar de identificación de producto"
+      },
+      "desc": {
+        "en": "Identifies the product-coding standard used for an invoice line's item code,\nmapped to the UBL's `StandardItemIdentification/ID@schemeID`.\n\nFor example:\n\n```js\n\"item\": {\n\t\"name\": \"Producto\",\n\t\"ref\": \"7702004003489\",\n\t\"ext\": { \"co-dian-item-identification\": \"010\" }\n}\n```"
+      },
+      "values": [
+        {
+          "code": "001",
+          "name": {
+            "en": "UNSPSC",
+            "es": "UNSPSC"
+          }
+        },
+        {
+          "code": "010",
+          "name": {
+            "en": "GTIN",
+            "es": "GTIN"
+          }
+        },
+        {
+          "code": "020",
+          "name": {
+            "en": "Customs tariff",
+            "es": "Partida arancelaria"
+          }
+        },
+        {
+          "code": "999",
+          "name": {
+            "en": "Taxpayer's own standard",
+            "es": "Estándar de adopción del contribuyente"
+          }
+        }
+      ]
+    },
+    {
+      "key": "co-dian-tax-scheme",
+      "name": {
+        "en": "Tax Scheme",
+        "es": "Tributo"
+      },
+      "desc": {
+        "en": "The tax (tributo) the party is responsible for, as defined by the DIAN for\nColombian electronic invoicing.\n\nThe DIAN limits suppliers to `01` (IVA) or `04` (INC), while customers may\nuse any value; final consumers must be reported with `ZZ`.\n\nFor example:\n\n```js\n\"supplier\": {\n\t\"name\": \"EXAMPLE SUPPLIER S.A.S.\",\n\t\"tax_id\": {\n\t\t\"country\": \"CO\",\n\t\t\"code\": \"9014514812\"\n\t},\n\t\"ext\": { \"co-dian-tax-scheme\": \"01\" }\n}\n```"
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "DIAN Tributo Codes for the PartyTaxScheme group, see Anexo Tecnico version 1.8, section 13.2.6.2"
+          },
+          "url": "https://www.dian.gov.co/impuestos/factura-electronica/Documents/Anexo-Tecnico-Resolucion-000012-09022021.pdf",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "01",
+          "name": {
+            "en": "VAT",
+            "es": "IVA"
+          }
+        },
+        {
+          "code": "04",
+          "name": {
+            "en": "National consumption tax",
+            "es": "INC"
+          }
+        },
+        {
+          "code": "ZA",
+          "name": {
+            "en": "VAT and national consumption tax",
+            "es": "IVA e INC"
+          }
+        },
+        {
+          "code": "ZZ",
+          "name": {
+            "en": "Not applicable",
+            "es": "No aplica"
+          }
+        }
+      ]
     }
   ],
   "scenarios": null,
