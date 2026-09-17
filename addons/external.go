@@ -50,6 +50,13 @@ func init() {
 		Module: frCTCModule,
 	})
 	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "co-dian-v2",
+		Name: i18n.String{
+			i18n.EN: "Colombia DIAN UBL 2.X",
+		},
+		Module: "github.com/invopop/gobl.co.dian",
+	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
 		Key: "sa-zatca-v1",
 		Name: i18n.String{
 			i18n.EN: "Saudi Arabia ZATCA",
