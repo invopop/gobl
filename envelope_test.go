@@ -11,8 +11,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/addons/co/dian"
 	"github.com/invopop/gobl/addons/es/facturae"
+	"github.com/invopop/gobl/addons/it/ticket"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -442,21 +442,21 @@ func TestEnvelopeCorrect(t *testing.T) {
 	})
 
 	t.Run("correct with stamps", func(t *testing.T) {
-		data, err := os.ReadFile("./examples/co/out/simple.json")
+		data, err := os.ReadFile("./examples/it/out/b2c-ticket.json")
 		require.NoError(t, err)
 		out, err := gobl.Parse(data)
 		require.NoError(t, err)
 		env, ok := out.(*gobl.Envelope)
 		require.True(t, ok)
 		env.Head.AddStamp(&head.Stamp{
-			Provider: dian.StampCUDE,
+			Provider: ticket.StampRef,
 			Value:    "1234567890",
 		})
 
 		_, err = env.Correct()
 		assert.ErrorContains(t, err, "validation: missing correction type")
 
-		e2, err := env.Correct(bill.Credit, bill.WithReason("test"))
+		e2, err := env.Correct(bill.Corrective, bill.WithReason("test"))
 		require.NoError(t, err)
 		doc := e2.Extract().(*bill.Invoice)
 		assert.Equal(t, "1234567890", doc.Preceding[0].Stamps[0].Value, "should copy stamps")
