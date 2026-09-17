@@ -223,6 +223,82 @@
               ]
             }
           ]
+        },
+        {
+          "field": "code",
+          "assert": [
+            {
+              "id": "GOBL-CO-DIAN-BILL-INVOICE-15",
+              "desc": "invoice code must be a positive integer without leading zeroes",
+              "tests": "matches ^[1-9][0-9]*$"
+            }
+          ]
+        },
+        {
+          "guard": "invoice type in [credit-note]",
+          "subsets": [
+            {
+              "field": "preceding",
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "guard": "missing dian-cude stamp",
+                      "subsets": [
+                        {
+                          "field": "ext",
+                          "assert": [
+                            {
+                              "id": "GOBL-CO-DIAN-BILL-INVOICE-16",
+                              "desc": "extension 'co-dian-credit-code' cannot be '2' (revoked) without a 'dian-cude' stamp",
+                              "tests": "ext 'co-dian-credit-code' not in [2]"
+                            }
+                          ]
+                        },
+                        {
+                          "field": "period",
+                          "assert": [
+                            {
+                              "id": "GOBL-CO-DIAN-BILL-INVOICE-17",
+                              "desc": "period must be within a single calendar month without a 'dian-cude' stamp",
+                              "tests": "single calendar month"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "invoice type in [standard, credit-note, debit-note]",
+          "assert": [
+            {
+              "id": "GOBL-CO-DIAN-BILL-INVOICE-18",
+              "desc": "payment due date is required when the invoice is not fully paid",
+              "tests": "credit sale has due date"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-CO-DIAN-BILL-LINE",
+      "object": "bill.Line",
+      "subsets": [
+        {
+          "field": "quantity",
+          "assert": [
+            {
+              "id": "GOBL-CO-DIAN-BILL-LINE-01",
+              "desc": "must be greater than 0",
+              "tests": "min 0"
+            }
+          ]
         }
       ]
     }

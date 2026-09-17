@@ -12,6 +12,8 @@ const (
 	ExtKeyCreditCode           cbc.Key = "co-dian-credit-code"
 	ExtKeyDebitCode            cbc.Key = "co-dian-debit-code"
 	ExtKeyFiscalResponsibility cbc.Key = "co-dian-fiscal-responsibility"
+	ExtKeyItemIdentification   cbc.Key = "co-dian-item-identification"
+	ExtKeyTaxScheme            cbc.Key = "co-dian-tax-scheme"
 )
 
 var extensions = []*cbc.Definition{
@@ -296,6 +298,127 @@ var extensions = []*cbc.Definition{
 				Desc: i18n.String{
 					i18n.EN: "Used when the issuer/acquirer does not have any of the first 4 responsibilities. Applies to legal entities, individuals, or final consumers.",
 					i18n.ES: "Se utiliza cuando el emisor/adquiriente no cuenta con las primeras 4 responsabilidades. Aplica para personas jurídicas, personas naturales o consumidor final.",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyItemIdentification,
+		Name: i18n.String{
+			i18n.EN: "Item Identification Standard",
+			i18n.ES: "Estándar de identificación de producto",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Identifies the product-coding standard used for an invoice line's item code,
+				mapped to the UBL's ~StandardItemIdentification/ID@schemeID~.
+
+				For example:
+
+				~~~js
+				"item": {
+					"name": "Producto",
+					"ref": "7702004003489",
+					"ext": { "co-dian-item-identification": "010" }
+				}
+				~~~
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "001",
+				Name: i18n.String{
+					i18n.EN: "UNSPSC",
+					i18n.ES: "UNSPSC",
+				},
+			},
+			{
+				Code: "010",
+				Name: i18n.String{
+					i18n.EN: "GTIN",
+					i18n.ES: "GTIN",
+				},
+			},
+			{
+				Code: "020",
+				Name: i18n.String{
+					i18n.EN: "Customs tariff",
+					i18n.ES: "Partida arancelaria",
+				},
+			},
+			{
+				Code: "999",
+				Name: i18n.String{
+					i18n.EN: "Taxpayer's own standard",
+					i18n.ES: "Estándar de adopción del contribuyente",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyTaxScheme,
+		Name: i18n.String{
+			i18n.EN: "Tax Scheme",
+			i18n.ES: "Tributo",
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "DIAN Tributo Codes for the PartyTaxScheme group, see Anexo Tecnico version 1.8, section 13.2.6.2",
+				},
+				URL:         "https://www.dian.gov.co/impuestos/factura-electronica/Documents/Anexo-Tecnico-Resolucion-000012-09022021.pdf",
+				ContentType: "application/pdf",
+			},
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				The tax (tributo) the party is responsible for, as defined by the DIAN for
+				Colombian electronic invoicing.
+
+				The DIAN limits suppliers to ~01~ (IVA) or ~04~ (INC), while customers may
+				use any value; final consumers must be reported with ~ZZ~.
+
+				For example:
+
+				~~~js
+				"supplier": {
+					"name": "EXAMPLE SUPPLIER S.A.S.",
+					"tax_id": {
+						"country": "CO",
+						"code": "9014514812"
+					},
+					"ext": { "co-dian-tax-scheme": "01" }
+				}
+				~~~
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "01",
+				Name: i18n.String{
+					i18n.EN: "VAT",
+					i18n.ES: "IVA",
+				},
+			},
+			{
+				Code: "04",
+				Name: i18n.String{
+					i18n.EN: "National consumption tax",
+					i18n.ES: "INC",
+				},
+			},
+			{
+				Code: "ZA",
+				Name: i18n.String{
+					i18n.EN: "VAT and national consumption tax",
+					i18n.ES: "IVA e INC",
+				},
+			},
+			{
+				Code: "ZZ",
+				Name: i18n.String{
+					i18n.EN: "Not applicable",
+					i18n.ES: "No aplica",
 				},
 			},
 		},
