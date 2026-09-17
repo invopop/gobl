@@ -82,3 +82,29 @@ func TestApprovedAddonStillRequiresRegistration(t *testing.T) {
 	err := rules.Validate(ts)
 	assert.ErrorContains(t, err, "add-on must be registered")
 }
+
+// TestApprovedAddonPrecedence locks in that a runtime-registered definition
+// wins over an approved stub of the same key in the JSON schema listing.
+func TestApprovedAddonPrecedence(t *testing.T) {
+	require.NotEmpty(t, tax.AllAddonDefs())
+	def := tax.AllAddonDefs()[0]
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key:  def.Key,
+		Name: i18n.String{i18n.EN: "Approved Stub"},
+	})
+
+	js := new(jsonschema.Schema)
+	require.NoError(t, json.Unmarshal([]byte(`{
+		"type": "array",
+		"items": { "$ref": "https://gobl.org/draft-0/cbc/key" }
+	}`), js))
+	tax.AddonList{}.JSONSchemaExtend(js)
+
+	for _, o := range js.Items.OneOf {
+		if o.Const == def.Key.String() {
+			assert.Equal(t, def.Name.String(), o.Title)
+			return
+		}
+	}
+	t.Fatalf("addon %s not listed in schema", def.Key)
+}
