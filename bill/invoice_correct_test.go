@@ -7,8 +7,8 @@ import (
 	"github.com/invopop/gobl/addons/ar/arca"
 	"github.com/invopop/gobl/addons/co/dian"
 	"github.com/invopop/gobl/addons/es/facturae"
+	"github.com/invopop/gobl/addons/es/sii"
 	"github.com/invopop/gobl/addons/es/tbai"
-	"github.com/invopop/gobl/addons/es/verifactu"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -232,8 +232,8 @@ func TestCorrectionOptionsSchema(t *testing.T) {
 	})
 	t.Run("with copy tax", func(t *testing.T) {
 		inv := testInvoiceESForCorrection(t)
-		// use Verifactu as we know that copies tax
-		inv.Addons = tax.WithAddons(verifactu.V1)
+		// use SII as we know that copies tax
+		inv.Addons = tax.WithAddons(sii.V1)
 		require.NoError(t, inv.Calculate())
 		out, err := inv.CorrectionOptionsSchema()
 		require.NoError(t, err)
