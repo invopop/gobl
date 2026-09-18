@@ -118,6 +118,16 @@ func invoiceScenarios() *tax.ScenarioSet {
 					Text:     "Reverse Charge / Inversión del sujeto pasivo.",
 				},
 			},
+			// Reverse Charges - IPSI
+			{
+				Tags:       []cbc.Key{tax.TagReverseCharge},
+				Categories: []cbc.Code{TaxCategoryIPSI},
+				Note: &tax.Note{
+					Category: TaxCategoryIPSI,
+					Key:      tax.KeyReverseCharge,
+					Text:     "Reverse Charge / Inversión del sujeto pasivo.",
+				},
+			},
 			// Simplified Scheme (Modules) - VAT only
 			{
 				Tags:       []cbc.Key{TagSimplifiedScheme},
