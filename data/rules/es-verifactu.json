@@ -303,18 +303,6 @@
           "subsets": [
             {
               "field": "ext",
-              "assert": [
-                {
-                  "id": "GOBL-ES-VERIFACTU-TAX-COMBO-01",
-                  "desc": "extension 'es-verifactu-regime' is required",
-                  "tests": "ext require [es-verifactu-regime]"
-                },
-                {
-                  "id": "GOBL-ES-VERIFACTU-TAX-COMBO-03",
-                  "desc": "cannot use both 'es-verifactu-op-class' and 'es-verifactu-exempt' at the same time",
-                  "tests": "ext allow one of [es-verifactu-op-class, es-verifactu-exempt]"
-                }
-              ],
               "subsets": [
                 {
                   "guard": "ext 'es-verifactu-regime' in [01]",
@@ -325,6 +313,41 @@
                       "tests": "ext 'es-verifactu-exempt' not in [E2, E3]"
                     }
                   ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "verifactu ipsi",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-ES-VERIFACTU-TAX-COMBO-05",
+                  "desc": "extension 'es-verifactu-regime' for IPSI must be one of [01 08 11 18 19 20]",
+                  "tests": "ext 'es-verifactu-regime' in [01, 08, 11, 18, 19, 20]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "verifactu vat/igic/ipsi",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-ES-VERIFACTU-TAX-COMBO-01",
+                  "desc": "extension 'es-verifactu-regime' is required",
+                  "tests": "ext require [es-verifactu-regime]"
+                },
+                {
+                  "id": "GOBL-ES-VERIFACTU-TAX-COMBO-03",
+                  "desc": "cannot use both 'es-verifactu-op-class' and 'es-verifactu-exempt' at the same time",
+                  "tests": "ext allow one of [es-verifactu-op-class, es-verifactu-exempt]"
                 }
               ]
             },

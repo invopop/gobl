@@ -270,6 +270,10 @@ func taxCategories() []*tax.CategoryDef {
 				i18n.EU: "Ekoizpen, Zerbitzu eta Inportazio Zerga",
 				i18n.CA: "Impost sobre la Producció, els Serveis i la Importació",
 			},
+			// IPSI is a sales-style tax that still needs to express exempt and
+			// non-subject operations (for example in VERI*FACTU), so it reuses the
+			// global VAT keys minus those that only make sense inside the EU VAT area.
+			Keys: ipsiKeys(),
 			// IPSI rates are complex and don't align well regular rates. Users are
 			// recommended to include whatever percentage applies to their situation
 			// directly in the invoice.
@@ -416,4 +420,17 @@ func taxCategories() []*tax.CategoryDef {
 			},
 		},
 	}
+}
+
+// ipsiKeys returns the tax keys accepted by the IPSI category. Ceuta and Melilla
+// are outside the EU VAT area, so the intra-community key is not available.
+func ipsiKeys() []*tax.KeyDef {
+	keys := make([]*tax.KeyDef, 0)
+	for _, kd := range tax.GlobalVATKeys() {
+		if kd.Key == tax.KeyIntraCommunity {
+			continue
+		}
+		keys = append(keys, kd)
+	}
+	return keys
 }
