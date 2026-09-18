@@ -116,4 +116,12 @@ func init() {
 		},
 		Module: "github.com/invopop/gobl.it.sdi",
 	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "es-verifactu-v1",
+		Name: i18n.String{
+			i18n.EN: "Spain VERI*FACTU V1",
+			i18n.ES: "España VERI*FACTU V1",
+		},
+		Module: "github.com/invopop/gobl.es.verifactu",
+	})
 }
