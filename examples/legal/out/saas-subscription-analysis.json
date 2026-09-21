@@ -1,0 +1,140 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "937b1b4d8c0c10516c76b867eabaf85b0b675c0e2d4a0c0f8d33976f14c13eb9"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/legal/analysis",
+		"uuid": "0198b001-1000-7c12-a26d-bdf38d26997a",
+		"contract": {
+			"relation": "agreement",
+			"uuid": "0198b001-1000-7a21-9b8a-48ea44647387",
+			"code": "SSA-2026-0042",
+			"title": "SaaS Subscription Agreement",
+			"digest": {
+				"alg": "sha256",
+				"val": "34fe86a8052549be2512a43d88672826a574282144fb854dfac583208535721e"
+			}
+		},
+		"produced_at": "2026-08-13T14:00:00.000Z",
+		"method": "illustrative-contract-review-v1",
+		"annotations": [
+			{
+				"anchor": "subscription-fee",
+				"kind": "obligation",
+				"subject": "customer",
+				"object": "provider",
+				"summary": "Customer owes EUR 48,000 plus VAT for the Initial Term.",
+				"data": {
+					"amount": "48000.00",
+					"currency": "EUR",
+					"term": "P1Y"
+				}
+			},
+			{
+				"anchor": "invoicing",
+				"kind": "obligation",
+				"subject": "customer",
+				"object": "provider",
+				"summary": "Two EUR 24,000 invoices are payable within 30 calendar days.",
+				"data": {
+					"installment-amount": "24000.00",
+					"installments": "2",
+					"payment-period": "P30D"
+				}
+			},
+			{
+				"anchor": "overage",
+				"kind": "obligation",
+				"subject": "customer",
+				"object": "provider",
+				"summary": "Usage over one million documents is billed monthly in arrears.",
+				"data": {
+					"currency": "EUR",
+					"included-documents": "1000000",
+					"overage-unit-price": "0.04"
+				}
+			},
+			{
+				"anchor": "availability-target",
+				"kind": "obligation",
+				"subject": "provider",
+				"object": "customer",
+				"summary": "Provider commits to 99.9% monthly production availability.",
+				"data": {
+					"availability-target": "99.9%",
+					"maintenance-allowance": "PT4H",
+					"maintenance-notice": "PT48H",
+					"measurement-period": "P1M"
+				}
+			},
+			{
+				"anchor": "service-credits",
+				"kind": "remedy",
+				"subject": "customer",
+				"object": "provider",
+				"summary": "Availability failures produce tiered credits capped at 25%.",
+				"data": {
+					"claim-period": "P30D",
+					"credit-tier-one": "5% below 99.9%",
+					"credit-tier-three": "25% below 95.0%",
+					"credit-tier-two": "10% below 99.0%"
+				}
+			},
+			{
+				"anchor": "incident-response",
+				"kind": "obligation",
+				"subject": "provider",
+				"object": "customer",
+				"summary": "Provider has severity-based response and restoration targets.",
+				"data": {
+					"sev1-response": "PT1H",
+					"sev1-restoration": "PT4H",
+					"sev2-response": "PT4H-business",
+					"sev2-restoration": "P2D-business",
+					"sev3-response": "P1D-business",
+					"sev3-restoration": "P5D-business"
+				}
+			},
+			{
+				"anchor": "sla-reporting",
+				"kind": "termination",
+				"subject": "customer",
+				"object": "provider",
+				"summary": "Customer may terminate after three sub-99% months in six months.",
+				"data": {
+					"breach-count": "3",
+					"breach-threshold": "99.0%",
+					"rolling-period": "P6M"
+				}
+			},
+			{
+				"anchor": "liability-cap",
+				"kind": "remedy",
+				"subject": "provider",
+				"object": "customer",
+				"summary": "Ordinary aggregate liability is capped at trailing twelve-month fees.",
+				"data": {
+					"cap-basis": "fees-paid-or-payable",
+					"lookback-period": "P12M"
+				}
+			},
+			{
+				"anchor": "term-renewal",
+				"kind": "condition",
+				"subject": "customer",
+				"object": "provider",
+				"summary": "The agreement renews annually unless either party gives 60 days' notice.",
+				"data": {
+					"initial-term": "P1Y",
+					"non-renewal-notice": "P60D",
+					"renewal-term": "P1Y"
+				}
+			}
+		]
+	}
+}

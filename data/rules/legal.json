@@ -1,0 +1,692 @@
+{
+  "id": "GOBL-LEGAL",
+  "package": "legal",
+  "subsets": [
+    {
+      "id": "GOBL-LEGAL-CONTRACT",
+      "object": "legal.Contract",
+      "assert": [
+        {
+          "id": "GOBL-LEGAL-CONTRACT-10",
+          "desc": "anchors must be unique throughout the contract",
+          "tests": "unique anchors"
+        },
+        {
+          "id": "GOBL-LEGAL-CONTRACT-11",
+          "desc": "local references must resolve to an anchor in the contract",
+          "tests": "resolved local references"
+        },
+        {
+          "id": "GOBL-LEGAL-CONTRACT-12",
+          "desc": "contract party and signatory keys must be unique",
+          "tests": "unique party and signatory keys"
+        },
+        {
+          "id": "GOBL-LEGAL-CONTRACT-13",
+          "desc": "execution requirements must reference contract parties and signatories",
+          "tests": "valid execution references"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "agreement",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-CONTRACT-01",
+              "desc": "contract agreement UUID is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "kind",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-LEGAL-CONTRACT-02",
+                  "desc": "contract kind is not valid",
+                  "tests": "one of [agreement, deed, amendment, terms]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "title",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-CONTRACT-03",
+              "desc": "contract title is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "language",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-CONTRACT-06",
+              "desc": "contract primary language is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "parties",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-CONTRACT-04",
+              "desc": "contract requires at least one party",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "chapters",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-CONTRACT-05",
+              "desc": "contract requires at least one chapter",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LEGAL-CHAPTER",
+      "object": "legal.Chapter",
+      "assert": [
+        {
+          "id": "GOBL-LEGAL-CHAPTER-03",
+          "desc": "chapter requires sections or a reference",
+          "tests": "len(Sections) \u003e 0 || Ref != \"\""
+        }
+      ],
+      "subsets": [
+        {
+          "field": "idx",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-CHAPTER-01",
+              "desc": "chapter index is required and must be positive",
+              "tests": "present, at least 1"
+            }
+          ]
+        },
+        {
+          "field": "title",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-CHAPTER-02",
+              "desc": "chapter title is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "$anchor",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-LEGAL-CHAPTER-04",
+                  "desc": "chapter anchor must be a valid plain-name anchor",
+                  "tests": "matches ^[A-Za-z_][-A-Za-z0-9._]*$"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "$ref",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-LEGAL-CHAPTER-05",
+                  "desc": "chapter reference must be an absolute URI, absolute path, or local anchor",
+                  "tests": "request-uri, or matches ^#[A-Za-z_][-A-Za-z0-9._]*$"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LEGAL-SECTION",
+      "object": "legal.Section",
+      "assert": [
+        {
+          "id": "GOBL-LEGAL-SECTION-02",
+          "desc": "section requires content, sub-sections, or a reference",
+          "tests": "Content != \"\" || len(Sections) \u003e 0 || Ref != \"\""
+        }
+      ],
+      "subsets": [
+        {
+          "field": "idx",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-SECTION-01",
+              "desc": "section index is required and must be positive",
+              "tests": "present, at least 1"
+            }
+          ]
+        },
+        {
+          "field": "$anchor",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-LEGAL-SECTION-03",
+                  "desc": "section anchor must be a valid plain-name anchor",
+                  "tests": "matches ^[A-Za-z_][-A-Za-z0-9._]*$"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "$ref",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-LEGAL-SECTION-04",
+                  "desc": "section reference must be an absolute URI, absolute path, or local anchor",
+                  "tests": "request-uri, or matches ^#[A-Za-z_][-A-Za-z0-9._]*$"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LEGAL-PARTY",
+      "object": "legal.Party",
+      "assert": [
+        {
+          "id": "GOBL-LEGAL-PARTY-04",
+          "desc": "contract party requires an entity or description",
+          "tests": "Entity != nil || Description != \"\""
+        }
+      ],
+      "subsets": [
+        {
+          "field": "key",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-PARTY-01",
+              "desc": "contract party key is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "role",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-PARTY-02",
+              "desc": "contract party role is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "defined_as",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-PARTY-03",
+              "desc": "contract party defined name is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LEGAL-SIGNATORY",
+      "object": "legal.Signatory",
+      "subsets": [
+        {
+          "field": "key",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-SIGNATORY-01",
+              "desc": "signatory key is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "person",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-SIGNATORY-02",
+              "desc": "signatory person is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LEGAL-RECITAL",
+      "object": "legal.Recital",
+      "subsets": [
+        {
+          "field": "$anchor",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-LEGAL-RECITAL-01",
+                  "desc": "recital anchor must be a valid plain-name anchor",
+                  "tests": "matches ^[A-Za-z_][-A-Za-z0-9._]*$"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "content",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-RECITAL-02",
+              "desc": "recital content is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LEGAL-DEFINITION",
+      "object": "legal.Definition",
+      "subsets": [
+        {
+          "field": "$anchor",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-LEGAL-DEFINITION-01",
+                  "desc": "definition anchor must be a valid plain-name anchor",
+                  "tests": "matches ^[A-Za-z_][-A-Za-z0-9._]*$"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "term",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-DEFINITION-02",
+              "desc": "defined term is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "meaning",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-DEFINITION-03",
+              "desc": "definition meaning is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LEGAL-EFFECT",
+      "object": "legal.Effect",
+      "assert": [
+        {
+          "id": "GOBL-LEGAL-EFFECT-10",
+          "desc": "contract effect requires a start date, end date, or trigger",
+          "tests": "Start != nil || End != nil || Trigger != \"\""
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LEGAL-GOVERNINGLAW",
+      "object": "legal.GoverningLaw",
+      "assert": [
+        {
+          "id": "GOBL-LEGAL-GOVERNINGLAW-10",
+          "desc": "governing law requires a country, jurisdiction, or legal instrument",
+          "tests": "governing law identified"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LEGAL-DISPUTERESOLUTION",
+      "object": "legal.DisputeResolution",
+      "subsets": [
+        {
+          "field": "method",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-DISPUTERESOLUTION-01",
+              "desc": "dispute resolution method is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-LEGAL-DISPUTERESOLUTION-02",
+              "desc": "dispute resolution method is not valid",
+              "tests": "one of [court, arbitration, mediation, negotiation]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LEGAL-EXECUTION",
+      "object": "legal.Execution",
+      "subsets": [
+        {
+          "field": "requirements",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-EXECUTION-01",
+              "desc": "execution requires at least one signature requirement",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LEGAL-SIGNATUREREQUIREMENT",
+      "object": "legal.SignatureRequirement",
+      "subsets": [
+        {
+          "field": "party",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-SIGNATUREREQUIREMENT-01",
+              "desc": "signature requirement party is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "intent",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-SIGNATUREREQUIREMENT-02",
+              "desc": "signature requirement intent is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-LEGAL-SIGNATUREREQUIREMENT-03",
+              "desc": "signature requirement intent is not valid",
+              "tests": "one of [execute, approve, acknowledge, witness]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LEGAL-REFERENCE",
+      "object": "legal.Reference",
+      "assert": [
+        {
+          "id": "GOBL-LEGAL-REFERENCE-10",
+          "desc": "legal reference requires a UUID, code, or URL",
+          "tests": "legal reference identified"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "relation",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-REFERENCE-01",
+              "desc": "legal reference relation is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "url",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-LEGAL-REFERENCE-02",
+                  "desc": "legal reference URL must be valid",
+                  "tests": "url"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LEGAL-RESOURCE",
+      "object": "legal.Resource",
+      "subsets": [
+        {
+          "field": "key",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-RESOURCE-01",
+              "desc": "legal resource key is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "title",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-RESOURCE-02",
+              "desc": "legal resource title is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "url",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-RESOURCE-03",
+              "desc": "legal resource URL is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-LEGAL-RESOURCE-04",
+              "desc": "legal resource URL must be valid",
+              "tests": "url"
+            }
+          ]
+        },
+        {
+          "guard": "Incorporated",
+          "subsets": [
+            {
+              "field": "digest",
+              "assert": [
+                {
+                  "id": "GOBL-LEGAL-RESOURCE-20",
+                  "desc": "incorporated legal resource requires a digest",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LEGAL-ASSENT",
+      "object": "legal.Assent",
+      "subsets": [
+        {
+          "field": "contract",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-ASSENT-01",
+              "desc": "assent contract reference is required",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "digest",
+              "assert": [
+                {
+                  "id": "GOBL-LEGAL-ASSENT-02",
+                  "desc": "assent contract reference requires a digest",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "party",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-ASSENT-03",
+              "desc": "assent party is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "intent",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-ASSENT-04",
+              "desc": "assent intent is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-LEGAL-ASSENT-05",
+              "desc": "assent intent is not valid",
+              "tests": "one of [execute, approve, acknowledge, witness]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LEGAL-ANALYSIS",
+      "object": "legal.Analysis",
+      "subsets": [
+        {
+          "field": "contract",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-ANALYSIS-01",
+              "desc": "analysis contract reference is required",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "digest",
+              "assert": [
+                {
+                  "id": "GOBL-LEGAL-ANALYSIS-02",
+                  "desc": "analysis contract reference requires a digest",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "produced_at",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-ANALYSIS-03",
+              "desc": "analysis production time is required",
+              "tests": "not zero"
+            }
+          ]
+        },
+        {
+          "field": "method",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-ANALYSIS-04",
+              "desc": "analysis method is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "annotations",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-ANALYSIS-05",
+              "desc": "analysis requires at least one annotation",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LEGAL-ANNOTATION",
+      "object": "legal.Annotation",
+      "subsets": [
+        {
+          "field": "anchor",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-ANNOTATION-01",
+              "desc": "annotation anchor is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-LEGAL-ANNOTATION-02",
+              "desc": "annotation anchor must be a valid plain-name anchor",
+              "tests": "matches ^[A-Za-z_][-A-Za-z0-9._]*$"
+            }
+          ]
+        },
+        {
+          "field": "kind",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-ANNOTATION-03",
+              "desc": "annotation kind is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "summary",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-ANNOTATION-04",
+              "desc": "annotation summary is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

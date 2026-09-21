@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/legal/section",
+  "$ref": "#/$defs/legal.Section",
+  "$defs": {
+    "legal.Section": {
+      "properties": {
+        "$anchor": {
+          "type": "string",
+          "title": "Anchor",
+          "description": "Unique anchor to be able to refer to this section inside a document"
+        },
+        "idx": {
+          "type": "integer",
+          "title": "Index",
+          "description": "Position inside the sections context",
+          "calculated": true
+        },
+        "$ref": {
+          "type": "string",
+          "title": "Ref",
+          "description": "Link to any reference material for this section."
+        },
+        "$comment": {
+          "type": "string",
+          "title": "Comment",
+          "description": "Additional comments regarding this section not meant to be included in output."
+        },
+        "title": {
+          "type": "string",
+          "title": "Title",
+          "description": "Title text."
+        },
+        "content": {
+          "type": "string",
+          "title": "Content",
+          "description": "Text contents for the section with Markdown formatting."
+        },
+        "sections": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/legal/section"
+          },
+          "type": "array",
+          "title": "Sub Sections",
+          "description": "Sub-sections shown after this section's contents."
+        }
+      },
+      "type": "object",
+      "required": [
+        "idx"
+      ],
+      "description": "Section represents a part of a chapter or other section."
+    }
+  }
+}
