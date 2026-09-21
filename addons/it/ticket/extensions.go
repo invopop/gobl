@@ -29,12 +29,25 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Excluded pursuant to Art. 15, DPR 633/72",
 					i18n.IT: "Escluse ex. art. 15 del D.P.R. 633/1972",
 				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Amounts excluded from the taxable base, such as default interest,
+						penalties, and sums advanced on behalf of the customer.
+					`),
+				},
 			},
 			{
 				Code: "N2",
 				Name: i18n.String{
 					i18n.EN: "Not subject",
 					i18n.IT: "Non soggette",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Operations outside the scope of Italian VAT, either because a
+						requirement for taxation is not met, or because of the supplier's
+						regime, such as the flat-rate regime (regime forfettario).
+					`),
 				},
 			},
 			{
@@ -43,12 +56,24 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Not taxable",
 					i18n.IT: "Non imponibili",
 				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Operations within the scope of VAT but not taxable by law, such as
+						exports, international services, and intra-community supplies.
+					`),
+				},
 			},
 			{
 				Code: "N4",
 				Name: i18n.String{
 					i18n.EN: "Exempt",
 					i18n.IT: "Esenti",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Operations exempt under Art. 10 of DPR 633/72, such as medical,
+						financial, insurance, and educational services.
+					`),
 				},
 			},
 			{
@@ -57,12 +82,25 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Margin regime / VAT not exposed",
 					i18n.IT: "Regime del margine/IVA non esposta in fattura",
 				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Sales under the margin scheme for second-hand goods, works of art,
+						and antiques, where VAT is included in the price but not shown
+						separately.
+					`),
+				},
 			},
 			{
 				Code: "N6",
 				Name: i18n.String{
 					i18n.EN: "Reverse charge",
 					i18n.IT: "Inversione contabile",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Operations for which the customer is liable for the VAT instead of
+						the supplier.
+					`),
 				},
 			},
 		},
