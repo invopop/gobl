@@ -1,0 +1,121 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "2611e4454e9dd69976fa527a7e7fe2b8bde6df4dfe6b371d9e13ca3b5fe10e15"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ZA",
+		"uuid": "019035bd-4524-73ab-bf44-6037841ce6a3",
+		"type": "credit-note",
+		"series": "SAMPLE",
+		"code": "003",
+		"issue_date": "2026-06-22",
+		"currency": "ZAR",
+		"preceding": [
+			{
+				"issue_date": "2026-06-15",
+				"series": "SAMPLE",
+				"code": "001",
+				"reason": "Partial return of goods"
+			}
+		],
+		"supplier": {
+			"name": "Highveld Trading (Pty) Ltd",
+			"tax_id": {
+				"country": "ZA",
+				"code": "4123456789"
+			},
+			"identities": [
+				{
+					"type": "CIPC",
+					"code": "2015/123456/07"
+				}
+			],
+			"addresses": [
+				{
+					"num": "44",
+					"street": "Rivonia Road",
+					"locality": "Sandton",
+					"region": "Gauteng",
+					"code": "2196",
+					"country": "ZA"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.co.za"
+				}
+			]
+		},
+		"customer": {
+			"name": "Table Mountain Distributors CC",
+			"tax_id": {
+				"country": "ZA",
+				"code": "4987654321"
+			},
+			"addresses": [
+				{
+					"num": "12",
+					"street": "Long Street",
+					"locality": "Cape Town",
+					"region": "Western Cape",
+					"code": "8001",
+					"country": "ZA"
+				}
+			],
+			"emails": [
+				{
+					"addr": "accounts@example.co.za"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Maize meal (zero-rated basic foodstuff)",
+					"price": "25.00"
+				},
+				"sum": "500.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "zero",
+						"percent": "0%"
+					}
+				],
+				"total": "500.00"
+			}
+		],
+		"totals": {
+			"sum": "500.00",
+			"total": "500.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "zero",
+								"base": "500.00",
+								"percent": "0%",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "500.00",
+			"payable": "500.00"
+		}
+	}
+}

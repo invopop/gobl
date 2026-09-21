@@ -1,0 +1,56 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "019035bd-4524-73ab-bf44-6037841ce6a1"
+issue_date: "2026-06-15"
+currency: "ZAR"
+series: "SAMPLE"
+code: "001"
+
+supplier:
+  tax_id:
+    country: "ZA"
+    code: "4123456789"
+  identities:
+    - type: "CIPC"
+      code: "2015/123456/07"
+  name: "Highveld Trading (Pty) Ltd"
+  emails:
+    - addr: "billing@example.co.za"
+  addresses:
+    - num: "44"
+      street: "Rivonia Road"
+      locality: "Sandton"
+      region: "Gauteng"
+      code: "2196"
+      country: "ZA"
+
+customer:
+  tax_id:
+    country: "ZA"
+    code: "4987654321"
+  name: "Table Mountain Distributors CC"
+  emails:
+    - addr: "accounts@example.co.za"
+  addresses:
+    - num: "12"
+      street: "Long Street"
+      locality: "Cape Town"
+      region: "Western Cape"
+      code: "8001"
+      country: "ZA"
+
+lines:
+  - quantity: 15
+    item:
+      name: "Consulting services"
+      price: "850.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: 100
+    item:
+      name: "Maize meal (zero-rated basic foodstuff)"
+      price: "25.00"
+    taxes:
+      - cat: VAT
+        rate: zero

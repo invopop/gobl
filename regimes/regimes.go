@@ -37,4 +37,5 @@ import (
 	_ "github.com/invopop/gobl/regimes/sg"
 	_ "github.com/invopop/gobl/regimes/sk"
 	_ "github.com/invopop/gobl/regimes/us"
+	_ "github.com/invopop/gobl/regimes/za"
 )

@@ -132,6 +132,10 @@
         {
           "const": "US",
           "title": "United States of America"
+        },
+        {
+          "const": "ZA",
+          "title": "South Africa"
         }
       ],
       "type": "string",
