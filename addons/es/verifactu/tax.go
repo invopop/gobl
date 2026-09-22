@@ -64,15 +64,32 @@ func normalizeTaxCombo(tc *tax.Combo) {
 				Set(ExtKeyExempt, "E5").
 				Delete(ExtKeyOpClass)
 		}
+
+	case es.TaxCategoryIPSI:
+		prepareTaxComboKey(tc)
+		switch tc.Key {
+		case tax.KeyStandard:
+			tc.Ext = tc.Ext.
+				Set(ExtKeyOpClass, "S1").
+				Delete(ExtKeyExempt).
+				SetIfEmpty(ExtKeyRegime, "01")
+		case tax.KeyExempt:
+			// Domestic exemptions (art. 7 Ley 8/1991) use regime 19 "Operaciones
+			// interiores exentas" for IPSI, per AEAT validation rules 15.6.
+			tc.Ext = tc.Ext.
+				SetOneOf(ExtKeyExempt, "E1", "E6").
+				Delete(ExtKeyOpClass).
+				SetIfEmpty(ExtKeyRegime, "19")
+		}
 	}
 }
 
 func taxComboRules() *rules.Set {
 	return rules.For(new(tax.Combo),
 		rules.When(
-			// Guard: only apply to VAT/IGIC combos that have been processed by verifactu
+			// Guard: only apply to VAT/IGIC/IPSI combos that have been processed by verifactu
 			// normalization (which always sets ExtKeyRegime via SetIfEmpty).
-			is.Func("verifactu vat/igic", taxComboForVATorIGIC),
+			is.Func("verifactu vat/igic/ipsi", taxComboForVATorIGICorIPSI),
 			rules.Field("ext",
 				rules.Assert("01", fmt.Sprintf("extension '%s' is required", ExtKeyRegime),
 					tax.ExtensionsRequire(ExtKeyRegime),
@@ -126,9 +143,9 @@ func prepareTaxComboKey(tc *tax.Combo) {
 	}
 }
 
-func taxComboForVATorIGIC(val any) bool {
+func taxComboForVATorIGICorIPSI(val any) bool {
 	tc, ok := val.(*tax.Combo)
-	return ok && tc != nil && tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC)
+	return ok && tc != nil && tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC, es.TaxCategoryIPSI)
 }
 
 func taxComboHasPercent(val any) bool {
