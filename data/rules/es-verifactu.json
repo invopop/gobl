@@ -299,7 +299,7 @@
       "object": "tax.Combo",
       "subsets": [
         {
-          "guard": "verifactu vat/igic",
+          "guard": "verifactu vat/igic/ipsi",
           "subsets": [
             {
               "field": "ext",
