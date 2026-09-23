@@ -94,14 +94,6 @@
           "title": "Price Base Quantity",
           "description": "Number of units the prices apply to, e.g. 100 for a price per 100 kg.\nAssumed to be 1 when empty."
         },
-        "alt_prices": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/currency/amount"
-          },
-          "type": "array",
-          "title": "Alternative Prices",
-          "description": "AltPrices defines a list of prices with their currencies that may be used\nas an alternative to the item's base price."
-        },
         "unit": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "oneOf": [
@@ -484,6 +476,14 @@
           ],
           "title": "Unit",
           "description": "Unit of measure using a GOBL key. Standard UN/ECE codes may be preserved\nin the untdid-unit extension."
+        },
+        "alt_prices": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/currency/amount"
+          },
+          "type": "array",
+          "title": "Alternative Prices",
+          "description": "AltPrices defines a list of prices with their currencies that may be used\nas an alternative to the item's base price."
         },
         "origin": {
           "$ref": "https://gobl.org/draft-0/l10n/iso-country-code",

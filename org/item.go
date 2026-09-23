@@ -60,12 +60,12 @@ type Item struct {
 	// Number of units the prices apply to, e.g. 100 for a price per 100 kg.
 	// Assumed to be 1 when empty.
 	Per *num.Amount `json:"per,omitempty" jsonschema:"title=Price Base Quantity"`
-	// AltPrices defines a list of prices with their currencies that may be used
-	// as an alternative to the item's base price.
-	AltPrices []*currency.Amount `json:"alt_prices,omitempty" jsonschema:"title=Alternative Prices"`
 	// Unit of measure using a GOBL key. Standard UN/ECE codes may be preserved
 	// in the untdid-unit extension.
 	Unit cbc.Key `json:"unit,omitempty" jsonschema:"title=Unit"`
+	// AltPrices defines a list of prices with their currencies that may be used
+	// as an alternative to the item's base price.
+	AltPrices []*currency.Amount `json:"alt_prices,omitempty" jsonschema:"title=Alternative Prices"`
 	// Country code of where this item was from originally.
 	Origin l10n.ISOCountryCode `json:"origin,omitempty" jsonschema:"title=Country of Origin"`
 	// Extension code map for any additional regime specific codes that may be required.
