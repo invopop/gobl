@@ -98,6 +98,83 @@ func TestInvoiceConvertInto(t *testing.T) {
 		assert.Equal(t, "120.50", i2.Lines[0].Item.AltPrices[0].Value.String())
 	})
 
+	t.Run("conversion with item pricing", func(t *testing.T) {
+		lines := []*bill.Line{
+			{
+				Quantity: num.MakeAmount(250, 0),
+				Item: &org.Item{
+					Name: "Test Item",
+					Pricing: &org.ItemPricing{
+						Per:      num.NewAmount(100, 0),
+						Gross:    num.NewAmount(12000, 2),
+						Discount: num.NewAmount(1200, 2),
+					},
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Rate:     tax.RateGeneral,
+					},
+				},
+			},
+		}
+		inv := baseInvoice(t, lines...)
+		inv.ExchangeRates = append(inv.ExchangeRates, &currency.ExchangeRate{
+			From:   currency.EUR,
+			To:     currency.USD,
+			Amount: num.MakeAmount(112, 2),
+		})
+
+		i2, err := inv.ConvertInto(currency.USD)
+		require.NoError(t, err)
+		ip := i2.Lines[0].Item.Pricing
+		assert.Equal(t, "100", ip.Per.String())
+		assert.Equal(t, "134.4000", ip.Gross.String())
+		assert.Equal(t, "13.4400", ip.Discount.String())
+		assert.Equal(t, "120.9600", i2.Lines[0].Item.Price.String())
+		assert.Equal(t, "302.4000", i2.Lines[0].Sum.String())
+	})
+
+	t.Run("conversion with item pricing and alt prices", func(t *testing.T) {
+		lines := []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name: "Test Item",
+					AltPrices: []*currency.Amount{
+						{Currency: currency.USD, Value: num.MakeAmount(12000, 2)},
+					},
+					Pricing: &org.ItemPricing{
+						Per:      num.NewAmount(10, 0),
+						Gross:    num.NewAmount(12000, 2),
+						Discount: num.NewAmount(1200, 2),
+					},
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Rate:     tax.RateGeneral,
+					},
+				},
+			},
+		}
+		inv := baseInvoice(t, lines...)
+		inv.ExchangeRates = append(inv.ExchangeRates, &currency.ExchangeRate{
+			From:   currency.EUR,
+			To:     currency.USD,
+			Amount: num.MakeAmount(112, 2),
+		})
+
+		i2, err := inv.ConvertInto(currency.USD)
+		require.NoError(t, err)
+		ip := i2.Lines[0].Item.Pricing
+		assert.Equal(t, "10", ip.Per.String())
+		assert.Nil(t, ip.Gross)
+		assert.Nil(t, ip.Discount)
+		assert.Equal(t, "120.00", i2.Lines[0].Item.Price.String())
+		assert.Equal(t, "12.00", i2.Lines[0].Sum.String())
+	})
+
 	t.Run("complex example", func(t *testing.T) {
 		i := &bill.Invoice{
 			Code: "123TEST",

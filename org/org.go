@@ -40,6 +40,7 @@ func init() {
 		imageRules(),
 		inboxRules(),
 		itemRules(),
+		itemPricingRules(),
 		nameRules(),
 		noteRules(),
 		partyRules(),

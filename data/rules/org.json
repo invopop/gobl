@@ -409,6 +409,72 @@
       ]
     },
     {
+      "id": "GOBL-ORG-ITEMPRICING",
+      "object": "org.ItemPricing",
+      "subsets": [
+        {
+          "field": "per",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-ITEMPRICING-01",
+                  "desc": "item pricing per must be positive",
+                  "tests": "min 0"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "gross",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-ITEMPRICING-02",
+                  "desc": "item pricing gross must be zero or positive",
+                  "tests": "min 0"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "discount",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-ITEMPRICING-03",
+                  "desc": "item pricing discount must be zero or positive",
+                  "tests": "min 0"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "Discount != nil",
+          "assert": [
+            {
+              "id": "GOBL-ORG-ITEMPRICING-04",
+              "desc": "item pricing discount requires a gross price",
+              "tests": "Gross != nil"
+            },
+            {
+              "id": "GOBL-ORG-ITEMPRICING-05",
+              "desc": "item pricing discount must not exceed the gross price",
+              "tests": "discount within gross"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-ORG-NAME",
       "object": "org.Name",
       "subsets": [

@@ -497,3 +497,79 @@ func TestLineGetTotal(t *testing.T) {
 		assert.Equal(t, "0", line.GetTotal().String())
 	})
 }
+
+func TestLineItemPricing(t *testing.T) {
+	t.Run("gross, discount and per", func(t *testing.T) {
+		line := &Line{
+			Quantity: num.MakeAmount(250, 0),
+			Item: &org.Item{
+				Name: "Bulk coffee beans",
+				Unit: org.UnitKilogram,
+				Pricing: &org.ItemPricing{
+					Per:      num.NewAmount(100, 0),
+					Gross:    num.NewAmount(12000, 2),
+					Discount: num.NewAmount(1200, 2),
+				},
+			},
+		}
+		norm.Normalize(line)
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleCurrency))
+		assert.Equal(t, "108.00", line.Item.Price.String())
+		assert.Equal(t, "270.00", line.Sum.String())
+		assert.Equal(t, "270.00", line.Total.String())
+	})
+	t.Run("pricing with breakdown", func(t *testing.T) {
+		line := &Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:    "Group",
+				Pricing: &org.ItemPricing{Per: num.NewAmount(10, 0)},
+			},
+			Breakdown: []*SubLine{
+				{
+					Quantity: num.MakeAmount(1, 0),
+					Item:     &org.Item{Name: "Part", Price: num.NewAmount(1000, 2)},
+				},
+			},
+		}
+		require.NoError(t, calculateLines([]*Line{line}, currency.EUR, nil, tax.RoundingRuleCurrency))
+		assert.ErrorContains(t, rules.Validate(line), "item pricing cannot be combined with a breakdown")
+	})
+	t.Run("breakdown check by value", func(t *testing.T) {
+		line := Line{
+			Item:      &org.Item{Name: "Group", Pricing: &org.ItemPricing{Per: num.NewAmount(10, 0)}},
+			Breakdown: []*SubLine{{Quantity: num.MakeAmount(1, 0)}},
+		}
+		assert.False(t, lineBreakdownWithoutItemPricing(line))
+		line.Item.Pricing = nil
+		assert.True(t, lineBreakdownWithoutItemPricing(line))
+		assert.True(t, lineBreakdownWithoutItemPricing("invalid"))
+	})
+	t.Run("remove included taxes", func(t *testing.T) {
+		line := &Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name: "Item",
+				Pricing: &org.ItemPricing{
+					Gross:    num.NewAmount(12100, 2),
+					Discount: num.NewAmount(1210, 2),
+				},
+			},
+			Taxes: tax.Set{
+				{
+					Category: tax.CategoryVAT,
+					Percent:  num.NewPercentage(210, 3),
+				},
+			},
+		}
+		norm.Normalize(line)
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRulePrecise))
+		line = removeLineIncludedTaxes(line, tax.CategoryVAT)
+		norm.Normalize(line)
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRulePrecise))
+		assert.Equal(t, "100.0000", line.Item.Pricing.Gross.String())
+		assert.Equal(t, "10.0000", line.Item.Pricing.Discount.String())
+		assert.Equal(t, "90.0000", line.Item.Price.String())
+		assert.Equal(t, "90.0000", line.Total.String())
+	})
+}

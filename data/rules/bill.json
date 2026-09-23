@@ -360,6 +360,13 @@
     {
       "id": "GOBL-BILL-LINE",
       "object": "bill.Line",
+      "assert": [
+        {
+          "id": "GOBL-BILL-LINE-06",
+          "desc": "item pricing cannot be combined with a breakdown",
+          "tests": "no item pricing with breakdown"
+        }
+      ],
       "subsets": [
         {
           "field": "i",

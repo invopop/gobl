@@ -52,6 +52,9 @@ type Item struct {
 	// AltPrices defines a list of prices with their currencies that may be used
 	// as an alternative to the item's base price.
 	AltPrices []*currency.Amount `json:"alt_prices,omitempty" jsonschema:"title=Alternative Prices"`
+	// Pricing details describing how the price was determined, such as a
+	// gross price and discount, or a price that applies to multiple units.
+	Pricing *ItemPricing `json:"pricing,omitempty" jsonschema:"title=Pricing"`
 	// Unit of measure using a GOBL key. Standard UN/ECE codes may be preserved
 	// in the untdid-unit extension.
 	Unit cbc.Key `json:"unit,omitempty" jsonschema:"title=Unit"`
@@ -109,4 +112,28 @@ func normalizeItem(i *Item) {
 	i.Name = cbc.NormalizeString(i.Name)
 	i.Description = cbc.NormalizeString(i.Description)
 	i.Attributes = CleanAttributes(i.Attributes)
+	normalizeItemPricing(i)
+}
+
+func normalizeItemPricing(i *Item) {
+	if i.Pricing.IsEmpty() {
+		i.Pricing = nil
+		return
+	}
+	if p := i.Pricing.Net(); p != nil {
+		if i.Price != nil {
+			*p = p.MatchPrecision(*i.Price)
+		}
+		i.Price = p
+	}
+}
+
+// UnitPrice provides the item's price for a single unit, dividing by the
+// pricing's Per value when set, or nil if the item has no price.
+func (i *Item) UnitPrice() *num.Amount {
+	if i == nil || i.Price == nil {
+		return nil
+	}
+	p := i.Pricing.PerUnit(*i.Price)
+	return &p
 }
