@@ -74,10 +74,20 @@
           "title": "Currency",
           "description": "Currency used for the item's price."
         },
+        "list": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "List Price",
+          "description": "List price before the price discount is applied. When set, the price\nis calculated as the list price less the discount."
+        },
+        "discount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Price Discount",
+          "description": "Amount deducted from the list price to determine the price."
+        },
         "price": {
           "$ref": "https://gobl.org/draft-0/num/amount",
-          "title": "Price",
-          "description": "Base price of a single unit to be sold. Must be either zero or positive."
+          "title": "Net Price",
+          "description": "Net price to be sold at, for a single unit or the number of units defined\nby per. Must be either zero or positive."
         },
         "alt_prices": {
           "items": {
@@ -86,6 +96,11 @@
           "type": "array",
           "title": "Alternative Prices",
           "description": "AltPrices defines a list of prices with their currencies that may be used\nas an alternative to the item's base price."
+        },
+        "per": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Price Base Quantity",
+          "description": "Number of units the prices apply to, e.g. 100 for a price per 100 kg.\nAssumed to be 1 when empty."
         },
         "unit": {
           "$ref": "https://gobl.org/draft-0/cbc/key",

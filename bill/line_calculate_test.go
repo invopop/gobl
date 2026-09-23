@@ -629,3 +629,107 @@ func TestLineCalculate(t *testing.T) {
 		assert.Equal(t, "37.77", lines[0].Total.String())
 	})
 }
+
+func TestLineCalculateItemPer(t *testing.T) {
+	t.Run("exact division", func(t *testing.T) {
+		line := &Line{
+			Quantity: num.MakeAmount(200, 0),
+			Item: &org.Item{
+				Name:  "Screws",
+				Price: num.NewAmount(123, 2), // 1.23 per 100 units
+				Per:   num.NewAmount(100, 0),
+			},
+		}
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleCurrency))
+		assert.Equal(t, "2.46", line.Sum.String())
+		assert.Equal(t, "2.46", line.Total.String())
+	})
+	t.Run("fractional per", func(t *testing.T) {
+		line := &Line{
+			Quantity: num.MakeAmount(5, 0),
+			Item: &org.Item{
+				Name:  "Cable",
+				Price: num.NewAmount(500, 2), // 5.00 per 2.5 units
+				Per:   num.NewAmount(25, 1),
+			},
+		}
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleCurrency))
+		assert.Equal(t, "10.00", line.Sum.String())
+	})
+	t.Run("per larger than quantity", func(t *testing.T) {
+		line := &Line{
+			Quantity: num.MakeAmount(50, 0),
+			Item: &org.Item{
+				Name:  "Per-thousand price",
+				Price: num.NewAmount(2500, 2), // 25.00 per 1000 units
+				Per:   num.NewAmount(1000, 0),
+			},
+		}
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleCurrency))
+		assert.Equal(t, "1.25", line.Sum.String())
+	})
+	t.Run("precise rounding keeps division precision", func(t *testing.T) {
+		line := &Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Bulk item",
+				Price: num.NewAmount(10000, 2), // 100.00 per 3 units
+				Per:   num.NewAmount(3, 0),
+			},
+		}
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRulePrecise))
+		assert.Equal(t, "33.33333", line.Sum.String())
+	})
+	t.Run("sub-line", func(t *testing.T) {
+		sl := &SubLine{
+			Quantity: num.MakeAmount(200, 0),
+			Item: &org.Item{
+				Name:  "Screws",
+				Price: num.NewAmount(123, 2),
+				Per:   num.NewAmount(100, 0),
+			},
+		}
+		require.NoError(t, calculateSubLine(sl, currency.EUR, nil, tax.RoundingRuleCurrency))
+		assert.Equal(t, "2.46", sl.Sum.String())
+	})
+	t.Run("converts list price and discount with rates", func(t *testing.T) {
+		line := &Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:     "Item",
+				Currency: currency.USD,
+				Price:    num.NewAmount(9000, 2),
+				List:     num.NewAmount(10000, 2),
+				Discount: num.NewAmount(1000, 2),
+			},
+		}
+		require.NoError(t, calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleCurrency))
+		assert.Equal(t, currency.EUR, line.Item.Currency)
+		assert.Equal(t, "87.60", line.Item.List.String())
+		assert.Equal(t, "8.76", line.Item.Discount.String())
+		assert.Equal(t, "78.84", line.Item.Price.String())
+		assert.Equal(t, "90.00", line.Item.AltPrices[0].Value.String())
+	})
+	t.Run("alt price drops list price and discount", func(t *testing.T) {
+		line := &Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:     "Item",
+				Currency: currency.USD,
+				Price:    num.NewAmount(9000, 2),
+				AltPrices: []*currency.Amount{
+					{Currency: currency.EUR, Value: num.MakeAmount(8000, 2)},
+				},
+				Per:      num.NewAmount(10, 0),
+				List:     num.NewAmount(10000, 2),
+				Discount: num.NewAmount(1000, 2),
+			},
+		}
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleCurrency))
+		assert.Equal(t, "80.00", line.Item.Price.String())
+		assert.Nil(t, line.Item.List)
+		assert.Nil(t, line.Item.Discount)
+		assert.Equal(t, "10", line.Item.Per.String())
+		assert.Equal(t, "8.00", line.Sum.String())
+	})
+}

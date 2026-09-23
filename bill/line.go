@@ -131,7 +131,24 @@ func lineRules() *rules.Set {
 				rules.Assert("05", "total is required when item has a price", is.Present),
 			),
 		),
+		rules.Assert("06", "item list price, discount, and per cannot be combined with a breakdown",
+			is.Func("no item price details with breakdown", lineBreakdownWithoutItemPriceDetails),
+		),
 	)
+}
+
+func lineBreakdownWithoutItemPriceDetails(val any) bool {
+	switch v := val.(type) {
+	case *Line:
+		return v == nil || len(v.Breakdown) == 0 || !itemHasPriceDetails(v.Item)
+	case Line:
+		return len(v.Breakdown) == 0 || !itemHasPriceDetails(v.Item)
+	}
+	return true
+}
+
+func itemHasPriceDetails(i *org.Item) bool {
+	return i != nil && (i.List != nil || i.Discount != nil || i.Per != nil)
 }
 
 func subLineRules() *rules.Set {
@@ -254,6 +271,8 @@ func removeLineIncludedTaxes(line *Line, cat cbc.Code) *Line {
 	l2i := *line.Item
 
 	l2i.AltPrices = nil // empty alternative prices
+	l2i.List = nil      // empty list price and discount
+	l2i.Discount = nil
 	price := line.Item.Price.Upscale(accuracy).Remove(*rate.Percent)
 	l2i.Price = &price
 	// assume sum and total will be calculated automatically
@@ -276,6 +295,8 @@ func removeSubLinesIncludedTaxes(sls []*SubLine, tc *tax.Combo, exp uint32) []*S
 		sl2 := *sl
 		sl2i := *sl.Item
 		sl2i.AltPrices = nil
+		sl2i.List = nil
+		sl2i.Discount = nil
 		price := sl.Item.Price.Upscale(exp).Remove(*tc.Percent)
 		sl2i.Price = &price
 		sl2.Discounts = removeLineDiscountsIncludedTaxes(sl.Discounts, tc, exp)

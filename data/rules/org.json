@@ -405,6 +405,66 @@
               ]
             }
           ]
+        },
+        {
+          "field": "per",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-ITEM-05",
+                  "desc": "item per must be positive",
+                  "tests": "min 0"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "list",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-ITEM-06",
+                  "desc": "item list price must be zero or positive",
+                  "tests": "min 0"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "discount",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-ITEM-07",
+                  "desc": "item price discount must be zero or positive",
+                  "tests": "min 0"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "Discount != nil",
+          "assert": [
+            {
+              "id": "GOBL-ORG-ITEM-08",
+              "desc": "item price discount requires a list price",
+              "tests": "List != nil"
+            },
+            {
+              "id": "GOBL-ORG-ITEM-09",
+              "desc": "item price discount must not exceed the list price",
+              "tests": "discount within list price"
+            }
+          ]
         }
       ]
     },

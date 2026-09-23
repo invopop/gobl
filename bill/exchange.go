@@ -2,6 +2,7 @@ package bill
 
 import (
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 )
 
@@ -52,6 +53,7 @@ func convertLineInto(ex *currency.ExchangeRate, line *Line) *Line {
 		// Perform exchange
 		price = price.Upscale(accuracy).Multiply(ex.Amount)
 	}
+	convertItemListInto(ex, &l2i, altFound)
 
 	if len(l2.Discounts) > 0 {
 		rows := make([]*LineDiscount, len(l2.Discounts))
@@ -79,6 +81,24 @@ func convertLineInto(ex *currency.ExchangeRate, line *Line) *Line {
 	}
 	l2.Item = &l2i
 	return &l2
+}
+
+func convertItemListInto(ex *currency.ExchangeRate, item *org.Item, altFound bool) {
+	if altFound {
+		// List price and discount are unknown in the alternative currency
+		item.List = nil
+		item.Discount = nil
+		return
+	}
+	accuracy := defaultCurrencyConversionAccuracy
+	if item.List != nil {
+		l := item.List.Upscale(accuracy).Multiply(ex.Amount)
+		item.List = &l
+	}
+	if item.Discount != nil {
+		d := item.Discount.Upscale(accuracy).Multiply(ex.Amount)
+		item.Discount = &d
+	}
 }
 
 func convertDiscountsInto(ex *currency.ExchangeRate, discounts []*Discount) []*Discount {
