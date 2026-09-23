@@ -64,13 +64,13 @@
 					"name": "Development services from Spain",
 					"currency": "USD",
 					"price": "100.00",
-					"unit": "h",
 					"alt_prices": [
 						{
 							"currency": "EUR",
 							"value": "90.00"
 						}
-					]
+					],
+					"unit": "h"
 				},
 				"sum": "2000.00",
 				"discounts": [
@@ -97,13 +97,13 @@
 					"name": "Development services from Mexico",
 					"currency": "USD",
 					"price": "88.80",
-					"unit": "h",
 					"alt_prices": [
 						{
 							"currency": "MXN",
 							"value": "1500.00"
 						}
-					]
+					],
+					"unit": "h"
 				},
 				"sum": "888.00",
 				"taxes": [

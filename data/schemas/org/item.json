@@ -89,6 +89,14 @@
           "title": "Net Price",
           "description": "Net price to be sold at, for a single unit or the number of units defined\nby per. Must be either zero or positive."
         },
+        "alt_prices": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/currency/amount"
+          },
+          "type": "array",
+          "title": "Alternative Prices",
+          "description": "AltPrices defines a list of prices with their currencies that may be used\nas an alternative to the item's base price."
+        },
         "per": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Price Base Quantity",
@@ -476,14 +484,6 @@
           ],
           "title": "Unit",
           "description": "Unit of measure using a GOBL key. Standard UN/ECE codes may be preserved\nin the untdid-unit extension."
-        },
-        "alt_prices": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/currency/amount"
-          },
-          "type": "array",
-          "title": "Alternative Prices",
-          "description": "AltPrices defines a list of prices with their currencies that may be used\nas an alternative to the item's base price."
         },
         "origin": {
           "$ref": "https://gobl.org/draft-0/l10n/iso-country-code",
