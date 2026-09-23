@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "f0fbce3966a2abc598c18a3571a264548875d4903cd2d9e7deca7b28ae2f3c5d"
+			"val": "32c80b07dbd7514a6ad6b503f8bbc78275b49c03dd0522a0b8c3a210d55eb8a6"
 		}
 	},
 	"doc": {
@@ -54,12 +54,10 @@
 				"quantity": "250",
 				"item": {
 					"name": "Bulk coffee beans",
+					"list": "120.00",
+					"discount": "12.00",
 					"price": "108.00",
-					"pricing": {
-						"per": "100",
-						"gross": "120.00",
-						"discount": "12.00"
-					},
+					"per": "100",
 					"unit": "kg"
 				},
 				"sum": "270.00",

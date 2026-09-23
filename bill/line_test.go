@@ -498,18 +498,16 @@ func TestLineGetTotal(t *testing.T) {
 	})
 }
 
-func TestLineItemPricing(t *testing.T) {
-	t.Run("gross, discount and per", func(t *testing.T) {
+func TestLineItemListPrice(t *testing.T) {
+	t.Run("list price, discount and per", func(t *testing.T) {
 		line := &Line{
 			Quantity: num.MakeAmount(250, 0),
 			Item: &org.Item{
-				Name: "Bulk coffee beans",
-				Unit: org.UnitKilogram,
-				Pricing: &org.ItemPricing{
-					Per:      num.NewAmount(100, 0),
-					Gross:    num.NewAmount(12000, 2),
-					Discount: num.NewAmount(1200, 2),
-				},
+				Name:     "Bulk coffee beans",
+				Unit:     org.UnitKilogram,
+				List:     num.NewAmount(12000, 2),
+				Discount: num.NewAmount(1200, 2),
+				Per:      num.NewAmount(100, 0),
 			},
 		}
 		norm.Normalize(line)
@@ -518,12 +516,12 @@ func TestLineItemPricing(t *testing.T) {
 		assert.Equal(t, "270.00", line.Sum.String())
 		assert.Equal(t, "270.00", line.Total.String())
 	})
-	t.Run("pricing with breakdown", func(t *testing.T) {
+	t.Run("per with breakdown", func(t *testing.T) {
 		line := &Line{
 			Quantity: num.MakeAmount(1, 0),
 			Item: &org.Item{
-				Name:    "Group",
-				Pricing: &org.ItemPricing{Per: num.NewAmount(10, 0)},
+				Name: "Group",
+				Per:  num.NewAmount(10, 0),
 			},
 			Breakdown: []*SubLine{
 				{
@@ -533,27 +531,25 @@ func TestLineItemPricing(t *testing.T) {
 			},
 		}
 		require.NoError(t, calculateLines([]*Line{line}, currency.EUR, nil, tax.RoundingRuleCurrency))
-		assert.ErrorContains(t, rules.Validate(line), "item pricing cannot be combined with a breakdown")
+		assert.ErrorContains(t, rules.Validate(line), "item list price, discount, and per cannot be combined with a breakdown")
 	})
 	t.Run("breakdown check by value", func(t *testing.T) {
 		line := Line{
-			Item:      &org.Item{Name: "Group", Pricing: &org.ItemPricing{Per: num.NewAmount(10, 0)}},
+			Item:      &org.Item{Name: "Group", List: num.NewAmount(1000, 2)},
 			Breakdown: []*SubLine{{Quantity: num.MakeAmount(1, 0)}},
 		}
-		assert.False(t, lineBreakdownWithoutItemPricing(line))
-		line.Item.Pricing = nil
-		assert.True(t, lineBreakdownWithoutItemPricing(line))
-		assert.True(t, lineBreakdownWithoutItemPricing("invalid"))
+		assert.False(t, lineBreakdownWithoutItemPriceDetails(line))
+		line.Item.List = nil
+		assert.True(t, lineBreakdownWithoutItemPriceDetails(line))
+		assert.True(t, lineBreakdownWithoutItemPriceDetails("invalid"))
 	})
 	t.Run("remove included taxes", func(t *testing.T) {
 		line := &Line{
 			Quantity: num.MakeAmount(1, 0),
 			Item: &org.Item{
-				Name: "Item",
-				Pricing: &org.ItemPricing{
-					Gross:    num.NewAmount(12100, 2),
-					Discount: num.NewAmount(1210, 2),
-				},
+				Name:     "Item",
+				List:     num.NewAmount(12100, 2),
+				Discount: num.NewAmount(1210, 2),
 			},
 			Taxes: tax.Set{
 				{
@@ -567,8 +563,8 @@ func TestLineItemPricing(t *testing.T) {
 		line = removeLineIncludedTaxes(line, tax.CategoryVAT)
 		norm.Normalize(line)
 		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRulePrecise))
-		assert.Equal(t, "100.0000", line.Item.Pricing.Gross.String())
-		assert.Equal(t, "10.0000", line.Item.Pricing.Discount.String())
+		assert.Equal(t, "100.0000", line.Item.List.String())
+		assert.Equal(t, "10.0000", line.Item.Discount.String())
 		assert.Equal(t, "90.0000", line.Item.Price.String())
 		assert.Equal(t, "90.0000", line.Total.String())
 	})

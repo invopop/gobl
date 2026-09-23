@@ -131,20 +131,24 @@ func lineRules() *rules.Set {
 				rules.Assert("05", "total is required when item has a price", is.Present),
 			),
 		),
-		rules.Assert("06", "item pricing cannot be combined with a breakdown",
-			is.Func("no item pricing with breakdown", lineBreakdownWithoutItemPricing),
+		rules.Assert("06", "item list price, discount, and per cannot be combined with a breakdown",
+			is.Func("no item price details with breakdown", lineBreakdownWithoutItemPriceDetails),
 		),
 	)
 }
 
-func lineBreakdownWithoutItemPricing(val any) bool {
+func lineBreakdownWithoutItemPriceDetails(val any) bool {
 	switch v := val.(type) {
 	case *Line:
-		return v == nil || len(v.Breakdown) == 0 || v.Item == nil || v.Item.Pricing == nil
+		return v == nil || len(v.Breakdown) == 0 || !itemHasPriceDetails(v.Item)
 	case Line:
-		return len(v.Breakdown) == 0 || v.Item == nil || v.Item.Pricing == nil
+		return len(v.Breakdown) == 0 || !itemHasPriceDetails(v.Item)
 	}
 	return true
+}
+
+func itemHasPriceDetails(i *org.Item) bool {
+	return i != nil && (i.List != nil || i.Discount != nil || i.Per != nil)
 }
 
 func subLineRules() *rules.Set {
@@ -269,7 +273,7 @@ func removeLineIncludedTaxes(line *Line, cat cbc.Code) *Line {
 	l2i.AltPrices = nil // empty alternative prices
 	price := line.Item.Price.Upscale(accuracy).Remove(*rate.Percent)
 	l2i.Price = &price
-	l2i.Pricing = removeItemPricingIncludedTaxes(line.Item.Pricing, rate, accuracy)
+	removeItemListIncludedTaxes(&l2i, rate, accuracy)
 	// assume sum and total will be calculated automatically
 
 	l2.Breakdown = removeSubLinesIncludedTaxes(line.Breakdown, rate, accuracy)
@@ -292,7 +296,7 @@ func removeSubLinesIncludedTaxes(sls []*SubLine, tc *tax.Combo, exp uint32) []*S
 		sl2i.AltPrices = nil
 		price := sl.Item.Price.Upscale(exp).Remove(*tc.Percent)
 		sl2i.Price = &price
-		sl2i.Pricing = removeItemPricingIncludedTaxes(sl.Item.Pricing, tc, exp)
+		removeItemListIncludedTaxes(&sl2i, tc, exp)
 		sl2.Discounts = removeLineDiscountsIncludedTaxes(sl.Discounts, tc, exp)
 		sl2.Charges = removeLineChargesIncludedTaxes(sl.Charges, tc, exp)
 		sl2.Item = &sl2i
@@ -301,20 +305,15 @@ func removeSubLinesIncludedTaxes(sls []*SubLine, tc *tax.Combo, exp uint32) []*S
 	return rows
 }
 
-func removeItemPricingIncludedTaxes(ip *org.ItemPricing, tc *tax.Combo, exp uint32) *org.ItemPricing {
-	if ip == nil {
-		return nil
+func removeItemListIncludedTaxes(item *org.Item, tc *tax.Combo, exp uint32) {
+	if item.List != nil {
+		l := item.List.Upscale(exp).Remove(*tc.Percent)
+		item.List = &l
 	}
-	ip2 := *ip
-	if ip.Gross != nil {
-		g := ip.Gross.Upscale(exp).Remove(*tc.Percent)
-		ip2.Gross = &g
+	if item.Discount != nil {
+		d := item.Discount.Upscale(exp).Remove(*tc.Percent)
+		item.Discount = &d
 	}
-	if ip.Discount != nil {
-		d := ip.Discount.Upscale(exp).Remove(*tc.Percent)
-		ip2.Discount = &d
-	}
-	return &ip2
 }
 
 func removeLineDiscountsIncludedTaxes(discounts []*LineDiscount, tc *tax.Combo, exp uint32) []*LineDiscount {

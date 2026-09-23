@@ -630,17 +630,14 @@ func TestLineCalculate(t *testing.T) {
 	})
 }
 
-func TestLineCalculateItemPricing(t *testing.T) {
-	per := func(v int64, exp uint32) *org.ItemPricing {
-		return &org.ItemPricing{Per: num.NewAmount(v, exp)}
-	}
+func TestLineCalculateItemPer(t *testing.T) {
 	t.Run("exact division", func(t *testing.T) {
 		line := &Line{
 			Quantity: num.MakeAmount(200, 0),
 			Item: &org.Item{
-				Name:    "Screws",
-				Price:   num.NewAmount(123, 2), // 1.23 per 100 units
-				Pricing: per(100, 0),
+				Name:  "Screws",
+				Price: num.NewAmount(123, 2), // 1.23 per 100 units
+				Per:   num.NewAmount(100, 0),
 			},
 		}
 		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleCurrency))
@@ -651,9 +648,9 @@ func TestLineCalculateItemPricing(t *testing.T) {
 		line := &Line{
 			Quantity: num.MakeAmount(5, 0),
 			Item: &org.Item{
-				Name:    "Cable",
-				Price:   num.NewAmount(500, 2), // 5.00 per 2.5 units
-				Pricing: per(25, 1),
+				Name:  "Cable",
+				Price: num.NewAmount(500, 2), // 5.00 per 2.5 units
+				Per:   num.NewAmount(25, 1),
 			},
 		}
 		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleCurrency))
@@ -663,9 +660,9 @@ func TestLineCalculateItemPricing(t *testing.T) {
 		line := &Line{
 			Quantity: num.MakeAmount(50, 0),
 			Item: &org.Item{
-				Name:    "Per-thousand price",
-				Price:   num.NewAmount(2500, 2), // 25.00 per 1000 units
-				Pricing: per(1000, 0),
+				Name:  "Per-thousand price",
+				Price: num.NewAmount(2500, 2), // 25.00 per 1000 units
+				Per:   num.NewAmount(1000, 0),
 			},
 		}
 		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleCurrency))
@@ -675,9 +672,9 @@ func TestLineCalculateItemPricing(t *testing.T) {
 		line := &Line{
 			Quantity: num.MakeAmount(1, 0),
 			Item: &org.Item{
-				Name:    "Bulk item",
-				Price:   num.NewAmount(10000, 2), // 100.00 per 3 units
-				Pricing: per(3, 0),
+				Name:  "Bulk item",
+				Price: num.NewAmount(10000, 2), // 100.00 per 3 units
+				Per:   num.NewAmount(3, 0),
 			},
 		}
 		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRulePrecise))
@@ -687,35 +684,33 @@ func TestLineCalculateItemPricing(t *testing.T) {
 		sl := &SubLine{
 			Quantity: num.MakeAmount(200, 0),
 			Item: &org.Item{
-				Name:    "Screws",
-				Price:   num.NewAmount(123, 2),
-				Pricing: per(100, 0),
+				Name:  "Screws",
+				Price: num.NewAmount(123, 2),
+				Per:   num.NewAmount(100, 0),
 			},
 		}
 		require.NoError(t, calculateSubLine(sl, currency.EUR, nil, tax.RoundingRuleCurrency))
 		assert.Equal(t, "2.46", sl.Sum.String())
 	})
-	t.Run("converts gross and discount with rates", func(t *testing.T) {
+	t.Run("converts list price and discount with rates", func(t *testing.T) {
 		line := &Line{
 			Quantity: num.MakeAmount(1, 0),
 			Item: &org.Item{
 				Name:     "Item",
 				Currency: currency.USD,
 				Price:    num.NewAmount(9000, 2),
-				Pricing: &org.ItemPricing{
-					Gross:    num.NewAmount(10000, 2),
-					Discount: num.NewAmount(1000, 2),
-				},
+				List:     num.NewAmount(10000, 2),
+				Discount: num.NewAmount(1000, 2),
 			},
 		}
 		require.NoError(t, calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleCurrency))
 		assert.Equal(t, currency.EUR, line.Item.Currency)
-		assert.Equal(t, "87.60", line.Item.Pricing.Gross.String())
-		assert.Equal(t, "8.76", line.Item.Pricing.Discount.String())
+		assert.Equal(t, "87.60", line.Item.List.String())
+		assert.Equal(t, "8.76", line.Item.Discount.String())
 		assert.Equal(t, "78.84", line.Item.Price.String())
 		assert.Equal(t, "90.00", line.Item.AltPrices[0].Value.String())
 	})
-	t.Run("alt price drops gross and discount", func(t *testing.T) {
+	t.Run("alt price drops list price and discount", func(t *testing.T) {
 		line := &Line{
 			Quantity: num.MakeAmount(1, 0),
 			Item: &org.Item{
@@ -725,18 +720,16 @@ func TestLineCalculateItemPricing(t *testing.T) {
 				AltPrices: []*currency.Amount{
 					{Currency: currency.EUR, Value: num.MakeAmount(8000, 2)},
 				},
-				Pricing: &org.ItemPricing{
-					Per:      num.NewAmount(10, 0),
-					Gross:    num.NewAmount(10000, 2),
-					Discount: num.NewAmount(1000, 2),
-				},
+				Per:      num.NewAmount(10, 0),
+				List:     num.NewAmount(10000, 2),
+				Discount: num.NewAmount(1000, 2),
 			},
 		}
 		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleCurrency))
 		assert.Equal(t, "80.00", line.Item.Price.String())
-		assert.Nil(t, line.Item.Pricing.Gross)
-		assert.Nil(t, line.Item.Pricing.Discount)
-		assert.Equal(t, "10", line.Item.Pricing.Per.String())
+		assert.Nil(t, line.Item.List)
+		assert.Nil(t, line.Item.Discount)
+		assert.Equal(t, "10", line.Item.Per.String())
 		assert.Equal(t, "8.00", line.Sum.String())
 	})
 }

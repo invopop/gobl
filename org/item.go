@@ -1,6 +1,8 @@
 package org
 
 import (
+	"strconv"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/l10n"
@@ -47,14 +49,20 @@ type Item struct {
 	Images []*Image `json:"images,omitempty" jsonschema:"title=Images"`
 	// Currency used for the item's price.
 	Currency currency.Code `json:"currency,omitempty" jsonschema:"title=Currency"`
-	// Base price of a single unit to be sold. Must be either zero or positive.
-	Price *num.Amount `json:"price,omitempty" jsonschema:"title=Price"`
+	// List price before the price discount is applied. When set, the price
+	// is calculated as the list price less the discount.
+	List *num.Amount `json:"list,omitempty" jsonschema:"title=List Price"`
+	// Amount deducted from the list price to determine the price.
+	Discount *num.Amount `json:"discount,omitempty" jsonschema:"title=Price Discount"`
+	// Net price to be sold at, for a single unit or the number of units defined
+	// by per. Must be either zero or positive.
+	Price *num.Amount `json:"price,omitempty" jsonschema:"title=Net Price"`
+	// Number of units the prices apply to, e.g. 100 for a price per 100 kg.
+	// Assumed to be 1 when empty.
+	Per *num.Amount `json:"per,omitempty" jsonschema:"title=Price Base Quantity"`
 	// AltPrices defines a list of prices with their currencies that may be used
 	// as an alternative to the item's base price.
 	AltPrices []*currency.Amount `json:"alt_prices,omitempty" jsonschema:"title=Alternative Prices"`
-	// Pricing details describing how the price was determined, such as a
-	// gross price and discount, or a price that applies to multiple units.
-	Pricing *ItemPricing `json:"pricing,omitempty" jsonschema:"title=Pricing"`
 	// Unit of measure using a GOBL key. Standard UN/ECE codes may be preserved
 	// in the untdid-unit extension.
 	Unit cbc.Key `json:"unit,omitempty" jsonschema:"title=Unit"`
@@ -82,7 +90,32 @@ func itemRules() *rules.Set {
 		rules.Field("unit",
 			rules.AssertIfPresent("04", "item unit must be valid", HasValidUnitKey),
 		),
+		rules.Field("per",
+			rules.AssertIfPresent("05", "item per must be positive", num.Positive),
+		),
+		rules.Field("list",
+			rules.AssertIfPresent("06", "item list price must be zero or positive", num.ZeroOrPositive),
+		),
+		rules.Field("discount",
+			rules.AssertIfPresent("07", "item price discount must be zero or positive", num.ZeroOrPositive),
+		),
+		rules.When(is.Expr(`Discount != nil`),
+			rules.Assert("08", "item price discount requires a list price",
+				is.Expr(`List != nil`),
+			),
+			rules.Assert("09", "item price discount must not exceed the list price",
+				is.Func("discount within list price", itemDiscountWithinList),
+			),
+		),
 	)
+}
+
+func itemDiscountWithinList(val any) bool {
+	i, ok := val.(*Item)
+	if !ok || i.List == nil || i.Discount == nil {
+		return true
+	}
+	return i.Discount.Compare(*i.List) <= 0
 }
 
 // JSONSchemaExtend adds extra details to the schema.
@@ -112,28 +145,50 @@ func normalizeItem(i *Item) {
 	i.Name = cbc.NormalizeString(i.Name)
 	i.Description = cbc.NormalizeString(i.Description)
 	i.Attributes = CleanAttributes(i.Attributes)
-	normalizeItemPricing(i)
+	normalizeItemPrice(i)
 }
 
-func normalizeItemPricing(i *Item) {
-	if i.Pricing.IsEmpty() {
-		i.Pricing = nil
+func normalizeItemPrice(i *Item) {
+	p := i.PriceFromList()
+	if p == nil {
 		return
 	}
-	if p := i.Pricing.Net(); p != nil {
-		if i.Price != nil {
-			*p = p.MatchPrecision(*i.Price)
-		}
-		i.Price = p
+	if i.Price != nil {
+		*p = p.MatchPrecision(*i.Price)
 	}
+	i.Price = p
+}
+
+// PriceFromList provides the list price less the discount, or nil if there
+// is no list price.
+func (i *Item) PriceFromList() *num.Amount {
+	if i == nil || i.List == nil {
+		return nil
+	}
+	p := *i.List
+	if i.Discount != nil {
+		p = p.MatchPrecision(*i.Discount).Subtract(*i.Discount)
+	}
+	return &p
+}
+
+// PerUnit divides an amount that applies to the item's Per number of units
+// so that it applies to a single unit. The amount is upscaled to cover the
+// decimal places the division may introduce.
+func (i *Item) PerUnit(a num.Amount) num.Amount {
+	if i == nil || i.Per == nil || !i.Per.IsPositive() {
+		return a
+	}
+	extra := uint32(len(strconv.FormatInt(i.Per.Rescale(0).Value(), 10)))
+	return a.Upscale(extra).Divide(*i.Per)
 }
 
 // UnitPrice provides the item's price for a single unit, dividing by the
-// pricing's Per value when set, or nil if the item has no price.
+// Per value when set, or nil if the item has no price.
 func (i *Item) UnitPrice() *num.Amount {
 	if i == nil || i.Price == nil {
 		return nil
 	}
-	p := i.Pricing.PerUnit(*i.Price)
+	p := i.PerUnit(*i.Price)
 	return &p
 }

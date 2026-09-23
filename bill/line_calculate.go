@@ -97,7 +97,7 @@ func calculateLine(l *Line, cur currency.Code, rates []*currency.ExchangeRate, r
 
 	// Calculate the line sum and total
 	sum := price.Multiply(l.Quantity)
-	sum = l.Item.Pricing.PerUnit(sum)
+	sum = l.Item.PerUnit(sum)
 	sum = tax.ApplyRoundingRule(rr, cur, sum)
 	total := sum
 	total = calculateLineDiscounts(l.Discounts, sum, total, cur, rr)
@@ -139,7 +139,7 @@ func calculateSubLine(sl *SubLine, cur currency.Code, rates []*currency.Exchange
 
 	// Calculate the line sum and total
 	sum := price.Multiply(sl.Quantity)
-	sum = sl.Item.Pricing.PerUnit(sum)
+	sum = sl.Item.PerUnit(sum)
 	sum = tax.ApplyRoundingRule(rr, cur, sum)
 	total := sum
 	total = calculateLineDiscounts(sl.Discounts, sum, total, cur, rr)
@@ -225,11 +225,9 @@ func calculateLineItemPrice(item *org.Item, cur currency.Code, rates []*currency
 			price = ap.Value.MatchPrecision(ap.Currency.Def().Zero())
 			item.Price = &price
 			item.AltPrices = []*currency.Amount{nap}
-			// Gross and discount are unknown in the alternative currency
-			if item.Pricing != nil {
-				item.Pricing.Gross = nil
-				item.Pricing.Discount = nil
-			}
+			// List price and discount are unknown in the alternative currency
+			item.List = nil
+			item.Discount = nil
 			return nil
 		}
 	}
@@ -239,12 +237,12 @@ func calculateLineItemPrice(item *org.Item, cur currency.Code, rates []*currency
 	if np == nil {
 		return fmt.Errorf("no exchange rate found from '%v' to '%v'", item.Currency, cur)
 	}
-	if ip := item.Pricing; ip != nil && ip.Gross != nil {
-		ip.Gross = currency.Convert(rates, item.Currency, cur, *ip.Gross)
-		if ip.Discount != nil {
-			ip.Discount = currency.Convert(rates, item.Currency, cur, *ip.Discount)
+	if item.List != nil {
+		item.List = currency.Convert(rates, item.Currency, cur, *item.List)
+		if item.Discount != nil {
+			item.Discount = currency.Convert(rates, item.Currency, cur, *item.Discount)
 		}
-		np = ip.Net()
+		np = item.PriceFromList()
 	}
 	item.Price = np
 	item.Currency = cur

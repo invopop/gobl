@@ -53,7 +53,7 @@ func convertLineInto(ex *currency.ExchangeRate, line *Line) *Line {
 		// Perform exchange
 		price = price.Upscale(accuracy).Multiply(ex.Amount)
 	}
-	l2i.Pricing = convertItemPricingInto(ex, l2i.Pricing, altFound)
+	convertItemListInto(ex, &l2i, altFound)
 
 	if len(l2.Discounts) > 0 {
 		rows := make([]*LineDiscount, len(l2.Discounts))
@@ -83,27 +83,22 @@ func convertLineInto(ex *currency.ExchangeRate, line *Line) *Line {
 	return &l2
 }
 
-func convertItemPricingInto(ex *currency.ExchangeRate, ip *org.ItemPricing, altFound bool) *org.ItemPricing {
-	if ip == nil {
-		return nil
+func convertItemListInto(ex *currency.ExchangeRate, item *org.Item, altFound bool) {
+	if altFound {
+		// List price and discount are unknown in the alternative currency
+		item.List = nil
+		item.Discount = nil
+		return
 	}
 	accuracy := defaultCurrencyConversionAccuracy
-	ip2 := *ip
-	if altFound {
-		// Gross and discount are unknown in the alternative currency
-		ip2.Gross = nil
-		ip2.Discount = nil
-		return &ip2
+	if item.List != nil {
+		l := item.List.Upscale(accuracy).Multiply(ex.Amount)
+		item.List = &l
 	}
-	if ip.Gross != nil {
-		g := ip.Gross.Upscale(accuracy).Multiply(ex.Amount)
-		ip2.Gross = &g
+	if item.Discount != nil {
+		d := item.Discount.Upscale(accuracy).Multiply(ex.Amount)
+		item.Discount = &d
 	}
-	if ip.Discount != nil {
-		d := ip.Discount.Upscale(accuracy).Multiply(ex.Amount)
-		ip2.Discount = &d
-	}
-	return &ip2
 }
 
 func convertDiscountsInto(ex *currency.ExchangeRate, discounts []*Discount) []*Discount {

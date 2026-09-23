@@ -29,16 +29,15 @@ customer:
       country: "GB"
 
 lines:
-  # 250 kg invoiced at a gross price of 120.00 per 100 kg, less a 12.00
+  # 250 kg invoiced at a list price of 120.00 per 100 kg, less a 12.00
   # price discount (EN 16931 BG-29). Sum = 250 × 108.00 ÷ 100 = 270.00.
   - quantity: 250
     item:
       name: "Bulk coffee beans"
       unit: "kg"
-      pricing:
-        per: "100"
-        gross: "120.00"
-        discount: "12.00"
+      list: "120.00"
+      discount: "12.00"
+      per: "100"
     taxes:
       - cat: VAT
         rate: "standard"
