@@ -12,8 +12,8 @@ import (
 // 1995 VAT was charged under the separate Value Added Tax Act, 1994, repealed in 1997,
 // and is out of scope here. The 7% tier only appears in 2011.
 //
-// Since versions a percentage, not the supplies it applies to: the Eighth Schedule items
-// named below are today's and are not versioned.
+// Since each rate's history versions a percentage, not the supplies it applies to, the
+// Eighth Schedule items named below are today's and are not versioned.
 var taxCategories = []*tax.CategoryDef{
 	{
 		Code: tax.CategoryVAT,
