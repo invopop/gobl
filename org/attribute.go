@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 )
 
@@ -178,9 +179,13 @@ type Attribute struct {
 	// Amount used when the attribute represents a numeric or measurable value.
 	Amount *num.Amount `json:"amount,omitempty" jsonschema:"title=Amount"`
 	// Unit of measure that accompanies the amount.
-	Unit Unit `json:"unit,omitempty" jsonschema:"title=Unit"`
+	Unit cbc.Key `json:"unit,omitempty" jsonschema:"title=Unit"`
 	// Date value of the attribute.
 	Date *cal.Date `json:"date,omitempty" jsonschema:"title=Date"`
+
+	// Extension code map for any additional regime specific codes that may be
+	// required, such as the standard unit code behind the attribute's unit.
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
 func attributeRules() *rules.Set {
@@ -200,6 +205,9 @@ func attributeRules() *rules.Set {
 			rules.Assert("03", "attribute unit may only be used alongside an amount",
 				is.Expr(`Amount != nil`),
 			),
+		),
+		rules.Field("unit",
+			rules.AssertIfPresent("05", "attribute unit must be valid", HasValidUnitKey),
 		),
 	)
 }
@@ -225,6 +233,7 @@ func attributeHasValue(val any) bool {
 }
 
 func normalizeAttribute(a *Attribute) {
+	a.Unit, a.Ext = normalizeUnit(a.Unit, a.Ext)
 	a.Label = cbc.NormalizeString(a.Label)
 	a.Text = cbc.NormalizeString(a.Text)
 }
@@ -237,8 +246,9 @@ func (a *Attribute) IsEmpty() bool {
 		a.Text == "" &&
 		a.Code == "" &&
 		a.Amount == nil &&
-		a.Unit == UnitEmpty &&
-		a.Date == nil)
+		a.Unit == cbc.KeyEmpty &&
+		a.Date == nil &&
+		a.Ext.IsZero())
 }
 
 // AttributesHaveUniqueKeys provides a test that ensures no two attributes
@@ -277,6 +287,7 @@ func CleanAttributes(attrs []*Attribute) []*Attribute {
 
 // JSONSchemaExtend adds extra details to the schema.
 func (Attribute) JSONSchemaExtend(js *jsonschema.Schema) {
+	ExtendUnitKeySchema(js, "unit")
 	prop, ok := js.Properties.Get("key")
 	if !ok {
 		return

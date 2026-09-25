@@ -89,6 +89,17 @@ func TestPartyNormalize(t *testing.T) {
 		assert.Equal(t, "+49 123 4567890", party.Telephones[0].Number)
 	})
 
+	t.Run("with agent", func(t *testing.T) {
+		party := org.Party{
+			Name: "Invopop",
+			Agent: &org.Party{
+				Name: " Agent ",
+			},
+		}
+		norm.Normalize(&party)
+		assert.Equal(t, "Agent", party.Agent.Name)
+	})
+
 	t.Run("for regime without normalizer", func(t *testing.T) {
 		party := org.Party{
 			Regime: tax.WithRegime("US"),
@@ -106,6 +117,29 @@ func TestPartyAddressNill(t *testing.T) {
 	}
 	norm.Normalize(&party)
 	assert.NoError(t, rules.Validate(&party))
+}
+
+func TestPartyAgentValidation(t *testing.T) {
+	t.Run("single level", func(t *testing.T) {
+		party := &org.Party{Agent: &org.Party{Name: "Agent"}}
+		assert.NoError(t, rules.Validate(party))
+	})
+
+	t.Run("nested agent", func(t *testing.T) {
+		party := &org.Party{Agent: &org.Party{Agent: &org.Party{Name: "Agent"}}}
+		err := rules.Validate(party)
+		assert.ErrorContains(t, err, "GOBL-ORG-PARTY-01")
+	})
+
+	t.Run("cyclic agent", func(t *testing.T) {
+		party := &org.Party{Name: "Party"}
+		party.Agent = party
+		assert.NotPanics(t, func() {
+			norm.Normalize(party)
+		})
+		err := rules.Validate(party)
+		assert.ErrorContains(t, err, "GOBL-ORG-PARTY-01")
+	})
 }
 
 func TestPartyValidation(t *testing.T) {

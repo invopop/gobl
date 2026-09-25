@@ -1705,6 +1705,26 @@
           }
         }
       ]
+    },
+    {
+      "key": "gr-mydata-branch",
+      "name": {
+        "el": "Αριθμός υποκαταστήματος",
+        "en": "Branch number"
+      },
+      "desc": {
+        "en": "The branch (establishment) number of the party, as declared in the\nAADE taxpayer registry. Set the `gr-mydata-branch` extension on a\nparty when the invoice is issued by or addressed to an establishment\nother than the headquarters. When absent, the headquarters branch\n(`0`) is assumed.\n\nThe number must match an establishment registered with AADE for the\nparty's tax ID; submissions with unknown branch numbers may be\nrejected by myDATA.\n\nFor example:\n\n```json\n\"supplier\": {\n\t\"name\": \"Hotel Example\",\n\t\"tax_id\": {\n\t\t\"country\": \"EL\",\n\t\t\"code\": \"111222333\"\n\t},\n\t\"ext\": {\n\t\t\"gr-mydata-branch\": \"2\"\n\t}\n}\n```"
+      },
+      "sources": [
+        {
+          "title": {
+            "el": "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση \u0026 λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+            "en": "Technical description of REST API interfaces for sending \u0026 receiving data for ERP users (Version 2.0.0)"
+          },
+          "url": "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf"
+        }
+      ],
+      "pattern": "^(0|[1-9]\\d{0,3})$"
     }
   ],
   "tags": [

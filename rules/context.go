@@ -18,8 +18,9 @@ type contextEntry struct {
 // is passed to ByContext test functions. Use Set to store values and Value to
 // retrieve them.
 type Context struct {
-	entries []contextEntry
-	ignores []Code
+	entries        []contextEntry
+	ignores        []Code
+	activePointers map[pointerVisit]struct{}
 }
 
 // addIgnores records fault codes to be suppressed from the validation result.

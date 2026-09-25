@@ -43,6 +43,11 @@
           "title": "Issuer",
           "description": "Issuer represents a third party responsible for issuing the document, but is not\nresponsible for tax. Some tax regimes and formats require this field."
         },
+        "addressee": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Addressee",
+          "description": "Addressee represents a third party to whom the document is addressed, but is not\nthe customer."
+        },
         "projects": {
           "items": {
             "$ref": "https://gobl.org/draft-0/org/document-ref"
@@ -101,7 +106,7 @@
         }
       },
       "type": "object",
-      "description": "Ordering provides additional information about the ordering process including references to other documents and alternative parties involved in the order-to-delivery process."
+      "description": "Ordering contains information about the commercial process and documents used to prepare the invoice, including orders, contracts, projects, preceding documents, and parties involved in issuing or addressing the invoice."
     }
   }
 }

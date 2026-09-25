@@ -147,6 +147,27 @@ func TestExemptionNoteValidation(t *testing.T) {
 		assert.NoError(t, rules.Validate(inv))
 	})
 
+	t.Run("exempt with french CTC extended vatex code no note needed", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
+							"cef-vatex": "VATEX-FR-CGI275",
+						}),
+					},
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
 	t.Run("nil note in notes slice", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines = []*bill.Line{
@@ -337,7 +358,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				DueDates: []*pay.DueDate{
 					{
 						Date:   cal.NewDate(2025, time.January, 1),
-						Amount: num.MakeAmount(1000, 2),
+						Amount: num.NewAmount(1000, 2),
 					},
 				},
 			},
@@ -657,7 +678,7 @@ func TestValidateBillPayment(t *testing.T) {
 			DueDates: []*pay.DueDate{
 				{
 					Date:   cal.NewDate(2025, time.January, 1),
-					Amount: num.MakeAmount(1000, 2),
+					Amount: num.NewAmount(1000, 2),
 				},
 			},
 		}

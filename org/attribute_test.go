@@ -6,10 +6,13 @@ import (
 	"time"
 
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/catalogues/untdid"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -128,6 +131,14 @@ func TestAttributeValidation(t *testing.T) {
 		}
 		assert.ErrorContains(t, rules.Validate(a), "attribute unit may only be used alongside an amount")
 	})
+	t.Run("invalid unit", func(t *testing.T) {
+		a := &org.Attribute{
+			Key:    org.AttributeKeyWeight,
+			Amount: num.NewAmount(200, 0),
+			Unit:   "unknown",
+		}
+		assert.ErrorContains(t, rules.Validate(a), "attribute unit must be valid")
+	})
 }
 
 func TestAttributeNormalization(t *testing.T) {
@@ -146,6 +157,51 @@ func TestAttributeNormalization(t *testing.T) {
 		assert.Equal(t, "Color", a.Label)
 		assert.Equal(t, "Black", a.Text)
 	})
+	t.Run("legacy UNTDID unit", func(t *testing.T) {
+		amount := num.MakeAmount(15, 1)
+		a := &org.Attribute{Key: org.AttributeKeyWeight, Amount: &amount, Unit: "KGM"}
+		norm.Normalize(a)
+		assert.Equal(t, cbc.KeyEmpty, a.Unit)
+		assert.Equal(t, cbc.Code("KGM"), a.Ext.Get(untdid.ExtKeyUnit))
+	})
+	t.Run("legacy UNTDID unit without GOBL mapping", func(t *testing.T) {
+		amount := num.MakeAmount(15, 1)
+		a := &org.Attribute{Key: org.AttributeKeyWeight, Amount: &amount, Unit: "XZZ"}
+		norm.Normalize(a)
+		assert.Equal(t, cbc.KeyEmpty, a.Unit)
+		assert.Equal(t, cbc.Code("XZZ"), a.Ext.Get(untdid.ExtKeyUnit))
+	})
+	t.Run("legacy unit preserves explicit extension", func(t *testing.T) {
+		amount := num.MakeAmount(15, 1)
+		a := &org.Attribute{
+			Key:    org.AttributeKeyWeight,
+			Amount: &amount,
+			Unit:   "KGM",
+			Ext:    tax.MakeExtensions().Set(untdid.ExtKeyUnit, "XZZ"),
+		}
+		norm.Normalize(a)
+		assert.Equal(t, cbc.KeyEmpty, a.Unit)
+		assert.Equal(t, cbc.Code("XZZ"), a.Ext.Get(untdid.ExtKeyUnit))
+	})
+	t.Run("legacy removed unit keys", func(t *testing.T) {
+		amount := num.MakeAmount(15, 1)
+		for unit, expect := range map[cbc.Key]cbc.Key{
+			"6pack":     org.UnitPackage,
+			"tetrabrik": org.UnitCarton,
+		} {
+			a := &org.Attribute{Key: org.AttributeKeyWeight, Amount: &amount, Unit: unit}
+			norm.Normalize(a)
+			assert.Equal(t, expect, a.Unit)
+			assert.True(t, a.Ext.IsZero())
+		}
+	})
+	t.Run("keeps GOBL unit keys", func(t *testing.T) {
+		amount := num.MakeAmount(15, 1)
+		a := &org.Attribute{Key: org.AttributeKeyWeight, Amount: &amount, Unit: org.UnitKilogram}
+		norm.Normalize(a)
+		assert.Equal(t, org.UnitKilogram, a.Unit)
+		assert.True(t, a.Ext.IsZero())
+	})
 }
 
 func TestCleanAttributes(t *testing.T) {
@@ -162,8 +218,9 @@ func TestCleanAttributes(t *testing.T) {
 	t.Run("keeps partially filled entries", func(t *testing.T) {
 		attrs := []*org.Attribute{
 			{Unit: org.UnitGram},
+			{Ext: tax.MakeExtensions().Set(untdid.ExtKeyUnit, "XZZ")},
 		}
-		assert.Len(t, org.CleanAttributes(attrs), 1)
+		assert.Len(t, org.CleanAttributes(attrs), 2)
 	})
 	t.Run("returns nil when none remain", func(t *testing.T) {
 		assert.Nil(t, org.CleanAttributes([]*org.Attribute{nil, {}}))
@@ -209,6 +266,9 @@ func TestAttributeJSONSchemaExtend(t *testing.T) {
 				"key": {
 					"$ref": "https://gobl.org/draft-0/cbc/key",
 					"title": "Key"
+				},
+				"unit": {
+					"$ref": "https://gobl.org/draft-0/cbc/key"
 				}
 			}
 		}
@@ -225,4 +285,18 @@ func TestAttributeJSONSchemaExtend(t *testing.T) {
 	last := prop.AnyOf[len(prop.AnyOf)-1]
 	assert.Equal(t, "Other", last.Title)
 	assert.NotEmpty(t, last.Pattern)
+	unit, ok := js.Properties.Get("unit")
+	require.True(t, ok)
+	require.Len(t, unit.OneOf, len(org.UnitDefinitions))
+
+	t.Run("missing key property", func(t *testing.T) {
+		js := &jsonschema.Schema{Properties: jsonschema.NewProperties()}
+		js.Properties.Set("unit", &jsonschema.Schema{})
+		org.Attribute{}.JSONSchemaExtend(js)
+		unit, ok := js.Properties.Get("unit")
+		require.True(t, ok)
+		assert.Len(t, unit.OneOf, len(org.UnitDefinitions))
+		_, ok = js.Properties.Get("key")
+		assert.False(t, ok)
+	})
 }

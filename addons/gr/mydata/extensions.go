@@ -18,6 +18,7 @@ const (
 	ExtKeyOtherTax     = "gr-mydata-other-tax"
 	ExtKeyFee          = "gr-mydata-fee"
 	ExtKeyStampDuty    = "gr-mydata-stamp-duty"
+	ExtKeyBranch       = "gr-mydata-branch"
 )
 
 // Tax type codes.
@@ -1932,5 +1933,50 @@ var extensions = []*cbc.Definition{
 				},
 			},
 		},
+	},
+	{
+		Key: ExtKeyBranch,
+		Name: i18n.String{
+			i18n.EN: "Branch number",
+			i18n.EL: "Αριθμός υποκαταστήματος",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				The branch (establishment) number of the party, as declared in the
+				AADE taxpayer registry. Set the ~gr-mydata-branch~ extension on a
+				party when the invoice is issued by or addressed to an establishment
+				other than the headquarters. When absent, the headquarters branch
+				(~0~) is assumed.
+
+				The number must match an establishment registered with AADE for the
+				party's tax ID; submissions with unknown branch numbers may be
+				rejected by myDATA.
+
+				For example:
+
+				~~~json
+				"supplier": {
+					"name": "Hotel Example",
+					"tax_id": {
+						"country": "EL",
+						"code": "111222333"
+					},
+					"ext": {
+						"gr-mydata-branch": "2"
+					}
+				}
+				~~~
+			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Technical description of REST API interfaces for sending & receiving data for ERP users (Version 2.0.0)",
+					i18n.EL: "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση & λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+				},
+				URL: "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf",
+			},
+		},
+		Pattern: `^(0|[1-9]\d{0,3})$`,
 	},
 }

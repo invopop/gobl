@@ -70,6 +70,31 @@
                   ]
                 }
               ]
+            },
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-GR-MYDATA-BILL-INVOICE-21",
+                  "desc": "supplier 'gr-mydata-branch' extension must be a valid branch number",
+                  "tests": "ext 'gr-mydata-branch' matches pattern '^(0|[1-9]\\d{0,3})$'"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "customer",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-GR-MYDATA-BILL-INVOICE-22",
+                  "desc": "customer 'gr-mydata-branch' extension must be a valid branch number",
+                  "tests": "ext 'gr-mydata-branch' matches pattern '^(0|[1-9]\\d{0,3})$'"
+                }
+              ]
             }
           ]
         },

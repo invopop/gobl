@@ -242,6 +242,8 @@ Codes and keys — `github.com/invopop/gobl/cbc`:
 | `cbc.InKeyDefs(defs)`         | Key is one of a `[]*cbc.Definition` list's keys           |
 | `cbc.HasValidKeyIn(keys...)`  | Key equals or is prefixed by one of the keys (`a+b`)      |
 | `cbc.CodeMapHas(keys...)`     | `cbc.CodeMap` contains all the given keys                 |
+| `cbc.URISchemeIn(schemes...)` | URI scheme is one of the list; a `When` guard              |
+| `cbc.URIOpaqueMatches(re)`    | Pattern over the URI's scheme-specific part               |
 
 Tax — `github.com/invopop/gobl/tax`:
 

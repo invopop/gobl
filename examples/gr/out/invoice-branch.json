@@ -1,0 +1,142 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "c4f5d352d959aba9decff2318a7cb2a882f473ef69393b361cb693ebb94c8e58"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "EL",
+		"$addons": [
+			"gr-mydata-v1"
+		],
+		"$tags": [
+			"services"
+		],
+		"uuid": "019035bd-4522-7eb3-83bf-9185ead05ef1",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "002",
+		"issue_date": "2022-02-01",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"gr-mydata-invoice-type": "2.1"
+			}
+		},
+		"supplier": {
+			"name": "Ελληνικά Τρόφιμα Α.Ε.",
+			"tax_id": {
+				"country": "EL",
+				"code": "177472438"
+			},
+			"addresses": [
+				{
+					"num": "12",
+					"street": "Λεωφόρος Βουλιαγμένης",
+					"locality": "Αθήνα",
+					"code": "11636",
+					"country": "GR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "hellenicfoods@example.com"
+				}
+			],
+			"ext": {
+				"gr-mydata-branch": "2"
+			}
+		},
+		"customer": {
+			"name": "Αιγαίο Λιανική Α.Ε.",
+			"tax_id": {
+				"country": "EL",
+				"code": "841442160"
+			},
+			"addresses": [
+				{
+					"num": "45",
+					"street": "Οδός Εγνατίας",
+					"locality": "Θεσσαλονίκη",
+					"code": "54625",
+					"country": "GR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "aegeanretail@example.com"
+				}
+			],
+			"ext": {
+				"gr-mydata-branch": "1"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Υπηρεσίες Ανάπτυξης",
+					"price": "90.00",
+					"unit": "h",
+					"ext": {
+						"gr-mydata-income-cat": "category1_3",
+						"gr-mydata-income-type": "E3_561_001"
+					}
+				},
+				"sum": "1800.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "24%",
+						"ext": {
+							"gr-mydata-vat-rate": "1"
+						}
+					}
+				],
+				"total": "1800.00"
+			}
+		],
+		"payment": {
+			"instructions": {
+				"key": "cash",
+				"ext": {
+					"gr-mydata-payment-means": "3"
+				}
+			}
+		},
+		"totals": {
+			"sum": "1800.00",
+			"total": "1800.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"gr-mydata-vat-rate": "1"
+								},
+								"base": "1800.00",
+								"percent": "24%",
+								"amount": "432.00"
+							}
+						],
+						"amount": "432.00"
+					}
+				],
+				"sum": "432.00"
+			},
+			"tax": "432.00",
+			"total_with_tax": "2232.00",
+			"payable": "2232.00"
+		}
+	}
+}
