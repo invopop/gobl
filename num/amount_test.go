@@ -143,6 +143,16 @@ func TestAmountNewFromString(t *testing.T) {
 	assert.Error(t, err)
 	_, err = num.AmountFromString("1234.bar")
 	assert.Error(t, err)
+	a, err = num.AmountFromString("1.-25")
+	if err == nil {
+		t.Fatalf("AmountFromString(\"1.-25\") = %s, want error", a.String())
+	}
+	a, err = num.AmountFromString("-1.-25")
+	if err == nil {
+		t.Fatalf("AmountFromString(\"-1.-25\") = %s, want error", a.String())
+	}
+	_, err = num.AmountFromString("1.+25")
+	assert.Error(t, err)
 
 	// 18 digits (9+9) should succeed without truncation
 	a, err = num.AmountFromString("123456789.123456789")
