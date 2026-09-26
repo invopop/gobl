@@ -84,7 +84,12 @@ func AmountFromString(val string) (Amount, error) {
 
 	// Truncate the decimal part so that total significant digits fit in int64.
 	// If truncation removes all decimal digits, treat the value as an integer.
+	// A sign in the fraction is not a digit. ParseInt would accept it and
+	// len would count it, so "1.-25" became 0.975.
 	if l == 2 {
+		if x[1] != "" && !allDigits(x[1]) {
+			return a, fmt.Errorf("invalid decimal number '%v'", val)
+		}
 		maxDecimal := AmmountMaxDigits - sigMajor
 		if len(x[1]) > maxDecimal {
 			x[1] = x[1][:maxDecimal]
@@ -401,6 +406,15 @@ func unquote(value []byte) []byte {
 		value = value[1 : len(value)-1]
 	}
 	return value
+}
+
+func allDigits(s string) bool {
+	for _, c := range s {
+		if c < '0' || c > '9' {
+			return false
+		}
+	}
+	return true
 }
 
 func intPow(base int, exp uint32) int64 { // nolint:unparam
