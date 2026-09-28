@@ -240,8 +240,10 @@ func encodeString(s string) ([]byte, error) {
 			continue
 		}
 		c, size := utf8.DecodeRuneInString(s[i:])
-		if c == utf8.RuneError {
-			// don't accept anything that isn't valid UTF-8, no exceptions.
+		// RuneError is itself a valid rune (U+FFFD), and a correctly encoded
+		// one decodes to (RuneError, 3). Only a size of 1 or less means the
+		// input was not valid UTF-8, which we still do not accept.
+		if c == utf8.RuneError && size <= 1 {
 			return nil, &json.UnsupportedValueError{Value: reflect.ValueOf(s), Str: fmt.Sprintf("%q", s)}
 		}
 		i += size
