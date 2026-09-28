@@ -37,6 +37,7 @@ func init() {
 		regimeDefRules(),
 		scenarioSetRules(),
 		setRules(),
+		thresholdDefRules(),
 		noteRules(),
 	)
 }

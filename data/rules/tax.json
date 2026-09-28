@@ -334,6 +334,57 @@
       ]
     },
     {
+      "id": "GOBL-TAX-THRESHOLDDEF",
+      "object": "tax.ThresholdDef",
+      "subsets": [
+        {
+          "field": "key",
+          "assert": [
+            {
+              "id": "GOBL-TAX-THRESHOLDDEF-01",
+              "desc": "key is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "name",
+          "assert": [
+            {
+              "id": "GOBL-TAX-THRESHOLDDEF-02",
+              "desc": "name is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "currency",
+          "assert": [
+            {
+              "id": "GOBL-TAX-THRESHOLDDEF-03",
+              "desc": "currency is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "values",
+          "assert": [
+            {
+              "id": "GOBL-TAX-THRESHOLDDEF-04",
+              "desc": "at least one value is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-TAX-THRESHOLDDEF-05",
+              "desc": "values must be in descending chronological order with only the last missing a since date",
+              "tests": "date order"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-TAX-NOTE",
       "object": "tax.Note",
       "subsets": [

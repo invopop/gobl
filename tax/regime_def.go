@@ -86,6 +86,9 @@ type RegimeDef struct {
 	// Configuration details for corrections to be used with correction options.
 	Corrections CorrectionSet `json:"corrections,omitempty" jsonschema:"title=Corrections"`
 
+	// Thresholds define monetary limits that rules compare document amounts against.
+	Thresholds []*ThresholdDef `json:"thresholds,omitempty" jsonschema:"title=Thresholds"`
+
 	// List of tax categories.
 	Categories []*CategoryDef `json:"categories" jsonschema:"title=Categories"`
 }
@@ -177,6 +180,19 @@ func (r *RegimeDef) TimeLocation() *time.Location {
 		return time.UTC
 	}
 	return loc
+}
+
+// ThresholdDef provides the threshold definition for the provided key.
+func (r *RegimeDef) ThresholdDef(key cbc.Key) *ThresholdDef {
+	if r == nil {
+		return nil
+	}
+	for _, td := range r.Thresholds {
+		if td.Key == key {
+			return td
+		}
+	}
+	return nil
 }
 
 // CategoryDef provides the requested category definition by its code.

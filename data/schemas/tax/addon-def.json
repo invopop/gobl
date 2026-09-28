@@ -80,6 +80,14 @@
           "$ref": "https://gobl.org/draft-0/tax/correction-set",
           "title": "Corrections",
           "description": "Corrections is used to provide a map of correction definitions that\nare supported by the add-on."
+        },
+        "thresholds": {
+          "items": {
+            "$ref": "#/$defs/tax.ThresholdDef"
+          },
+          "type": "array",
+          "title": "Thresholds",
+          "description": "Thresholds define monetary limits that rules compare document amounts against."
         }
       },
       "type": "object",
@@ -91,6 +99,73 @@
         "corrections"
       ],
       "description": "AddonDef is an interface that defines the methods that a tax add-on must implement."
+    },
+    "tax.ThresholdDef": {
+      "properties": {
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Key used to identify the threshold in rules."
+        },
+        "name": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Name",
+          "description": "Human name of the threshold."
+        },
+        "desc": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Description",
+          "description": "Useful description of the threshold."
+        },
+        "sources": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/source"
+          },
+          "type": "array",
+          "title": "Sources",
+          "description": "Sources of the threshold's values."
+        },
+        "currency": {
+          "$ref": "https://gobl.org/draft-0/currency/code",
+          "title": "Currency",
+          "description": "Currency the threshold amounts are expressed in."
+        },
+        "values": {
+          "items": {
+            "$ref": "#/$defs/tax.ThresholdValueDef"
+          },
+          "type": "array",
+          "title": "Values",
+          "description": "Values contains the current and historical amounts of the threshold,\nordered newest first."
+        }
+      },
+      "type": "object",
+      "required": [
+        "key",
+        "name",
+        "currency",
+        "values"
+      ],
+      "description": "ThresholdDef defines a monetary limit that document amounts are compared against, such as the total above which an invoice must identify the customer."
+    },
+    "tax.ThresholdValueDef": {
+      "properties": {
+        "since": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Since",
+          "description": "Date from which this value should be applied."
+        },
+        "amount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Amount",
+          "description": "Amount of the threshold."
+        }
+      },
+      "type": "object",
+      "required": [
+        "amount"
+      ],
+      "description": "ThresholdValueDef contains the threshold amount from a given date."
     }
   }
 }

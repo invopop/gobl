@@ -62,6 +62,9 @@ type AddonDef struct {
 	// Corrections is used to provide a map of correction definitions that
 	// are supported by the add-on.
 	Corrections CorrectionSet `json:"corrections" jsonschema:"title=Corrections"`
+
+	// Thresholds define monetary limits that rules compare document amounts against.
+	Thresholds []*ThresholdDef `json:"thresholds,omitempty" jsonschema:"title=Thresholds"`
 }
 
 // WithAddons prepares the Addons struct with the provided list of keys.
@@ -292,6 +295,19 @@ var addonRegistered = is.Func("add-on must be registered", func(value any) bool 
 	key, _ := value.(cbc.Key)
 	return AddonForKey(key) != nil
 })
+
+// ThresholdDef provides the threshold definition for the provided key.
+func (ad *AddonDef) ThresholdDef(key cbc.Key) *ThresholdDef {
+	if ad == nil {
+		return nil
+	}
+	for _, td := range ad.Thresholds {
+		if td.Key == key {
+			return td
+		}
+	}
+	return nil
+}
 
 func addonDefRules() *rules.Set {
 	return rules.For(new(AddonDef),
