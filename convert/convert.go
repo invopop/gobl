@@ -12,6 +12,8 @@
 package convert
 
 import (
+	"slices"
+
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
@@ -78,6 +80,8 @@ type Converter interface {
 	// Import converts data in the given context into a GOBL envelope.
 	Import(key cbc.Key, data []byte) (*gobl.Envelope, error)
 	// Accepts reports whether the envelope can be exported into the context.
+	// It is only called once the document's schema is in the context's Export
+	// list and the document includes the context's Addons.
 	Accepts(key cbc.Key, env *gobl.Envelope) bool
 	// Export converts the envelope into the given context.
 	Export(key cbc.Key, env *gobl.Envelope) ([]byte, error)
@@ -99,6 +103,28 @@ type Conversion struct {
 	Schema schema.ID `json:"schema" jsonschema:"title=Schema"`
 	// Direction of the conversion, import into GOBL or export from it.
 	Direction cbc.Key `json:"direction" jsonschema:"title=Direction"`
+}
+
+// exports checks if the envelope's document has one of the context's export
+// schemas and includes all of its addons.
+func (c *Context) exports(env *gobl.Envelope) bool {
+	if env == nil || env.Document == nil || !slices.Contains(c.Export, env.Document.Schema) {
+		return false
+	}
+	if len(c.Addons) == 0 {
+		return true
+	}
+	doc, ok := env.Extract().(interface{ GetAddons() []cbc.Key })
+	if !ok {
+		return false
+	}
+	addons := doc.GetAddons()
+	for _, a := range c.Addons {
+		if !a.In(addons...) {
+			return false
+		}
+	}
+	return true
 }
 
 // appliesTo checks if the context can be used in the country, either directly,
@@ -173,7 +199,8 @@ func Import(data []byte, keys ...cbc.Key) (*gobl.Envelope, error) {
 }
 
 // Export converts the envelope into the first of the keys, in order of
-// preference, whose converter accepts it.
+// preference, that exports the document's schema, whose addons the document
+// includes, and whose converter accepts it.
 func Export(env *gobl.Envelope, keys ...cbc.Key) (*Output, error) {
 	if len(keys) == 0 {
 		return nil, ErrUnknownContext.WithReason("no contexts provided")
@@ -185,7 +212,7 @@ func Export(env *gobl.Envelope, keys ...cbc.Key) (*Output, error) {
 	}
 	for _, k := range keys {
 		e := converters.entryFor(k)
-		if !e.converter.Accepts(k, env) {
+		if !e.context.exports(env) || !e.converter.Accepts(k, env) {
 			continue
 		}
 		data, err := e.converter.Export(k, env)

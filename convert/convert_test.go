@@ -79,14 +79,7 @@ func (alphaConverter) Import(_ cbc.Key, data []byte) (*gobl.Envelope, error) {
 	return gobl.Envelop(&note.Message{Content: string(data)})
 }
 
-func (alphaConverter) Accepts(key cbc.Key, env *gobl.Envelope) bool {
-	inv, ok := env.Extract().(*bill.Invoice)
-	if !ok {
-		return false
-	}
-	if key == "test+alpha-fr" {
-		return cbc.Key("test-fr").In(inv.GetAddons()...)
-	}
+func (alphaConverter) Accepts(_ cbc.Key, _ *gobl.Envelope) bool {
 	return true
 }
 
@@ -95,7 +88,8 @@ func (alphaConverter) Export(key cbc.Key, _ *gobl.Envelope) ([]byte, error) {
 }
 
 // betaConverter handles "beta:" data, and claims "alpha" data as gamma to
-// produce an ambiguous match. Gamma accepts nothing on export.
+// produce an ambiguous match. Beta has no export schemas, and gamma's
+// converter refuses every envelope.
 type betaConverter struct{}
 
 func (betaConverter) Contexts() []*convert.Context {
@@ -128,8 +122,8 @@ func (betaConverter) Import(_ cbc.Key, data []byte) (*gobl.Envelope, error) {
 	return gobl.Envelop(&note.Message{Content: string(data)})
 }
 
-func (betaConverter) Accepts(_ cbc.Key, _ *gobl.Envelope) bool {
-	return false
+func (betaConverter) Accepts(key cbc.Key, _ *gobl.Envelope) bool {
+	return key != "test+gamma"
 }
 
 func (betaConverter) Export(_ cbc.Key, _ *gobl.Envelope) ([]byte, error) {
@@ -279,7 +273,13 @@ func TestExport(t *testing.T) {
 		assert.Equal(t, cbc.Key("test+alpha-fr"), out.Context.Key)
 	})
 	t.Run("not supported", func(t *testing.T) {
-		_, err := convert.Export(invoiceEnvelope(t), "test+gamma", "test+alpha-fr")
+		_, err := convert.Export(invoiceEnvelope(t), "test+beta", "test+gamma", "test+alpha-fr")
+		assert.ErrorIs(t, err, convert.ErrNotSupported)
+	})
+	t.Run("schema not exported", func(t *testing.T) {
+		env, err := gobl.Envelop(&note.Message{Content: "hello"})
+		require.NoError(t, err)
+		_, err = convert.Export(env, "test+alpha")
 		assert.ErrorIs(t, err, convert.ErrNotSupported)
 	})
 	t.Run("unknown key", func(t *testing.T) {
