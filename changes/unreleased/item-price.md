@@ -10,10 +10,6 @@
 - `bill`: line sums divide the item's price by `per`, so a price per 100 kg
   applied to 250 kg gives a sum of 2.5 times the price.
 
-## Changed
-
-- `org`: the `Item.Price` schema title is "Net Price".
-
 ## Fixed
 
 - `bill`: `ConvertInto` converts the items, discounts, and charges of

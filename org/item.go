@@ -54,15 +54,15 @@ type Item struct {
 	List *num.Amount `json:"list,omitempty" jsonschema:"title=List Price"`
 	// Amount deducted from the list price to determine the price.
 	Discount *num.Amount `json:"discount,omitempty" jsonschema:"title=Price Discount"`
-	// Net price to be sold at, for a single unit or the number of units defined
-	// by per. Must be either zero or positive.
-	Price *num.Amount `json:"price,omitempty" jsonschema:"title=Net Price"`
+	// Price after any price discount, for a single unit or the number of units
+	// defined by per. Must be either zero or positive.
+	Price *num.Amount `json:"price,omitempty" jsonschema:"title=Price"`
 	// AltPrices defines a list of prices with their currencies that may be used
-	// as an alternative to the item's base price.
+	// as an alternative to the item's price.
 	AltPrices []*currency.Amount `json:"alt_prices,omitempty" jsonschema:"title=Alternative Prices"`
 	// Number of units the prices apply to, e.g. 100 for a price per 100 kg.
 	// Assumed to be 1 when empty.
-	Per *num.Amount `json:"per,omitempty" jsonschema:"title=Price Base Quantity"`
+	Per *num.Amount `json:"per,omitempty" jsonschema:"title=Per Quantity"`
 	// Unit of measure using a GOBL key. Standard UN/ECE codes may be preserved
 	// in the untdid-unit extension.
 	Unit cbc.Key `json:"unit,omitempty" jsonschema:"title=Unit"`

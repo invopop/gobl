@@ -212,7 +212,7 @@ func calculateLineItemPrice(item *org.Item, cur currency.Code, rates []*currency
 		return nil
 	}
 
-	// Grab a copy of the base price
+	// Grab a copy of the original price
 	nap := &currency.Amount{
 		Currency: item.Currency,
 		Value:    price,
