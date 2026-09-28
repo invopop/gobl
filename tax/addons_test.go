@@ -2,6 +2,8 @@ package tax_test
 
 import (
 	"encoding/json"
+	"maps"
+	"slices"
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
@@ -151,6 +153,18 @@ func TestAddonsJSONSchemaEmbed(t *testing.T) {
 	al.JSONSchemaExtend(js)
 
 	assert.Greater(t, len(js.Items.OneOf), 1)
-	ao := tax.AllAddonDefs()[0]
-	assert.Equal(t, ao.Key.String(), js.Items.OneOf[0].Const)
+	keys := make([]string, len(js.Items.OneOf))
+	for i, o := range js.Items.OneOf {
+		keys[i], _ = o.Const.(string)
+	}
+
+	// The list is the sorted union of registered and approved external addons.
+	want := make(map[string]bool)
+	for _, ao := range tax.AllAddonDefs() {
+		want[ao.Key.String()] = true
+	}
+	for _, ea := range tax.ApprovedAddons() {
+		want[ea.Key.String()] = true
+	}
+	assert.Equal(t, slices.Sorted(maps.Keys(want)), keys)
 }
