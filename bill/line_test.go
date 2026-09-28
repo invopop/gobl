@@ -516,6 +516,19 @@ func TestLineItemListPrice(t *testing.T) {
 		assert.Equal(t, "270.00", line.Sum.String())
 		assert.Equal(t, "270.00", line.Total.String())
 	})
+	t.Run("negative price negates quantity", func(t *testing.T) {
+		line := &Line{
+			Quantity: num.MakeAmount(2, 0),
+			Item: &org.Item{
+				Name:  "Refund",
+				Price: num.NewAmount(-1000, 2),
+				List:  num.NewAmount(1000, 2),
+			},
+		}
+		norm.Normalize(line)
+		assert.Equal(t, "-2", line.Quantity.String())
+		assert.Equal(t, "10.00", line.Item.Price.String())
+	})
 	t.Run("per with breakdown", func(t *testing.T) {
 		line := &Line{
 			Quantity: num.MakeAmount(1, 0),

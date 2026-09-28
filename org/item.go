@@ -155,6 +155,10 @@ func normalizeItemPrice(i *Item) {
 	}
 	if i.Price != nil {
 		*p = p.MatchPrecision(*i.Price)
+		// Keep a negative price's sign, used to negate the line quantity
+		if i.Price.IsNegative() {
+			*p = p.Negate()
+		}
 	}
 	i.Price = p
 }

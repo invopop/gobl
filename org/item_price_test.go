@@ -41,6 +41,16 @@ func TestItemPriceNormalize(t *testing.T) {
 		norm.Normalize(i)
 		assert.Equal(t, "108.000", i.Price.String())
 	})
+	t.Run("keeps negative price sign", func(t *testing.T) {
+		i := &org.Item{
+			Name:     "Item",
+			Price:    num.NewAmount(-100, 0),
+			List:     num.NewAmount(12000, 2),
+			Discount: num.NewAmount(1200, 2),
+		}
+		norm.Normalize(i)
+		assert.Equal(t, "-108.00", i.Price.String())
+	})
 	t.Run("per only leaves price", func(t *testing.T) {
 		i := &org.Item{
 			Name:  "Item",
