@@ -53,6 +53,23 @@
                       "desc": "invoice supplier must have an ABN when GST is charged",
                       "tests": "has tax ID code"
                     }
+                  ],
+                  "subsets": [
+                    {
+                      "field": "tax_id",
+                      "subsets": [
+                        {
+                          "field": "country",
+                          "assert": [
+                            {
+                              "id": "GOBL-AU-BILL-INVOICE-02",
+                              "desc": "invoice supplier tax ID country must be AU when GST is charged",
+                              "tests": "one of [AU]"
+                            }
+                          ]
+                        }
+                      ]
+                    }
                   ]
                 }
               ]

@@ -23,6 +23,15 @@ func billInvoiceRules() *rules.Set {
 					rules.Assert("01", "invoice supplier must have an ABN when GST is charged",
 						org.PartyHasTaxIDCode(),
 					),
+					// PartyHasTaxIDCode accepts any country's identity; the ABN
+					// itself is validated by the AU tax identity rules.
+					rules.Field("tax_id",
+						rules.Field("country",
+							rules.Assert("02", "invoice supplier tax ID country must be AU when GST is charged",
+								is.In(CountryCode),
+							),
+						),
+					),
 				),
 			),
 		),

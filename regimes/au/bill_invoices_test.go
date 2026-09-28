@@ -71,6 +71,12 @@ func TestInvoiceSupplierABN(t *testing.T) {
 			"[GOBL-AU-BILL-INVOICE-01] ($.supplier) invoice supplier must have an ABN when GST is charged")
 	})
 
+	t.Run("supplier tax ID from another country", func(t *testing.T) {
+		inv := testInvoice(500, standardGST())
+		inv.Supplier.TaxID.Country = "US"
+		assert.ErrorContains(t, validateInvoice(t, inv), "[GOBL-AU-BILL-INVOICE-02]")
+	})
+
 	t.Run("missing ABN on a GST-free sale", func(t *testing.T) {
 		inv := testInvoice(100, gstFree())
 		inv.Supplier.TaxID = nil
