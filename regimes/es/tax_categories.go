@@ -270,6 +270,18 @@ func taxCategories() []*tax.CategoryDef {
 				i18n.EU: "Ekoizpen, Zerbitzu eta Inportazio Zerga",
 				i18n.CA: "Impost sobre la Producció, els Serveis i la Importació",
 			},
+			// Only the keys needed to express taxed and exempt operations for now.
+			Keys: []*tax.KeyDef{
+				{
+					Key:  tax.KeyStandard,
+					Name: i18n.NewString("Standard"),
+				},
+				{
+					Key:       tax.KeyExempt,
+					Name:      i18n.NewString("Exempt"),
+					NoPercent: true,
+				},
+			},
 			// IPSI rates are complex and don't align well regular rates. Users are
 			// recommended to include whatever percentage applies to their situation
 			// directly in the invoice.

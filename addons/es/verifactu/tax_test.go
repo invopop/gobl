@@ -3,12 +3,16 @@ package verifactu
 import (
 	"testing"
 
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNormalizeTaxCombo(t *testing.T) {
@@ -295,5 +299,59 @@ func TestValidateTaxCombo(t *testing.T) {
 		}
 		err := ruleSet.Validate(tc)
 		assert.ErrorContains(t, err, "E2")
+	})
+}
+
+func TestNormalizeTaxComboIPSI(t *testing.T) {
+	t.Run("percent only", func(t *testing.T) {
+		tc := &tax.Combo{Category: es.TaxCategoryIPSI, Percent: num.NewPercentage(4, 2)}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, tax.KeyStandard, tc.Key)
+		assert.Equal(t, "S1", tc.Ext.Get(ExtKeyOpClass).String())
+		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
+		assert.Empty(t, tc.Ext.Get(ExtKeyExempt))
+	})
+	t.Run("exempt", func(t *testing.T) {
+		tc := &tax.Combo{Category: es.TaxCategoryIPSI, Key: tax.KeyExempt}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, "E1", tc.Ext.Get(ExtKeyExempt).String())
+		assert.Equal(t, "19", tc.Ext.Get(ExtKeyRegime).String())
+		assert.Empty(t, tc.Ext.Get(ExtKeyOpClass))
+	})
+	t.Run("exempt with explicit codes", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: es.TaxCategoryIPSI,
+			Key:      tax.KeyExempt,
+			Ext:      tax.ExtensionsOf(cbc.CodeMap{ExtKeyExempt: "E6", ExtKeyRegime: "01"}),
+		}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, "E6", tc.Ext.Get(ExtKeyExempt).String())
+		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
+	})
+	t.Run("invoice", func(t *testing.T) {
+		inv := &bill.Invoice{
+			Addons:   tax.WithAddons(V1),
+			Code:     "IPSI-1",
+			Supplier: &org.Party{Name: "Clínica Ceuta", TaxID: &tax.Identity{Country: "ES", Code: "B98602642"}},
+			Customer: &org.Party{Name: "Customer", TaxID: &tax.Identity{Country: "ES", Code: "54387763P"}},
+			Lines: []*bill.Line{
+				{
+					Quantity: num.MakeAmount(1, 0),
+					Item:     &org.Item{Name: "Hairdressing", Price: num.NewAmount(5000, 2)},
+					Taxes:    tax.Set{{Category: es.TaxCategoryIPSI, Percent: num.NewPercentage(4, 2)}},
+				},
+				{
+					Quantity: num.MakeAmount(1, 0),
+					Item:     &org.Item{Name: "Physiotherapy", Price: num.NewAmount(6000, 2)},
+					Taxes:    tax.Set{{Category: es.TaxCategoryIPSI, Key: tax.KeyExempt}},
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+		assert.Equal(t, "4%", inv.Lines[0].Taxes[0].Percent.String())
+		assert.Equal(t, tax.ExtensionsOf(cbc.CodeMap{ExtKeyOpClass: "S1", ExtKeyRegime: "01"}), inv.Lines[0].Taxes[0].Ext)
+		assert.Nil(t, inv.Lines[1].Taxes[0].Percent)
+		assert.Equal(t, tax.ExtensionsOf(cbc.CodeMap{ExtKeyExempt: "E1", ExtKeyRegime: "19"}), inv.Lines[1].Taxes[0].Ext)
 	})
 }

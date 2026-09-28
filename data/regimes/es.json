@@ -653,7 +653,22 @@
         "es": "Impuesto sobre la Producción, los Servicios y la Importación",
         "eu": "Ekoizpen, Zerbitzu eta Inportazio Zerga",
         "gl": "Imposto sobre a Produción, os Servizos e a Importación"
-      }
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        }
+      ]
     },
     {
       "code": "IRPF",
