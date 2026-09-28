@@ -22,6 +22,7 @@ func init() {
 		Scenario{},
 		ScenarioSet{},
 		TagSet{},
+		ThresholdDef{},
 		Total{},
 	)
 	rules.Register(
