@@ -38,7 +38,8 @@ var (
 	// the envelope for export.
 	ErrNotSupported = gobl.NewError("not-supported")
 
-	// ErrConversion wraps errors returned by a converter.
+	// ErrConversion wraps errors returned by a converter. Errors that are
+	// already GOBL errors, such as validation faults, are returned unchanged.
 	ErrConversion = gobl.NewError("conversion")
 )
 

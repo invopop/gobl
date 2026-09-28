@@ -73,6 +73,9 @@ func (alphaConverter) Import(_ cbc.Key, data []byte) (*gobl.Envelope, error) {
 	if strings.HasSuffix(string(data), ":fail") {
 		return nil, errors.New("boom")
 	}
+	if strings.HasSuffix(string(data), ":invalid") {
+		return nil, gobl.ErrValidation.WithReason("bad document")
+	}
 	return gobl.Envelop(&note.Message{Content: string(data)})
 }
 
@@ -256,6 +259,10 @@ func TestImport(t *testing.T) {
 		_, err := convert.Import([]byte("alpha-fr:fail"))
 		assert.ErrorIs(t, err, convert.ErrConversion)
 		assert.ErrorContains(t, err, "conversion: boom")
+	})
+	t.Run("gobl error unchanged", func(t *testing.T) {
+		_, err := convert.Import([]byte("alpha-fr:invalid"))
+		assert.ErrorIs(t, err, gobl.ErrValidation)
 	})
 }
 

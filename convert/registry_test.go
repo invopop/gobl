@@ -47,6 +47,13 @@ func TestRegistryAdd(t *testing.T) {
 		})
 		assert.Nil(t, r.contextFor("b"), "nothing added from a rejected converter")
 	})
+	t.Run("duplicate key in one converter", func(t *testing.T) {
+		r := newRegistry()
+		assert.PanicsWithValue(t, "convert: context a already registered", func() {
+			r.add(stub("a", "a"))
+		})
+		assert.Empty(t, r.contexts())
+	})
 	t.Run("empty key", func(t *testing.T) {
 		r := newRegistry()
 		assert.PanicsWithValue(t, "convert: context key is empty", func() {
@@ -59,6 +66,31 @@ func TestRegistryAdd(t *testing.T) {
 			r.add(stub())
 		})
 	})
+}
+
+// valueConverter is registered by value and holds a slice, so it is not
+// comparable.
+type valueConverter struct {
+	contexts []*Context
+	detect   cbc.Key
+}
+
+func (c valueConverter) Contexts() []*Context                               { return c.contexts }
+func (c valueConverter) Detect(_ *Input) cbc.Key                            { return c.detect }
+func (c valueConverter) Import(_ cbc.Key, _ []byte) (*gobl.Envelope, error) { return nil, nil }
+func (c valueConverter) Accepts(_ cbc.Key, _ *gobl.Envelope) bool           { return false }
+func (c valueConverter) Export(_ cbc.Key, _ *gobl.Envelope) ([]byte, error) { return nil, nil }
+
+func TestRegistryDetectValueConverters(t *testing.T) {
+	r := newRegistry()
+	r.add(valueConverter{contexts: []*Context{{Key: "a"}}, detect: "a"})
+	r.add(valueConverter{contexts: []*Context{{Key: "b"}}, detect: "a"})
+	e, err := r.detect(nil, nil)
+	assert.NoError(t, err, "context owned by another converter is ignored")
+	assert.Equal(t, cbc.Key("a"), e.context.Key)
+	e, err = r.detect(nil, []cbc.Key{"a"})
+	assert.NoError(t, err)
+	assert.Equal(t, cbc.Key("a"), e.context.Key)
 }
 
 func TestRegistryContextFor(t *testing.T) {
