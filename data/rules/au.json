@@ -56,21 +56,6 @@
                   ]
                 }
               ]
-            },
-            {
-              "guard": "invoice type in [standard], and charges GST on A$1,000 or more",
-              "subsets": [
-                {
-                  "field": "customer",
-                  "assert": [
-                    {
-                      "id": "GOBL-AU-BILL-INVOICE-02",
-                      "desc": "invoice customer is required when GST is charged on a total of A$1,000 or more",
-                      "tests": "present"
-                    }
-                  ]
-                }
-              ]
             }
           ]
         }

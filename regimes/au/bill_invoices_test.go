@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/au"
@@ -97,39 +96,6 @@ func TestInvoiceSupplierABN(t *testing.T) {
 		inv.Preceding = []*org.DocumentRef{{Code: "0000"}}
 		inv.Supplier.TaxID = nil
 		assert.NotContains(t, errorText(validateInvoice(t, inv)), "GOBL-AU-BILL-INVOICE-01")
-	})
-}
-
-func TestInvoiceCustomerThreshold(t *testing.T) {
-	t.Run("no customer below A$1,000", func(t *testing.T) {
-		inv := testInvoice(900, standardGST()) // 990 with GST
-		inv.Customer = nil
-		assert.NoError(t, validateInvoice(t, inv))
-	})
-
-	t.Run("no customer at A$1,000 with GST", func(t *testing.T) {
-		inv := testInvoice(1000, standardGST()) // 1,100 with GST
-		inv.Customer = nil
-		assert.ErrorContains(t, validateInvoice(t, inv),
-			"[GOBL-AU-BILL-INVOICE-02] ($.customer) invoice customer is required when GST is charged on a total of A$1,000 or more")
-	})
-
-	t.Run("customer present at A$1,000 with GST", func(t *testing.T) {
-		assert.NoError(t, validateInvoice(t, testInvoice(1000, standardGST())))
-	})
-
-	t.Run("no customer on a large GST-free sale", func(t *testing.T) {
-		inv := testInvoice(5000, gstFree())
-		inv.Customer = nil
-		assert.NoError(t, validateInvoice(t, inv))
-	})
-
-	t.Run("no customer on a large sale in another currency", func(t *testing.T) {
-		inv := testInvoice(5000, standardGST())
-		inv.Currency = "USD"
-		inv.ExchangeRates = []*currency.ExchangeRate{{From: "USD", To: "AUD", Amount: num.MakeAmount(15, 1)}}
-		inv.Customer = nil
-		assert.NoError(t, validateInvoice(t, inv))
 	})
 }
 
