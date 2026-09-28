@@ -22,83 +22,113 @@ func convertLinesInto(ex *currency.ExchangeRate, lines []*Line) []*Line {
 }
 
 func convertLineInto(ex *currency.ExchangeRate, line *Line) *Line {
-	accuracy := defaultCurrencyConversionAccuracy
-
 	if line.Item == nil || line.Item.Price == nil {
 		return line
 	}
-
 	l2 := *line
-	l2i := *line.Item
-	price := *l2i.Price
-
-	// Add current price to the list of alternative prices
-	l2i.AltPrices = append(l2i.AltPrices, &currency.Amount{
-		Currency: ex.From,
-		Value:    price,
-	})
-
-	// Use alt price if available
-	altFound := false
-	for i, ap := range l2i.AltPrices {
-		if ap.Currency == ex.To {
-			price = ap.Value
-			// remove this alt price from the list
-			l2i.AltPrices = append(l2i.AltPrices[:i], l2i.AltPrices[i+1:]...)
-			altFound = true
-			break
-		}
-	}
-	if !altFound {
-		// Perform exchange
-		price = price.Upscale(accuracy).Multiply(ex.Amount)
-	}
-	convertItemListInto(ex, &l2i, altFound)
-
-	if len(l2.Discounts) > 0 {
-		rows := make([]*LineDiscount, len(l2.Discounts))
-		for i, v := range line.Discounts {
-			d := *v
-			d.Amount = d.Amount.Upscale(accuracy).Multiply(ex.Amount)
-			rows[i] = &d
-		}
-		l2.Discounts = rows
-	}
-
-	if len(l2.Charges) > 0 {
-		rows := make([]*LineCharge, len(l2.Charges))
-		for i, v := range line.Charges {
-			d := *v
-			d.Amount = d.Amount.Upscale(accuracy).Multiply(ex.Amount)
-			rows[i] = &d
-		}
-		l2.Charges = rows
-	}
-
-	l2i.Price = &price
-	if l2i.Currency != "" {
-		l2i.Currency = ex.To
-	}
-	l2.Item = &l2i
+	l2.Item = convertItemInto(ex, line.Item)
+	l2.Discounts = convertLineDiscountsInto(ex, line.Discounts)
+	l2.Charges = convertLineChargesInto(ex, line.Charges)
+	l2.Breakdown = convertSubLinesInto(ex, line.Breakdown)
+	l2.Substituted = convertSubLinesInto(ex, line.Substituted)
 	return &l2
 }
 
-func convertItemListInto(ex *currency.ExchangeRate, item *org.Item, altFound bool) {
+func convertSubLinesInto(ex *currency.ExchangeRate, sls []*SubLine) []*SubLine {
+	if len(sls) == 0 {
+		return sls
+	}
+	rows := make([]*SubLine, len(sls))
+	for i, sl := range sls {
+		rows[i] = convertSubLineInto(ex, sl)
+	}
+	return rows
+}
+
+func convertSubLineInto(ex *currency.ExchangeRate, sl *SubLine) *SubLine {
+	if sl == nil || sl.Item == nil || sl.Item.Price == nil {
+		return sl
+	}
+	sl2 := *sl
+	sl2.Item = convertItemInto(ex, sl.Item)
+	sl2.Discounts = convertLineDiscountsInto(ex, sl.Discounts)
+	sl2.Charges = convertLineChargesInto(ex, sl.Charges)
+	return &sl2
+}
+
+// convertItemInto provides a copy of the item with its price in the exchange
+// rate's target currency, using a matching alternative price if available.
+func convertItemInto(ex *currency.ExchangeRate, item *org.Item) *org.Item {
+	accuracy := defaultCurrencyConversionAccuracy
+	i2 := *item
+	price := *item.Price
+
+	// Keep the current price as an alternative, and use an existing
+	// alternative price in the target currency if available.
+	altFound := false
+	alts := make([]*currency.Amount, 0, len(item.AltPrices)+1)
+	for _, ap := range item.AltPrices {
+		if !altFound && ap.Currency == ex.To {
+			price = ap.Value
+			altFound = true
+			continue
+		}
+		alts = append(alts, ap)
+	}
+	i2.AltPrices = append(alts, &currency.Amount{
+		Currency: ex.From,
+		Value:    *item.Price,
+	})
+
 	if altFound {
 		// List price and discount are unknown in the alternative currency
-		item.List = nil
-		item.Discount = nil
-		return
+		i2.List = nil
+		i2.Discount = nil
+	} else {
+		price = price.Upscale(accuracy).Multiply(ex.Amount)
+		if item.List != nil {
+			l := item.List.Upscale(accuracy).Multiply(ex.Amount)
+			i2.List = &l
+		}
+		if item.Discount != nil {
+			d := item.Discount.Upscale(accuracy).Multiply(ex.Amount)
+			i2.Discount = &d
+		}
+	}
+
+	i2.Price = &price
+	if i2.Currency != "" {
+		i2.Currency = ex.To
+	}
+	return &i2
+}
+
+func convertLineDiscountsInto(ex *currency.ExchangeRate, discounts []*LineDiscount) []*LineDiscount {
+	if len(discounts) == 0 {
+		return discounts
 	}
 	accuracy := defaultCurrencyConversionAccuracy
-	if item.List != nil {
-		l := item.List.Upscale(accuracy).Multiply(ex.Amount)
-		item.List = &l
+	rows := make([]*LineDiscount, len(discounts))
+	for i, v := range discounts {
+		d := *v
+		d.Amount = d.Amount.Upscale(accuracy).Multiply(ex.Amount)
+		rows[i] = &d
 	}
-	if item.Discount != nil {
-		d := item.Discount.Upscale(accuracy).Multiply(ex.Amount)
-		item.Discount = &d
+	return rows
+}
+
+func convertLineChargesInto(ex *currency.ExchangeRate, charges []*LineCharge) []*LineCharge {
+	if len(charges) == 0 {
+		return charges
 	}
+	accuracy := defaultCurrencyConversionAccuracy
+	rows := make([]*LineCharge, len(charges))
+	for i, v := range charges {
+		c := *v
+		c.Amount = c.Amount.Upscale(accuracy).Multiply(ex.Amount)
+		rows[i] = &c
+	}
+	return rows
 }
 
 func convertDiscountsInto(ex *currency.ExchangeRate, discounts []*Discount) []*Discount {

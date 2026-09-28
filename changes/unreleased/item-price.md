@@ -13,3 +13,9 @@
 ## Changed
 
 - `org`: the `Item.Price` schema title is "Net Price".
+
+## Fixed
+
+- `bill`: `ConvertInto` converts the items, discounts, and charges of
+  breakdown and substituted sub-lines, not only those of the line itself.
+- `bill`: `RemoveIncludedTaxes` no longer panics on lines without a price.
