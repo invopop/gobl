@@ -259,6 +259,38 @@ func TestInvoiceConvertInto(t *testing.T) {
 		assert.Equal(t, "10.00", inv.Lines[0].Breakdown[0].Item.List.String())
 	})
 
+	t.Run("conversion with substituted under unpriced line", func(t *testing.T) {
+		lines := []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Group"},
+				Substituted: []*bill.SubLine{
+					{
+						Quantity: num.MakeAmount(1, 0),
+						Item:     &org.Item{Name: "Old", Price: num.NewAmount(1000, 2)},
+					},
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Rate:     tax.RateGeneral,
+					},
+				},
+			},
+		}
+		inv := baseInvoice(t, lines...)
+		inv.ExchangeRates = append(inv.ExchangeRates, &currency.ExchangeRate{
+			From:   currency.EUR,
+			To:     currency.USD,
+			Amount: num.MakeAmount(2, 0),
+		})
+
+		i2, err := inv.ConvertInto(currency.USD)
+		require.NoError(t, err)
+		assert.Nil(t, i2.Lines[0].Item.Price)
+		assert.Equal(t, "20.0000", i2.Lines[0].Substituted[0].Item.Price.String())
+	})
+
 	t.Run("complex example", func(t *testing.T) {
 		i := &bill.Invoice{
 			Code: "123TEST",

@@ -582,3 +582,8 @@ func TestLineItemListPrice(t *testing.T) {
 		assert.Equal(t, "90.0000", line.Total.String())
 	})
 }
+
+func TestConvertSubLineIntoNil(t *testing.T) {
+	ex := &currency.ExchangeRate{From: currency.EUR, To: currency.USD, Amount: num.MakeAmount(2, 0)}
+	assert.Nil(t, convertSubLineInto(ex, nil))
+}

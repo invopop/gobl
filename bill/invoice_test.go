@@ -866,6 +866,45 @@ func TestRemoveIncludedTaxUncalculatedLines(t *testing.T) {
 		assert.Equal(t, "10.0000", inv.Lines[0].Item.Price.String())
 		assert.Equal(t, "12.10", inv.Totals.Payable.String())
 	})
+	t.Run("list price only with line total", func(t *testing.T) {
+		inv := baseInvoice(t, &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item:     &org.Item{Name: "Item", List: num.NewAmount(1210, 2)},
+			Total:    num.NewAmount(1210, 2),
+			Taxes:    tax.Set{{Category: tax.CategoryVAT, Percent: num.NewPercentage(21, 2)}},
+		})
+		inv.Tax = &bill.Tax{PricesInclude: tax.CategoryVAT}
+		inv.Currency = currency.EUR
+		inv.Totals = &bill.Totals{Sum: num.MakeAmount(1210, 2), Payable: num.MakeAmount(1210, 2)}
+		require.NoError(t, inv.RemoveIncludedTaxes())
+		assert.Nil(t, inv.Lines[0].Item.List)
+		assert.Equal(t, "10.0000", inv.Lines[0].Item.Price.String())
+		assert.Equal(t, "10.00", inv.Totals.Sum.String())
+		assert.Equal(t, "12.10", inv.Totals.Payable.String())
+	})
+	t.Run("list price only in breakdown with line total", func(t *testing.T) {
+		inv := baseInvoice(t, &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item:     &org.Item{Name: "Group"},
+			Breakdown: []*bill.SubLine{
+				{
+					Quantity: num.MakeAmount(1, 0),
+					Item:     &org.Item{Name: "Part", List: num.NewAmount(1210, 2)},
+				},
+			},
+			Total: num.NewAmount(1210, 2),
+			Taxes: tax.Set{{Category: tax.CategoryVAT, Percent: num.NewPercentage(21, 2)}},
+		})
+		inv.Tax = &bill.Tax{PricesInclude: tax.CategoryVAT}
+		inv.Currency = currency.EUR
+		inv.Totals = &bill.Totals{Sum: num.MakeAmount(1210, 2), Payable: num.MakeAmount(1210, 2)}
+		require.NoError(t, inv.RemoveIncludedTaxes())
+		sub := inv.Lines[0].Breakdown[0].Item
+		assert.Nil(t, sub.List)
+		assert.Equal(t, "10.0000", sub.Price.String())
+		assert.Equal(t, "10.0000", inv.Lines[0].Item.Price.String())
+		assert.Equal(t, "12.10", inv.Totals.Payable.String())
+	})
 	t.Run("no price", func(t *testing.T) {
 		inv := baseInvoice(t, &bill.Line{
 			Quantity: num.MakeAmount(1, 0),

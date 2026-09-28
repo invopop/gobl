@@ -22,9 +22,6 @@ func convertLinesInto(ex *currency.ExchangeRate, lines []*Line) []*Line {
 }
 
 func convertLineInto(ex *currency.ExchangeRate, line *Line) *Line {
-	if line.Item == nil || line.Item.Price == nil {
-		return line
-	}
 	l2 := *line
 	l2.Item = convertItemInto(ex, line.Item)
 	l2.Discounts = convertLineDiscountsInto(ex, line.Discounts)
@@ -46,8 +43,8 @@ func convertSubLinesInto(ex *currency.ExchangeRate, sls []*SubLine) []*SubLine {
 }
 
 func convertSubLineInto(ex *currency.ExchangeRate, sl *SubLine) *SubLine {
-	if sl == nil || sl.Item == nil || sl.Item.Price == nil {
-		return sl
+	if sl == nil {
+		return nil
 	}
 	sl2 := *sl
 	sl2.Item = convertItemInto(ex, sl.Item)
@@ -58,7 +55,11 @@ func convertSubLineInto(ex *currency.ExchangeRate, sl *SubLine) *SubLine {
 
 // convertItemInto provides a copy of the item with its price in the exchange
 // rate's target currency, using a matching alternative price if available.
+// Items without a price are returned as they are.
 func convertItemInto(ex *currency.ExchangeRate, item *org.Item) *org.Item {
+	if item == nil || item.Price == nil {
+		return item
+	}
 	accuracy := defaultCurrencyConversionAccuracy
 	i2 := *item
 	price := *item.Price
