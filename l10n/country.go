@@ -73,7 +73,7 @@ func (ISOCountryCode) JSONSchema() *jsonschema.Schema {
 		Title:       "ISO Country Code",
 		Type:        "string",
 		OneOf:       make([]*jsonschema.Schema, len(defs)),
-		Description: `Defines an ISO 3166-1 alpha-2 country code`,
+		Description: `Defines an ISO 3166-1 alpha-2 country code.`,
 	}
 	for i, d := range defs {
 		s.OneOf[i] = &jsonschema.Schema{
@@ -155,7 +155,7 @@ func (TaxCountryCode) JSONSchema() *jsonschema.Schema {
 		Title:       "Tax Country Code",
 		Type:        "string",
 		OneOf:       make([]*jsonschema.Schema, len(defs)),
-		Description: `Defines an ISO base country code used for tax purposes`,
+		Description: `Defines an ISO base country code used for tax purposes.`,
 	}
 	for i, d := range defs {
 		s.OneOf[i] = &jsonschema.Schema{

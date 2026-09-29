@@ -88,7 +88,7 @@ type Order struct {
 	// require this field. An empty string will be automatically replaced with the current
 	// time; otherwise the field can be left nil.
 	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time" jsonschema_extras:"calculated=true"`
-	// Date when the operation defined by the invoice became effective.
+	// Date when the operation defined by the order became effective.
 	OperationDate *cal.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
 	// When the taxes of the document become accountable. Defaults to the issue date.
 	ValueDate *cal.Date `json:"value_date,omitempty" jsonschema:"title=Value Date"`
@@ -121,9 +121,9 @@ type Order struct {
 
 	// List of lines representing each of the items to be ordered.
 	Lines []*Line `json:"lines,omitempty" jsonschema:"title=Lines"`
-	// Discounts or allowances applied to order totals
+	// Discounts or allowances applied to the order totals.
 	Discounts []*Discount `json:"discounts,omitempty" jsonschema:"title=Discounts"`
-	// Charges or surcharges applied to order totals
+	// Charges or surcharges applied to the order totals.
 	Charges []*Charge `json:"charges,omitempty" jsonschema:"title=Charges"`
 
 	// Information on when, how, and to whom a final invoice would be paid.

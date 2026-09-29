@@ -153,14 +153,14 @@ type Delivery struct {
 	// The courier responsible for delivering the goods.
 	Courier *org.Party `json:"courier,omitempty" jsonschema:"title=Courier"`
 
-	// List of lines representing each of the items to be ordered.
+	// List of lines representing each of the items to be delivered.
 	Lines []*Line `json:"lines,omitempty" jsonschema:"title=Lines"`
-	// Discounts or allowances applied to order totals
+	// Discounts or allowances applied to the delivery totals.
 	Discounts []*Discount `json:"discounts,omitempty" jsonschema:"title=Discounts"`
-	// Charges or surcharges applied to order totals
+	// Charges or surcharges applied to the delivery totals.
 	Charges []*Charge `json:"charges,omitempty" jsonschema:"title=Charges"`
 
-	// Summary of all the order totals, including taxes (calculated).
+	// Summary of all the delivery totals, including taxes (calculated).
 	Totals *Totals `json:"totals,omitempty" jsonschema:"title=Totals" jsonschema_extras:"calculated=true"`
 
 	// Unstructured information that is relevant to the delivery, such as correction or additional

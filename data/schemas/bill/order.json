@@ -76,7 +76,7 @@
         "op_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
           "title": "Operation Date",
-          "description": "Date when the operation defined by the invoice became effective."
+          "description": "Date when the operation defined by the order became effective."
         },
         "value_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
@@ -165,7 +165,7 @@
           },
           "type": "array",
           "title": "Discounts",
-          "description": "Discounts or allowances applied to order totals"
+          "description": "Discounts or allowances applied to the order totals."
         },
         "charges": {
           "items": {
@@ -173,7 +173,7 @@
           },
           "type": "array",
           "title": "Charges",
-          "description": "Charges or surcharges applied to order totals"
+          "description": "Charges or surcharges applied to the order totals."
         },
         "payment": {
           "$ref": "https://gobl.org/draft-0/bill/payment-details",

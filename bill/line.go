@@ -40,7 +40,7 @@ type Line struct {
 	Discounts []*LineDiscount `json:"discounts,omitempty" jsonschema:"title=Discounts"`
 	// Charges applied to this line.
 	Charges []*LineCharge `json:"charges,omitempty" jsonschema:"title=Charges"`
-	// Map of taxes to be applied and used in the invoice totals.
+	// Map of taxes to be applied and used in the document totals.
 	Taxes tax.Set `json:"taxes,omitempty" jsonschema:"title=Taxes"`
 	// Total line amount after applying discounts to the sum (calculated).
 	Total *num.Amount `json:"total,omitempty" jsonschema:"title=Total"  jsonschema_extras:"calculated=true"`
