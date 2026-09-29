@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `net`: added `SandboxAuthorities` (defaulting to `lookup.sandbox.gobl.org`)
   and `WithSandbox`. Sandbox and live trust lists remain separate.
-- `regimes/ro`: new tax regime for Romania.
+- `regimes/ro`: new tax regime for Romania, including examples for the supported invoice type codes (380, 381, 384, 389, 751).
 
 ### Changed
 
