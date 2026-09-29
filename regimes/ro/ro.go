@@ -34,7 +34,7 @@ func New() *tax.RegimeDef {
 			i18n.RO: "România",
 		},
 
-		// Short description (based on pl format)
+		// Short description
 		Description: i18n.String{
 			i18n.EN: here.Doc(`
 				Romania's tax system is administered by the Agenția Națională de
