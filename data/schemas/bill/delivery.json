@@ -13,7 +13,7 @@
         "$addons": {
           "$ref": "https://gobl.org/draft-0/tax/addon-list",
           "title": "Addons",
-          "description": "Addons defines a list of keys used to identify tax addons that apply special\nnormalization, scenarios, and validation rules to a document."
+          "description": "Keys identifying the tax addons that apply special normalization, scenarios, and\nvalidation rules to the document."
         },
         "$tags": {
           "items": {
@@ -27,7 +27,7 @@
           },
           "type": "array",
           "title": "Tags",
-          "description": "Tags are used to help identify specific tax scenarios or requirements that may\napply changes to the contents of the document or imply a specific meaning.\nConverters may use tags to help identify specific situations that do not have\na specific extension, for example; self-billed or partial invoices may be\nidentified by their respective tags."
+          "description": "Keys that identify specific tax scenarios or requirements that may change the\ncontents of the document or imply a specific meaning. Converters may use tags to\nidentify situations that do not have a specific extension; for example, self-billed\nor partial invoices are identified by their respective tags."
         },
         "uuid": {
           "type": "string",
@@ -71,12 +71,12 @@
         "series": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Series",
-          "description": "Series is used to identify groups of deliveries by date, business area, project,\ntype, customer, a combination of any, or other company specific data.\nIf the output format does not support the series as a separate field, it will be\nprepended to the code for presentation with a dash (`-`) for separation."
+          "description": "Identifies groups of deliveries by date, business area, project, type, customer,\na combination of any, or other company specific data. If the output format does not\nsupport the series as a separate field, it will be prepended to the code with a dash\n(`-`) for separation."
         },
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Code",
-          "description": "Code is a sequential identifier that uniquely identifies the delivery. The code can\nbe left empty initially, but is **required** to **sign** the document."
+          "description": "Sequential identifier that uniquely identifies the delivery. May be left empty\ninitially, but is **required** to **sign** the document."
         },
         "issue_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
@@ -87,13 +87,13 @@
         "issue_time": {
           "$ref": "https://gobl.org/draft-0/cal/time",
           "title": "Issue Time",
-          "description": "IssueTime is an optional field that may be useful to indicate the time of day when\nthe delivery was issued. Some regions and formats may require this field to be set.\nAn empty string will be automatically updated to reflect the current time, otherwise\nthe field can be left with a nil value.",
+          "description": "Optional time of day when the delivery was issued. Some regions and formats may\nrequire this field. An empty string will be automatically replaced with the current\ntime; otherwise the field can be left nil.",
           "calculated": true
         },
         "value_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
           "title": "Value Date",
-          "description": "When the taxes of this delivery become accountable, if none set, the issue date is used."
+          "description": "When the taxes of the delivery become accountable. Defaults to the issue date."
         },
         "currency": {
           "$ref": "https://gobl.org/draft-0/currency/code",
@@ -107,7 +107,7 @@
           },
           "type": "array",
           "title": "Exchange Rates",
-          "description": "Exchange rates to be used when converting the invoices monetary values into other currencies."
+          "description": "Exchange rates to be used when converting the document's monetary values into other currencies."
         },
         "ordering": {
           "$ref": "https://gobl.org/draft-0/bill/ordering",
@@ -125,17 +125,17 @@
         "tracking": {
           "$ref": "#/$defs/bill.Tracking",
           "title": "Tracking",
-          "description": "Tracking is used to define specific codes or IDs that may be used to\nidentify and track delivery."
+          "description": "Codes or IDs that may be used to identify and track the delivery."
         },
         "despatch_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
           "title": "Despatch Date",
-          "description": "DespatchDate is the date when the goods are expected to be despatched."
+          "description": "Date when the goods are expected to be despatched."
         },
         "receive_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
           "title": "Receive Date",
-          "description": "ReceiveDate is the date when the goods are expected to be received."
+          "description": "Date when the goods are expected to be received."
         },
         "tax": {
           "$ref": "https://gobl.org/draft-0/bill/tax",
@@ -224,7 +224,7 @@
           },
           "type": "array",
           "title": "Attachments",
-          "description": "Attachments provide additional information or supporting documents that are not included\nin the main document. It is important that attachments are not used for alternative\nversions of the PDF, for that, see \"links\" inside the envelope headers."
+          "description": "Supporting documents that are not included in the main document. Do not use for\nalternative versions of the PDF; use \"links\" inside the envelope headers instead."
         }
       },
       "type": "object",
@@ -246,12 +246,12 @@
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Code",
-          "description": "Code used for tracking"
+          "description": "Code used to track the delivery."
         },
         "website": {
           "$ref": "https://gobl.org/draft-0/org/website",
           "title": "Website",
-          "description": "Website to access for more tracking details"
+          "description": "URL to access more tracking details."
         }
       },
       "type": "object",

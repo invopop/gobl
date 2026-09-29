@@ -13,7 +13,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// CountryCode is the ISO 3166-2 code for Germany.
+// CountryCode is the ISO 3166-1 alpha-2 code for Germany.
 const CountryCode = "DE"
 
 func init() {

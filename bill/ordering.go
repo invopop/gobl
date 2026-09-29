@@ -27,29 +27,28 @@ type Ordering struct {
 
 	// Party who is responsible for issuing payment, if not the same as the customer.
 	Buyer *org.Party `json:"buyer,omitempty" jsonschema:"title=Buyer"`
-	// Seller is the party liable to pay taxes on the transaction if not the same as the supplier.
+	// Party liable to pay taxes on the transaction, if not the same as the supplier.
 	Seller *org.Party `json:"seller,omitempty" jsonschema:"title=Seller"`
-	// Issuer represents a third party responsible for issuing the document, but is not
-	// responsible for tax. Some tax regimes and formats require this field.
+	// Third party responsible for issuing the document, but not responsible for tax.
+	// Required by some tax regimes and formats.
 	Issuer *org.Party `json:"issuer,omitempty" jsonschema:"title=Issuer"`
-	// Addressee represents a third party to whom the document is addressed, but is not
-	// the customer.
+	// Third party to whom the document is addressed, but who is not the customer.
 	Addressee *org.Party `json:"addressee,omitempty" jsonschema:"title=Addressee"`
 
 	/*** DOCUMENTS ***/
 
 	// Projects this document refers to.
 	Projects []*org.DocumentRef `json:"projects,omitempty" jsonschema:"title=Projects"`
-	// The identification of contracts.
+	// Contracts related to the document.
 	Contracts []*org.DocumentRef `json:"contracts,omitempty" jsonschema:"title=Contracts"`
 	// Purchase orders issued by the customer or buyer.
 	Purchases []*org.DocumentRef `json:"purchases,omitempty" jsonschema:"title=Purchase Orders"`
 	// Sales orders issued by the supplier or seller.
 	Sales []*org.DocumentRef `json:"sales,omitempty" jsonschema:"title=Sales Orders"`
-	// Receiving Advice.
+	// Receiving advice documents.
 	Receiving []*org.DocumentRef `json:"receiving,omitempty" jsonschema:"title=Receiving Advice"`
-	// Despatch advice.
+	// Despatch advice documents.
 	Despatch []*org.DocumentRef `json:"despatch,omitempty" jsonschema:"title=Despatch Advice"`
-	// Tender advice, the identification of the call for tender or lot the document relates to.
+	// Call for tender or lot the document relates to.
 	Tender []*org.DocumentRef `json:"tender,omitempty" jsonschema:"title=Tender Advice"`
 }

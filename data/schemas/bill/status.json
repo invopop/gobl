@@ -13,7 +13,7 @@
         "$addons": {
           "$ref": "https://gobl.org/draft-0/tax/addon-list",
           "title": "Addons",
-          "description": "Addons defines a list of keys used to identify tax addons that apply special\nnormalization, scenarios, and validation rules to a document."
+          "description": "Keys identifying the tax addons that apply special normalization, scenarios, and\nvalidation rules to the document."
         },
         "uuid": {
           "type": "string",
@@ -46,42 +46,42 @@
         "issue_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
           "title": "Issue Date",
-          "description": "IssueDate is the date when the status is to be considered effective."
+          "description": "Date when the status is to be considered effective."
         },
         "issue_time": {
           "$ref": "https://gobl.org/draft-0/cal/time",
           "title": "Issue Time",
-          "description": "IssueTime is used when extra precision is required to determine when exactly\nthe status was issued."
+          "description": "Time of day when the status was issued, for when extra precision is required."
         },
         "series": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Series",
-          "description": "Series is an optional code to group related status events together."
+          "description": "Optional code to group related status events together."
         },
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Code",
-          "description": "Code provides a way to identify the specific status event being reported."
+          "description": "Identifies the specific status event being reported."
         },
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",
           "title": "Extensions",
-          "description": "Ext provides additional structured data specific to the regime or addon."
+          "description": "Additional structured data specific to the regime or addon."
         },
         "supplier": {
           "$ref": "https://gobl.org/draft-0/org/party",
           "title": "Supplier",
-          "description": "Supplier represents the entity supplying the goods or services in the\noriginal transaction."
+          "description": "Entity supplying the goods or services in the original transaction."
         },
         "customer": {
           "$ref": "https://gobl.org/draft-0/org/party",
           "title": "Customer",
-          "description": "Customer is optional and describes the recipient of the original\nservices."
+          "description": "Optional recipient of the original goods or services."
         },
         "ordering": {
           "$ref": "https://gobl.org/draft-0/bill/ordering",
           "title": "Ordering",
-          "description": "Ordering provides links to related documents and additional details about\nwhich parties may be involved in the transaction."
+          "description": "Links to related documents and additional details about which parties may be\ninvolved in the transaction."
         },
         "lines": {
           "items": {
@@ -89,7 +89,7 @@
           },
           "type": "array",
           "title": "Lines",
-          "description": "Lines contain the main payload of the message used to describe individual\ndocuments which have a status."
+          "description": "Main payload of the message, describing the status of individual documents."
         },
         "notes": {
           "items": {
@@ -102,7 +102,7 @@
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
           "title": "Meta",
-          "description": "Meta contains unstructured data useful for internal tools."
+          "description": "Unstructured data useful for internal tools."
         }
       },
       "type": "object",

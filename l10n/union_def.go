@@ -24,7 +24,7 @@ type UnionDef struct {
 // UnionMember represents a country that is a member of a union,
 // including the date when the country joined and may have left.
 type UnionMember struct {
-	// ISO 3166-2 Country Code
+	// ISO 3166-1 alpha-2 country code.
 	Code Code `json:"code" jsonschema:"title=Code"`
 	// Alternative code that can be used for lookups
 	AltCode Code `json:"alt_code,omitempty" jsonschema:"title=Alt Code"`

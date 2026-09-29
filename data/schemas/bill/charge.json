@@ -75,38 +75,38 @@
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Code",
-          "description": "Code to used to refer to the this charge by the issuer"
+          "description": "Code used by the issuer to refer to this charge."
         },
         "reason": {
           "type": "string",
           "title": "Reason",
-          "description": "Text description as to why the charge was applied"
+          "description": "Reason why the charge was applied."
         },
         "base": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Base",
-          "description": "Base represents the value used as a base for percent calculations instead\nof the invoice's sum of lines."
+          "description": "Value used as the base for percent calculations instead of the invoice's sum of lines."
         },
         "percent": {
           "$ref": "https://gobl.org/draft-0/num/percentage",
           "title": "Percent",
-          "description": "Percentage to apply to the sum of all lines"
+          "description": "Percentage to apply to the sum of all lines."
         },
         "amount": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Amount",
-          "description": "Amount to apply (calculated if percent present)",
+          "description": "Amount to apply (calculated if percent present).",
           "calculated": true
         },
         "taxes": {
           "$ref": "https://gobl.org/draft-0/tax/set",
           "title": "Taxes",
-          "description": "List of taxes to apply to the charge"
+          "description": "List of taxes to apply to the charge."
         },
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",
           "title": "Extensions",
-          "description": "Extension codes that apply to the charge"
+          "description": "Extension codes that apply to the charge."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
@@ -119,7 +119,7 @@
         "i",
         "amount"
       ],
-      "description": "Charge represents a surchange applied to the complete document independent from the individual lines."
+      "description": "Charge represents a surcharge applied to the complete document independent from the individual lines."
     }
   }
 }

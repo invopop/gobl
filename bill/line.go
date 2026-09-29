@@ -16,7 +16,7 @@ type Line struct {
 	uuid.Identify
 	// Line number inside the parent (calculated)
 	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
-	// Number of items
+	// Number of items.
 	Quantity num.Amount `json:"quantity" jsonschema:"title=Quantity"`
 	// Single identifier provided by the supplier for an object on which the
 	// line item is based and is not considered a universal identity. Examples
@@ -29,18 +29,18 @@ type Line struct {
 	Order cbc.Code `json:"order,omitempty" jsonschema:"title=Order Reference"`
 	// Buyer accounting reference cost code to associate with the line.
 	Cost cbc.Code `json:"cost,omitempty" jsonschema:"title=Cost Reference"`
-	// Details about the item, service or good, that is being sold
+	// Details about the item, service, or good being sold.
 	Item *org.Item `json:"item" jsonschema:"title=Item"`
 	// Breakdown of the line item for more detailed information. The sum of all lines
 	// will be used for the item price.
 	Breakdown []*SubLine `json:"breakdown,omitempty" jsonschema:"title=Breakdown"`
-	// Result of quantity multiplied by the item's price (calculated)
+	// Result of quantity multiplied by the item's price (calculated).
 	Sum *num.Amount `json:"sum,omitempty" jsonschema:"title=Sum" jsonschema_extras:"calculated=true"`
-	// Discounts applied to this line
+	// Discounts applied to this line.
 	Discounts []*LineDiscount `json:"discounts,omitempty" jsonschema:"title=Discounts"`
-	// Charges applied to this line
+	// Charges applied to this line.
 	Charges []*LineCharge `json:"charges,omitempty" jsonschema:"title=Charges"`
-	// Map of taxes to be applied and used in the invoice totals
+	// Map of taxes to be applied and used in the invoice totals.
 	Taxes tax.Set `json:"taxes,omitempty" jsonschema:"title=Taxes"`
 	// Total line amount after applying discounts to the sum (calculated).
 	Total *num.Amount `json:"total,omitempty" jsonschema:"title=Total"  jsonschema_extras:"calculated=true"`
@@ -59,7 +59,7 @@ type Line struct {
 	// clarification.
 	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
 
-	// Extension codes that apply to the line
+	// Extension codes that apply to the line.
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
@@ -69,7 +69,7 @@ type SubLine struct {
 	uuid.Identify
 	// Line number inside the parent (calculated)
 	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
-	// Number of items
+	// Number of items.
 	Quantity num.Amount `json:"quantity" jsonschema:"title=Quantity"`
 	// Single identifier provided by the supplier for an object on which the
 	// line item is based and is not considered a universal identity. Examples
@@ -82,13 +82,13 @@ type SubLine struct {
 	Order cbc.Code `json:"order,omitempty" jsonschema:"title=Order Reference"`
 	// Buyer accounting reference cost code to associate with the line.
 	Cost cbc.Code `json:"cost,omitempty" jsonschema:"title=Cost Reference"`
-	// Details about the item, service or good, that is being sold
+	// Details about the item, service, or good being sold.
 	Item *org.Item `json:"item" jsonschema:"title=Item"`
-	// Result of quantity multiplied by the item's price (calculated)
+	// Result of quantity multiplied by the item's price (calculated).
 	Sum *num.Amount `json:"sum,omitempty" jsonschema:"title=Sum" jsonschema_extras:"calculated=true"`
-	// Discounts applied to this sub-line
+	// Discounts applied to this sub-line.
 	Discounts []*LineDiscount `json:"discounts,omitempty" jsonschema:"title=Discounts"`
-	// Charges applied to this sub-line
+	// Charges applied to this sub-line.
 	Charges []*LineCharge `json:"charges,omitempty" jsonschema:"title=Charges"`
 	// Total sub-line amount after applying discounts to the sum (calculated).
 	Total *num.Amount `json:"total,omitempty" jsonschema:"title=Total"  jsonschema_extras:"calculated=true"`

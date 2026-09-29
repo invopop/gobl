@@ -74,31 +74,30 @@ type Order struct {
 
 	// Type of the order.
 	Type cbc.Key `json:"type,omitempty" jsonschema:"title=Type"`
-	// Series is used to identify groups of orders by date, business area, project,
-	// type, customer, a combination of any, or other company specific data.
-	// If the output format does not support the series as a separate field, it will be
-	// prepended to the code for presentation with a dash (`-`) for separation.
+	// Identifies groups of orders by date, business area, project, type, customer,
+	// a combination of any, or other company specific data. If the output format does not
+	// support the series as a separate field, it will be prepended to the code with a dash
+	// (`-`) for separation.
 	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
-	// Code is a sequential identifier that uniquely identifies the order. The code can
-	// be left empty initially, but is **required** to **sign** the document.
+	// Sequential identifier that uniquely identifies the order. May be left empty
+	// initially, but is **required** to **sign** the document.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
-	// When the invoice was created.
+	// When the order was created.
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
-	// IssueTime is an optional field that may be useful to indicate the time of day when
-	// the order was issued. Some regions and formats may require this field to be set.
-	// An empty string will be automatically updated to reflect the current time, otherwise
-	// the field can be left with a nil value.
+	// Optional time of day when the order was issued. Some regions and formats may
+	// require this field. An empty string will be automatically replaced with the current
+	// time; otherwise the field can be left nil.
 	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time" jsonschema_extras:"calculated=true"`
 	// Date when the operation defined by the invoice became effective.
 	OperationDate *cal.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
-	// When the taxes of this invoice become accountable, if none set, the issue date is used.
+	// When the taxes of the document become accountable. Defaults to the issue date.
 	ValueDate *cal.Date `json:"value_date,omitempty" jsonschema:"title=Value Date"`
-	// Currency for all invoice totals.
+	// Currency for all order totals.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency" jsonschema_extras:"calculated=true"`
-	// Exchange rates to be used when converting the invoices monetary values into other currencies.
+	// Exchange rates to be used when converting the document's monetary values into other currencies.
 	ExchangeRates []*currency.ExchangeRate `json:"exchange_rates,omitempty" jsonschema:"title=Exchange Rates"`
 
-	// The identification of contracts.
+	// Contracts related to the document.
 	Contracts []*org.DocumentRef `json:"contracts,omitempty" jsonschema:"title=Contracts"`
 	// Key information regarding previous order documents.
 	Preceding []*org.DocumentRef `json:"preceding,omitempty" jsonschema:"title=Preceding Details"`
@@ -117,7 +116,7 @@ type Order struct {
 	Customer *org.Party `json:"customer,omitempty" jsonschema:"title=Customer"`
 	// Party who is responsible for issuing payment, if not the same as the customer.
 	Buyer *org.Party `json:"buyer,omitempty" jsonschema:"title=Buyer"`
-	// Seller is the party liable to pay taxes on the transaction if not the same as the supplier.
+	// Party liable to pay taxes on the transaction, if not the same as the supplier.
 	Seller *org.Party `json:"seller,omitempty" jsonschema:"title=Seller"`
 
 	// List of lines representing each of the items to be ordered.
@@ -145,9 +144,8 @@ type Order struct {
 	// Additional semi-structured data that doesn't fit into the body of the order.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 
-	// Attachments provide additional information or supporting documents that are not included
-	// in the main document. It is important that attachments are not used for alternative
-	// versions of the PDF, for that, see "links" inside the envelope headers.
+	// Supporting documents that are not included in the main document. Do not use for
+	// alternative versions of the PDF; use "links" inside the envelope headers instead.
 	Attachments []*org.Attachment `json:"attachments,omitempty" jsonschema:"title=Attachments"`
 }
 

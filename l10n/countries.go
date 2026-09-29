@@ -1,6 +1,6 @@
 package l10n
 
-// List of all ISO 3166-2 country codes that we know about.
+// List of all ISO 3166-1 alpha-2 country codes that we know about.
 const (
 	// Afghanistan
 	AF Code = "AF"

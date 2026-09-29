@@ -20,7 +20,7 @@
         "quantity": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Quantity",
-          "description": "Number of items"
+          "description": "Number of items."
         },
         "identifier": {
           "$ref": "https://gobl.org/draft-0/org/identity",
@@ -45,7 +45,7 @@
         "item": {
           "$ref": "https://gobl.org/draft-0/org/item",
           "title": "Item",
-          "description": "Details about the item, service or good, that is being sold"
+          "description": "Details about the item, service, or good being sold."
         },
         "breakdown": {
           "items": {
@@ -58,7 +58,7 @@
         "sum": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Sum",
-          "description": "Result of quantity multiplied by the item's price (calculated)",
+          "description": "Result of quantity multiplied by the item's price (calculated).",
           "calculated": true
         },
         "discounts": {
@@ -67,7 +67,7 @@
           },
           "type": "array",
           "title": "Discounts",
-          "description": "Discounts applied to this line"
+          "description": "Discounts applied to this line."
         },
         "charges": {
           "items": {
@@ -75,12 +75,12 @@
           },
           "type": "array",
           "title": "Charges",
-          "description": "Charges applied to this line"
+          "description": "Charges applied to this line."
         },
         "taxes": {
           "$ref": "https://gobl.org/draft-0/tax/set",
           "title": "Taxes",
-          "description": "Map of taxes to be applied and used in the invoice totals"
+          "description": "Map of taxes to be applied and used in the invoice totals."
         },
         "total": {
           "$ref": "https://gobl.org/draft-0/num/amount",
@@ -112,7 +112,7 @@
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",
           "title": "Extensions",
-          "description": "Extension codes that apply to the line"
+          "description": "Extension codes that apply to the line."
         }
       },
       "type": "object",
@@ -183,22 +183,22 @@
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Code",
-          "description": "Reference or ID for this charge defined by the issuer"
+          "description": "Reference or ID for this charge defined by the issuer."
         },
         "reason": {
           "type": "string",
           "title": "Reason",
-          "description": "Text description as to why the charge was applied"
+          "description": "Reason why the charge was applied."
         },
         "base": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Base",
-          "description": "Base for percent calculations instead of the line's sum"
+          "description": "Base for percent calculations instead of the line's sum."
         },
         "percent": {
           "$ref": "https://gobl.org/draft-0/num/percentage",
           "title": "Percent",
-          "description": "Percentage of base or parent line's sum"
+          "description": "Percentage of the base or the parent line's sum."
         },
         "quantity": {
           "$ref": "https://gobl.org/draft-0/num/amount",
@@ -591,7 +591,7 @@
         "rate": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Rate",
-          "description": "Rate defines a price per unit to use instead of the percentage."
+          "description": "Price per unit to use instead of the percentage."
         },
         "amount": {
           "$ref": "https://gobl.org/draft-0/num/amount",
@@ -602,7 +602,7 @@
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",
           "title": "Extensions",
-          "description": "Extension codes that apply to the charge"
+          "description": "Extension codes that apply to the charge."
         }
       },
       "type": "object",
@@ -683,12 +683,12 @@
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Code",
-          "description": "Code or reference for this discount defined by the issuer"
+          "description": "Code or reference for this discount defined by the issuer."
         },
         "reason": {
           "type": "string",
           "title": "Reason",
-          "description": "Text description as to why the discount was applied"
+          "description": "Reason why the discount was applied."
         },
         "base": {
           "$ref": "https://gobl.org/draft-0/num/amount",
@@ -698,18 +698,18 @@
         "percent": {
           "$ref": "https://gobl.org/draft-0/num/percentage",
           "title": "Percent",
-          "description": "Percentage to apply to the base or line sum to calculate the discount amount"
+          "description": "Percentage to apply to the base or line sum to calculate the discount amount."
         },
         "amount": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Amount",
-          "description": "Fixed discount amount to apply (calculated if percent present)",
+          "description": "Fixed discount amount to apply (calculated if percent present).",
           "calculated": true
         },
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",
           "title": "Extensions",
-          "description": "Extension codes that apply to the discount"
+          "description": "Extension codes that apply to the discount."
         }
       },
       "type": "object",
@@ -735,7 +735,7 @@
         "quantity": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Quantity",
-          "description": "Number of items"
+          "description": "Number of items."
         },
         "identifier": {
           "$ref": "https://gobl.org/draft-0/org/identity",
@@ -760,12 +760,12 @@
         "item": {
           "$ref": "https://gobl.org/draft-0/org/item",
           "title": "Item",
-          "description": "Details about the item, service or good, that is being sold"
+          "description": "Details about the item, service, or good being sold."
         },
         "sum": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Sum",
-          "description": "Result of quantity multiplied by the item's price (calculated)",
+          "description": "Result of quantity multiplied by the item's price (calculated).",
           "calculated": true
         },
         "discounts": {
@@ -774,7 +774,7 @@
           },
           "type": "array",
           "title": "Discounts",
-          "description": "Discounts applied to this sub-line"
+          "description": "Discounts applied to this sub-line."
         },
         "charges": {
           "items": {
@@ -782,7 +782,7 @@
           },
           "type": "array",
           "title": "Charges",
-          "description": "Charges applied to this sub-line"
+          "description": "Charges applied to this sub-line."
         },
         "total": {
           "$ref": "https://gobl.org/draft-0/num/amount",
