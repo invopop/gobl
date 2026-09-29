@@ -4,17 +4,17 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "346a943cce1e1b08b58e3af8b59434b52a016f8cfd38c948bd6630f26036600e"
+			"val": "75a7a9550cd4431d53a5ebf06c1740c6aa0ace8a374d021f7ca1800b2d5afe83"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "RO",
-		"uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e3c4e",
+		"uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e4001",
 		"type": "standard",
-		"series": "FACT",
-		"code": "0001",
-		"issue_date": "2026-02-10",
+		"series": "FCT",
+		"code": "2026-0101",
+		"issue_date": "2026-09-01",
 		"currency": "RON",
 		"supplier": {
 			"name": "Furnizor Exemplu S.R.L.",
@@ -24,16 +24,17 @@
 			},
 			"addresses": [
 				{
-					"street": "Strada Exemplu 10",
-					"locality": "București",
+					"num": "10",
+					"street": "Bulevardul Unirii",
+					"locality": "Sector 3",
 					"region": "B",
-					"code": "010101",
+					"code": "030167",
 					"country": "RO"
 				}
 			],
 			"emails": [
 				{
-					"addr": "contact@furnizor-exemplu.ro"
+					"addr": "facturare@furnizor-exemplu.ro"
 				}
 			]
 		},
@@ -45,10 +46,11 @@
 			},
 			"addresses": [
 				{
-					"street": "Strada Client 5",
+					"num": "5",
+					"street": "Strada Memorandumului",
 					"locality": "Cluj-Napoca",
 					"region": "CJ",
-					"code": "400001",
+					"code": "400114",
 					"country": "RO"
 				}
 			]
@@ -78,8 +80,7 @@
 				"quantity": "5",
 				"item": {
 					"name": "Cărți tehnice",
-					"price": "80.00",
-					"unit": "unit"
+					"price": "80.00"
 				},
 				"sum": "400.00",
 				"taxes": [
@@ -94,9 +95,17 @@
 			}
 		],
 		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2026-10-01",
+						"amount": "3469.00",
+						"percent": "100%"
+					}
+				]
+			},
 			"instructions": {
 				"key": "credit-transfer",
-				"detail": "Plată prin transfer bancar",
 				"credit_transfer": [
 					{
 						"iban": "RO49AAAA1B31007593840000",

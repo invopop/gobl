@@ -74,7 +74,8 @@ func New() *tax.RegimeDef {
 			{
 				Schema: bill.ShortSchemaInvoice,
 				Types: []cbc.Key{
-					bill.InvoiceTypeCreditNote,
+					bill.InvoiceTypeCreditNote, // Code 381
+					bill.InvoiceTypeCorrective, // Code 384
 				},
 			},
 		},
