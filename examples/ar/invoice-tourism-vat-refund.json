@@ -88,7 +88,7 @@
         "amount": "150000.00"
       },
       {
-        "key": "waiver+vat-refund",
+        "waiver": "vat-refund",
         "description": "Reintegro de IVA - turista extranjero (Decreto 1043/2016)",
         "taxes": [
           {

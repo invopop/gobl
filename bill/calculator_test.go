@@ -311,7 +311,7 @@ func TestCalculate(t *testing.T) {
 		inv.Payment = &bill.PaymentDetails{
 			Advances: []*pay.Record{
 				{
-					Key:         pay.MeansKeyWaiver,
+					Waiver:      "vat-refund",
 					Description: "VAT refund",
 					Taxes: []*tax.Filter{
 						{

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "4d66bd343c6fd4fb610d0e9c0815e600524465a9c5e41520d777b74af9cfa114"
+			"val": "86310ebb58258876f7d4a44d82e4a3f2ea45fcbcd69ebc7d481d0b3f7bb2cef7"
 		}
 	},
 	"doc": {
@@ -108,7 +108,7 @@
 					"amount": "150000.00"
 				},
 				{
-					"key": "waiver+vat-refund",
+					"waiver": "vat-refund",
 					"description": "Reintegro de IVA - turista extranjero (Decreto 1043/2016)",
 					"taxes": [
 						{

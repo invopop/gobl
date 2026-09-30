@@ -125,10 +125,25 @@ func TestRecordValidate(t *testing.T) {
 	})
 	t.Run("valid with taxes", func(t *testing.T) {
 		a := &pay.Record{
-			Key:   pay.MeansKeyWaiver,
-			Taxes: []*tax.Filter{{Category: tax.CategoryVAT}},
+			Waiver: "vat-refund",
+			Taxes:  []*tax.Filter{{Category: tax.CategoryVAT}},
 		}
 		assert.NoError(t, rules.Validate(a))
+	})
+	t.Run("waiver with key", func(t *testing.T) {
+		a := &pay.Record{
+			Key:    pay.MeansKeyCard,
+			Waiver: "vat-refund",
+			Amount: num.MakeAmount(100, 2),
+		}
+		assert.ErrorContains(t, rules.Validate(a), "key must be blank with waiver")
+	})
+	t.Run("invalid waiver", func(t *testing.T) {
+		a := &pay.Record{
+			Waiver: "VAT Refund",
+			Amount: num.MakeAmount(100, 2),
+		}
+		assert.ErrorContains(t, rules.Validate(a), "key must match the required pattern")
 	})
 	t.Run("taxes with percent", func(t *testing.T) {
 		a := &pay.Record{
@@ -164,6 +179,6 @@ func TestRecordJSONSchemaExtend(t *testing.T) {
 	a.JSONSchemaExtend(schema)
 	prop, ok := schema.Properties.Get("key")
 	require.True(t, ok)
-	assert.Len(t, prop.AnyOf, 18)
+	assert.Len(t, prop.AnyOf, 17)
 	assert.Equal(t, cbc.Key("any"), prop.AnyOf[0].Const)
 }

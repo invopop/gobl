@@ -2,7 +2,7 @@
 
 - `tax`: `Filter` selects rate totals by category and, optionally, key and extensions. `Total.FilteredAmount` sums the matching rate amounts.
 - `pay`: `Record.Taxes` takes tax filters as an alternative to `percent`, so the amount is the sum of the matching rate totals. Setting both fails validation, as does using taxes on `bill.Payment` methods.
-- `pay`: `waiver` means key for amounts not collected from the customer, such as a tax refunded at the point of sale. It has no UNTDID 4461 equivalent.
+- `pay`: `Record.Waiver` gives the reason an amount was waived and not collected from the customer, such as a tax refunded at the point of sale, as an alternative to the means `key`. GOBL doesn't define the values, and `bill.Payment` methods don't accept it.
 
 ## Changed
 

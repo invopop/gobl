@@ -24,6 +24,9 @@ type Record struct {
 	Date *cal.Date `json:"date,omitempty" jsonschema:"title=Date"`
 	// The payment means used.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
+	// Reason the amount was waived and not collected from the customer,
+	// as an alternative to the payment means key.
+	Waiver cbc.Key `json:"waiver,omitempty" jsonschema:"title=Waiver"`
 	// ID or reference for the payment.
 	Ref cbc.Code `json:"ref,omitempty" jsonschema:"title=Reference"`
 	// Description about the payment.
@@ -58,6 +61,11 @@ func recordRules() *rules.Set {
 	return rules.For(new(Record),
 		rules.Field("key",
 			rules.AssertIfPresent("01", "key must be valid", HasValidMeansKey),
+		),
+		rules.When(is.Expr(`string(Waiver) != ""`),
+			rules.Field("key",
+				rules.Assert("03", "key must be blank with waiver", is.Empty),
+			),
 		),
 		rules.When(is.Expr("Percent != nil"),
 			rules.Field("taxes",
