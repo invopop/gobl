@@ -225,8 +225,12 @@ func roundTotalsAndPreparePayments(doc billable, cur currency.Code, t *Totals) {
 			v := t.Payable.Subtract(*t.Advances)
 			t.Due = &v
 		}
-		// Calculate any due date amounts
-		pd.Terms.CalculateDues(zero, t.Payable)
+		// Calculate any due date amounts from what remains to be paid
+		due := t.Payable
+		if t.Due != nil {
+			due = *t.Due
+		}
+		pd.Terms.CalculateDues(zero, due)
 	}
 	doc.setTotals(t)
 }

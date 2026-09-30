@@ -215,6 +215,36 @@ func TestCalculate(t *testing.T) {
 		assert.Equal(t, "53.00", inv.Totals.Due.String())
 	})
 
+	t.Run("with advances and due dates", func(t *testing.T) {
+		inv := baseInvoice(t, &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "test item 1",
+				Price: num.NewAmount(10000, 2),
+			},
+		})
+		inv.Tax.PricesInclude = ""
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Record{
+				{
+					Amount: num.MakeAmount(4000, 2),
+				},
+			},
+			Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{
+					{
+						Date:    cal.NewDate(2024, 2, 1),
+						Percent: num.NewPercentage(100, 2),
+					},
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "100.00", inv.Totals.Payable.String())
+		assert.Equal(t, "60.00", inv.Totals.Due.String())
+		assert.Equal(t, "60.00", inv.Payment.Terms.DueDates[0].Amount.String())
+	})
+
 	t.Run("with multiple informative taxes", func(t *testing.T) {
 		inv := baseInvoice(t,
 			&bill.Line{

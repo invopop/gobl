@@ -19,14 +19,20 @@ import (
 func TestRecordNormalize(t *testing.T) {
 	a := &pay.Record{
 		Identify:    uuid.Identify{UUID: uuid.Zero},
+		Ref:         " TRX 2024/0012\t",
 		Description: "Test advance",
 		Percent:     num.NewPercentage(100, 2),
+		DirectDebit: &pay.DirectDebit{
+			Ref: " MANDATE-001 ",
+		},
 		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			"random": "",
 		}),
 	}
 	norm.Normalize(a)
 	assert.Empty(t, a.UUID)
+	assert.Equal(t, "TRX 2024/0012", a.Ref.String())
+	assert.Equal(t, "MANDATE-001", a.DirectDebit.Ref.String())
 	assert.True(t, a.Ext.IsZero())
 
 	a = nil

@@ -108,7 +108,7 @@
           "description": "The payment means used."
         },
         "ref": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Reference",
           "description": "ID or reference for the payment."
         },

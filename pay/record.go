@@ -24,7 +24,7 @@ type Record struct {
 	// The payment means used.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// ID or reference for the payment.
-	Ref string `json:"ref,omitempty" jsonschema:"title=Reference"`
+	Ref cbc.Code `json:"ref,omitempty" jsonschema:"title=Reference"`
 	// Description about the payment.
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
 	// Percentage of the total amount payable that was paid. Note that

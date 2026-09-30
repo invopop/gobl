@@ -12,10 +12,10 @@ type PaymentDetails struct {
 	Payee *org.Party `json:"payee,omitempty" jsonschema:"title=Payee"`
 	// The party responsible for making payment of the invoice, if not the customer.
 	Payer *org.Party `json:"payer,omitempty" jsonschema:"title=Payer"`
-	// Payment terms or conditions.
-	Terms *pay.Terms `json:"terms,omitempty" jsonschema:"title=Terms"`
 	// Any amounts that have been paid in advance and should be deducted from the amount due.
 	Advances []*pay.Record `json:"advances,omitempty" jsonschema:"title=Advances"`
+	// Payment terms or conditions.
+	Terms *pay.Terms `json:"terms,omitempty" jsonschema:"title=Terms"`
 	// Details on how payment should be made.
 	Instructions *pay.Instructions `json:"instructions,omitempty" jsonschema:"title=Instructions"`
 }
