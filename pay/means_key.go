@@ -1,8 +1,6 @@
 package pay
 
 import (
-	"slices"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/jsonschema"
@@ -131,36 +129,29 @@ var settlementMeansKeys = []cbc.Key{
 // HasValidMeansKey provides a usable validator for the means key
 // to ensure it is at least *based* on one of the primary keys.
 // This allows means keys to be extended or customised.
-var HasValidMeansKey = cbc.HasValidKeyIn(meansKeys(MeansKeyDefinitions)...)
+var HasValidMeansKey = cbc.HasValidKeyIn(validBaseMeansKeys()...)
 
-// HasValidInstructionsMeansKey is like HasValidMeansKey, but excludes the
-// keys that only describe how an amount was settled, such as a waiver.
-var HasValidInstructionsMeansKey = cbc.HasValidKeyIn(meansKeys(instructionsMeansKeyDefinitions())...)
-
-func instructionsMeansKeyDefinitions() []*cbc.Definition {
-	return slices.DeleteFunc(slices.Clone(MeansKeyDefinitions), func(d *cbc.Definition) bool {
-		return d.Key.In(settlementMeansKeys...)
-	})
-}
-
-func meansKeys(defs []*cbc.Definition) []cbc.Key {
-	list := make([]cbc.Key, len(defs))
-	for i, v := range defs {
+func validBaseMeansKeys() []cbc.Key {
+	list := make([]cbc.Key, len(MeansKeyDefinitions))
+	for i, v := range MeansKeyDefinitions {
 		list[i] = v.Key
 	}
 	return list
 }
 
-func extendJSONSchemaWithMeansKey(schema *jsonschema.Schema, property string, defs []*cbc.Definition) {
+func extendJSONSchemaWithMeansKey(schema *jsonschema.Schema, property string, exclude ...cbc.Key) {
 	prop, ok := schema.Properties.Get(property)
 	if ok {
-		anyOf := make([]*jsonschema.Schema, len(defs))
-		for i, v := range defs {
-			anyOf[i] = &jsonschema.Schema{
+		anyOf := make([]*jsonschema.Schema, 0, len(MeansKeyDefinitions))
+		for _, v := range MeansKeyDefinitions {
+			if v.Key.In(exclude...) {
+				continue
+			}
+			anyOf = append(anyOf, &jsonschema.Schema{
 				Const:       v.Key,
 				Title:       v.Name.String(),
 				Description: v.Desc.String(),
-			}
+			})
 		}
 		anyOf = append(anyOf, &jsonschema.Schema{
 			Title:   "Regime Specific Key",

@@ -41,7 +41,8 @@ func instructionsRules() *rules.Set {
 	return rules.For(new(Instructions),
 		rules.Field("key",
 			rules.Assert("01", "key is required", is.Present),
-			rules.AssertIfPresent("02", "key must be valid", HasValidInstructionsMeansKey),
+			rules.AssertIfPresent("02", "key must be valid", HasValidMeansKey),
+			rules.AssertIfPresent("03", "key cannot be used to request payment", is.Not(cbc.HasValidKeyIn(settlementMeansKeys...))),
 		),
 	)
 }
@@ -129,5 +130,5 @@ func (u *Online) UnmarshalJSON(data []byte) error {
 
 // JSONSchemaExtend extends the JSONSchema for the Instructions type.
 func (Instructions) JSONSchemaExtend(schema *jsonschema.Schema) {
-	extendJSONSchemaWithMeansKey(schema, "key", instructionsMeansKeyDefinitions())
+	extendJSONSchemaWithMeansKey(schema, "key", settlementMeansKeys...)
 }

@@ -21,10 +21,10 @@ func TestMeansKey(t *testing.T) {
 	assert.NoError(t, err)
 
 	i.Key = pay.MeansKeyWaiver
-	assert.ErrorContains(t, rules.Validate(i), "key must be valid", "waiver is not a way to request payment")
+	assert.ErrorContains(t, rules.Validate(i), "key cannot be used to request payment")
 
 	i.Key = pay.MeansKeyWaiver.With("vat-refund")
-	assert.ErrorContains(t, rules.Validate(i), "key must be valid")
+	assert.ErrorContains(t, rules.Validate(i), "key cannot be used to request payment")
 
 	r := &pay.Record{Key: pay.MeansKeyWaiver.With("vat-refund")}
 	assert.NoError(t, rules.Validate(r))
