@@ -144,6 +144,19 @@
         },
         {
           "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "IPSI"
+          ],
+          "note": {
+            "cat": "IPSI",
+            "key": "reverse-charge",
+            "text": "Reverse Charge / Inversión del sujeto pasivo."
+          }
+        },
+        {
+          "tags": [
             "simplified-scheme"
           ],
           "cat": [
@@ -653,7 +666,49 @@
         "es": "Impuesto sobre la Producción, los Servicios y la Importación",
         "eu": "Ekoizpen, Zerbitzu eta Inportazio Zerga",
         "gl": "Imposto sobre a Produción, os Servizos e a Importación"
-      }
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ]
     },
     {
       "code": "IRPF",
