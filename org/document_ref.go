@@ -13,7 +13,7 @@ import (
 	"github.com/invopop/gobl/uuid"
 )
 
-// DocumentRef is used to describe an existing document or a specific part of it's contents.
+// DocumentRef is used to describe an existing document or a specific part of its contents.
 type DocumentRef struct {
 	uuid.Identify
 	// Schema of the referenced document if different from that of the parent.
@@ -21,7 +21,7 @@ type DocumentRef struct {
 	// Type of the document referenced according to the defined schema or that of the
 	// parent document.
 	Type cbc.Key `json:"type,omitempty" jsonschema:"title=Type"`
-	// IssueDate reflects the date the document was issued.
+	// Date the document was issued.
 	IssueDate *cal.Date `json:"issue_date,omitempty" jsonschema:"title=Issue Date"`
 	// Series the referenced document belongs to.
 	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
@@ -46,14 +46,14 @@ type DocumentRef struct {
 	// Tax total breakdown from the original document in the provided currency. Should
 	// only be included if required by a specific tax regime or addon.
 	Tax *tax.Total `json:"tax,omitempty" jsonschema:"title=Tax"`
-	// Payable is the total amount that is payable in the referenced document. Only needed
-	// for specific tax regimes or addons. This may also be used in some scenarios
-	// to determine the proportion of the referenced document that has been paid, and
-	// calculate the remaining amount due and taxes.
+	// Total amount payable in the referenced document. Only needed for specific tax
+	// regimes or addons. May also be used in some scenarios to determine the proportion
+	// of the referenced document that has been paid, and to calculate the remaining
+	// amount due and taxes.
 	Payable *num.Amount `json:"payable,omitempty" jsonschema:"title=Payable"`
 	// Extensions for additional codes that may be required.
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
-	// Meta contains additional information about the document.
+	// Additional information about the document.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 

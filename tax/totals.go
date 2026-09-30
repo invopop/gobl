@@ -21,13 +21,11 @@ type CategoryTotal struct {
 // a matching category and rate. The Key is optional as we may be using
 // the percentage to group rates.
 type RateTotal struct {
-	// Country code override when issuing with taxes applied from different countries,
-	// it'd be very strange to mix rates from different countries, but in theory
-	// this would be possible.
+	// Country code override when issuing with taxes applied from different countries.
 	Country l10n.TaxCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
 	// Tax key if supported by the category.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
-	// If the rate is defined with extensions, they'll be used to group by also.
+	// Extensions used to group the rate, if defined.
 	Ext Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// Base amount that the percentage is applied to.
 	Base num.Amount `json:"base" jsonschema:"title=Base"`
@@ -35,7 +33,7 @@ type RateTotal struct {
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
 	// Surcharge applied to the rate.
 	Surcharge *RateTotalSurcharge `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`
-	// Total amount of rate, excluding surcharges
+	// Total amount of the rate, excluding surcharges.
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
 }
 
@@ -49,11 +47,11 @@ type RateTotalSurcharge struct {
 // contain all the accumulated taxes contained in the document. The resulting
 // `sum` is that value that should be added to the payable total.
 type Total struct {
-	// Grouping of all the taxes by their category
+	// Grouping of all the taxes by their category.
 	Categories []*CategoryTotal `json:"categories,omitempty" jsonschema:"title=Categories"`
 	// Total value of all non-retained or indirect taxes.
 	Sum num.Amount `json:"sum" jsonschema:"title=Sum"`
-	// Sum of retained or withheld tax amounts
+	// Sum of retained or withheld tax amounts.
 	Retained *num.Amount `json:"retained,omitempty" jsonschema:"title=Retained"`
 }
 

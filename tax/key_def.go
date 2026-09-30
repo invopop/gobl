@@ -8,15 +8,14 @@ import (
 // KeyDef defines a key that can be used inside a tax category. Rates may also be
 // defined in addition to the key, and reference them for filtering purposes.
 type KeyDef struct {
-	// Key identifies this rate within the system
+	// Unique identifier for the key within the category.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 
-	// Human name of the rate set
+	// Human readable name of the key.
 	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
-	// Useful description of the rate.
+	// Useful description of the key.
 	Description i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
 
-	// NoPercent when true implies that the rate when used in a tax Combo should
-	// not define a percent value.
+	// When true, a tax combo using this key should not define a percent value.
 	NoPercent bool `json:"no_percent,omitempty" jsonschema:"title=No Percent"`
 }

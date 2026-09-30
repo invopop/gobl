@@ -1016,7 +1016,7 @@
       ],
       "type": "string",
       "title": "Tax Country Code",
-      "description": "Defines an ISO base country code used for tax purposes"
+      "description": "Defines an ISO base country code used for tax purposes."
     }
   }
 }

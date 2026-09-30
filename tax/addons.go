@@ -17,8 +17,8 @@ type AddonList []cbc.Key
 
 // Addons adds functionality to the owner to be able to handle addons.
 type Addons struct {
-	// Addons defines a list of keys used to identify tax addons that apply special
-	// normalization, scenarios, and validation rules to a document.
+	// Keys identifying the tax addons that apply special normalization, scenarios, and
+	// validation rules to the document.
 	List AddonList `json:"$addons,omitempty" jsonschema:"title=Addons"`
 }
 
@@ -27,40 +27,36 @@ type AddonDef struct {
 	// Key that defines how to uniquely identify the add-on.
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
 
-	// Requires defines any additional addons that this one depends on to operate
-	// correctly.
+	// Additional addons that this one depends on to operate correctly.
 	Requires []cbc.Key `json:"requires,omitempty" jsonschema:"title=Requires"`
 
-	// Name of the add-on
+	// Name of the add-on.
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
 
-	// Description of the add-on
+	// Description of the add-on.
 	Description i18n.String `json:"description,omitempty" jsonschema:"title=Description"`
 
-	// Sources is a list of sources that are used to provide the data for the add-on.
+	// Sources of the data used to define the add-on.
 	Sources []*cbc.Source `json:"sources,omitempty" jsonschema:"title=Sources"`
 
-	// Extensions defines the list of extensions that are associated with an add-on.
+	// Extensions associated with the add-on.
 	Extensions []*cbc.Definition `json:"extensions" jsonschema:"title=Extensions"`
 
-	// Tags is slice of tag sets that define what can be assigned to each document schema.
+	// Tag sets that define what can be assigned to each document schema.
 	Tags []*TagSet `json:"tags,omitempty" jsonschema:"title=Tags"`
 
-	// Scenarios are applied to documents after normalization and before
-	// validation to ensure that form specific extensions have been added
-	// to the document.
+	// Applied to documents after normalization and before validation to ensure that
+	// format specific extensions have been added.
 	Scenarios []*ScenarioSet `json:"scenarios" jsonschema:"title=Scenarios"`
 
 	// Identities that are specific for the add-on and may be validated against or
 	// used during conversion processes.
 	Identities []*cbc.Definition `json:"identities,omitempty" jsonschema:"title=Identities"`
 
-	// Inboxes is a list of keys that are used to identify where copies of
-	// documents can be sent.
+	// Keys used to identify where copies of documents can be sent.
 	Inboxes []*cbc.Definition `json:"inboxes,omitempty" jsonschema:"title=Inboxes"`
 
-	// Corrections is used to provide a map of correction definitions that
-	// are supported by the add-on.
+	// Correction definitions supported by the add-on.
 	Corrections CorrectionSet `json:"corrections" jsonschema:"title=Corrections"`
 }
 

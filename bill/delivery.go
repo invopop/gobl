@@ -105,26 +105,25 @@ type Delivery struct {
 
 	// Type of delivery document.
 	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"calculated=true"`
-	// Series is used to identify groups of deliveries by date, business area, project,
-	// type, customer, a combination of any, or other company specific data.
-	// If the output format does not support the series as a separate field, it will be
-	// prepended to the code for presentation with a dash (`-`) for separation.
+	// Identifies groups of deliveries by date, business area, project, type, customer,
+	// a combination of any, or other company specific data. If the output format does not
+	// support the series as a separate field, it will be prepended to the code with a dash
+	// (`-`) for separation.
 	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
-	// Code is a sequential identifier that uniquely identifies the delivery. The code can
-	// be left empty initially, but is **required** to **sign** the document.
+	// Sequential identifier that uniquely identifies the delivery. May be left empty
+	// initially, but is **required** to **sign** the document.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 	// When the delivery document is to be issued.
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
-	// IssueTime is an optional field that may be useful to indicate the time of day when
-	// the delivery was issued. Some regions and formats may require this field to be set.
-	// An empty string will be automatically updated to reflect the current time, otherwise
-	// the field can be left with a nil value.
+	// Optional time of day when the delivery was issued. Some regions and formats may
+	// require this field. An empty string will be automatically replaced with the current
+	// time; otherwise the field can be left nil.
 	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time" jsonschema_extras:"calculated=true"`
-	// When the taxes of this delivery become accountable, if none set, the issue date is used.
+	// When the taxes of the delivery become accountable. Defaults to the issue date.
 	ValueDate *cal.Date `json:"value_date,omitempty" jsonschema:"title=Value Date"`
 	// Currency for all delivery totals.
 	Currency currency.Code `json:"currency,omitempty" jsonschema:"title=Currency" jsonschema_extras:"calculated=true"`
-	// Exchange rates to be used when converting the invoices monetary values into other currencies.
+	// Exchange rates to be used when converting the document's monetary values into other currencies.
 	ExchangeRates []*currency.ExchangeRate `json:"exchange_rates,omitempty" jsonschema:"title=Exchange Rates"`
 
 	// Ordering details for the delivery, including links to other documents.
@@ -133,12 +132,11 @@ type Delivery struct {
 	// extend or replace.
 	Preceding []*org.DocumentRef `json:"preceding,omitempty" jsonschema:"title=Preceding Details"`
 
-	// Tracking is used to define specific codes or IDs that may be used to
-	// identify and track delivery.
+	// Codes or IDs that may be used to identify and track the delivery.
 	Tracking *Tracking `json:"tracking,omitempty" jsonschema:"title=Tracking"`
-	// DespatchDate is the date when the goods are expected to be despatched.
+	// Date when the goods are expected to be despatched.
 	DespatchDate *cal.Date `json:"despatch_date,omitempty" jsonschema:"title=Despatch Date"`
-	// ReceiveDate is the date when the goods are expected to be received.
+	// Date when the goods are expected to be received.
 	ReceiveDate *cal.Date `json:"receive_date,omitempty" jsonschema:"title=Receive Date"`
 
 	// Special tax configuration for calculating totals.
@@ -155,14 +153,14 @@ type Delivery struct {
 	// The courier responsible for delivering the goods.
 	Courier *org.Party `json:"courier,omitempty" jsonschema:"title=Courier"`
 
-	// List of lines representing each of the items to be ordered.
+	// List of lines representing each of the items to be delivered.
 	Lines []*Line `json:"lines,omitempty" jsonschema:"title=Lines"`
-	// Discounts or allowances applied to order totals
+	// Discounts or allowances applied to the delivery totals.
 	Discounts []*Discount `json:"discounts,omitempty" jsonschema:"title=Discounts"`
-	// Charges or surcharges applied to order totals
+	// Charges or surcharges applied to the delivery totals.
 	Charges []*Charge `json:"charges,omitempty" jsonschema:"title=Charges"`
 
-	// Summary of all the order totals, including taxes (calculated).
+	// Summary of all the delivery totals, including taxes (calculated).
 	Totals *Totals `json:"totals,omitempty" jsonschema:"title=Totals" jsonschema_extras:"calculated=true"`
 
 	// Unstructured information that is relevant to the delivery, such as correction or additional
@@ -175,17 +173,16 @@ type Delivery struct {
 	// Additional semi-structured data that doesn't fit into the body of the delivery.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 
-	// Attachments provide additional information or supporting documents that are not included
-	// in the main document. It is important that attachments are not used for alternative
-	// versions of the PDF, for that, see "links" inside the envelope headers.
+	// Supporting documents that are not included in the main document. Do not use for
+	// alternative versions of the PDF; use "links" inside the envelope headers instead.
 	Attachments []*org.Attachment `json:"attachments,omitempty" jsonschema:"title=Attachments"`
 }
 
 // Tracking stores tracking information about a delivery.
 type Tracking struct {
-	// Code used for tracking
+	// Code used to track the delivery.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
-	// Website to access for more tracking details
+	// URL to access more tracking details.
 	Website *org.Website `json:"website,omitempty" jsonschema:"title=Website"`
 }
 

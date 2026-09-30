@@ -17,7 +17,7 @@ import (
 type Instructions struct {
 	// The payment means expected or that have been arranged to be used to make the payment.
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
-	// Optional text description of the payment method
+	// Optional text description of the payment method.
 	Detail string `json:"detail,omitempty" jsonschema:"title=Detail"`
 	// Remittance information or concept, a code value used to link the payment with the invoice.
 	Ref cbc.Code `json:"ref,omitempty" jsonschema:"title=Reference"`
@@ -27,11 +27,11 @@ type Instructions struct {
 	Card *Card `json:"card,omitempty" jsonschema:"title=Card"`
 	// A group of terms that can be used by the customer or payer to consolidate direct debit payments.
 	DirectDebit *DirectDebit `json:"direct_debit,omitempty" jsonschema:"title=Direct Debit"`
-	// Array of online payment options
+	// Online payment options.
 	Online []*Online `json:"online,omitempty" jsonschema:"title=Online"`
 	// Any additional instructions that may be required to make the payment.
 	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
-	// Extension key-pairs values defined by a tax regime.
+	// Extension key-value pairs defined by a tax regime.
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// Non-structured additional data that may be useful.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
@@ -71,7 +71,7 @@ type DirectDebit struct {
 // CreditTransfer contains fields that can be used for making payments via
 // a bank transfer or wire.
 type CreditTransfer struct {
-	// International Bank Account Number
+	// International Bank Account Number.
 	IBAN cbc.Code `json:"iban,omitempty" jsonschema:"title=IBAN"`
 	// Bank Identifier Code used for international transfers.
 	BIC cbc.Code `json:"bic,omitempty" jsonschema:"title=BIC"`

@@ -33,3 +33,11 @@ func TestCodeOutput(t *testing.T) {
 	assert.Equal(t, l10n.ISOCountryCode("US"), c.ISO())
 	assert.Equal(t, l10n.TaxCountryCode("US"), c.Tax())
 }
+
+func TestCodeJSONSchema(t *testing.T) {
+	s := l10n.Code("").JSONSchema()
+	assert.Equal(t, "Code", s.Title)
+	assert.Equal(t, "string", s.Type)
+	assert.NotEmpty(t, s.Pattern)
+	assert.Equal(t, "Code is used for short identifiers like country or state codes.", s.Description)
+}

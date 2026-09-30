@@ -18,25 +18,24 @@ type Definition struct {
 
 	// Short name for the key.
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
-	// Description offering more details about when the key should be used.
+	// More details about when the key should be used.
 	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
-	// Meta defines any additional details that may be useful or associated
-	// with the key.
+	// Any additional details associated with the key.
 	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 
 	// Where the information was sourced from and where it can be reviewed for updates in the future.
 	Sources []*Source `json:"sources,omitempty" jsonschema:"title=Sources"`
 
-	// Values defines the possible values associated with the key, which themselves will
-	// either be keys or codes depending on the context.
+	// Possible values associated with the key, which are themselves either keys or codes
+	// depending on the context.
 	Values []*Definition `json:"values,omitempty" jsonschema:"title=Values"`
 
-	// Pattern is used to validate the key value instead of using a fixed value
-	// from the code or key definitions.
+	// Regular expression used to validate the value instead of a fixed value from the
+	// code or key definitions.
 	Pattern string `json:"pattern,omitempty" jsonschema:"title=Pattern"`
 
-	// Map helps map local keys to specific codes, useful for converting the
-	// described key into a local code.
+	// Maps local keys to specific codes, useful for converting the described key into a
+	// local code.
 	Map CodeMap `json:"map,omitempty" jsonschema:"title=Code Map"`
 }
 
