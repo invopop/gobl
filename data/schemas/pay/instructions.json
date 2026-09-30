@@ -84,11 +84,6 @@
               "description": "Intercompany clearing or clearing between partners."
             },
             {
-              "const": "waiver",
-              "title": "Waiver",
-              "description": "Amount waived and not collected from the customer, such as a tax refunded at the point of sale."
-            },
-            {
               "const": "other",
               "title": "Other",
               "description": "Other or mutually defined means of payment."

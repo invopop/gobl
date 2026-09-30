@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -81,4 +82,20 @@ func TestOnline(t *testing.T) {
 
 	assert.Equal(t, "Test", inst.Online[0].Label)
 	assert.Equal(t, "https://example.com", inst.Online[0].URL)
+}
+
+func TestInstructionsJSONSchemaExtend(t *testing.T) {
+	schema := &jsonschema.Schema{
+		Properties: jsonschema.NewProperties(),
+	}
+	schema.Properties.Set("key", &jsonschema.Schema{
+		Type: "string",
+	})
+	pay.Instructions{}.JSONSchemaExtend(schema)
+	prop, ok := schema.Properties.Get("key")
+	require.True(t, ok)
+	assert.Len(t, prop.AnyOf, 17)
+	for _, s := range prop.AnyOf {
+		assert.NotEqual(t, pay.MeansKeyWaiver, s.Const)
+	}
 }

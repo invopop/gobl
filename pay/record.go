@@ -103,5 +103,5 @@ func (r *Record) UnmarshalJSON(data []byte) error {
 
 // JSONSchemaExtend extends the JSONSchema for the Record type.
 func (Record) JSONSchemaExtend(schema *jsonschema.Schema) {
-	extendJSONSchemaWithMeansKey(schema, "key")
+	extendJSONSchemaWithMeansKey(schema, "key", MeansKeyDefinitions)
 }

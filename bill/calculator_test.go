@@ -11,6 +11,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/regimes/br"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
@@ -244,6 +245,36 @@ func TestCalculate(t *testing.T) {
 		assert.Equal(t, "100.00", inv.Totals.Payable.String())
 		assert.Equal(t, "60.00", inv.Totals.Due.String())
 		assert.Equal(t, "60.00", inv.Payment.Terms.DueDates[0].Amount.String())
+	})
+
+	t.Run("fully paid with due dates", func(t *testing.T) {
+		inv := baseInvoice(t, &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "test item 1",
+				Price: num.NewAmount(10000, 2),
+			},
+		})
+		inv.Tax.PricesInclude = ""
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Record{
+				{
+					Percent: num.NewPercentage(100, 2),
+				},
+			},
+			Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{
+					{
+						Date:    cal.NewDate(2024, 2, 1),
+						Percent: num.NewPercentage(100, 2),
+					},
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "0.00", inv.Totals.Due.String())
+		assert.Nil(t, inv.Payment.Terms.DueDates[0].Amount)
+		assert.NoError(t, rules.Validate(inv.Payment))
 	})
 
 	t.Run("with advance from taxes", func(t *testing.T) {

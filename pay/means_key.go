@@ -1,6 +1,8 @@
 package pay
 
 import (
+	"slices"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/jsonschema"
@@ -120,24 +122,40 @@ var MeansKeyDefinitions = []*cbc.Definition{
 	},
 }
 
+// settlementMeansKeys describe how an amount was settled, but cannot be
+// used to request a payment in instructions.
+var settlementMeansKeys = []cbc.Key{
+	MeansKeyWaiver,
+}
+
 // HasValidMeansKey provides a usable validator for the means key
 // to ensure it is at least *based* on one of the primary keys.
 // This allows means keys to be extended or customised.
-var HasValidMeansKey = cbc.HasValidKeyIn(validBaseMeansKeys()...)
+var HasValidMeansKey = cbc.HasValidKeyIn(meansKeys(MeansKeyDefinitions)...)
 
-func validBaseMeansKeys() []cbc.Key {
-	list := make([]cbc.Key, len(MeansKeyDefinitions))
-	for i, v := range MeansKeyDefinitions {
+// HasValidInstructionsMeansKey is like HasValidMeansKey, but excludes the
+// keys that only describe how an amount was settled, such as a waiver.
+var HasValidInstructionsMeansKey = cbc.HasValidKeyIn(meansKeys(instructionsMeansKeyDefinitions())...)
+
+func instructionsMeansKeyDefinitions() []*cbc.Definition {
+	return slices.DeleteFunc(slices.Clone(MeansKeyDefinitions), func(d *cbc.Definition) bool {
+		return d.Key.In(settlementMeansKeys...)
+	})
+}
+
+func meansKeys(defs []*cbc.Definition) []cbc.Key {
+	list := make([]cbc.Key, len(defs))
+	for i, v := range defs {
 		list[i] = v.Key
 	}
 	return list
 }
 
-func extendJSONSchemaWithMeansKey(schema *jsonschema.Schema, property string) {
+func extendJSONSchemaWithMeansKey(schema *jsonschema.Schema, property string, defs []*cbc.Definition) {
 	prop, ok := schema.Properties.Get(property)
 	if ok {
-		anyOf := make([]*jsonschema.Schema, len(MeansKeyDefinitions))
-		for i, v := range MeansKeyDefinitions {
+		anyOf := make([]*jsonschema.Schema, len(defs))
+		for i, v := range defs {
 			anyOf[i] = &jsonschema.Schema{
 				Const:       v.Key,
 				Title:       v.Name.String(),
