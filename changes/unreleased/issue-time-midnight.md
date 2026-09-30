@@ -4,4 +4,4 @@
 
 ## Added
 
-- `cal`: `Time` gains `IsEmpty` and the `EmptyTime` constructor to distinguish a deliberately undefined time from midnight. Empty times marshal back to `""`.
+- `cal`: `Time` gains `IsEmpty` and the `EmptyTime` constructor to distinguish a deliberately undefined time from midnight. Empty times marshal back to `""`, the JSON schema pattern now admits an empty string, and JSON `null` keeps the plain zero value.

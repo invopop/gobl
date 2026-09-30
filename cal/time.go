@@ -86,15 +86,20 @@ func (t Time) MarshalJSON() ([]byte, error) {
 // UnmarshalJSON is used to parse a time from json and ensures that
 // we can handle invalid data reasonably.
 func (t *Time) UnmarshalJSON(data []byte) error {
-	var s string
+	var s *string
 	if err := json.Unmarshal(data, &s); err != nil {
 		return err
 	}
-	if s == "" {
+	if s == nil {
+		// JSON null leaves the zero value, without marking it as empty.
+		*t = Time{}
+		return nil
+	}
+	if *s == "" {
 		*t = Time{empty: true}
 		return nil
 	}
-	dt, err := civil.ParseTime(s)
+	dt, err := civil.ParseTime(*s)
 	if err != nil {
 		return err
 	}
@@ -108,7 +113,7 @@ func (Time) JSONSchema() *jsonschema.Schema {
 	return &jsonschema.Schema{
 		Type:        "string",
 		Title:       "Time",
-		Pattern:     `^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$`,
-		Description: "Civil time in simplified ISO format, like 13:45:30",
+		Pattern:     `^(([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9])?$`,
+		Description: "Civil time in simplified ISO format, like 13:45:30. An empty string indicates the time has been left undefined and should be filled in automatically.",
 	}
 }

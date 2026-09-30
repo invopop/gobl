@@ -113,6 +113,13 @@ func TestTimeParsing(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, `""`, string(data))
 	})
+	t.Run("null time", func(t *testing.T) {
+		var tm cal.Time
+		err := json.Unmarshal([]byte(`null`), &tm)
+		require.NoError(t, err)
+		assert.True(t, tm.IsZero())
+		assert.False(t, tm.IsEmpty())
+	})
 	t.Run("zero time, no seconds", func(t *testing.T) {
 		var tm cal.Time
 		err := json.Unmarshal([]byte(`"00:00"`), &tm)
@@ -202,5 +209,5 @@ func TestTimeJSONSChema(t *testing.T) {
 	schema := cal.Time{}.JSONSchema()
 	out, err := json.Marshal(schema)
 	require.NoError(t, err)
-	assert.JSONEq(t, `{"description":"Civil time in simplified ISO format, like 13:45:30", "pattern":"^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$", "title":"Time", "type":"string"}`, string(out))
+	assert.JSONEq(t, `{"description":"Civil time in simplified ISO format, like 13:45:30. An empty string indicates the time has been left undefined and should be filled in automatically.", "pattern":"^(([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9])?$", "title":"Time", "type":"string"}`, string(out))
 }
