@@ -86,9 +86,6 @@ type Order struct {
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
 	// IssueTime is an optional field that may be useful to indicate the time of day when
 	// the order was issued. Some regions and formats may require this field to be set.
-	// An empty string will be automatically updated to reflect the current date and time,
-	// while an explicit time such as midnight (00:00:00) is respected. Otherwise the field
-	// can be left with a nil value.
 	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time" jsonschema_extras:"calculated=true"`
 	// Date when the operation defined by the invoice became effective.
 	OperationDate *cal.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
@@ -255,9 +252,6 @@ func (ord *Order) GetExchangeRates() []*currency.ExchangeRate {
 func (ord *Order) getIssueDate() cal.Date {
 	return ord.IssueDate
 }
-func (ord *Order) getIssueTime() *cal.Time {
-	return ord.IssueTime
-}
 func (ord *Order) getValueDate() *cal.Date {
 	return ord.ValueDate
 }
@@ -291,9 +285,6 @@ func (ord *Order) getComplements() []*schema.Object {
 
 func (ord *Order) setIssueDate(d cal.Date) {
 	ord.IssueDate = d
-}
-func (ord *Order) setIssueTime(t *cal.Time) {
-	ord.IssueTime = t
 }
 func (ord *Order) setCurrency(c currency.Code) {
 	ord.Currency = c

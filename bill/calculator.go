@@ -29,7 +29,6 @@ type billable interface {
 
 	// private methods
 	getIssueDate() cal.Date
-	getIssueTime() *cal.Time
 	getValueDate() *cal.Date
 	getTax() *Tax
 	getPreceding() []*org.DocumentRef
@@ -43,7 +42,6 @@ type billable interface {
 
 	// private setters
 	setIssueDate(cal.Date)
-	setIssueTime(*cal.Time)
 	setCurrency(currency.Code)
 	setTax(*Tax)
 	setTotals(*Totals)
@@ -253,16 +251,8 @@ func prepareTaxableLines(doc billable) []tax.TaxableLine {
 }
 
 func calculateIssueDateAndTime(r *tax.RegimeDef, doc billable) *cal.Date {
-	tz := r.TimeLocation()
-	if doc.getIssueTime() != nil && doc.getIssueTime().IsEmpty() {
-		// An empty time is a request to set both the date and time
-		// to now. Midnight (00:00:00) is a valid time and left untouched.
-		dn := cal.ThisSecondIn(tz)
-		tn := dn.Time()
-		doc.setIssueDate(dn.Date())
-		doc.setIssueTime(&tn)
-	} else if doc.getIssueDate().IsZero() {
-		doc.setIssueDate(cal.TodayIn(tz))
+	if doc.getIssueDate().IsZero() {
+		doc.setIssueDate(cal.TodayIn(r.TimeLocation()))
 	}
 
 	// Get the date used for tax calculations

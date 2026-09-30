@@ -97,27 +97,6 @@ func TestCalculate(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 	})
 
-	t.Run("update issue date and time", func(t *testing.T) {
-		inv := baseInvoiceWithLines(t)
-		inv.IssueDate = cal.MakeDate(2022, 11, 6)
-		inv.IssueTime = cal.EmptyTime()
-		require.NoError(t, inv.Calculate())
-		tn := cal.ThisSecondIn(inv.RegimeDef().TimeLocation())
-		assert.Equal(t, tn.Date().String(), inv.IssueDate.String())
-		assert.Equal(t, tn.Time().String(), inv.IssueTime.String())
-	})
-
-	t.Run("update issue date and time from empty JSON string", func(t *testing.T) {
-		inv := baseInvoiceWithLines(t)
-		inv.IssueDate = cal.MakeDate(2022, 11, 6)
-		inv.IssueTime = new(cal.Time)
-		require.NoError(t, inv.IssueTime.UnmarshalJSON([]byte(`""`)))
-		require.NoError(t, inv.Calculate())
-		tn := cal.ThisSecondIn(inv.RegimeDef().TimeLocation())
-		assert.Equal(t, tn.Date().String(), inv.IssueDate.String())
-		assert.Equal(t, tn.Time().String(), inv.IssueTime.String())
-	})
-
 	t.Run("respect midnight issue time", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
 		inv.IssueDate = cal.MakeDate(2022, 11, 6)

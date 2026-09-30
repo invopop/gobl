@@ -153,18 +153,6 @@ func TestPaymentCalculate(t *testing.T) {
 		assert.Nil(t, p.IssueTime)
 	})
 
-	t.Run("with empty issue time", func(t *testing.T) {
-		p := testPaymentWithTax(t)
-		p.IssueDate = cal.Date{}
-		p.IssueTime = cal.EmptyTime()
-		require.NoError(t, p.Calculate())
-		tn := cal.ThisSecondIn(p.RegimeDef().TimeLocation())
-		assert.Equal(t, p.IssueDate.String(), tn.Date().String())
-		assert.Equal(t, p.IssueTime.Hour, tn.Time().Hour)
-		assert.Equal(t, p.IssueTime.Minute, tn.Time().Minute)
-		assert.Equal(t, p.IssueTime.Second, tn.Time().Second)
-	})
-
 	t.Run("with midnight issue time", func(t *testing.T) {
 		p := testPaymentWithTax(t)
 		p.IssueDate = cal.MakeDate(2024, 1, 15)

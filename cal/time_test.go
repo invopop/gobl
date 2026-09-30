@@ -95,10 +95,6 @@ func TestTimeParsing(t *testing.T) {
 		assert.Equal(t, tm.Minute, 0)
 		assert.Equal(t, tm.Second, 0)
 		assert.True(t, tm.IsZero())
-		assert.False(t, tm.IsEmpty())
-		data, err := json.Marshal(tm)
-		require.NoError(t, err)
-		assert.Equal(t, `"00:00:00"`, string(data))
 	})
 	t.Run("empty time", func(t *testing.T) {
 		var tm cal.Time
@@ -108,17 +104,6 @@ func TestTimeParsing(t *testing.T) {
 		assert.Equal(t, tm.Minute, 0)
 		assert.Equal(t, tm.Second, 0)
 		assert.True(t, tm.IsZero())
-		assert.True(t, tm.IsEmpty())
-		data, err := json.Marshal(tm)
-		require.NoError(t, err)
-		assert.Equal(t, `""`, string(data))
-	})
-	t.Run("null time", func(t *testing.T) {
-		var tm cal.Time
-		err := json.Unmarshal([]byte(`null`), &tm)
-		require.NoError(t, err)
-		assert.True(t, tm.IsZero())
-		assert.False(t, tm.IsEmpty())
 	})
 	t.Run("zero time, no seconds", func(t *testing.T) {
 		var tm cal.Time
@@ -161,27 +146,6 @@ func TestTimeIsZero(t *testing.T) {
 	})
 }
 
-func TestTimeIsEmpty(t *testing.T) {
-	t.Run("zero value", func(t *testing.T) {
-		var tm cal.Time
-		assert.False(t, tm.IsEmpty())
-	})
-	t.Run("midnight", func(t *testing.T) {
-		tm := cal.MakeTime(0, 0, 0)
-		assert.False(t, tm.IsEmpty())
-	})
-	t.Run("empty time", func(t *testing.T) {
-		tm := cal.EmptyTime()
-		assert.True(t, tm.IsEmpty())
-		assert.True(t, tm.IsZero())
-	})
-	t.Run("parsed time", func(t *testing.T) {
-		var tm cal.Time
-		require.NoError(t, json.Unmarshal([]byte(`"12:34:56"`), &tm))
-		assert.False(t, tm.IsEmpty())
-	})
-}
-
 func TestTimeOmitZero(t *testing.T) {
 	type testStruct struct {
 		Name string   `json:"name"`
@@ -209,5 +173,5 @@ func TestTimeJSONSChema(t *testing.T) {
 	schema := cal.Time{}.JSONSchema()
 	out, err := json.Marshal(schema)
 	require.NoError(t, err)
-	assert.JSONEq(t, `{"description":"Civil time in simplified ISO format, like 13:45:30. An empty string indicates the time has been left undefined and should be filled in automatically.", "pattern":"^(([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9])?$", "title":"Time", "type":"string"}`, string(out))
+	assert.JSONEq(t, `{"description":"Civil time in simplified ISO format, like 13:45:30", "pattern":"^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$", "title":"Time", "type":"string"}`, string(out))
 }
