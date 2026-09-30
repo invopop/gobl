@@ -51,16 +51,6 @@
                   "tests": "be or starts with one of [any, card, card+credit, card+debit, credit-transfer, credit-transfer+sepa, debit-transfer, cash, cheque, bank-draft, direct-debit, direct-debit+sepa, online, promissory-note, netting, waiver, other]"
                 }
               ]
-            },
-            {
-              "guard": "present",
-              "assert": [
-                {
-                  "id": "GOBL-PAY-INSTRUCTIONS-03",
-                  "desc": "key cannot be used to request payment",
-                  "tests": "not (be or starts with one of [waiver])"
-                }
-              ]
             }
           ]
         }

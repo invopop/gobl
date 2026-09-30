@@ -120,12 +120,6 @@ var MeansKeyDefinitions = []*cbc.Definition{
 	},
 }
 
-// settlementMeansKeys describe how an amount was settled, but cannot be
-// used to request a payment in instructions.
-var settlementMeansKeys = []cbc.Key{
-	MeansKeyWaiver,
-}
-
 // HasValidMeansKey provides a usable validator for the means key
 // to ensure it is at least *based* on one of the primary keys.
 // This allows means keys to be extended or customised.
@@ -139,19 +133,16 @@ func validBaseMeansKeys() []cbc.Key {
 	return list
 }
 
-func extendJSONSchemaWithMeansKey(schema *jsonschema.Schema, property string, exclude ...cbc.Key) {
+func extendJSONSchemaWithMeansKey(schema *jsonschema.Schema, property string) {
 	prop, ok := schema.Properties.Get(property)
 	if ok {
-		anyOf := make([]*jsonschema.Schema, 0, len(MeansKeyDefinitions))
-		for _, v := range MeansKeyDefinitions {
-			if v.Key.In(exclude...) {
-				continue
-			}
-			anyOf = append(anyOf, &jsonschema.Schema{
+		anyOf := make([]*jsonschema.Schema, len(MeansKeyDefinitions))
+		for i, v := range MeansKeyDefinitions {
+			anyOf[i] = &jsonschema.Schema{
 				Const:       v.Key,
 				Title:       v.Name.String(),
 				Description: v.Desc.String(),
-			})
+			}
 		}
 		anyOf = append(anyOf, &jsonschema.Schema{
 			Title:   "Regime Specific Key",
