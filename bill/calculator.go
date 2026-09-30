@@ -216,7 +216,7 @@ func roundTotalsAndPreparePayments(doc billable, cur currency.Code, t *Totals) {
 		t.Payable = t.Payable.Add(*t.Rounding)
 	}
 	if pd := doc.getPaymentDetails(); pd != nil {
-		pd.calculateAdvances(zero, t.Payable)
+		pd.calculateAdvances(zero, t.Payable, t.Taxes)
 		// Deal with advances, if any. Note that in the current
 		// implementation multiple percentage advances are likely to
 		// suffer rounding errors. It usually better for users to use

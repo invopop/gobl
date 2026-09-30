@@ -17,6 +17,7 @@ const (
 	MeansKeyCash           cbc.Key = "cash"
 	MeansKeyPromissoryNote cbc.Key = "promissory-note"
 	MeansKeyNetting        cbc.Key = "netting" // Clearing between parties
+	MeansKeyWaiver         cbc.Key = "waiver"  // Not collected from the customer
 	MeansKeyCheque         cbc.Key = "cheque"
 	MeansKeyBankDraft      cbc.Key = "bank-draft"
 	MeansKeyDirectDebit    cbc.Key = "direct-debit" // aka. Mandate
@@ -106,6 +107,11 @@ var MeansKeyDefinitions = []*cbc.Definition{
 		Key:  MeansKeyNetting,
 		Name: i18n.NewString("Netting"),
 		Desc: i18n.NewString("Intercompany clearing or clearing between partners."),
+	},
+	{
+		Key:  MeansKeyWaiver,
+		Name: i18n.NewString("Waiver"),
+		Desc: i18n.NewString("Amount waived and not collected from the customer, such as a tax refunded at the point of sale."),
 	},
 	{
 		Key:  MeansKeyOther,

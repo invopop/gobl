@@ -20,6 +20,10 @@ func TestMeansKey(t *testing.T) {
 	err = rules.Validate(i)
 	assert.NoError(t, err)
 
+	i.Key = pay.MeansKeyWaiver
+	err = rules.Validate(i)
+	assert.NoError(t, err)
+
 	// Key with an extension
 	i.Key = pay.MeansKeyCard.With("visa")
 	err = rules.Validate(i)

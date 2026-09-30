@@ -4,6 +4,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/tax"
 )
 
 // PaymentDetails contains details as to how the invoice should be paid.
@@ -28,12 +29,13 @@ func (p *PaymentDetails) ResetAdvances() {
 	p.Advances = make([]*pay.Record, 0)
 }
 
-func (p *PaymentDetails) calculateAdvances(zero num.Amount, payable num.Amount) {
+func (p *PaymentDetails) calculateAdvances(zero num.Amount, payable num.Amount, taxes *tax.Total) {
 	for _, a := range p.Advances {
 		if a == nil {
 			continue
 		}
 		a.CalculateFrom(payable)
+		a.CalculateFromTaxes(zero, taxes)
 		// Payments must always have currency precision
 		a.Amount = a.Amount.Rescale(zero.Exp())
 	}

@@ -48,7 +48,7 @@
                 {
                   "id": "GOBL-PAY-INSTRUCTIONS-02",
                   "desc": "key must be valid",
-                  "tests": "be or starts with one of [any, card, card+credit, card+debit, credit-transfer, credit-transfer+sepa, debit-transfer, cash, cheque, bank-draft, direct-debit, direct-debit+sepa, online, promissory-note, netting, other]"
+                  "tests": "be or starts with one of [any, card, card+credit, card+debit, credit-transfer, credit-transfer+sepa, debit-transfer, cash, cheque, bank-draft, direct-debit, direct-debit+sepa, online, promissory-note, netting, waiver, other]"
                 }
               ]
             }
@@ -85,7 +85,22 @@
                 {
                   "id": "GOBL-PAY-RECORD-01",
                   "desc": "key must be valid",
-                  "tests": "be or starts with one of [any, card, card+credit, card+debit, credit-transfer, credit-transfer+sepa, debit-transfer, cash, cheque, bank-draft, direct-debit, direct-debit+sepa, online, promissory-note, netting, other]"
+                  "tests": "be or starts with one of [any, card, card+credit, card+debit, credit-transfer, credit-transfer+sepa, debit-transfer, cash, cheque, bank-draft, direct-debit, direct-debit+sepa, online, promissory-note, netting, waiver, other]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "Percent != nil",
+          "subsets": [
+            {
+              "field": "taxes",
+              "assert": [
+                {
+                  "id": "GOBL-PAY-RECORD-02",
+                  "desc": "taxes must be blank with percent",
+                  "tests": "empty"
                 }
               ]
             }

@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -243,6 +244,68 @@ func TestCalculate(t *testing.T) {
 		assert.Equal(t, "100.00", inv.Totals.Payable.String())
 		assert.Equal(t, "60.00", inv.Totals.Due.String())
 		assert.Equal(t, "60.00", inv.Payment.Terms.DueDates[0].Amount.String())
+	})
+
+	t.Run("with advance from taxes", func(t *testing.T) {
+		inv := baseInvoice(t,
+			&bill.Line{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "room",
+					Price: num.NewAmount(10000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Percent:  num.NewPercentage(21, 2),
+						Ext:      tax.ExtensionsOf(cbc.CodeMap{"es-tbai-product": "services"}),
+					},
+				},
+			},
+			&bill.Line{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "minibar",
+					Price: num.NewAmount(1000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Percent:  num.NewPercentage(21, 2),
+					},
+				},
+			},
+		)
+		inv.Tax.PricesInclude = ""
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Record{
+				{
+					Key:         pay.MeansKeyWaiver,
+					Description: "VAT refund",
+					Taxes: []*tax.Filter{
+						{
+							Category: tax.CategoryVAT,
+							Ext:      tax.ExtensionsOf(cbc.CodeMap{"es-tbai-product": "services"}),
+						},
+					},
+				},
+			},
+			Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{
+					{
+						Date:    cal.NewDate(2024, 2, 1),
+						Percent: num.NewPercentage(100, 2),
+					},
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "23.10", inv.Totals.Tax.String())
+		assert.Equal(t, "133.10", inv.Totals.Payable.String())
+		assert.Equal(t, "21.00", inv.Payment.Advances[0].Amount.String())
+		assert.Equal(t, "21.00", inv.Totals.Advances.String())
+		assert.Equal(t, "112.10", inv.Totals.Due.String())
+		assert.Equal(t, "112.10", inv.Payment.Terms.DueDates[0].Amount.String())
 	})
 
 	t.Run("with multiple informative taxes", func(t *testing.T) {
