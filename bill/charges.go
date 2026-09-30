@@ -89,6 +89,11 @@ type Charge struct {
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 	// Text description as to why the charge was applied
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
+	// Informative when true implies that the charge amount is calculated and
+	// reported, but does not affect the document totals. Use it for costs that
+	// must be declared on the document while being borne by the supplier, such
+	// as a stamp duty the issuer absorbs instead of passing on to the customer.
+	Informative bool `json:"informative,omitempty" jsonschema:"title=Informative"`
 	// Base represents the value used as a base for percent calculations instead
 	// of the invoice's sum of lines.
 	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base"`
@@ -96,7 +101,7 @@ type Charge struct {
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
 	// Amount to apply (calculated if percent present)
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
-	// List of taxes to apply to the charge
+	// List of taxes to apply to the charge. Not allowed on informative charges.
 	Taxes tax.Set `json:"taxes,omitempty" jsonschema:"title=Taxes"`
 	// Extension codes that apply to the charge
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
@@ -113,6 +118,11 @@ func chargeRules() *rules.Set {
 		rules.When(is.Expr("Base != nil"),
 			rules.Field("percent",
 				rules.Assert("01", "percent is required when base is set", is.Present),
+			),
+		),
+		rules.When(is.Expr("Informative"),
+			rules.Field("taxes",
+				rules.Assert("02", "cannot be set on an informative charge", is.Empty),
 			),
 		),
 	)
@@ -172,12 +182,18 @@ func calculateChargeSum(charges []*Charge, cur currency.Code) *num.Amount {
 		return nil
 	}
 	total := cur.Def().Zero()
+	found := false
 	for _, l := range charges {
-		if l == nil {
+		if l == nil || l.Informative {
+			// Informative charges are reported but do not affect totals.
 			continue
 		}
+		found = true
 		total = total.MatchPrecision(l.Amount)
 		total = total.Add(l.Amount)
+	}
+	if !found {
+		return nil
 	}
 	return &total
 }

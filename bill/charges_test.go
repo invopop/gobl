@@ -28,6 +28,27 @@ func TestChargeValidation(t *testing.T) {
 		require.NotNil(t, err)
 		assert.ErrorContains(t, err, "percent is required when base is set")
 	})
+	t.Run("informative with taxes", func(t *testing.T) {
+		c := &Charge{
+			Key:         ChargeKeyStampDuty,
+			Informative: true,
+			Amount:      num.MakeAmount(200, 2),
+			Taxes: tax.Set{
+				{Category: tax.CategoryVAT, Percent: num.NewPercentage(21, 2)},
+			},
+		}
+		err := rules.Validate(c)
+		require.NotNil(t, err)
+		assert.ErrorContains(t, err, "($.taxes) cannot be set on an informative charge")
+	})
+	t.Run("informative without taxes", func(t *testing.T) {
+		c := &Charge{
+			Key:         ChargeKeyStampDuty,
+			Informative: true,
+			Amount:      num.MakeAmount(200, 2),
+		}
+		require.NoError(t, rules.Validate(c))
+	})
 }
 
 func TestChargeTotals(t *testing.T) {
@@ -186,6 +207,40 @@ func TestChargeTotals(t *testing.T) {
 		roundCharges(ls, currency.EUR)
 		assert.Equal(t, "50.1234", ls[0].Base.String(), "should maintain original precision")
 		assert.Equal(t, "10.02", ls[0].Amount.String())
+	})
+
+	t.Run("informative charges are excluded from the sum", func(t *testing.T) {
+		ls := []*Charge{
+			{
+				Reason: "Delivery",
+				Amount: num.MakeAmount(1000, 2),
+			},
+			{
+				Key:         ChargeKeyStampDuty,
+				Informative: true,
+				Amount:      num.MakeAmount(200, 2),
+			},
+		}
+		base := num.MakeAmount(10000, 2)
+		calculateCharges(ls, currency.EUR, base, tax.RoundingRulePrecise)
+		sum := calculateChargeSum(ls, currency.EUR)
+		require.NotNil(t, sum)
+		assert.Equal(t, "10.00", sum.String())
+		assert.Equal(t, 2, ls[1].Index, "informative charges keep their index")
+		assert.Equal(t, "2.00", ls[1].Amount.String(), "informative charge amount is still calculated")
+	})
+
+	t.Run("only informative charges", func(t *testing.T) {
+		ls := []*Charge{
+			{
+				Key:         ChargeKeyStampDuty,
+				Informative: true,
+				Amount:      num.MakeAmount(200, 2),
+			},
+		}
+		base := num.MakeAmount(10000, 2)
+		calculateCharges(ls, currency.EUR, base, tax.RoundingRulePrecise)
+		assert.Nil(t, calculateChargeSum(ls, currency.EUR), "no charge total when nothing is added")
 	})
 
 	t.Run("with zero percent charge and inconsistent amount", func(t *testing.T) {

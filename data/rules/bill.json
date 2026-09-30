@@ -630,6 +630,21 @@
               ]
             }
           ]
+        },
+        {
+          "guard": "Informative",
+          "subsets": [
+            {
+              "field": "taxes",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-CHARGE-02",
+                  "desc": "cannot be set on an informative charge",
+                  "tests": "empty"
+                }
+              ]
+            }
+          ]
         }
       ]
     },
