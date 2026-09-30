@@ -61,7 +61,7 @@ type Card struct {
 // DirectDebit defines the data that will be used to make the direct debit.
 type DirectDebit struct {
 	// Unique identifier assigned by the payee for referencing the direct debit.
-	Ref string `json:"ref,omitempty" jsonschema:"title=Mandate Reference"`
+	Ref cbc.Code `json:"ref,omitempty" jsonschema:"title=Mandate Reference"`
 	// Unique banking reference that identifies the payee or seller assigned by the bank.
 	Creditor string `json:"creditor,omitempty" jsonschema:"title=Creditor ID"`
 	// Account identifier to be debited by the direct debit.

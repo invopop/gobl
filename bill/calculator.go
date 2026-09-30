@@ -216,7 +216,7 @@ func roundTotalsAndPreparePayments(doc billable, cur currency.Code, t *Totals) {
 		t.Payable = t.Payable.Add(*t.Rounding)
 	}
 	if pd := doc.getPaymentDetails(); pd != nil {
-		pd.calculateAdvances(zero, t.Payable)
+		pd.calculateAdvances(zero, t.Payable, t.Taxes)
 		// Deal with advances, if any. Note that in the current
 		// implementation multiple percentage advances are likely to
 		// suffer rounding errors. It usually better for users to use
@@ -225,8 +225,12 @@ func roundTotalsAndPreparePayments(doc billable, cur currency.Code, t *Totals) {
 			v := t.Payable.Subtract(*t.Advances)
 			t.Due = &v
 		}
-		// Calculate any due date amounts
-		pd.Terms.CalculateDues(zero, t.Payable)
+		// Calculate any due date amounts from what remains to be paid
+		due := t.Payable
+		if t.Due != nil {
+			due = *t.Due
+		}
+		pd.Terms.CalculateDues(zero, due)
 	}
 	doc.setTotals(t)
 }

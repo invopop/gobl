@@ -182,6 +182,12 @@ func paymentRules() *rules.Set {
 				rules.Field("key",
 					rules.Assert("09", "payment method key is required", is.Present),
 				),
+				rules.Field("taxes",
+					rules.Assert("10", "payment method taxes are not supported", is.Empty),
+				),
+				rules.Field("waiver",
+					rules.Assert("11", "payment method waiver is not supported", is.Empty),
+				),
 			),
 		),
 		rules.Field("issue_date",
@@ -364,7 +370,7 @@ func (pmt *Payment) UnmarshalJSON(data []byte) error {
 		}
 		pmt.Methods = []*pay.Record{{
 			Key:            aux.Method.Key,
-			Ref:            string(aux.Method.Ref),
+			Ref:            aux.Method.Ref,
 			Description:    aux.Method.Detail,
 			Card:           aux.Method.Card,
 			CreditTransfer: ct,

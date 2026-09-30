@@ -348,6 +348,22 @@
           ]
         }
       ]
+    },
+    {
+      "id": "GOBL-TAX-FILTER",
+      "object": "tax.Filter",
+      "subsets": [
+        {
+          "field": "cat",
+          "assert": [
+            {
+              "id": "GOBL-TAX-FILTER-01",
+              "desc": "tax filter category is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
