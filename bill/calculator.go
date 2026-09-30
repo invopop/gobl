@@ -77,7 +77,7 @@ func isCalculated(doc billable) bool {
 		if l == nil || l.Total != nil {
 			continue
 		}
-		if len(l.Breakdown) > 0 || (l.Item != nil && l.Item.Price != nil) {
+		if len(l.Breakdown) > 0 || (l.Item != nil && (l.Item.Price != nil || l.Item.List != nil)) {
 			return false
 		}
 	}
