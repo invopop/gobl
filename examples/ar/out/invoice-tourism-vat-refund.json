@@ -1,0 +1,160 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "4d66bd343c6fd4fb610d0e9c0815e600524465a9c5e41520d777b74af9cfa114"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "AR",
+		"uuid": "0190f3a8-6c1e-7b40-9a52-1a0b2c3d4e03",
+		"type": "standard",
+		"code": "0003-00000103",
+		"issue_date": "2026-08-15",
+		"currency": "ARS",
+		"tax": {
+			"prices_include": "VAT"
+		},
+		"supplier": {
+			"name": "Hotel Patagonia S.A.",
+			"tax_id": {
+				"country": "AR",
+				"code": "30712345671"
+			},
+			"addresses": [
+				{
+					"street": "Av. Bustillo 1500",
+					"locality": "San Carlos de Bariloche",
+					"region": "Río Negro",
+					"code": "8400",
+					"country": "AR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "reservas@hotelpatagonia.com.ar"
+				}
+			]
+		},
+		"customer": {
+			"name": "Lucía Fernández",
+			"addresses": [
+				{
+					"street": "Calle Mayor 10",
+					"locality": "Madrid",
+					"code": "28013",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "lucia.fernandez@example.com"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "5",
+				"item": {
+					"name": "Habitación deluxe king - noche",
+					"price": "77530.86"
+				},
+				"sum": "387654.30",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
+					}
+				],
+				"total": "387654.30"
+			},
+			{
+				"i": 2,
+				"quantity": "5",
+				"item": {
+					"name": "Desayuno buffet",
+					"price": "12100.00"
+				},
+				"sum": "60500.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
+					}
+				],
+				"total": "60500.00"
+			}
+		],
+		"ordering": {
+			"period": {
+				"start": "2026-08-10",
+				"end": "2026-08-15"
+			}
+		},
+		"payment": {
+			"advances": [
+				{
+					"date": "2026-08-10",
+					"key": "card",
+					"description": "Seña",
+					"amount": "150000.00"
+				},
+				{
+					"key": "waiver+vat-refund",
+					"description": "Reintegro de IVA - turista extranjero (Decreto 1043/2016)",
+					"taxes": [
+						{
+							"cat": "VAT"
+						}
+					],
+					"amount": "77778.85"
+				}
+			],
+			"terms": {
+				"key": "due-date",
+				"due_dates": [
+					{
+						"date": "2026-08-15",
+						"amount": "220375.45",
+						"percent": "100%"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "448154.30",
+			"tax_included": "77778.85",
+			"total": "370375.45",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "370375.45",
+								"percent": "21.0%",
+								"amount": "77778.85"
+							}
+						],
+						"amount": "77778.85"
+					}
+				],
+				"sum": "77778.85"
+			},
+			"tax": "77778.85",
+			"total_with_tax": "448154.30",
+			"payable": "448154.30",
+			"advance": "227778.85",
+			"due": "220375.45"
+		}
+	}
+}
