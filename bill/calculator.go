@@ -254,7 +254,9 @@ func prepareTaxableLines(doc billable) []tax.TaxableLine {
 
 func calculateIssueDateAndTime(r *tax.RegimeDef, doc billable) *cal.Date {
 	tz := r.TimeLocation()
-	if doc.getIssueTime() != nil && doc.getIssueTime().IsZero() {
+	if doc.getIssueTime() != nil && doc.getIssueTime().IsEmpty() {
+		// An empty time is a request to set both the date and time
+		// to now. Midnight (00:00:00) is a valid time and left untouched.
 		dn := cal.ThisSecondIn(tz)
 		tn := dn.Time()
 		doc.setIssueDate(dn.Date())

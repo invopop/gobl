@@ -95,6 +95,10 @@ func TestTimeParsing(t *testing.T) {
 		assert.Equal(t, tm.Minute, 0)
 		assert.Equal(t, tm.Second, 0)
 		assert.True(t, tm.IsZero())
+		assert.False(t, tm.IsEmpty())
+		data, err := json.Marshal(tm)
+		require.NoError(t, err)
+		assert.Equal(t, `"00:00:00"`, string(data))
 	})
 	t.Run("empty time", func(t *testing.T) {
 		var tm cal.Time
@@ -104,6 +108,10 @@ func TestTimeParsing(t *testing.T) {
 		assert.Equal(t, tm.Minute, 0)
 		assert.Equal(t, tm.Second, 0)
 		assert.True(t, tm.IsZero())
+		assert.True(t, tm.IsEmpty())
+		data, err := json.Marshal(tm)
+		require.NoError(t, err)
+		assert.Equal(t, `""`, string(data))
 	})
 	t.Run("zero time, no seconds", func(t *testing.T) {
 		var tm cal.Time
@@ -143,6 +151,27 @@ func TestTimeIsZero(t *testing.T) {
 	t.Run("only seconds", func(t *testing.T) {
 		tm := cal.MakeTime(0, 0, 1)
 		assert.False(t, tm.IsZero())
+	})
+}
+
+func TestTimeIsEmpty(t *testing.T) {
+	t.Run("zero value", func(t *testing.T) {
+		var tm cal.Time
+		assert.False(t, tm.IsEmpty())
+	})
+	t.Run("midnight", func(t *testing.T) {
+		tm := cal.MakeTime(0, 0, 0)
+		assert.False(t, tm.IsEmpty())
+	})
+	t.Run("empty time", func(t *testing.T) {
+		tm := cal.EmptyTime()
+		assert.True(t, tm.IsEmpty())
+		assert.True(t, tm.IsZero())
+	})
+	t.Run("parsed time", func(t *testing.T) {
+		var tm cal.Time
+		require.NoError(t, json.Unmarshal([]byte(`"12:34:56"`), &tm))
+		assert.False(t, tm.IsEmpty())
 	})
 }
 

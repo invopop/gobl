@@ -117,8 +117,9 @@ type Delivery struct {
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
 	// IssueTime is an optional field that may be useful to indicate the time of day when
 	// the delivery was issued. Some regions and formats may require this field to be set.
-	// An empty string will be automatically updated to reflect the current time, otherwise
-	// the field can be left with a nil value.
+	// An empty string will be automatically updated to reflect the current date and time,
+	// while an explicit time such as midnight (00:00:00) is respected. Otherwise the field
+	// can be left with a nil value.
 	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time" jsonschema_extras:"calculated=true"`
 	// When the taxes of this delivery become accountable, if none set, the issue date is used.
 	ValueDate *cal.Date `json:"value_date,omitempty" jsonschema:"title=Value Date"`

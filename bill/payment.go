@@ -111,7 +111,9 @@ type Payment struct {
 	// When the payment was issued.
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
 	// IssueTime is an optional field that may be useful to indicate the time of day when
-	// the payment was issued.
+	// the payment was issued. An empty string will be automatically updated to reflect the
+	// current date and time, while an explicit time such as midnight (00:00:00) is respected.
+	// Otherwise the field can be left with a nil value.
 	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time" jsonschema_extras:"calculated=true"`
 	// When the taxes of this payment become accountable, if none set, the issue date is assumed.
 	ValueDate *cal.Date `json:"value_date,omitempty" jsonschema:"title=Value Date"`
@@ -254,8 +256,9 @@ func (pmt *Payment) calculate() error {
 
 	// Set the issue date and time
 	tz := r.TimeLocation()
-	if pmt.IssueTime != nil && pmt.IssueTime.IsZero() {
-		// If setting the time, also set the date
+	if pmt.IssueTime != nil && pmt.IssueTime.IsEmpty() {
+		// An empty time is a request to set both the date and time
+		// to now. Midnight (00:00:00) is a valid time and left untouched.
 		tn := cal.ThisSecondIn(tz)
 		hn := tn.Time()
 		pmt.IssueDate = tn.Date()

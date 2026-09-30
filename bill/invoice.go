@@ -43,8 +43,9 @@ type Invoice struct {
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
 	// IssueTime is an optional field that may be useful to indicate the time of day when
 	// the invoice was issued. Some regions and formats may require this field to be set.
-	// An empty string will be automatically updated to reflect the current time, otherwise
-	// the field can be left with a nil value.
+	// An empty string will be automatically updated to reflect the current date and time,
+	// while an explicit time such as midnight (00:00:00) is respected. Otherwise the field
+	// can be left with a nil value.
 	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time" jsonschema_extras:"calculated=true"`
 	// Date when the operation defined by the invoice became effective.
 	OperationDate *cal.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
