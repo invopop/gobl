@@ -270,6 +270,21 @@ func TestPaymentValidate(t *testing.T) {
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "payment method key is required")
 	})
+
+	t.Run("method with taxes", func(t *testing.T) {
+		pmt := testPaymentMinimal(t)
+		pmt.Methods[0].Taxes = []*tax.Filter{{Category: tax.CategoryVAT}}
+		require.NoError(t, pmt.Calculate())
+		assert.ErrorContains(t, rules.Validate(pmt), "payment method taxes are not supported")
+	})
+
+	t.Run("method with waiver", func(t *testing.T) {
+		pmt := testPaymentMinimal(t)
+		pmt.Methods[0].Key = ""
+		pmt.Methods[0].Waiver = "vat-refund"
+		require.NoError(t, pmt.Calculate())
+		assert.ErrorContains(t, rules.Validate(pmt), "payment method waiver is not supported")
+	})
 }
 
 func testPaymentMinimal(t *testing.T) *bill.Payment {

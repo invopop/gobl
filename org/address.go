@@ -43,7 +43,7 @@ type Address struct {
 	Country l10n.ISOCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
 	// When the postal address is not sufficient, coordinates help locate the address more precisely.
 	Coordinates *Coordinates `json:"coords,omitempty" jsonschema:"title=Coordinates"`
-	// Any additional semi-structure details about the address.
+	// Any additional semi-structured details about the address.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 

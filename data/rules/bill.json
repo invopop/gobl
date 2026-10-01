@@ -310,6 +310,26 @@
                       "tests": "present"
                     }
                   ]
+                },
+                {
+                  "field": "taxes",
+                  "assert": [
+                    {
+                      "id": "GOBL-BILL-PAYMENT-10",
+                      "desc": "payment method taxes are not supported",
+                      "tests": "empty"
+                    }
+                  ]
+                },
+                {
+                  "field": "waiver",
+                  "assert": [
+                    {
+                      "id": "GOBL-BILL-PAYMENT-11",
+                      "desc": "payment method waiver is not supported",
+                      "tests": "empty"
+                    }
+                  ]
                 }
               ]
             }

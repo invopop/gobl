@@ -41,7 +41,7 @@
         "copy_tax": {
           "type": "boolean",
           "title": "Copy Tax Totals",
-          "description": "CopyTax when true will copy the tax totals from the previous document to the\npreceding document data."
+          "description": "When true, copies the tax totals from the previous document into the preceding document data."
         }
       },
       "type": "object",

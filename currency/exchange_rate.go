@@ -35,13 +35,11 @@ type ExchangeRate struct {
 	From Code `json:"from" jsonschema:"title=From"`
 	// Currency code this exchange rate will convert into.
 	To Code `json:"to" jsonschema:"title=To"`
-	// At represents the effective date and time at which the exchange rate
-	// is determined by the source. The time may be zero if referring to a
-	// specific day only.
+	// Effective date and time at which the exchange rate was determined by the source.
+	// The time may be zero if referring to a specific day only.
 	At *cal.DateTime `json:"at,omitempty" jsonschema:"title=At"`
-	// Source key provides a reference to the source the exchange rate was
-	// obtained from. Typically this will be determined by an application
-	// used to update exchange rates automatically.
+	// Key identifying the source the exchange rate was obtained from. Typically set by
+	// an application that updates exchange rates automatically.
 	Source cbc.Key `json:"source,omitempty" jsonschema:"title=Source"`
 	// How much is 1 of the "from" currency worth in the "to" currency.
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`

@@ -7,12 +7,12 @@ import (
 
 // Period represents a span of time bounded by a start and/or an end date.
 type Period struct {
-	// Label is a short description of the period.
+	// Short description of the period.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
-	// Start indicates when this period starts, required if there is no end date.
+	// When the period starts. Required if there is no end date.
 	Start *Date `json:"start,omitempty" jsonschema:"title=Start"`
-	// End indicates when the period ends, required if there is no start date,
-	// and must be on or after the start date.
+	// When the period ends. Required if there is no start date, and must be on or after
+	// the start date.
 	End *Date `json:"end,omitempty" jsonschema:"title=End"`
 }
 

@@ -47,7 +47,7 @@ var InvoiceTypes = []*cbc.Definition{
 			i18n.EN: "Proforma",
 		},
 		Desc: i18n.String{
-			i18n.EN: "For a clients validation before sending a final invoice.",
+			i18n.EN: "For a client's validation before sending a final invoice.",
 		},
 		Map: cbc.CodeMap{
 			UNTDID1001Key: "325",
@@ -103,7 +103,7 @@ var InvoiceTypes = []*cbc.Definition{
 				that any scenarios defined in tax regimes or addons will not be applied.
 
 				This is useful for being able to create invoices with custom types in extensions,
-				but is not recommend for general use.
+				but is not recommended for general use.
 			`),
 		},
 	},

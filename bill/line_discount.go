@@ -14,17 +14,17 @@ import (
 type LineDiscount struct {
 	// Key for identifying the type of discount being applied.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
-	// Code or reference for this discount defined by the issuer
+	// Code or reference for this discount defined by the issuer.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
-	// Text description as to why the discount was applied
+	// Reason why the discount was applied.
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
 	// Base for percent calculations instead of the line's sum.
 	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base"`
-	// Percentage to apply to the base or line sum to calculate the discount amount
+	// Percentage to apply to the base or line sum to calculate the discount amount.
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
-	// Fixed discount amount to apply (calculated if percent present)
+	// Fixed discount amount to apply (calculated if percent present).
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
-	// Extension codes that apply to the discount
+	// Extension codes that apply to the discount.
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 

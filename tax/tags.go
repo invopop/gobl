@@ -9,11 +9,10 @@ import (
 // Tags defines the structure to use for allowing an object to be assigned tags
 // for use in determining how the content should be handled.
 type Tags struct {
-	// Tags are used to help identify specific tax scenarios or requirements that may
-	// apply changes to the contents of the document or imply a specific meaning.
-	// Converters may use tags to help identify specific situations that do not have
-	// a specific extension, for example; self-billed or partial invoices may be
-	// identified by their respective tags.
+	// Keys that identify specific tax scenarios or requirements that may change the
+	// contents of the document or imply a specific meaning. Converters may use tags to
+	// identify situations that do not have a specific extension; for example, self-billed
+	// or partial invoices are identified by their respective tags.
 	List []cbc.Key `json:"$tags,omitempty" jsonschema:"title=Tags"`
 }
 
@@ -26,7 +25,7 @@ type TagSet struct {
 	// Schema that the tags are associated with.
 	Schema string `json:"schema" jsonschema:"title=Schema"`
 
-	// List of tags for the schema
+	// List of tags for the schema.
 	List []*cbc.Definition `json:"list" jsonschema:"title=List"`
 }
 

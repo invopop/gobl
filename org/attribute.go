@@ -164,9 +164,8 @@ type Attribute struct {
 	// Key that identifies the attribute, either from the list pre-defined by
 	// GOBL or an alternative agreed upon between the supplier and customer.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
-	// Type defines a code used to identify the attribute when the "key"
-	// field is empty, from a code list agreed upon between the supplier
-	// and customer.
+	// Code used to identify the attribute when the "key" field is empty, from a code
+	// list agreed upon between the supplier and customer.
 	Type cbc.Code `json:"type,omitempty" jsonschema:"title=Type"`
 
 	// Value fields; at least one must be provided.

@@ -29,28 +29,28 @@ type Invoice struct {
 
 	// Type of invoice document. May be restricted by local tax regime requirements.
 	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"calculated=true"`
-	// Series is used to identify groups of invoices by date, business area, project,
-	// type of document, customer type, a combination of any or other company specific data.
-	// If the output format does not support the series as a separate field, it will be
-	// prepended to the code for presentation with a dash (`-`) for separation.
+	// Identifies groups of invoices by date, business area, project, type of document,
+	// customer type, a combination of any, or other company specific data. If the output
+	// format does not support the series as a separate field, it will be prepended to the
+	// code with a dash (`-`) for separation.
 	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
-	// Code is a sequential identifier that uniquely identifies the invoice. The code can
-	// be left empty initially, but is **required** to **sign** the invoice.
+	// Sequential identifier that uniquely identifies the invoice. May be left empty
+	// initially, but is **required** to **sign** the invoice.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
-	// Issue date for when the invoice was created and issued. Todays date is used if
-	// none is set. There are often legal restrictions on how far back or in the future an
-	// invoice can be issued.
+	// Date when the invoice was created and issued. Today's date is used if none is set.
+	// There are often legal restrictions on how far back or in the future an invoice can be
+	// issued.
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
-	// IssueTime is an optional field that may be useful to indicate the time of day when
-	// the invoice was issued. Some regions and formats may require this field to be set.
+	// Optional time of day when the invoice was issued. Some regions and formats may
+	// require this field; otherwise it can be left nil.
 	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time" jsonschema_extras:"calculated=true"`
 	// Date when the operation defined by the invoice became effective.
 	OperationDate *cal.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
-	// When the taxes of this invoice become accountable, if none set, the issue date is used.
+	// When the taxes of the document become accountable. Defaults to the issue date.
 	ValueDate *cal.Date `json:"value_date,omitempty" jsonschema:"title=Value Date"`
 	// Currency for all invoice amounts and totals, unless explicitly stated otherwise.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency" jsonschema_extras:"calculated=true"`
-	// Exchange rates to be used when converting the invoices monetary values into other currencies.
+	// Exchange rates to be used when converting the document's monetary values into other currencies.
 	ExchangeRates []*currency.ExchangeRate `json:"exchange_rates,omitempty" jsonschema:"title=Exchange Rates"`
 
 	// Document references for previous invoices that this document replaces or extends.
@@ -92,9 +92,8 @@ type Invoice struct {
 	// Additional semi-structured data that doesn't fit into the body of the invoice.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 
-	// Attachments provide additional information or supporting documents that are not included
-	// in the main document. It is important that attachments are not used for alternative
-	// versions of the PDF, for that, see "links" inside the envelope headers.
+	// Supporting documents that are not included in the main document. Do not use for
+	// alternative versions of the PDF; use "links" inside the envelope headers instead.
 	Attachments []*org.Attachment `json:"attachments,omitempty" jsonschema:"title=Attachments"`
 }
 
