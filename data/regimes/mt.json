@@ -1,0 +1,246 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Malta",
+    "mt": "Malta"
+  },
+  "description": {
+    "en": "Malta's tax system is administered by the Malta Tax and Customs\nAdministration (MTCA). As an EU member state Malta follows the EU VAT\nDirective, transposed by the Value Added Tax Act (Chapter 406).\n\nVAT applies at a standard rate of 18% under article 19(1), plus reduced\nrates of 12%, 7% and 5% set by the Eighth Schedule and bounded by article\n19(2) at no more than 18% and no less than 5%. Malta gives these rates no\nnames, referring to them only by value, so they map onto GOBL's rate keys\nby magnitude rather than by translation.\n\nExemptions come in two kinds and only one is GOBL's exempt. Part One of the\nFifth Schedule is \"exempt with credit\": no VAT is charged but input tax\nstays recoverable under article 22(4), matching the zero, export and\nintra-community keys. Part Two is \"exempt without credit\" and carries no\nright of deduction, which is what exempt means.\n\nBusinesses are identified by a VAT number of MT plus 8 digits, the last two\na check over the first six. Article 13(3) gives that prefix to article 10\nand article 12 registrations only; an article 11 small-enterprise number has\nnone, is not a VAT identification number, and never appears on a tax invoice.\n\nCorrections are not restricted to a document type: the Twelfth Schedule\ntreats any document unambiguously amending an earlier invoice as an invoice,\nand the Eleventh Schedule recognizes credit and debit notes alike.\n\nMalta has no e-invoicing mandate. Contracting authorities must be able to\nreceive EN 16931 invoices over PEPPOL for procurement above the EU\nthresholds, but suppliers need not issue electronically and there is no B2B\nmandate or clearance system."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Value Added Tax Act (Chapter 406)"
+      },
+      "url": "https://legislation.mt/eli/cap/406/eng"
+    },
+    {
+      "title": {
+        "en": "Legal Notice 231 of 2023 - Amendment of Eighth Schedule"
+      },
+      "url": "https://legislation.mt/eli/ln/2023/231/eng"
+    },
+    {
+      "title": {
+        "en": "MTCA - VAT Rates \u0026 Exemptions FAQs"
+      },
+      "url": "https://mtca.gov.mt/docs/default-source/documents/business-tax/vat/faqs/vat-rates-exemptions---faqs.pdf"
+    },
+    {
+      "title": {
+        "en": "MTCA - Tax Invoices and Fiscal Receipts FAQs"
+      },
+      "url": "https://mtca.gov.mt/docs/default-source/documents/business-tax/vat/faqs/tax-invoice-and-fiscal-receipts---faqs.pdf"
+    },
+    {
+      "title": {
+        "en": "MTCA - Registrations \u0026 De-Registrations FAQs"
+      },
+      "url": "https://mtca.gov.mt/docs/default-source/documents/business-tax/vat/faqs/registrations-de-registrations-faqs.pdf"
+    },
+    {
+      "title": {
+        "en": "MTCA - Guidelines on the VAT rules applicable to small enterprises"
+      },
+      "url": "https://mtca.gov.mt/docs/default-source/documents/news/2025/guidelines-on-article-11-(2025)---final-clean.pdf"
+    },
+    {
+      "title": {
+        "en": "European Commission - eInvoicing in Malta"
+      },
+      "url": "https://ec.europa.eu/digital-building-blocks/sites/spaces/DIGITAL/pages/467108894/eInvoicing+in+Malta"
+    }
+  ],
+  "time_zone": "Europe/Malta",
+  "country": "MT",
+  "currency": "EUR",
+  "tax_scheme": "VAT",
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "mt": "VAT"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "mt": "Taxxa fuq il-Valur Miżjud"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate"
+          },
+          "desc": {
+            "en": "Article 19(1) of the VAT Act. Applies to any taxable supply for which no reduced rate or exemption is specified."
+          },
+          "values": [
+            {
+              "since": "2004-01-01",
+              "percent": "18.0%"
+            },
+            {
+              "since": "1999-01-01",
+              "percent": "15.0%"
+            }
+          ]
+        },
+        {
+          "rate": "intermediate",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "12% Rate"
+          },
+          "desc": {
+            "en": "Items 12 to 15 of the Eighth Schedule: custody and management of securities, management of credit and credit guarantees, short-term hiring of pleasure boats, and care of the human body by regulated health professionals."
+          },
+          "values": [
+            {
+              "since": "2024-01-01",
+              "percent": "12.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "7% Rate"
+          },
+          "desc": {
+            "en": "Items 1 and 11 of the Eighth Schedule: licensed tourist accommodation, and the use of sporting facilities."
+          },
+          "values": [
+            {
+              "since": "2011-01-01",
+              "percent": "7.0%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "5% Rate"
+          },
+          "desc": {
+            "en": "Items 2 to 10 of the Eighth Schedule: electricity, confectionery, medical accessories, printed matter, items for the exclusive use of the disabled, the importation of works of art, minor repairs, domestic care services, and admission to cultural events."
+          },
+          "values": [
+            {
+              "since": "1999-01-01",
+              "percent": "5.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "VAT Act (Chapter 406) - Eighth Schedule, Rate of tax"
+          },
+          "url": "https://legislation.mt/eli/cap/406/eng"
+        },
+        {
+          "title": {
+            "en": "Legal Notice 231 of 2023 - Amendment of Eighth Schedule"
+          },
+          "url": "https://legislation.mt/eli/ln/2023/231/eng"
+        },
+        {
+          "title": {
+            "en": "MTCA - VAT Rates \u0026 Exemptions FAQs"
+          },
+          "url": "https://mtca.gov.mt/docs/default-source/documents/business-tax/vat/faqs/vat-rates-exemptions---faqs.pdf"
+        },
+        {
+          "title": {
+            "en": "European Commission (DG TAXUD) - VAT rates applied in the Member States of the European Union, section VIII: evolution of the VAT rates"
+          },
+          "url": "https://taxation-customs.ec.europa.eu/system/files/2020-10/vat_rates_en.pdf",
+          "content_type": "application/pdf",
+          "at": "2026-09-04T00:00:00"
+        }
+      ]
+    }
+  ]
+}
