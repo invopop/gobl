@@ -1,0 +1,60 @@
+# Partial credit note against invoice-b2b.yaml: 20 of the 100 units of
+# maize meal were returned. VAT Act s21 governs credit notes as adjustments
+# to a previously issued tax invoice; South Africa places no additional
+# constraints on which correction types are valid or requires any stamps to
+# be copied across, so this exercises the plain GOBL core correction flow.
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "019035bd-4524-73ab-bf44-6037841ce6a3"
+type: "credit-note"
+issue_date: "2026-06-22"
+currency: "ZAR"
+series: "SAMPLE"
+code: "003"
+
+preceding:
+  - series: "SAMPLE"
+    code: "001"
+    issue_date: "2026-06-15"
+    reason: "Partial return of goods"
+
+supplier:
+  tax_id:
+    country: "ZA"
+    code: "4123456789"
+  identities:
+    - type: "CIPC"
+      code: "2015/123456/07"
+  name: "Highveld Trading (Pty) Ltd"
+  emails:
+    - addr: "billing@example.co.za"
+  addresses:
+    - num: "44"
+      street: "Rivonia Road"
+      locality: "Sandton"
+      region: "Gauteng"
+      code: "2196"
+      country: "ZA"
+
+customer:
+  tax_id:
+    country: "ZA"
+    code: "4987654321"
+  name: "Table Mountain Distributors CC"
+  emails:
+    - addr: "accounts@example.co.za"
+  addresses:
+    - num: "12"
+      street: "Long Street"
+      locality: "Cape Town"
+      region: "Western Cape"
+      code: "8001"
+      country: "ZA"
+
+lines:
+  - quantity: 20
+    item:
+      name: "Maize meal (zero-rated basic foodstuff)"
+      price: "25.00"
+    taxes:
+      - cat: VAT
+        rate: zero

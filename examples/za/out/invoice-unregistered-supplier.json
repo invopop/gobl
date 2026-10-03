@@ -1,0 +1,69 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "7bcacac08104ff7fd618420d878c585060aaf4b919091f854980de6ed790dc6d"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"uuid": "019035bd-4524-73ab-bf44-6037841ce6a2",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "002",
+		"issue_date": "2026-06-20",
+		"currency": "ZAR",
+		"supplier": {
+			"name": "Kalahari Crafts",
+			"addresses": [
+				{
+					"num": "3",
+					"street": "Church Street",
+					"locality": "Upington",
+					"region": "Northern Cape",
+					"code": "8801",
+					"country": "ZA"
+				}
+			],
+			"emails": [
+				{
+					"addr": "hello@example.co.za"
+				}
+			]
+		},
+		"customer": {
+			"name": "Jane's Retail Shop",
+			"addresses": [
+				{
+					"num": "9",
+					"street": "Market Street",
+					"locality": "Kimberley",
+					"region": "Northern Cape",
+					"code": "8301",
+					"country": "ZA"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "50",
+				"item": {
+					"name": "Handmade woven baskets",
+					"price": "120.00"
+				},
+				"sum": "6000.00",
+				"total": "6000.00"
+			}
+		],
+		"totals": {
+			"sum": "6000.00",
+			"total": "6000.00",
+			"tax": "0.00",
+			"total_with_tax": "6000.00",
+			"payable": "6000.00"
+		}
+	}
+}
