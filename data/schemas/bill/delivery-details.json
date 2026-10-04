@@ -16,7 +16,7 @@
           },
           "type": "array",
           "title": "Identities",
-          "description": "Identities is used to define specific codes or IDs that may be used to\nidentify the delivery."
+          "description": "Specific codes or IDs that may be used to identify the delivery."
         },
         "date": {
           "$ref": "https://gobl.org/draft-0/cal/date",

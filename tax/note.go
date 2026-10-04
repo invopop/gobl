@@ -12,10 +12,10 @@ import (
 type Note struct {
 	// Tax category code from those available inside a region.
 	Category cbc.Code `json:"cat,omitempty" jsonschema:"title=Category"`
-	// Key usually identifies the tax rate key this note applies to (e.g. "exempt",
-	// "reverse-charge"), but may also be used for other identifiers depending on context.
+	// Usually the tax rate key this note applies to (e.g. "exempt", "reverse-charge"),
+	// but may also be used for other identifiers depending on context.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
-	// Text contains the exemption reason or explanation.
+	// Exemption reason or explanation.
 	Text string `json:"text" jsonschema:"title=Text"`
 	// Extensions for additional structured data.
 	Ext Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`

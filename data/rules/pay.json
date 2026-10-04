@@ -90,6 +90,36 @@
               ]
             }
           ]
+        },
+        {
+          "guard": "string(Waiver) != \"\"",
+          "subsets": [
+            {
+              "field": "key",
+              "assert": [
+                {
+                  "id": "GOBL-PAY-RECORD-03",
+                  "desc": "key must be blank with waiver",
+                  "tests": "empty"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "Percent != nil",
+          "subsets": [
+            {
+              "field": "taxes",
+              "assert": [
+                {
+                  "id": "GOBL-PAY-RECORD-02",
+                  "desc": "taxes must be blank with percent",
+                  "tests": "empty"
+                }
+              ]
+            }
+          ]
         }
       ]
     },

@@ -46,7 +46,7 @@
         "country": {
           "$ref": "https://gobl.org/draft-0/l10n/tax-country-code",
           "title": "Country",
-          "description": "Country code override when issuing with taxes applied from different countries,\nit'd be very strange to mix rates from different countries, but in theory\nthis would be possible."
+          "description": "Country code override when issuing with taxes applied from different countries."
         },
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
@@ -56,7 +56,7 @@
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",
           "title": "Extensions",
-          "description": "If the rate is defined with extensions, they'll be used to group by also."
+          "description": "Extensions used to group the rate, if defined."
         },
         "base": {
           "$ref": "https://gobl.org/draft-0/num/amount",
@@ -76,7 +76,7 @@
         "amount": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Amount",
-          "description": "Total amount of rate, excluding surcharges"
+          "description": "Total amount of the rate, excluding surcharges."
         }
       },
       "type": "object",
@@ -112,7 +112,7 @@
           },
           "type": "array",
           "title": "Categories",
-          "description": "Grouping of all the taxes by their category"
+          "description": "Grouping of all the taxes by their category."
         },
         "sum": {
           "$ref": "https://gobl.org/draft-0/num/amount",
@@ -122,7 +122,7 @@
         "retained": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Retained",
-          "description": "Sum of retained or withheld tax amounts"
+          "description": "Sum of retained or withheld tax amounts."
         }
       },
       "type": "object",

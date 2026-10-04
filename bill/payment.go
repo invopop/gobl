@@ -100,20 +100,19 @@ type Payment struct {
 	// Type of payment document being issued.
 	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"calculated=true"`
 
-	// Series is used to identify groups of payments by date, business area, project,
-	// type, customer, a combination of any, or other company specific data.
-	// If the output format does not support the series as a separate field, it will be
-	// prepended to the code for presentation with a dash (`-`) for separation.
+	// Identifies groups of payments by date, business area, project, type, customer,
+	// a combination of any, or other company specific data. If the output format does not
+	// support the series as a separate field, it will be prepended to the code with a dash
+	// (`-`) for separation.
 	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
-	// Code is a sequential identifier that uniquely identifies the payment. The code can
-	// be left empty initially, but is **required** to **sign** the document.
+	// Sequential identifier that uniquely identifies the payment. May be left empty
+	// initially, but is **required** to **sign** the document.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 	// When the payment was issued.
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
-	// IssueTime is an optional field that may be useful to indicate the time of day when
-	// the payment was issued.
+	// Optional time of day when the payment was issued.
 	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time" jsonschema_extras:"calculated=true"`
-	// When the taxes of this payment become accountable, if none set, the issue date is assumed.
+	// When the taxes of the payment become accountable. Defaults to the issue date.
 	ValueDate *cal.Date `json:"value_date,omitempty" jsonschema:"title=Value Date"`
 	// Currency for all payment totals.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency" jsonschema_extras:"calculated=true"`
@@ -132,15 +131,15 @@ type Payment struct {
 	// Legal entity that receives the payment if not the supplier.
 	Payee *org.Party `json:"payee,omitempty" jsonschema:"title=Payee"`
 
-	// Ordering allows for additional information about the ordering process including references
-	// to other documents and alternative parties involved in the order-to-delivery process.
+	// Additional information about the ordering process, including references to other
+	// documents and alternative parties involved in the order-to-delivery process.
 	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering"`
 
 	// List of documents that are being paid for.
 	Lines []*PaymentLine `json:"lines" jsonschema:"title=Lines"`
-	// Methods describes how the payment was settled. At least one method is
-	// required; multiple may be present when the payment was split across
-	// means (for example, partly card + partly cash).
+	// How the payment was settled. At least one method is required; multiple may be
+	// present when the payment was split across means, for example partly card and
+	// partly cash.
 	Methods []*pay.Record `json:"methods" jsonschema:"title=Methods"`
 
 	// Total amount to be paid in this payment, either positive or negative according to the
@@ -181,6 +180,12 @@ func paymentRules() *rules.Set {
 			rules.Each(
 				rules.Field("key",
 					rules.Assert("09", "payment method key is required", is.Present),
+				),
+				rules.Field("taxes",
+					rules.Assert("10", "payment method taxes are not supported", is.Empty),
+				),
+				rules.Field("waiver",
+					rules.Assert("11", "payment method waiver is not supported", is.Empty),
 				),
 			),
 		),
@@ -364,7 +369,7 @@ func (pmt *Payment) UnmarshalJSON(data []byte) error {
 		}
 		pmt.Methods = []*pay.Record{{
 			Key:            aux.Method.Key,
-			Ref:            string(aux.Method.Ref),
+			Ref:            aux.Method.Ref,
 			Description:    aux.Method.Detail,
 			Card:           aux.Method.Card,
 			CreditTransfer: ct,

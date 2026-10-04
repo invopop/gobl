@@ -13,27 +13,23 @@ import (
 
 // RateDef defines a single rate inside a category
 type RateDef struct {
-	// Rate defines the key for which this rate applies.
+	// Identifies the rate within the category.
 	Rate cbc.Key `json:"rate" jsonschema:"title=Rate"`
 
-	// Keys identifies the set of tax keys defined in the category that this
-	// rate can be used with.
+	// Tax keys defined in the category that this rate can be used with.
 	Keys []cbc.Key `json:"keys,omitempty" jsonschema:"title=Keys"`
 
-	// Human name of the rate
+	// Human readable name of the rate.
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
 	// Useful description of the rate.
 	Description i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
 
-	// Values contains a list of Value objects that contain the
-	// current and historical percentage values for the rate and
-	// additional filters.
-	// Order is important, newer values should come before
-	// older values.
+	// Current and historical percentage values for the rate with additional filters.
+	// Order is important; newer values should come before older values.
 	Values []*RateValueDef `json:"values,omitempty" jsonschema:"title=Values"`
 
-	// Meta contains additional information about the rate that is relevant
-	// for local frequently used implementations.
+	// Additional information about the rate that is relevant for local frequently used
+	// implementations.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
@@ -41,13 +37,11 @@ type RateDef struct {
 // Fiscal policy changes mean that rates are not static so we need to
 // be able to apply the correct rate for a given period.
 type RateValueDef struct {
-	// Only apply this rate if one of the tags is present in the invoice.
-	// Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tags"`
-	// Ext map of keys that can be used to filter to determine if the rate applies.
+	// Extension codes used to filter whether this value applies.
 	Ext Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// Date from which this value should be applied.
 	Since *cal.Date `json:"since,omitempty" jsonschema:"title=Since"`
-	// Percent rate that should be applied
+	// Percent rate that should be applied.
 	Percent num.Percentage `json:"percent" jsonschema:"title=Percent"`
 	// An additional surcharge to apply.
 	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`

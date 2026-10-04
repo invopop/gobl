@@ -76,7 +76,7 @@ var chargeKeyDefinitions = []*cbc.Definition{
 	},
 }
 
-// Charge represents a surchange applied to the complete document
+// Charge represents a surcharge applied to the complete document
 // independent from the individual lines.
 type Charge struct {
 	uuid.Identify
@@ -85,20 +85,19 @@ type Charge struct {
 	// Key for grouping or identifying charges for tax purposes. A suggested list of
 	// keys is provided, but these may be extended by the issuer.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
-	// Code to used to refer to the this charge by the issuer
+	// Code used by the issuer to refer to this charge.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
-	// Text description as to why the charge was applied
+	// Reason why the charge was applied.
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
-	// Base represents the value used as a base for percent calculations instead
-	// of the invoice's sum of lines.
+	// Value used as the base for percent calculations instead of the invoice's sum of lines.
 	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base"`
-	// Percentage to apply to the sum of all lines
+	// Percentage to apply to the sum of all lines.
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
-	// Amount to apply (calculated if percent present)
+	// Amount to apply (calculated if percent present).
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
-	// List of taxes to apply to the charge
+	// List of taxes to apply to the charge.
 	Taxes tax.Set `json:"taxes,omitempty" jsonschema:"title=Taxes"`
-	// Extension codes that apply to the charge
+	// Extension codes that apply to the charge.
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// Additional semi-structured information.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`

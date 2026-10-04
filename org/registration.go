@@ -27,7 +27,7 @@ type Registration struct {
 	Entry    string        `json:"entry,omitempty" jsonschema:"title=Entry"`
 	Other    string        `json:"other,omitempty" jsonschema:"title=Other"`
 
-	// Ext holds any additional information that may be required by specific tax authorities.
+	// Any additional information that may be required by specific tax authorities.
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 

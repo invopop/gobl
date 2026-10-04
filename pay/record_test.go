@@ -19,14 +19,20 @@ import (
 func TestRecordNormalize(t *testing.T) {
 	a := &pay.Record{
 		Identify:    uuid.Identify{UUID: uuid.Zero},
+		Ref:         " TRX 2024/0012\t",
 		Description: "Test advance",
 		Percent:     num.NewPercentage(100, 2),
+		DirectDebit: &pay.DirectDebit{
+			Ref: " MANDATE-001 ",
+		},
 		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			"random": "",
 		}),
 	}
 	norm.Normalize(a)
 	assert.Empty(t, a.UUID)
+	assert.Equal(t, "TRX 2024/0012", a.Ref.String())
+	assert.Equal(t, "MANDATE-001", a.DirectDebit.Ref.String())
 	assert.True(t, a.Ext.IsZero())
 
 	a = nil
@@ -60,6 +66,40 @@ func TestRecordCalculateFrom(t *testing.T) {
 	})
 }
 
+func TestRecordCalculateFromTaxes(t *testing.T) {
+	zero := num.MakeAmount(0, 2)
+	tt := &tax.Total{
+		Categories: []*tax.CategoryTotal{
+			{
+				Code: tax.CategoryVAT,
+				Rates: []*tax.RateTotal{
+					{Amount: num.MakeAmount(2100, 2)},
+				},
+			},
+		},
+	}
+	t.Run("with taxes", func(t *testing.T) {
+		a := &pay.Record{
+			Taxes: []*tax.Filter{{Category: tax.CategoryVAT}},
+		}
+		a.CalculateFromTaxes(zero, tt)
+		assert.Equal(t, "21.00", a.Amount.String())
+	})
+	t.Run("without taxes", func(t *testing.T) {
+		a := &pay.Record{
+			Amount: num.MakeAmount(500, 2),
+		}
+		a.CalculateFromTaxes(zero, tt)
+		assert.Equal(t, "5.00", a.Amount.String())
+	})
+	t.Run("nil", func(t *testing.T) {
+		var a *pay.Record
+		assert.NotPanics(t, func() {
+			a.CalculateFromTaxes(zero, tt)
+		})
+	})
+}
+
 func TestRecordValidate(t *testing.T) {
 	t.Run("valid", func(t *testing.T) {
 		a := &pay.Record{
@@ -82,6 +122,41 @@ func TestRecordValidate(t *testing.T) {
 			Key:         pay.MeansKeyCard,
 		}
 		assert.NoError(t, rules.Validate(a))
+	})
+	t.Run("valid with taxes", func(t *testing.T) {
+		a := &pay.Record{
+			Waiver: "vat-refund",
+			Taxes:  []*tax.Filter{{Category: tax.CategoryVAT}},
+		}
+		assert.NoError(t, rules.Validate(a))
+	})
+	t.Run("waiver with key", func(t *testing.T) {
+		a := &pay.Record{
+			Key:    pay.MeansKeyCard,
+			Waiver: "vat-refund",
+			Amount: num.MakeAmount(100, 2),
+		}
+		assert.ErrorContains(t, rules.Validate(a), "key must be blank with waiver")
+	})
+	t.Run("invalid waiver", func(t *testing.T) {
+		a := &pay.Record{
+			Waiver: "VAT Refund",
+			Amount: num.MakeAmount(100, 2),
+		}
+		assert.ErrorContains(t, rules.Validate(a), "key must match the required pattern")
+	})
+	t.Run("taxes with percent", func(t *testing.T) {
+		a := &pay.Record{
+			Percent: num.NewPercentage(100, 2),
+			Taxes:   []*tax.Filter{{Category: tax.CategoryVAT}},
+		}
+		assert.ErrorContains(t, rules.Validate(a), "taxes must be blank with percent")
+	})
+	t.Run("invalid tax filter", func(t *testing.T) {
+		a := &pay.Record{
+			Taxes: []*tax.Filter{{Key: tax.KeyStandard}},
+		}
+		assert.ErrorContains(t, rules.Validate(a), "tax filter category is required")
 	})
 	t.Run("invalid means key", func(t *testing.T) {
 		a := &pay.Record{

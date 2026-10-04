@@ -116,4 +116,11 @@ func init() {
 		},
 		Module: "github.com/invopop/gobl.it.sdi",
 	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "ar-arca-v4",
+		Name: i18n.String{
+			i18n.EN: "Argentina ARCA V4",
+		},
+		Module: "github.com/invopop/gobl.ar.arca",
+	})
 }

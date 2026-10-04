@@ -14,6 +14,7 @@ func init() {
 		CorrectionDefinition{},
 		CorrectionSet{},
 		Extensions{},
+		Filter{},
 		Identity{},
 		Note{},
 		RegimeCode(""),
@@ -38,5 +39,6 @@ func init() {
 		scenarioSetRules(),
 		setRules(),
 		noteRules(),
+		filterRules(),
 	)
 }

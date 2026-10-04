@@ -97,7 +97,7 @@
         },
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
-          "description": "Key helps determine the tax situation within the category."
+          "description": "Determines the tax situation within the category."
         },
         "rate": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
@@ -107,7 +107,7 @@
         "percent": {
           "$ref": "https://gobl.org/draft-0/num/percentage",
           "title": "Percent",
-          "description": "Percent defines the percentage set manually or determined from the\nkey. A nil percent implies that this tax combo is either exempt or not-subject.",
+          "description": "Percentage set manually or determined from the rate or key. A nil percent implies\nthat the tax combo is either exempt or not subject.",
           "calculated": true
         },
         "surcharge": {
