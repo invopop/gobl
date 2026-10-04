@@ -1,0 +1,70 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "607dd67b5df5394b2300ba9ae34b9df14ff0c1d6b982a07cb48e596129ac114d"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "AU",
+		"uuid": "3b0f1e8c-6a55-4f7e-9d0c-2c7b9e4a1f21",
+		"type": "standard",
+		"code": "1002",
+		"issue_date": "2026-08-03",
+		"currency": "AUD",
+		"supplier": {
+			"name": "EXAMPLE SUPPLIER PTY LTD",
+			"tax_id": {
+				"country": "AU",
+				"code": "18123456789"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "2",
+				"item": {
+					"name": "Deadlock",
+					"price": "40.00"
+				},
+				"sum": "80.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "standard",
+						"rate": "general",
+						"percent": "10.0%"
+					}
+				],
+				"total": "80.00"
+			}
+		],
+		"totals": {
+			"sum": "80.00",
+			"total": "80.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "GST",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "80.00",
+								"percent": "10.0%",
+								"amount": "8.00"
+							}
+						],
+						"amount": "8.00"
+					}
+				],
+				"sum": "8.00"
+			},
+			"tax": "8.00",
+			"total_with_tax": "88.00",
+			"payable": "88.00"
+		}
+	}
+}

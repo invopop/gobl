@@ -12,6 +12,12 @@
         "en": "ATO - GST"
       },
       "url": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst"
+    },
+    {
+      "title": {
+        "en": "ATO - Tax invoices"
+      },
+      "url": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/tax-invoices"
     }
   ],
   "time_zone": "Australia/Sydney",
