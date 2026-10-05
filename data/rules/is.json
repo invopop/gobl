@@ -1,0 +1,103 @@
+{
+  "id": "GOBL-IS",
+  "package": "is",
+  "subsets": [
+    {
+      "id": "GOBL-IS-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [IS]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-IS-TAX-IDENTITY-01",
+                      "desc": "invalid kennitala format",
+                      "tests": "numeric"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-IS-TAX-IDENTITY-02",
+                      "desc": "invalid kennitala length",
+                      "tests": "length"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-IS-TAX-IDENTITY-03",
+                      "desc": "invalid checksum for kennitala",
+                      "tests": "checksum"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-IS-TAX-IDENTITY-04",
+                      "desc": "person kennitala is not valid for VAT",
+                      "tests": "not person"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-IS-TAX-IDENTITY-05",
+                      "desc": "temporary kennitala is not valid for VAT",
+                      "tests": "not temporary"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-IS-ORG-IDENTITY",
+      "object": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [IS]",
+          "subsets": [
+            {
+              "guard": "type in [KT]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-IS-ORG-IDENTITY-01",
+                      "desc": "invalid kennitala format",
+                      "tests": "well-formed"
+                    },
+                    {
+                      "id": "GOBL-IS-ORG-IDENTITY-02",
+                      "desc": "invalid checksum for kennitala",
+                      "tests": "checksum"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
