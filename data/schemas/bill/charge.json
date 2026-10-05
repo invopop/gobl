@@ -82,6 +82,11 @@
           "title": "Reason",
           "description": "Reason why the charge was applied."
         },
+        "informative": {
+          "type": "boolean",
+          "title": "Informative",
+          "description": "When true, the charge amount is calculated and reported but does not affect the\ndocument totals. Used for costs that must be declared while being borne by the\nsupplier, such as a stamp duty the issuer absorbs instead of passing on to the customer."
+        },
         "base": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Base",
@@ -101,7 +106,7 @@
         "taxes": {
           "$ref": "https://gobl.org/draft-0/tax/set",
           "title": "Taxes",
-          "description": "List of taxes to apply to the charge."
+          "description": "List of taxes to apply to the charge. Not allowed on informative charges."
         },
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",

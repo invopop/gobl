@@ -249,7 +249,7 @@ func prepareTaxableLines(doc billable) []tax.TaxableLine {
 		}
 	}
 	for _, l := range doc.getCharges() {
-		if l != nil {
+		if l != nil && !l.Informative {
 			tls = append(tls, l)
 		}
 	}
