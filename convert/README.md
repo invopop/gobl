@@ -13,7 +13,7 @@ import (
 )
 
 env, err := convert.Import(data)
-out, err := convert.Export(env, "ubl+de-xrechnung-v3", "ubl+eu-en16931-v2017")
+out, err := convert.Export(env, "ubl+peppol", "ubl+en16931")
 ```
 
 ## Concepts
@@ -52,15 +52,14 @@ A converter implements the `Converter` interface and registers itself once:
 ```go
 package ubl
 
-var contextXRechnung = &convert.Context{
-	Key:       "ubl+de-xrechnung-v3",
-	Name:      i18n.NewString("UBL XRechnung 3"),
-	MIME:      "application/xml",
-	Syntax:    "ubl",
-	Countries: []l10n.Code{"DE"},
-	Addons:    []cbc.Key{xrechnung.V3},
-	Import:    []schema.ID{schema.Lookup(bill.Invoice{})},
-	Export:    []schema.ID{schema.Lookup(bill.Invoice{})},
+var contextPeppol = &convert.Context{
+	Key:    "ubl+peppol",
+	Name:   i18n.NewString("UBL Peppol BIS Billing 3"),
+	MIME:   "application/xml",
+	Syntax: "ubl",
+	Addons: []cbc.Key{en16931.V2017},
+	Import: []schema.ID{schema.Lookup(bill.Invoice{})},
+	Export: []schema.ID{schema.Lookup(bill.Invoice{})},
 }
 
 type converter struct{}
@@ -70,7 +69,7 @@ func init() {
 }
 
 func (converter) Contexts() []*convert.Context {
-	return []*convert.Context{contextEN16931, contextXRechnung}
+	return []*convert.Context{contextEN16931, contextPeppol}
 }
 ```
 
@@ -133,16 +132,35 @@ Contexts expect documents to already include their addons. A converter that
 adds missing addons during export does so only to help existing users migrate,
 and new converters should not rely on it.
 
+## Regional variants
+
+Most specifications narrow a more general one: Peppol BIS Billing is an EN 16931
+CIUS, and the French CIUS builds on Peppol. The recommended structure is a base
+conversion in the syntax package, with no behavior specific to a context, and
+layers for each specification that are applied on top of it. The syntax package
+registers the contexts that apply in any country. Packages that implement a
+regional specification, such as gobl.fr.ctc, build on the syntax package's base
+conversion and register their own contexts when imported.
+
 ## Naming contexts
 
 Context keys are a public contract: they are stored by users, passed to
 `Export`, and shown in user interfaces. They follow the `cbc.Key` rules
 (lowercase letters, numbers, `-` and `+`, at most 64 characters), and are built
-from the syntax and the specification:
+from the syntax followed by one layer for each specification the context builds
+on, from the most general to the most specific:
 
 ```
-<syntax>+<specification>
+<syntax>[+<layer>...]
 ```
+
+For example:
+
+- `ubl+en16931`
+- `ubl+peppol`, `ubl+peppol+self-billing`, `ubl+peppol+invoice-response`
+- `ubl+peppol+fr-cius-v1`, `ubl+peppol+fr-extended-v1`
+- `ubl+de-xrechnung-v3`, `cii+de-xrechnung-v3`
+- `ubl+sa-zatca-v1`
 
 ### Syntax
 
@@ -150,21 +168,25 @@ The syntax is the base format the document is written in, the same value as the
 context's `Syntax` field, such as `ubl` or `cii`. It comes first so that all the
 contexts of a syntax can be found with `key.HasPrefix`.
 
-### Specification
+### Layers
 
-The specification identifies the rules the document follows on top of the
-syntax, and is chosen in this order:
+Each layer names a specification that narrows the one before it:
 
-1. **The addon key**, when a GOBL addon implements the specification. The key
-   then names the same thing everywhere, version included:
-   - `ubl+eu-en16931-v2017`
-   - `ubl+de-xrechnung-v3`, `cii+de-xrechnung-v3`
-   - `cii+fr-facturx-v1`
-   - `ubl+fr-ctc-flow2-v1`
-2. **A new key in the style of an addon key** otherwise: a country code or
-   network name, the name of the specification, and its major version.
-   - `ubl+peppol-bis-billing-v3`
-   - `ubl+peppol-invoice-response-v1`
+- **Base and network layers** that apply in any country, such as `en16931`,
+  `peppol`, or `self-billing`, have no version.
+- **Regional layers** use the key of the GOBL addon that implements the
+  specification, with its major version, such as `de-xrechnung-v3` or
+  `sa-zatca-v1`. When there is no addon, or one addon covers several
+  specifications, use a key in the same style: a country code, the short name
+  of the specification, and its major version, such as `fr-cius-v1`.
+
+Only add a layer for the specification a document declares. A layer may be
+left out when the specification it would name adds nothing to tell documents
+apart, as with `ubl+de-xrechnung-v3`, which is not written as
+`ubl+en16931+de-xrechnung-v3`.
+
+The key describes where the specification comes from. It does not define the
+conversion: each context lists the behavior it applies itself.
 
 When a format is its own syntax and has no separate specification, as with
 FacturaE or CFDI, use the addon key alone, such as `es-facturae-v3` or
@@ -179,9 +201,7 @@ FacturaE or CFDI, use the addon key alone, such as `es-facturae-v3` or
   handled inside the converter, and should not change the key users store.
 - Use American spelling and the official short name of the specification,
   without words like `format` or `invoice` that every context would share.
-- Only register keys for the specifications your package implements. A package
-  building on another syntax, such as gobl.fr.ctc on UBL and CII, registers its
-  own contexts with that syntax as the prefix.
+- Only register keys for the specifications your package implements.
 - Never rename a published key. Add a new context for a new major version, and
   keep the old one for as long as it is supported.
 
