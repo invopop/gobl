@@ -1,0 +1,68 @@
+{
+    "$schema": "https://gobl.org/draft-0/bill/invoice",
+    "$regime": "AU",
+    "uuid": "f4f2d4e9-09a2-4b89-b441-bf369ba3d9ad",
+    "code": "1001",
+    "currency": "AUD",
+    "issue_date": "2026-08-03",
+    "supplier": {
+      "name": "EXAMPLE SUPPLIER PTY LTD",
+      "tax_id": {
+        "country": "AU",
+        "code": "18123456789"
+      },
+      "addresses": [
+        {
+          "street": "12 Example Street",
+          "locality": "Sydney",
+          "region": "NSW",
+          "code": "2000",
+          "country": "AU"
+        }
+      ]
+    },
+    "customer": {
+      "name": "EXAMPLE CUSTOMER PTY LTD",
+      "tax_id": {
+        "country": "AU",
+        "code": "80987654321"
+      },
+      "addresses": [
+        {
+          "street": "15 Sample Road",
+          "locality": "Newcastle",
+          "region": "NSW",
+          "code": "2300",
+          "country": "AU"
+        }
+      ]
+    },
+    "lines": [
+      {
+        "quantity": "50",
+        "item": {
+          "name": "Window frame",
+          "price": "150.00"
+        },
+        "taxes": [
+          {
+            "cat": "GST",
+            "rate": "general"
+          }
+        ]
+      },
+      {
+        "quantity": "10",
+        "item": {
+          "name": "Deadlock",
+          "price": "40.00"
+        },
+        "taxes": [
+          {
+            "cat": "GST",
+            "rate": "general"
+          }
+        ]
+      }
+    ]
+  }
