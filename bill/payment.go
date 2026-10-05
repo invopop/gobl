@@ -257,16 +257,9 @@ func (pmt *Payment) calculate() error {
 	r := pmt.RegimeDef()
 	rr := r.GetRoundingRule()
 
-	// Set the issue date and time
-	tz := r.TimeLocation()
-	if pmt.IssueTime != nil && pmt.IssueTime.IsZero() {
-		// If setting the time, also set the date
-		tn := cal.ThisSecondIn(tz)
-		hn := tn.Time()
-		pmt.IssueDate = tn.Date()
-		pmt.IssueTime = &hn
-	} else if pmt.IssueDate.IsZero() {
-		pmt.IssueDate = cal.TodayIn(tz)
+	// Set the issue date
+	if pmt.IssueDate.IsZero() {
+		pmt.IssueDate = cal.TodayIn(r.TimeLocation())
 	}
 
 	// Convert empty or invalid currency to the regime's currency
