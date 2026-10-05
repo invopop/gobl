@@ -1,0 +1,57 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["es-verifactu-v1"]
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: "EUR"
+issue_date: "2024-12-04"
+series: "IPSI"
+code: "001"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642" # random
+  name: "Clínica Ceuta S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "12"
+      street: "Paseo de las Palmeras"
+      locality: "Ceuta"
+      region: "Ceuta"
+      code: "51001"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "ES"
+    code: "54387763P"
+  name: "Sample Consumer"
+
+lines:
+  - quantity: 1
+    item:
+      name: "Hairdressing service"
+      price: "50.00"
+    taxes:
+      - cat: IPSI
+        percent: "4%"
+  - quantity: 1
+    item:
+      name: "Physiotherapy session"
+      price: "60.00"
+    taxes:
+      - cat: IPSI
+        key: exempt
+  - quantity: 1
+    item:
+      name: "Multi-purpose gift voucher"
+      price: "100.00"
+    taxes:
+      - cat: IPSI
+        key: outside-scope
+        ext:
+          es-verifactu-op-class: "N1"
+
+notes:
+  - key: "general"
+    text: "Services provided in Ceuta subject to IPSI"
