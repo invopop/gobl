@@ -1,0 +1,209 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "ca": "Andorra",
+    "en": "Andorra"
+  },
+  "description": {
+    "en": "Andorra's tax system is administered by the Departament de Tributs i Fronteres.\nThe primary indirect tax is the Impost General Indirecte (IGI), which functions\nas a value-added tax on goods and services.\n\nEntities and individuals are identified by a Número de Registre Tributari (NRT),\nwhich consists of 8 characters: a letter prefix indicating entity type, six digits,\nand a control letter.\n\nElectronic invoicing follows specific form structures: Form 980-A for traveler/export\nrefunds, Form 980-B for non-resident B2B transactions (requiring a local fiscal\nrepresentative), and Form 980-C for diplomatic exemptions under Article 15 of\nLaw 11/2012."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Departament de Tributs i Fronteres"
+      },
+      "url": "https://www.govern.ad/tributs-i-fronteres"
+    }
+  ],
+  "time_zone": "Europe/Andorra",
+  "country": "AD",
+  "currency": "EUR",
+  "tax_scheme": "VAT",
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "diplomatic"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "diplomatic",
+            "text": "Exempt d'IGI - Art. 15 Llei 11/2012 (Règim diplomàtic)"
+          }
+        },
+        {
+          "tags": [
+            "export"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "export",
+            "text": "Exempt d'IGI - Exportació / Devolució a viatgers (Form 980-A)"
+          }
+        },
+        {
+          "tags": [
+            "non-resident-b2b"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "non-resident-b2b",
+            "text": "Operació amb no-resident - Representant fiscal requerit (Form 980-B)"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "ca": "IGI",
+        "en": "IGI"
+      },
+      "title": {
+        "ca": "Impost General Indirecte",
+        "en": "General Indirect Tax"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "increased",
+          "keys": [
+            "",
+            "standard"
+          ],
+          "name": {
+            "ca": "Tipus Incrementat",
+            "en": "Increased Rate"
+          },
+          "values": [
+            {
+              "percent": "9.5%"
+            }
+          ]
+        },
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "ca": "Tipus General",
+            "en": "Standard Rate"
+          },
+          "values": [
+            {
+              "percent": "4.5%"
+            }
+          ]
+        },
+        {
+          "rate": "intermediate",
+          "keys": [
+            "",
+            "standard"
+          ],
+          "name": {
+            "ca": "Tipus Intermedi",
+            "en": "Intermediate Rate"
+          },
+          "values": [
+            {
+              "percent": "2.5%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "",
+            "standard"
+          ],
+          "name": {
+            "ca": "Tipus Reduït",
+            "en": "Reduced Rate"
+          },
+          "values": [
+            {
+              "percent": "1%"
+            }
+          ]
+        },
+        {
+          "rate": "zero",
+          "keys": [
+            "zero"
+          ],
+          "name": {
+            "ca": "Tipus Zero",
+            "en": "Zero Rate"
+          },
+          "values": [
+            {
+              "percent": "0%"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
