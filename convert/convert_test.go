@@ -41,8 +41,8 @@ func header(in *convert.Input) string {
 // that requires the "test-fr" addon on export.
 type alphaConverter struct{}
 
-func (alphaConverter) Contexts() []*convert.Context {
-	return []*convert.Context{
+func (alphaConverter) Formats() []*convert.Format {
+	return []*convert.Format{
 		{
 			Key:    "test+alpha",
 			Syntax: "test",
@@ -92,8 +92,8 @@ func (alphaConverter) Export(key cbc.Key, _ *gobl.Envelope) ([]byte, error) {
 // converter refuses every envelope.
 type betaConverter struct{}
 
-func (betaConverter) Contexts() []*convert.Context {
-	return []*convert.Context{
+func (betaConverter) Formats() []*convert.Format {
+	return []*convert.Format{
 		{
 			Key:       "test+beta",
 			Countries: []l10n.Code{l10n.EU},
@@ -135,7 +135,7 @@ func init() {
 	convert.Register(betaConverter{})
 }
 
-func contextKeys(list []*convert.Context) []cbc.Key {
+func formatKeys(list []*convert.Format) []cbc.Key {
 	keys := make([]cbc.Key, len(list))
 	for i, c := range list {
 		keys[i] = c.Key
@@ -152,32 +152,32 @@ func invoiceEnvelope(t *testing.T, addons ...cbc.Key) *gobl.Envelope {
 	return env
 }
 
-func TestContexts(t *testing.T) {
+func TestFormats(t *testing.T) {
 	assert.Equal(t,
 		[]cbc.Key{"test+alpha", "test+alpha-fr", "test+beta", "test+gamma"},
-		contextKeys(convert.Contexts()),
+		formatKeys(convert.Formats()),
 	)
-	assert.Equal(t, cbc.Key("test+beta"), convert.ContextFor("test+beta").Key)
-	assert.Nil(t, convert.ContextFor("test+unknown"))
+	assert.Equal(t, cbc.Key("test+beta"), convert.FormatFor("test+beta").Key)
+	assert.Nil(t, convert.FormatFor("test+unknown"))
 }
 
-func TestContextsFor(t *testing.T) {
+func TestFormatsFor(t *testing.T) {
 	t.Run("country and union", func(t *testing.T) {
 		assert.Equal(t,
 			[]cbc.Key{"test+alpha", "test+alpha-fr", "test+beta"},
-			contextKeys(convert.ContextsFor("FR")),
+			formatKeys(convert.FormatsFor("FR")),
 		)
 	})
 	t.Run("outside union", func(t *testing.T) {
 		assert.Equal(t,
 			[]cbc.Key{"test+alpha", "test+gamma"},
-			contextKeys(convert.ContextsFor("US")),
+			formatKeys(convert.FormatsFor("US")),
 		)
 	})
 	t.Run("no match", func(t *testing.T) {
 		assert.Equal(t,
 			[]cbc.Key{"test+alpha"},
-			contextKeys(convert.ContextsFor("JP")),
+			formatKeys(convert.FormatsFor("JP")),
 		)
 	})
 }
@@ -185,13 +185,13 @@ func TestContextsFor(t *testing.T) {
 func TestConversions(t *testing.T) {
 	list := convert.Conversions()
 	assert.Contains(t, list, &convert.Conversion{
-		Context: "test+alpha", Schema: invoiceSchema, Direction: convert.DirectionImport,
+		Format: "test+alpha", Schema: invoiceSchema, Direction: convert.DirectionImport,
 	})
 	assert.Contains(t, list, &convert.Conversion{
-		Context: "test+alpha-fr", Schema: invoiceSchema, Direction: convert.DirectionExport,
+		Format: "test+alpha-fr", Schema: invoiceSchema, Direction: convert.DirectionExport,
 	})
 	assert.NotContains(t, list, &convert.Conversion{
-		Context: "test+beta", Schema: invoiceSchema, Direction: convert.DirectionExport,
+		Format: "test+beta", Schema: invoiceSchema, Direction: convert.DirectionExport,
 	})
 	assert.Len(t, list, 6)
 }
@@ -204,7 +204,7 @@ func TestDetect(t *testing.T) {
 	})
 	t.Run("unknown", func(t *testing.T) {
 		_, err := convert.Detect([]byte("other:data"))
-		assert.ErrorIs(t, err, convert.ErrUnknownContext)
+		assert.ErrorIs(t, err, convert.ErrUnknownFormat)
 	})
 	t.Run("ambiguous", func(t *testing.T) {
 		_, err := convert.Detect([]byte("alpha:data"))
@@ -216,13 +216,13 @@ func TestDetect(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, cbc.Key("test+gamma"), ctx.Key)
 	})
-	t.Run("keys exclude a context of the same converter", func(t *testing.T) {
+	t.Run("keys exclude a format of the same converter", func(t *testing.T) {
 		_, err := convert.Detect([]byte("beta:data"), "test+gamma")
-		assert.ErrorIs(t, err, convert.ErrUnknownContext)
+		assert.ErrorIs(t, err, convert.ErrUnknownFormat)
 	})
 	t.Run("unregistered key", func(t *testing.T) {
 		_, err := convert.Detect([]byte("beta:data"), "test+unknown")
-		assert.ErrorIs(t, err, convert.ErrUnknownContext)
+		assert.ErrorIs(t, err, convert.ErrUnknownFormat)
 	})
 	t.Run("shared values parsed once", func(t *testing.T) {
 		headerParses = 0
@@ -247,7 +247,7 @@ func TestImport(t *testing.T) {
 	})
 	t.Run("keys not matching data", func(t *testing.T) {
 		_, err := convert.Import([]byte("alpha:data"), "test+beta")
-		assert.ErrorIs(t, err, convert.ErrUnknownContext)
+		assert.ErrorIs(t, err, convert.ErrUnknownFormat)
 	})
 	t.Run("converter error", func(t *testing.T) {
 		_, err := convert.Import([]byte("alpha-fr:fail"))
@@ -261,16 +261,16 @@ func TestImport(t *testing.T) {
 }
 
 func TestExport(t *testing.T) {
-	t.Run("skips context missing addon", func(t *testing.T) {
+	t.Run("skips format missing addon", func(t *testing.T) {
 		out, err := convert.Export(invoiceEnvelope(t), "test+alpha-fr", "test+alpha")
 		require.NoError(t, err)
-		assert.Equal(t, cbc.Key("test+alpha"), out.Context.Key)
+		assert.Equal(t, cbc.Key("test+alpha"), out.Format.Key)
 		assert.Equal(t, []byte("test+alpha"), out.Data)
 	})
-	t.Run("chooses context with addon", func(t *testing.T) {
+	t.Run("chooses format with addon", func(t *testing.T) {
 		out, err := convert.Export(invoiceEnvelope(t, "test-fr"), "test+alpha-fr", "test+alpha")
 		require.NoError(t, err)
-		assert.Equal(t, cbc.Key("test+alpha-fr"), out.Context.Key)
+		assert.Equal(t, cbc.Key("test+alpha-fr"), out.Format.Key)
 	})
 	t.Run("not supported", func(t *testing.T) {
 		_, err := convert.Export(invoiceEnvelope(t), "test+beta", "test+gamma", "test+alpha-fr")
@@ -284,10 +284,10 @@ func TestExport(t *testing.T) {
 	})
 	t.Run("unknown key", func(t *testing.T) {
 		_, err := convert.Export(invoiceEnvelope(t), "test+alpha", "test+unknown")
-		assert.ErrorIs(t, err, convert.ErrUnknownContext)
+		assert.ErrorIs(t, err, convert.ErrUnknownFormat)
 	})
 	t.Run("no keys", func(t *testing.T) {
 		_, err := convert.Export(invoiceEnvelope(t))
-		assert.ErrorIs(t, err, convert.ErrUnknownContext)
+		assert.ErrorIs(t, err, convert.ErrUnknownFormat)
 	})
 }

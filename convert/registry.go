@@ -10,15 +10,15 @@ import (
 
 var converters = newRegistry()
 
-// registry holds the registered converters and the contexts they handle.
+// registry holds the registered converters and the formats they handle.
 type registry struct {
 	converters []Converter // in registration order
-	keys       []cbc.Key   // sorted context keys
+	keys       []cbc.Key   // sorted format keys
 	list       map[cbc.Key]*entry
 }
 
 type entry struct {
-	context   *Context
+	format    *Format
 	converter Converter
 	index     int // position of the converter in registration order
 }
@@ -30,24 +30,24 @@ func newRegistry() *registry {
 }
 
 func (r *registry) add(c Converter) {
-	cs := c.Contexts()
+	cs := c.Formats()
 	if len(cs) == 0 {
-		panic("convert: converter has no contexts")
+		panic("convert: converter has no formats")
 	}
 	seen := make(map[cbc.Key]bool, len(cs))
 	for _, ctx := range cs {
 		if ctx.Key == cbc.KeyEmpty {
-			panic("convert: context key is empty")
+			panic("convert: format key is empty")
 		}
 		if _, ok := r.list[ctx.Key]; ok || seen[ctx.Key] {
-			panic(fmt.Sprintf("convert: context %s already registered", ctx.Key))
+			panic(fmt.Sprintf("convert: format %s already registered", ctx.Key))
 		}
 		seen[ctx.Key] = true
 	}
 	index := len(r.converters)
 	for _, ctx := range cs {
 		r.keys = append(r.keys, ctx.Key)
-		r.list[ctx.Key] = &entry{context: ctx, converter: c, index: index}
+		r.list[ctx.Key] = &entry{format: ctx, converter: c, index: index}
 	}
 	sort.Slice(r.keys, func(i, j int) bool {
 		return r.keys[i].String() < r.keys[j].String()
@@ -59,25 +59,25 @@ func (r *registry) entryFor(key cbc.Key) *entry {
 	return r.list[key]
 }
 
-func (r *registry) contextFor(key cbc.Key) *Context {
+func (r *registry) formatFor(key cbc.Key) *Format {
 	if e := r.list[key]; e != nil {
-		return e.context
+		return e.format
 	}
 	return nil
 }
 
-func (r *registry) contexts() []*Context {
-	all := make([]*Context, len(r.keys))
+func (r *registry) formats() []*Format {
+	all := make([]*Format, len(r.keys))
 	for i, k := range r.keys {
-		all[i] = r.list[k].context
+		all[i] = r.list[k].format
 	}
 	return all
 }
 
-func (r *registry) contextsFor(country l10n.Code) []*Context {
-	list := make([]*Context, 0)
+func (r *registry) formatsFor(country l10n.Code) []*Format {
+	list := make([]*Format, 0)
 	for _, k := range r.keys {
-		ctx := r.list[k].context
+		ctx := r.list[k].format
 		if ctx.appliesTo(country) {
 			list = append(list, ctx)
 		}
@@ -88,12 +88,12 @@ func (r *registry) contextsFor(country l10n.Code) []*Context {
 func (r *registry) conversions() []*Conversion {
 	list := make([]*Conversion, 0)
 	for _, k := range r.keys {
-		ctx := r.list[k].context
+		ctx := r.list[k].format
 		for _, s := range ctx.Import {
-			list = append(list, &Conversion{Context: k, Schema: s, Direction: DirectionImport})
+			list = append(list, &Conversion{Format: k, Schema: s, Direction: DirectionImport})
 		}
 		for _, s := range ctx.Export {
-			list = append(list, &Conversion{Context: k, Schema: s, Direction: DirectionExport})
+			list = append(list, &Conversion{Format: k, Schema: s, Direction: DirectionExport})
 		}
 	}
 	return list
@@ -106,7 +106,7 @@ func (r *registry) candidates(keys []cbc.Key) ([]int, error) {
 	for _, k := range keys {
 		e := r.list[k]
 		if e == nil {
-			return nil, ErrUnknownContext.WithReason("context %s not registered", k)
+			return nil, ErrUnknownFormat.WithReason("format %s not registered", k)
 		}
 		match[e.index] = true
 	}
@@ -133,18 +133,18 @@ func (r *registry) detect(data []byte, keys []cbc.Key) (*entry, error) {
 		}
 		e := r.list[k]
 		if e == nil || e.index != i {
-			continue // not a context owned by this converter
+			continue // not a format owned by this converter
 		}
 		if len(keys) > 0 && !k.In(keys...) {
 			continue
 		}
 		if match != nil {
-			return nil, ErrAmbiguous.WithReason("detected as %s and %s", match.context.Key, k)
+			return nil, ErrAmbiguous.WithReason("detected as %s and %s", match.format.Key, k)
 		}
 		match = e
 	}
 	if match == nil {
-		return nil, ErrUnknownContext.WithReason("data not recognized")
+		return nil, ErrUnknownFormat.WithReason("data not recognized")
 	}
 	return match, nil
 }
