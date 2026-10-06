@@ -1,0 +1,100 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "94fd3459ebb33eb33b9cf48c35f9a7acd8ac009342fb201d5e431b5114dfb383"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "RO",
+		"uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e4006",
+		"type": "standard",
+		"series": "PFA",
+		"code": "2026-0106",
+		"issue_date": "2026-09-05",
+		"currency": "RON",
+		"supplier": {
+			"name": "Ionescu Maria PFA",
+			"tax_id": {
+				"country": "RO",
+				"code": "45678900"
+			},
+			"addresses": [
+				{
+					"num": "9",
+					"street": "Strada Florilor",
+					"locality": "Iași",
+					"region": "IS",
+					"code": "700001",
+					"country": "RO"
+				}
+			]
+		},
+		"customer": {
+			"name": "Client Exemplu S.R.L.",
+			"tax_id": {
+				"country": "RO",
+				"code": "23456783"
+			},
+			"addresses": [
+				{
+					"num": "5",
+					"street": "Strada Memorandumului",
+					"locality": "Cluj-Napoca",
+					"region": "CJ",
+					"code": "400114",
+					"country": "RO"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "4",
+				"item": {
+					"name": "Traduceri autorizate",
+					"price": "150.00"
+				},
+				"sum": "600.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "outside-scope"
+					}
+				],
+				"total": "600.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"notes": "Plată în 15 zile"
+			}
+		},
+		"totals": {
+			"sum": "600.00",
+			"total": "600.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "outside-scope",
+								"base": "600.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "600.00",
+			"payable": "600.00"
+		}
+	}
+}

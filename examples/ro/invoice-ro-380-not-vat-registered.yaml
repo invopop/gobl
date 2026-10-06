@@ -1,0 +1,49 @@
+# 380 - Seller not registered for VAT (neplătitor de TVA). Every line is outside
+# the scope of VAT, so no VAT is charged.
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "RO"
+uuid: "01927639-c1a0-7f3a-88d9-5b1f2a5e4006"
+type: standard
+currency: RON
+series: "PFA"
+code: "2026-0106"
+issue_date: "2026-09-05"
+
+supplier:
+  name: Ionescu Maria PFA
+  tax_id:
+    country: "RO"
+    code: "45678900"
+  addresses:
+    - street: Strada Florilor
+      num: "9"
+      locality: Iași
+      region: "IS"
+      code: "700001"
+      country: "RO"
+
+customer:
+  name: Client Exemplu S.R.L.
+  tax_id:
+    country: "RO"
+    code: "23456783"
+  addresses:
+    - street: Strada Memorandumului
+      num: "5"
+      locality: Cluj-Napoca
+      region: "CJ"
+      code: "400114"
+      country: "RO"
+
+lines:
+  - quantity: "4"
+    item:
+      name: Traduceri autorizate
+      price: "150.00"
+    taxes:
+      - cat: VAT
+        key: outside-scope
+
+payment:
+  terms:
+    notes: Plată în 15 zile

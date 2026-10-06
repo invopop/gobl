@@ -1,0 +1,55 @@
+# 389 - Self-billed invoice (autofactură). The buyer issues the invoice in the
+# supplier's name, under a prior agreement, and states the mention "Autofactură".
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "RO"
+$tags:
+  - self-billed
+uuid: "01927639-c1a0-7f3a-88d9-5b1f2a5e4009"
+type: standard
+currency: RON
+series: "AUT"
+code: "2026-0001"
+issue_date: "2026-09-06"
+
+notes:
+  - text: Autofactură
+
+supplier:
+  name: Producător Agricol S.R.L.
+  tax_id:
+    country: "RO"
+    code: "34567892"
+  addresses:
+    - street: Strada Fermei
+      num: "3"
+      locality: Timișoara
+      region: "TM"
+      code: "300001"
+      country: "RO"
+
+customer:
+  name: Client Exemplu S.R.L.
+  tax_id:
+    country: "RO"
+    code: "23456783"
+  addresses:
+    - street: Strada Memorandumului
+      num: "5"
+      locality: Cluj-Napoca
+      region: "CJ"
+      code: "400114"
+      country: "RO"
+
+lines:
+  - quantity: "500"
+    item:
+      name: Legume proaspete
+      price: "3.20"
+      unit: kg
+    taxes:
+      - cat: VAT
+        rate: reduced
+
+payment:
+  terms:
+    notes: Plată în 30 de zile
