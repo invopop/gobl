@@ -190,9 +190,11 @@ For example:
 
 - `ubl+en16931`
 - `ubl+peppol`, `ubl+peppol+self-billing`, `ubl+peppol+invoice-response`
-- `ubl+peppol+fr-cius-v1`, `ubl+peppol+fr-extended-v1`
+- `ubl+peppol+fr-cius-v1`, `ubl+peppol+fr-extended-v1`, `cii+peppol+fr-cius-v1`
 - `ubl+de-xrechnung-v3`, `cii+de-xrechnung-v3`
+- `cii+fr-facturx-v1`, `cii+fr-facturx-v1+basic`, `cii+de-zugferd-v2+extended`
 - `ubl+sa-zatca-v1`
+- `cdar+peppol+fr-cdv-v1`
 
 ### Syntax
 
@@ -211,6 +213,9 @@ Each layer names a specification that narrows the one before it:
   `sa-zatca-v1`. When there is no addon, or one addon covers several
   specifications, use a key in the same style: a country code, the short name
   of the specification, and its major version, such as `fr-cius-v1`.
+
+A specification with several profiles, each declared with its own identifier,
+adds the profile as a final layer, such as `+basic` or `+extended`.
 
 Only add a layer for the specification a document declares. A layer may be
 left out when the specification it would name adds nothing to tell documents
