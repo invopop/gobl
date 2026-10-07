@@ -44,6 +44,18 @@ func billInvoiceRules() *rules.Set {
 					),
 				),
 			),
+			// Chilean Notas de Crédito/Débito Electrónicas only correct standard
+			// "factura" documents, never simplified ones ("boletas") — per the
+			// SII's official guides, under Art. 57 of the D.L. 825 and Art. 71 of
+			// its Reglamento. GOBL's preceding document reference doesn't carry
+			// the original document's tags forward, so this rule checks the next
+			// best thing: the correction itself must not be tagged as simplified.
+			//
+			// Source: https://www.sii.cl/destacados/factura_electronica/guias_ayuda/nota_credito_corrige_monto_fe.htm
+			rules.When(
+				bill.InvoiceTypeIn(bill.InvoiceTypeCreditNote, bill.InvoiceTypeDebitNote),
+				rules.Assert("04", "credit and debit notes cannot be simplified invoices for Chilean regime", is.Func("not simplified", invoiceNotSimplified)),
+			),
 		),
 	)
 }
