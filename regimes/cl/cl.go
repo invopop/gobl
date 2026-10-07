@@ -18,6 +18,7 @@ func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("cl", rules.GOBL.Add(CountryCode),
 		taxIdentityRules(),
+		billInvoiceRules(),
 	)
 	norm.Register(
 		norm.When(tax.IdentityIn(CountryCode), norm.For(normalizeTaxIdentity)),
