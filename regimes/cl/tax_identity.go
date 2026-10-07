@@ -38,12 +38,12 @@ func isValidRUT(value any) bool {
 		return false
 	}
 	s := code.String()
-// Chilean law does not fix an exact digit count for the RUT body. Numbers
-// have been assigned sequentially for decades, so older RUTs can be shorter
-// than the 7-8 digits typical of RUTs issued today. We accept a body of
-// 1 to 8 digits plus 1 check digit (total length 2-9) as a practical bound,
-// not a legal requirement, to avoid rejecting older but mathematically
-// valid RUTs.
+	// Chilean law does not fix an exact digit count for the RUT body. Numbers
+	// have been assigned sequentially for decades, so older RUTs can be shorter
+	// than the 7-8 digits typical of RUTs issued today. We accept a body of
+	// 1 to 8 digits plus 1 check digit (total length 2-9) as a practical bound,
+	// not a legal requirement, to avoid rejecting older but mathematically
+	// valid RUTs.
 	if len(s) < 2 || len(s) > 9 {
 		return false
 	}
@@ -56,17 +56,17 @@ func isValidRUT(value any) bool {
 	sum := 0
 	count := 0
 	for i := len(body) - 1; i >= 0; i-- {
-    	digit := int(body[i] - '0')
-    	weight := rutWeights[count % len(rutWeights)]
-    	sum += digit * weight
-    	count ++
+		digit := int(body[i] - '0')
+		weight := rutWeights[count%len(rutWeights)]
+		sum += digit * weight
+		count++
 	}
 	check := 11 - (sum % 11)
 	switch check {
-		case 11:
-			check = 0
-		case 10:
-			return dv == 'K'
-		}
+	case 11:
+		check = 0
+	case 10:
+		return dv == 'K'
+	}
 	return int(dv-'0') == check
 }
