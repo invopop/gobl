@@ -1,0 +1,134 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Chile",
+    "es": "Chile"
+  },
+  "description": {
+    "en": "Chile's Impuesto al Valor Agregado (IVA) is a value-added tax applied\nto most sales of goods and services. It is administered by the\nServicio de Impuestos Internos (SII).\n\nBusinesses and individuals are identified by their RUT (Rol Único\nTributario), a numeric identifier of 7 or 8 digits followed by a\ncheck digit (0-9 or the letter \"K\"), validated with a modulus-11\nchecksum.",
+    "es": "El Impuesto al Valor Agregado (IVA) en Chile se aplica a la mayoría\nde las ventas de bienes y servicios. Es administrado por el Servicio\nde Impuestos Internos (SII).\n\nLas empresas y personas se identifican con su RUT (Rol Único\nTributario), un identificador numérico de 7 u 8 dígitos seguido de\nun dígito verificador (0-9 o la letra \"K\"), validado con un\nalgoritmo de módulo 11."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "SII - Circular No. 47 (2003), VAT rate increase to 19%",
+        "es": "SII - Circular N° 47 (2003), aumento de la tasa de IVA a 19%"
+      },
+      "url": "https://www.sii.cl/documentos/circulares/2003/circu47.htm"
+    },
+    {
+      "title": {
+        "en": "Ley sobre Impuesto a las Ventas y Servicios (D.L. 825)",
+        "es": "Ley sobre Impuesto a las Ventas y Servicios (D.L. 825)"
+      },
+      "url": "https://www.bcn.cl/leychile/navegar?idNorma=6369\u0026idParte=10549143\u0026idVersion=2025-08-01"
+    }
+  ],
+  "time_zone": "America/Santiago",
+  "country": "CL",
+  "currency": "CLP",
+  "tax_scheme": "VAT",
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ],
+      "reason_required": true
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "es": "IVA"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "es": "Impuesto al Valor Agregado"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate",
+            "es": "Tasa General"
+          },
+          "desc": {
+            "en": "Standard rate applied to most goods and services unless they are exempt.",
+            "es": "Tasa estándar aplicada a la mayoría de bienes y servicios a menos que estén exentos."
+          },
+          "values": [
+            {
+              "since": "2003-10-01",
+              "percent": "19.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Decree Law 825 - Law on Sales and Services Tax (Art. 14, standard rate)",
+            "es": "Decreto Ley 825 - Ley sobre Impuesto a las Ventas y Servicios (Art. 14, tasa general)"
+          },
+          "url": "https://www.sii.cl/normativa_legislacion/dl825.pdf"
+        }
+      ]
+    }
+  ]
+}
