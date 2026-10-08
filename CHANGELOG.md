@@ -378,6 +378,10 @@ Normalization has been rebuilt around the new `norm` package — the counterpart
 
 - `rules`: Anonymous embedded struct fields are now also checked from the parent.
 
+### Added
+
+- `uy`: New tax regime for Uruguay with IVA (22% standard, 10% reduced) and RUT validation.
+
 ## [v0.401.0] - 2026-04-17
 
 ### Changed
