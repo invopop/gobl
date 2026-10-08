@@ -38,6 +38,10 @@
           "title": "Switzerland"
         },
         {
+          "const": "CL",
+          "title": "Chile"
+        },
+        {
           "const": "CO",
           "title": "Colombia"
         },

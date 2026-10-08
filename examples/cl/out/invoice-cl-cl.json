@@ -1,0 +1,96 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "bc60f2e38c7315bc92e12c86fe7ad0d76606ee753d8f2e2b13f40b17c8c79d55"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "CL",
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "CL",
+		"code": "001",
+		"issue_date": "2026-01-15",
+		"currency": "CLP",
+		"supplier": {
+			"name": "Proveedor Ejemplo SpA",
+			"tax_id": {
+				"country": "CL",
+				"code": "760864285"
+			},
+			"addresses": [
+				{
+					"street": "Av. Libertador Bernardo O'Higgins 123",
+					"locality": "Santiago",
+					"region": "Metropolitana",
+					"country": "CL"
+				}
+			],
+			"emails": [
+				{
+					"addr": "facturacion@example.cl"
+				}
+			]
+		},
+		"customer": {
+			"name": "Cliente Ejemplo Ltda.",
+			"tax_id": {
+				"country": "CL",
+				"code": "125319092"
+			},
+			"emails": [
+				{
+					"addr": "compras@example.cl"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Servicios profesionales",
+					"price": "100000"
+				},
+				"sum": "100000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "19%"
+					}
+				],
+				"total": "100000"
+			}
+		],
+		"totals": {
+			"sum": "100000",
+			"total": "100000",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "100000",
+								"percent": "19%",
+								"amount": "19000"
+							}
+						],
+						"amount": "19000"
+					}
+				],
+				"sum": "19000"
+			},
+			"tax": "19000",
+			"total_with_tax": "119000",
+			"payable": "119000"
+		}
+	}
+}

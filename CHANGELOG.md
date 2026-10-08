@@ -222,6 +222,10 @@ This file is generated from the change files in the [changes](./changes) directo
 
 - `tax`: totals now reset the retained tax and category surcharge sums before recalculating, so repeated calculations over the same totals no longer accumulate stale amounts.
 
+### Added
+
+- `cl`: added the Chilean (CL) tax regime with IVA tax category and RUT tax identity validation.
+
 ## [v0.502.2] - 2026-07-06
 
 ### Changed

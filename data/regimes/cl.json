@@ -1,0 +1,119 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Chile",
+    "es": "Chile"
+  },
+  "description": {
+    "en": "Chile's tax system is administered by the Servicio de Impuestos Internos\n(SII). IVA (Impuesto al Valor Agregado), Chile's value-added tax,\napplies at the general rate defined in Decreto Ley 825.\n\nTaxpayers are identified by their RUT (Rol Unico Tributario), which\nincludes a modulo-11 check digit. This regime normalizes and validates\nRUT values when used as Chilean tax identities.\n\nElectronic tax documents (Documentos Tributarios Electronicos, DTE)\ninclude electronic invoices, credit notes, and debit notes. This regime\nprovides the core tax metadata and correction types needed by GOBL;\nDTE XML generation, SII transmission, folio authorization, CAF, and\nelectronic stamps are format-specific concerns left for a future addon."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "SII - Servicio de Impuestos Internos"
+      },
+      "url": "https://www.sii.cl/"
+    }
+  ],
+  "time_zone": "America/Santiago",
+  "country": "CL",
+  "currency": "CLP",
+  "tax_scheme": "VAT",
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "es": "IVA"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "es": "Impuesto al Valor Agregado"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "es": "Tasa General"
+          },
+          "values": [
+            {
+              "since": "2003-10-01",
+              "percent": "19%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "VAT law - Article 14"
+          },
+          "url": "https://www.bcn.cl/leychile/navegar?idNorma=6369"
+        }
+      ]
+    }
+  ]
+}
