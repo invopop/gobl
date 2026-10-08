@@ -1,0 +1,196 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Israel",
+    "he": "ישראל"
+  },
+  "description": {
+    "en": "Israel's value-added tax, known as Ma'am (מע\"מ), is administered by the Israel Tax Authority (ITA) under the VAT Law 5736-1975.\n\nThe general VAT rate is 18%, raised from 17% on 1 January 2025. A zero rate applies to exports, services provided to non-residents, supplies to the Eilat Free Trade Zone, and fresh fruits and vegetables. Certain financial services, residential real estate leases, educational and healthcare services, and non-profit organisations are exempt from VAT.\n\nBusinesses are classified into three categories based on annual turnover: Osek Murshe (Authorized Dealer) for businesses above NIS 120,000 that must register, charge VAT, and file bimonthly returns; Osek Patur (Exempt Dealer) for businesses below the threshold that cannot charge or recover VAT; and Osek Zair (Small Dealer), introduced in 2025 as a simplified alternative for sole operators below the threshold.\n\nVAT-registered businesses are identified by a 9-digit Mispar Osek Murshe. For sole proprietors, this is typically the same as the personal Mispar Zehut. For companies and other legal entities, it corresponds to the Corporations Authority registration number, where prefixes indicate entity type: 51 (companies), 58 (associations), among others.\n\nSince May 2024, B2B invoices above certain thresholds must be pre-cleared with the ITA via the SHAAM platform, which assigns an Allocation Number required for input VAT deduction. The threshold is being reduced in phases from NIS 25,000 to NIS 5,000 by June 2026. SHAAM integration is planned as a future GOBL addon.\n\nSimplified tax invoices are permitted when the recipient is not a registered dealer, per Section 46 of the VAT Law."
+  },
+  "time_zone": "Asia/Jerusalem",
+  "country": "IL",
+  "currency": "ILS",
+  "tax_scheme": "VAT",
+  "identities": [
+    {
+      "key": "il-personal-id",
+      "name": {
+        "en": "Personal ID",
+        "he": "מספר זהות"
+      },
+      "desc": {
+        "en": "Israeli national identity number (Mispar Zehut / Teudat Zehut), a 9-digit number validated with the Luhn algorithm. Used by sole proprietors who are not VAT-registered."
+      }
+    },
+    {
+      "key": "il-company-id",
+      "name": {
+        "en": "Corporation Number",
+        "he": "מספר תאגיד"
+      },
+      "desc": {
+        "en": "Corporation registration number issued by the Corporations Authority, a 9-digit number with a prefix indicating entity type."
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse Charge"
+          }
+        },
+        {
+          "tags": [
+            "simplified"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "simplified",
+            "text": "Simplified Tax Invoice"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "he": "מע\"מ"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "he": "מס ערך מוסף"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "he": "שיעור כללי"
+          },
+          "desc": {
+            "en": "Applies to most goods and services unless specified otherwise.",
+            "he": "חל על רוב הסחורות והשירותים אלא אם צוין אחרת."
+          },
+          "values": [
+            {
+              "since": "2025-01-01",
+              "percent": "18%"
+            },
+            {
+              "since": "2015-10-01",
+              "percent": "17%"
+            },
+            {
+              "since": "2013-06-02",
+              "percent": "18%"
+            },
+            {
+              "since": "2012-09-01",
+              "percent": "17%"
+            },
+            {
+              "since": "2010-01-01",
+              "percent": "16%"
+            },
+            {
+              "since": "2009-07-01",
+              "percent": "16.5%"
+            },
+            {
+              "since": "2006-07-01",
+              "percent": "15.5%"
+            },
+            {
+              "since": "2005-09-01",
+              "percent": "16.5%"
+            },
+            {
+              "since": "2004-03-01",
+              "percent": "17%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Israel Tax Authority - VAT Law 1975",
+            "he": "רשות המסים בישראל - חוק מס ערך מוסף תשל\"ו-1975"
+          },
+          "url": "https://www.gov.il/en/departments/israel_tax_authority"
+        }
+      ]
+    }
+  ]
+}

@@ -18,6 +18,10 @@ This file is generated from the change files in the [changes](./changes) directo
   so it can satisfy BR-23, which requires a unit code on every invoice line.
   Every unit GOBL defines now has an exact UNTDID equivalent.
 
+### Added
+
+- `il`: Israel tax regime with VAT (Ma'am) support, tax identity validation, org identity support, and invoice scenarios
+
 ### Changed
 
 - `addons/pl/favat`: **breaking**: the Polish KSeF FA_VAT (`pl-favat-v3`) addon moved to the standalone [`github.com/invopop/gobl.pl.ksef`](https://github.com/invopop/gobl.pl.ksef) module, alongside the KSeF converter that consumes it. Add a blank import (`_ "github.com/invopop/gobl.pl.ksef/addon"`) to keep using the `pl-favat-v3` addon key. The key itself is unchanged, and remains a valid `$addons` value through the approved external addon list.
