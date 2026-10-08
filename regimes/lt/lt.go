@@ -7,7 +7,9 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -16,6 +18,12 @@ const CountryCode = "LT"
 
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("lt", rules.GOBL.Add(CountryCode),
+		taxIdentityRules(),
+	)
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode), norm.For(func(tID *tax.Identity) { tax.NormalizeIdentity(tID) })),
+	)
 }
 
 // New instantiates a new Lithuania regime.
