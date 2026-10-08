@@ -43,7 +43,7 @@ var taxCategories = []*tax.CategoryDef{
 				// Source of the 12% reduced rate and the current scope of Art. 19, in force
 				// from 2026-01-01.
 				Title: i18n.NewString("e-TAR - Pridėtinės vertės mokesčio įstatymo Nr. IX-751 19 straipsnio pakeitimo įstatymas Nr. XV-287"),
-				URL:   "https://www.e-tar.lt/portal/fr/legalAct/14bbc1a04dd411f0b070ee7f1ceefc75",
+				URL:   "https://www.e-tar.lt/portal/lt/legalAct/14bbc1a04dd411f0b070ee7f1ceefc75",
 				At:    cal.NewDateTime(2026, 10, 8, 0, 0, 0),
 			},
 		},
