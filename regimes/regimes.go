@@ -5,6 +5,7 @@ package regimes
 import (
 	// Import all the regime definitions which will automatically
 	// add themselves to the tax regime register.
+	_ "github.com/invopop/gobl/regimes/ad"
 	_ "github.com/invopop/gobl/regimes/ae"
 	_ "github.com/invopop/gobl/regimes/ar"
 	_ "github.com/invopop/gobl/regimes/at"
@@ -37,4 +38,5 @@ import (
 	_ "github.com/invopop/gobl/regimes/sg"
 	_ "github.com/invopop/gobl/regimes/sk"
 	_ "github.com/invopop/gobl/regimes/us"
+
 )
