@@ -82,6 +82,10 @@
           "title": "India"
         },
         {
+          "const": "IS",
+          "title": "Iceland"
+        },
+        {
           "const": "IT",
           "title": "Italy"
         },
