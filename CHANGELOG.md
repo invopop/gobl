@@ -206,6 +206,7 @@ This file is generated from the change files in the [changes](./changes) directo
 
 ### Added
 
+- `regimes/cl`: new tax regime for Chile (CL), including RUT tax identity validation (modulo 11 check digit) and the single-rate IVA category.
 - `org`: new `Attribute` model with `Item.Attributes` for named item features such as color or size (EN 16931 BG-32). Attributes replace the previous practice of mapping `Item.Meta` into output formats — meta is internal-only data. Each attribute is identified by a `key` or `type` and holds exactly one of a `text`, `code`, `amount` (with optional `unit`), or `date` value. Standard keys cover physical properties of the item, dates, nutritional declarations, and CO2e emissions. Item attribute keys must be unique.
 - `org`: `kj` (kilojoule) and `kcal` (kilocalorie) units.
 - `net`: `Client.Who` fetches and verifies a domain's public identity from `GET /.well-known/gobl/who`, and `Client.VerifySender` additionally requires a countersignature from a trusted authority at a minimum scope. New `ErrNoContent` (HTTP 204: the account exists but publishes no identity details) and `ErrScopeInsufficient` sentinel errors.

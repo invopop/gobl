@@ -1,0 +1,141 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Chile",
+    "es": "Chile"
+  },
+  "description": {
+    "en": "Chile's tax system is administered by the Servicio de Impuestos\nInternos (SII). Businesses and individuals are identified by their\nRUT (Rol Único Tributario), a numeric code followed by a single\ncheck digit (0-9 or K) calculated with a modulo 11 algorithm.\n\nVAT (Impuesto al Valor Agregado, IVA) is a single, flat-rate tax\napplied uniformly to sales and services, with no reduced or\nintermediate rates.\n\nChile's electronic invoicing system (Documentos Tributarios\nElectrónicos, DTE) requires invoices to be digitally signed and\nsent to the SII for clearance before being delivered to the\ncustomer. That clearance flow — including certificate\nmanagement, CAF folio ranges, and the SII's SOAP/XML web\nservices — is a separate integration concern from the core tax\nrules modelled here, and is intentionally out of scope for this\nregime. It would be a natural candidate for a future GOBL addon\n(similar to how es/tbai or es/verifactu extend the Spanish\nregime), not part of the base regime itself.\n\nBoth credit notes and debit notes are supported for invoice\ncorrections, mirroring the SII's Nota de Crédito Electrónica and\nNota de Débito Electrónica document types."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "SII - What is the VAT rate?",
+        "es": "SII - ¿Cuál es la tasa del Impuesto al Valor Agregado (IVA)?"
+      },
+      "url": "https://www.sii.cl/preguntas_frecuentes/impuestos_mensuales/001_130_0572.htm"
+    }
+  ],
+  "time_zone": "America/Santiago",
+  "country": "CL",
+  "currency": "CLP",
+  "tax_scheme": "VAT",
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "es": "IVA"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "es": "Impuesto al Valor Agregado"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "es": "Tasa General"
+          },
+          "values": [
+            {
+              "since": "2003-10-01",
+              "percent": "19.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "SII - What is the VAT rate?",
+            "es": "SII - ¿Cuál es la tasa del Impuesto al Valor Agregado (IVA)?"
+          },
+          "url": "https://www.sii.cl/preguntas_frecuentes/impuestos_mensuales/001_130_0572.htm"
+        }
+      ]
+    }
+  ]
+}
