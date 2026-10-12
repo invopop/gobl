@@ -21,7 +21,7 @@ func taxIdentityRules() *rules.Set {
 	return rules.For(new(tax.Identity),
 		rules.When(tax.IdentityIn(CountryCode),
 			rules.Field("code",
-				rules.Assert("01", "tax id code must be a valid IRD number",
+				rules.Assert("01", "tax id code must be a valid TIN",
 					is.MatchesRegexp(tinRegexp)),
 			),
 		),
