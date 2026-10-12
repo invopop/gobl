@@ -39,8 +39,7 @@ func New() *tax.RegimeDef {
 				as part of a broader reform of the tax system. The broad based consumption
 				tax is applied to almost all goods and services that are imported, bought
 				and sold for use in The Bahamas. Three rates of VAT are applied which are
-				the standard rate of 10%, a reduced rate of 5% and a zero rate of 0%. Goods
-				exported to customers abroad are classified as exempt from VAT or zero rated.
+				the standard rate of 10%, a reduced rate of 5% and a zero rate of 0%.
 
 				Businesses are identified by their Tax Identification Number, a 9 digit
 				identifier.
