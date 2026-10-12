@@ -11,7 +11,7 @@ import (
 // Bahamas TIN is 9 digits
 var tinRegexp = regexp.MustCompile(`^[0-9]{9}$`)
 
-// normalizeTaxIdentity gets rid of occassional hyphens
+// normalizeTaxIdentity gets rid of occasional hyphens
 // in TINs.
 func normalizeTaxIdentity(tID *tax.Identity) {
 	tax.NormalizeIdentity(tID)
