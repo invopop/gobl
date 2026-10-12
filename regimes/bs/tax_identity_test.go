@@ -52,7 +52,7 @@ func TestTaxIdentityNormalization(t *testing.T) {
 	})
 
 	t.Run("normalizes identity", func(t *testing.T) {
-		tID := &tax.Identity{Country: "BS", Code: "490918501"}
+		tID := &tax.Identity{Country: "BS", Code: "490-918-501"}
 		norm.Normalize(tID)
 		assert.Equal(t, cbc.Code("490918501"), tID.Code)
 	})
