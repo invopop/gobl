@@ -24,32 +24,36 @@ func init() {
 	)
 }
 
-// New provides the tax regime definition for New Zealand.
+// New provides the tax regime definition for Bahamas.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
 		Country:   CountryCode,
-		Currency:  currency.NZD,
-		TaxScheme: tax.CategoryGST,
+		Currency:  currency.BSD,
+		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
 			i18n.EN: "Commonwealth of The Bahamas",
 		},
 		Description: i18n.String{
 			i18n.EN: here.Doc(`
-				New Zealand's Goods and Services Tax (GST) is a broad-based tax
-				applied to most goods and services supplied in New Zealand. It is
-				administered by Inland Revenue (IRD).
+				Value Added Tax (VAT) was introduced in The Bahamas in January 2015
+				as part of a broader reform of the tax system. The broad based consumption
+				tax is applied to almost all goods and services that are imported, bought
+				and sold for use in The Bahamas. Three rates of VAT are applied which is
+				the standard rate of 10%, a reduced rate of 5% and a zero rate of 0%. Goods
+				exported to customers abroad are classified as exempt from VAT or zero rated.
 
-				Businesses are identified by their IRD number, an 8 or 9 digit
-				identifier whose validity is confirmed with a weighted modulus-11 check.
+				Businesses are identified by their Tax Identification Number, a 9 digit
+				identifier.
 			`),
 		},
 		Sources: []*cbc.Source{
 			{
-				Title: i18n.String{
-					i18n.EN: "Inland Revenue - GST",
-					i18n.MI: "Te Tari Taake - GST",
-				},
-				URL: "https://www.ird.govt.nz/gst",
+				Title: i18n.NewString("PRIME MINISTER DAVIS’S CONTRIBUTION ON THE COMMONWEALTH OF THE BAHAMAS 2025/2026 MID-YEAR BUDGET STATEMENT"),
+				URL: "https://opm.gov.bs/prime-minister-daivs-contribution-2025-2026-mid-year-budget-statement/",
+			},
+			{
+				Title: i18n.NewString("ABOUT - VAT, Department of Inland Revenue"),
+				URL: "https://inlandrevenue.finance.gov.bs/value-added-tax/about-vat/",
 			},
 		},
 		TimeZone:   "Pacific/Auckland",
