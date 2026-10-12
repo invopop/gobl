@@ -56,7 +56,7 @@ func New() *tax.RegimeDef {
 				URL: "https://inlandrevenue.finance.gov.bs/value-added-tax/about-vat/",
 			},
 		},
-		TimeZone:   "Pacific/Auckland",
+		TimeZone:   "America/Nassau",
 		Categories: taxCategories(),
 	}
 }
