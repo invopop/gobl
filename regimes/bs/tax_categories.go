@@ -65,11 +65,11 @@ func taxCategories() []*tax.CategoryDef {
 			Sources: []*cbc.Source{
 				{
 					Title: i18n.NewString("PRIME MINISTER DAVIS’S CONTRIBUTION ON THE COMMONWEALTH OF THE BAHAMAS 2025/2026 MID-YEAR BUDGET STATEMENT"),
-					URL: "https://opm.gov.bs/prime-minister-daivs-contribution-2025-2026-mid-year-budget-statement/",
+					URL:   "https://opm.gov.bs/prime-minister-daivs-contribution-2025-2026-mid-year-budget-statement/",
 				},
 				{
 					Title: i18n.NewString("ABOUT - VAT, Department of Inland Revenue"),
-					URL: "https://inlandrevenue.finance.gov.bs/value-added-tax/about-vat/",
+					URL:   "https://inlandrevenue.finance.gov.bs/value-added-tax/about-vat/",
 				},
 			},
 		},
