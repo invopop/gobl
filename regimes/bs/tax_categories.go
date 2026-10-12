@@ -73,19 +73,19 @@ func taxCategories() []*tax.CategoryDef {
 				},
 				{
 					Title: i18n.NewString("VAT Guidance on Transitional Arrangements"),
-					URL: "https://inlandrevenue.finance.gov.bs/wp-content/uploads/2015/02/2015-11-01-Bahamas-VAT-Guidance_Transitional-Arrangements-Final-.pdf",
+					URL:   "https://inlandrevenue.finance.gov.bs/wp-content/uploads/2015/02/2015-11-01-Bahamas-VAT-Guidance_Transitional-Arrangements-Final-.pdf",
 				},
 				{
 					Title: i18n.NewString("OFFICIAL GAZETTE - THE BAHAMAS (published on 1st July 2018)"),
-					URL: "https://inlandrevenue.finance.gov.bs/wp-content/uploads/2022/02/ValueAddedTaxAmendmentAct2018.pdf",
+					URL:   "https://inlandrevenue.finance.gov.bs/wp-content/uploads/2022/02/ValueAddedTaxAmendmentAct2018.pdf",
 				},
 				{
 					Title: i18n.NewString("VAT GUIDANCE ON 2021 AMENDMENTS"),
-					URL: "https://inlandrevenue.finance.gov.bs/wp-content/uploads/2021/12/VAT-Guidance-2021-Amendments.pdf",
+					URL:   "https://inlandrevenue.finance.gov.bs/wp-content/uploads/2021/12/VAT-Guidance-2021-Amendments.pdf",
 				},
 				{
 					Title: i18n.NewString("VALUE ADDED TAX (AMENDMENT) BILL, 2025"),
-					URL: "https://laws.bahamas.gov.bs/cms/images/LEGISLATION/BILLS/2025/2025-0009/2025-0009.pdf",
+					URL:   "https://laws.bahamas.gov.bs/cms/images/LEGISLATION/BILLS/2025/2025-0009/2025-0009.pdf",
 				},
 			},
 		},
