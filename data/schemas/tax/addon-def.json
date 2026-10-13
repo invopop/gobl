@@ -16,17 +16,17 @@
           },
           "type": "array",
           "title": "Requires",
-          "description": "Requires defines any additional addons that this one depends on to operate\ncorrectly."
+          "description": "Additional addons that this one depends on to operate correctly."
         },
         "name": {
           "$ref": "https://gobl.org/draft-0/i18n/string",
           "title": "Name",
-          "description": "Name of the add-on"
+          "description": "Name of the add-on."
         },
         "description": {
           "$ref": "https://gobl.org/draft-0/i18n/string",
           "title": "Description",
-          "description": "Description of the add-on"
+          "description": "Description of the add-on."
         },
         "sources": {
           "items": {
@@ -34,7 +34,7 @@
           },
           "type": "array",
           "title": "Sources",
-          "description": "Sources is a list of sources that are used to provide the data for the add-on."
+          "description": "Sources of the data used to define the add-on."
         },
         "extensions": {
           "items": {
@@ -42,7 +42,7 @@
           },
           "type": "array",
           "title": "Extensions",
-          "description": "Extensions defines the list of extensions that are associated with an add-on."
+          "description": "Extensions associated with the add-on."
         },
         "tags": {
           "items": {
@@ -50,7 +50,7 @@
           },
           "type": "array",
           "title": "Tags",
-          "description": "Tags is slice of tag sets that define what can be assigned to each document schema."
+          "description": "Tag sets that define what can be assigned to each document schema."
         },
         "scenarios": {
           "items": {
@@ -58,7 +58,7 @@
           },
           "type": "array",
           "title": "Scenarios",
-          "description": "Scenarios are applied to documents after normalization and before\nvalidation to ensure that form specific extensions have been added\nto the document."
+          "description": "Applied to documents after normalization and before validation to ensure that\nformat specific extensions have been added."
         },
         "identities": {
           "items": {
@@ -74,12 +74,12 @@
           },
           "type": "array",
           "title": "Inboxes",
-          "description": "Inboxes is a list of keys that are used to identify where copies of\ndocuments can be sent."
+          "description": "Keys used to identify where copies of documents can be sent."
         },
         "corrections": {
           "$ref": "https://gobl.org/draft-0/tax/correction-set",
           "title": "Corrections",
-          "description": "Corrections is used to provide a map of correction definitions that\nare supported by the add-on."
+          "description": "Correction definitions supported by the add-on."
         }
       },
       "type": "object",

@@ -99,7 +99,7 @@
         "detail": {
           "type": "string",
           "title": "Detail",
-          "description": "Optional text description of the payment method"
+          "description": "Optional text description of the payment method."
         },
         "ref": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
@@ -130,7 +130,7 @@
           },
           "type": "array",
           "title": "Online",
-          "description": "Array of online payment options"
+          "description": "Online payment options."
         },
         "notes": {
           "type": "string",
@@ -140,7 +140,7 @@
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",
           "title": "Extensions",
-          "description": "Extension key-pairs values defined by a tax regime."
+          "description": "Extension key-value pairs defined by a tax regime."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",

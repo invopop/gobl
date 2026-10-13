@@ -6,7 +6,7 @@
     "pay.DirectDebit": {
       "properties": {
         "ref": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Mandate Reference",
           "description": "Unique identifier assigned by the payee for referencing the direct debit."
         },

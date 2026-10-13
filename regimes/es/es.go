@@ -11,7 +11,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// CountryCode is the ISO 3166-2 code for Spain.
+// CountryCode is the ISO 3166-1 alpha-2 code for Spain.
 const CountryCode = "ES"
 
 func init() {

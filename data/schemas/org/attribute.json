@@ -124,7 +124,7 @@
         "type": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Type",
-          "description": "Type defines a code used to identify the attribute when the \"key\"\nfield is empty, from a code list agreed upon between the supplier\nand customer."
+          "description": "Code used to identify the attribute when the \"key\" field is empty, from a code\nlist agreed upon between the supplier and customer."
         },
         "text": {
           "type": "string",

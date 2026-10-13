@@ -72,6 +72,7 @@ Conversion to local and international formats:
 
 Addons adapt GOBL documents to a specific format or regulatory regime, adding the extensions, normalization, and validation rules identified by a versioned key under `$addons` (e.g. `es-facturae-v3`). Most addons are bundled with this library in the [addons directory](https://github.com/invopop/gobl/tree/main/addons), but some live in their own Go modules and must be imported separately:
 
+- [gobl.ar.arca](https://github.com/invopop/gobl.ar.arca) - Argentina ARCA (`ar-arca-v4`)
 - [gobl.br.nfe](https://github.com/invopop/gobl.br.nfe) - Brazil NF-e (`br-nfe-v4`)
 - [gobl.br.nfse](https://github.com/invopop/gobl.br.nfse) - Brazil NFS-e (`br-nfse-v1`)
 - [gobl.fr.ctc](https://github.com/invopop/gobl.fr.ctc) - France CTC flows (`fr-ctc-flow2-v1`, `fr-ctc-flow6-v1`, `fr-ctc-flow10-v1`)

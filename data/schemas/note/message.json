@@ -14,7 +14,7 @@
         "title": {
           "type": "string",
           "title": "Title",
-          "description": "Summary of the message content"
+          "description": "Summary of the message content."
         },
         "content": {
           "type": "string",

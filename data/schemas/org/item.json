@@ -38,7 +38,7 @@
         "name": {
           "type": "string",
           "title": "Name",
-          "description": "Brief name of the item"
+          "description": "Brief name of the item."
         },
         "identities": {
           "items": {
@@ -54,7 +54,7 @@
           },
           "type": "array",
           "title": "Attributes",
-          "description": "Attributes describe named features or properties of the item, such as\ncolor or size."
+          "description": "Named features or properties of the item, such as color or size."
         },
         "description": {
           "type": "string",
@@ -85,7 +85,7 @@
           },
           "type": "array",
           "title": "Alternative Prices",
-          "description": "AltPrices defines a list of prices with their currencies that may be used\nas an alternative to the item's base price."
+          "description": "Prices in other currencies that may be used as an alternative to the item's base\nprice."
         },
         "unit": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
@@ -473,7 +473,7 @@
         "origin": {
           "$ref": "https://gobl.org/draft-0/l10n/iso-country-code",
           "title": "Country of Origin",
-          "description": "Country code of where this item was from originally."
+          "description": "Country code of where the item originates from."
         },
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",
@@ -483,7 +483,7 @@
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
           "title": "Meta",
-          "description": "Additional meta information that may be useful"
+          "description": "Additional semi-structured information that may be useful."
         }
       },
       "type": "object",

@@ -147,8 +147,9 @@ func (t *Terms) UNTDID4279() cbc.Code {
 }
 
 // CalculateDues goes through each DueDate. If it has a percentage
-// value set, it'll be used to calculate the amount. Due dates without
-// an amount or percentage are left untouched.
+// value set, it'll be used to calculate the amount, which is removed
+// when nothing remains to be paid. Due dates without an amount or
+// percentage are left untouched.
 func (t *Terms) CalculateDues(zero num.Amount, sum num.Amount) {
 	if t == nil {
 		return
@@ -158,6 +159,10 @@ func (t *Terms) CalculateDues(zero num.Amount, sum num.Amount) {
 			continue
 		}
 		if dd.Percent != nil && !dd.Percent.IsZero() {
+			if sum.IsZero() {
+				dd.Amount = nil
+				continue
+			}
 			a := dd.Percent.Of(sum)
 			dd.Amount = &a
 		}

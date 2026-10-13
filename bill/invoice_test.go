@@ -1096,6 +1096,47 @@ func TestInvertWithBypassTag(t *testing.T) {
 	assert.Contains(t, err.Error(), "bypass")
 }
 
+func TestCalculateWithInformativeCharge(t *testing.T) {
+	// An informative charge, such as a stamp duty the supplier absorbs,
+	// is calculated and kept on the document but never reaches the totals.
+	inv := baseInvoiceWithLines(t)
+	require.NoError(t, inv.Calculate())
+	total := inv.Totals.Total.String()
+	payable := inv.Totals.Payable.String()
+	taxTotal := inv.Totals.Tax.String()
+
+	inv.Charges = []*bill.Charge{
+		{
+			Key:         bill.ChargeKeyStampDuty,
+			Informative: true,
+			Amount:      num.MakeAmount(200, 2),
+		},
+	}
+	require.NoError(t, inv.Calculate())
+	require.NoError(t, rules.Validate(inv))
+
+	assert.Equal(t, 1, inv.Charges[0].Index)
+	assert.Equal(t, "2.00", inv.Charges[0].Amount.String())
+	assert.Nil(t, inv.Totals.Charge, "informative charges do not produce a charge total")
+	assert.Equal(t, total, inv.Totals.Total.String())
+	assert.Equal(t, taxTotal, inv.Totals.Tax.String())
+	assert.Equal(t, payable, inv.Totals.Payable.String())
+
+	// Mixed with a regular charge, only the regular one counts.
+	inv.Charges = append(inv.Charges, &bill.Charge{
+		Key:    bill.ChargeKeyDelivery,
+		Amount: num.MakeAmount(1000, 2),
+	})
+	require.NoError(t, inv.Calculate())
+	require.NotNil(t, inv.Totals.Charge)
+	assert.Equal(t, "10.00", inv.Totals.Charge.String())
+	assert.Equal(t, "2.00", inv.Charges[0].Amount.String())
+
+	data, err := json.Marshal(inv.Charges[0])
+	require.NoError(t, err)
+	assert.Contains(t, string(data), `"informative":true`)
+}
+
 func TestInvertWithTopLevelChargesAndDiscounts(t *testing.T) {
 	// Exercises the top-level Charges and Discounts inversion paths
 	// in Invoice.Invert which the other tests don't cover.
