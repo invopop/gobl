@@ -172,3 +172,24 @@ func TestIdentityNormalize(t *testing.T) {
 		assert.Equal(t, tID.Code.String(), "39356000000")
 	})
 }
+
+func TestIdentityCountryCase(t *testing.T) {
+	t.Run("lowercase country is uppercased before the regime runs", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "de",
+			Code:    "DE282741168",
+		}
+		tID.Normalize()
+		assert.Equal(t, "DE", tID.Country.String())
+		// Only the German regime's normalizer strips the country prefix.
+		assert.Equal(t, "282741168", tID.Code.String())
+		assert.NoError(t, rules.Validate(tID))
+	})
+	t.Run("unknown country is rejected", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "de",
+			Code:    "282741168",
+		}
+		assert.ErrorContains(t, rules.Validate(tID), "GOBL-L10N-TAXCOUNTRYCODE-01")
+	})
+}

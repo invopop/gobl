@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"slices"
 
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/jsonschema"
 )
 
@@ -54,6 +56,28 @@ func (c TaxCountryCode) Validate() error {
 		return nil
 	}
 	return fmt.Errorf("must be a valid tax country code")
+}
+
+func isoCountryCodeRules() *rules.Set {
+	return rules.For(ISOCountryCode(""),
+		rules.AssertIfPresent("01", "must be a valid ISO country code",
+			is.Func("valid ISO country code", func(val any) bool {
+				c, ok := val.(ISOCountryCode)
+				return ok && c.Validate() == nil
+			}),
+		),
+	)
+}
+
+func taxCountryCodeRules() *rules.Set {
+	return rules.For(TaxCountryCode(""),
+		rules.AssertIfPresent("01", "must be a valid tax country code",
+			is.Func("valid tax country code", func(val any) bool {
+				c, ok := val.(TaxCountryCode)
+				return ok && c.Validate() == nil
+			}),
+		),
+	)
 }
 
 // Empty returns true if the ISO country code is empty.

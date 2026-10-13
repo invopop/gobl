@@ -128,3 +128,24 @@ func TestAddressLineTwo(t *testing.T) {
 		assert.Equal(t, "Apt. 3", a.LineTwo())
 	})
 }
+
+func TestAddressCountryCase(t *testing.T) {
+	t.Run("lowercase country is uppercased", func(t *testing.T) {
+		a := &org.Address{
+			Street:   "Hauptstr. 1",
+			Locality: "Berlin",
+			Code:     "10115",
+			Country:  "de",
+		}
+		norm.Normalize(a)
+		assert.Equal(t, "DE", a.Country.String())
+		assert.NoError(t, rules.Validate(a))
+	})
+	t.Run("unknown country is rejected", func(t *testing.T) {
+		a := &org.Address{
+			Street:  "Hauptstr. 1",
+			Country: "de",
+		}
+		assert.ErrorContains(t, rules.Validate(a), "GOBL-L10N-ISOCOUNTRYCODE-01")
+	})
+}

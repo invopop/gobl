@@ -1,0 +1,38 @@
+{
+  "id": "GOBL-L10N",
+  "package": "l10n",
+  "subsets": [
+    {
+      "id": "GOBL-L10N-ISOCOUNTRYCODE",
+      "object": "l10n.ISOCountryCode",
+      "subsets": [
+        {
+          "guard": "present",
+          "assert": [
+            {
+              "id": "GOBL-L10N-ISOCOUNTRYCODE-01",
+              "desc": "must be a valid ISO country code",
+              "tests": "valid ISO country code"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-L10N-TAXCOUNTRYCODE",
+      "object": "l10n.TaxCountryCode",
+      "subsets": [
+        {
+          "guard": "present",
+          "assert": [
+            {
+              "id": "GOBL-L10N-TAXCOUNTRYCODE-01",
+              "desc": "must be a valid tax country code",
+              "tests": "valid tax country code"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
