@@ -16,7 +16,7 @@
           },
           "type": "array",
           "title": "List",
-          "description": "List of tags for the schema"
+          "description": "List of tags for the schema."
         }
       },
       "type": "object",

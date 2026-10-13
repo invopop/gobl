@@ -8,17 +8,17 @@
         "$schema": {
           "type": "string",
           "title": "JSON Schema ID",
-          "description": "Schema identifies the schema that should be used to understand this document"
+          "description": "Identifies the schema that should be used to understand this document."
         },
         "head": {
           "$ref": "https://gobl.org/draft-0/head/header",
           "title": "Header",
-          "description": "Details on what the contents are"
+          "description": "Details about the contents of the envelope."
         },
         "doc": {
           "$ref": "https://gobl.org/draft-0/schema/object",
           "title": "Document",
-          "description": "The data inside the envelope"
+          "description": "Document contained inside the envelope."
         },
         "sigs": {
           "items": {
@@ -26,7 +26,7 @@
           },
           "type": "array",
           "title": "Signatures",
-          "description": "JSON Web Signatures of the header"
+          "description": "JSON Web Signatures of the header."
         }
       },
       "type": "object",

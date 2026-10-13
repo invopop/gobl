@@ -30,7 +30,7 @@
           },
           "type": "array",
           "title": "Links",
-          "description": "Links provide URLs to other resources that are related to this envelope\nand unlike stamps can be added even in the draft state."
+          "description": "URLs to other resources related to this envelope. Unlike stamps, links can be\nadded even in the draft state."
         },
         "tags": {
           "items": {
@@ -48,17 +48,17 @@
         "notes": {
           "type": "string",
           "title": "Notes",
-          "description": "Any information that may be relevant to other humans about this envelope"
+          "description": "Any information that may be relevant to other humans about this envelope."
         },
         "from": {
           "$ref": "https://gobl.org/draft-0/cbc/uri",
           "title": "From",
-          "description": "From is the URI-form transport address of the envelope's issuer,\ne.g. \"gobl:invoices.example.com\" or\n\"iso6523-actorid-upis::9920:b123123123\"."
+          "description": "URI-form transport address of the envelope's issuer, e.g.\n\"gobl:invoices.example.com\" or \"iso6523-actorid-upis::9920:b123123123\"."
         },
         "to": {
           "$ref": "https://gobl.org/draft-0/cbc/uri",
           "title": "To",
-          "description": "To is the URI-form transport address of the envelope's intended\nreceiver."
+          "description": "URI-form transport address of the envelope's intended receiver."
         },
         "ignore": {
           "items": {
@@ -66,7 +66,7 @@
           },
           "type": "array",
           "title": "Ignore",
-          "description": "Ignore lists fully-qualified validation fault codes to suppress when\nvalidating this envelope, e.g. \"GOBL-EU-EN16931-ORG-ITEM-01\". Intended\nfor format-conversion cases where a specific, known fault is acceptable.\nCovered by the envelope signature when sealed. NOTE: any code may be\nlisted, including structural envelope/header codes — use deliberately."
+          "description": "Fully-qualified validation fault codes to suppress when validating this\nenvelope, e.g. \"GOBL-EU-EN16931-ORG-ITEM-01\". Intended for format-conversion\ncases where a specific, known fault is acceptable. Covered by the envelope\nsignature when sealed. Any code may be listed, including structural envelope\nand header codes, so use deliberately."
         }
       },
       "type": "object",

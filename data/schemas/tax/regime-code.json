@@ -30,6 +30,10 @@
           "title": "Brazil"
         },
         {
+          "const": "BS",
+          "title": "Commonwealth of The Bahamas"
+        },
+        {
           "const": "CA",
           "title": "Canada"
         },

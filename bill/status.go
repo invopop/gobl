@@ -432,42 +432,38 @@ type Status struct {
 	// Type of status being reported (e.g. "system" for internal events).
 	Type cbc.Key `json:"type" jsonschema:"title=Type"`
 
-	// IssueDate is the date when the status is to be considered effective.
+	// Date when the status is to be considered effective.
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date"`
 
-	// IssueTime is used when extra precision is required to determine when exactly
-	// the status was issued.
+	// Time of day when the status was issued, for when extra precision is required.
 	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time"`
 
-	// Series is an optional code to group related status events together.
+	// Optional code to group related status events together.
 	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
 
-	// Code provides a way to identify the specific status event being reported.
+	// Identifies the specific status event being reported.
 	Code cbc.Code `json:"code" jsonschema:"title=Code"`
 
-	// Ext provides additional structured data specific to the regime or addon.
+	// Additional structured data specific to the regime or addon.
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 
-	// Supplier represents the entity supplying the goods or services in the
-	// original transaction.
+	// Entity supplying the goods or services in the original transaction.
 	Supplier *org.Party `json:"supplier" jsonschema:"title=Supplier"`
 
-	// Customer is optional and describes the recipient of the original
-	// services.
+	// Optional recipient of the original goods or services.
 	Customer *org.Party `json:"customer,omitempty" jsonschema:"title=Customer"`
 
-	// Ordering provides links to related documents and additional details about
-	// which parties may be involved in the transaction.
+	// Links to related documents and additional details about which parties may be
+	// involved in the transaction.
 	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering"`
 
-	// Lines contain the main payload of the message used to describe individual
-	// documents which have a status.
+	// Main payload of the message, describing the status of individual documents.
 	Lines []*StatusLine `json:"lines" jsonschema:"title=Lines"`
 
 	// Notes for additional details about the event.
 	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
 
-	// Meta contains unstructured data useful for internal tools.
+	// Unstructured data useful for internal tools.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
@@ -477,32 +473,28 @@ type StatusLine struct {
 	// Position of the row inside the message, determined automatically.
 	Index int `json:"index" jsonschema:"title=Index"`
 
-	// Status Key indicates the situation of the document
+	// Indicates the situation of the referenced document.
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
 
-	// When this row should be considered effective
+	// When this row should be considered effective.
 	Date *cal.Date `json:"date,omitempty" jsonschema:"title=Date"`
 
-	// Document reference or details about the document that needs to be looked
-	// at.
+	// Reference to or details of the document this status applies to.
 	Doc *org.DocumentRef `json:"doc,omitempty" jsonschema:"title=Document"`
 
-	// Description includes a human readable description that explains the
-	// reason for the current status, if necessary.
+	// Human readable explanation of the reason for the current status, if necessary.
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
 
-	// Reasons define an array of reason objects that help the recipient
-	// determine why the status was provided.
+	// Reasons that help the recipient determine why the status was provided.
 	Reasons []*Reason `json:"reasons,omitempty" jsonschema:"title=Reasons"`
 
-	// Actions contains an array of actions that should be carried out by the
-	// recipient of the message. These are suggestions.
+	// Suggested actions to be carried out by the recipient of the message.
 	Actions []*Action `json:"actions,omitempty" jsonschema:"title=Actions"`
 
-	// Extensions for local or format focussed data
+	// Extensions for local or format specific data.
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 
-	// Complements contain regime/addon specific payload data.
+	// Regime or addon specific payload data.
 	Complements []*schema.Object `json:"complements,omitempty" jsonschema:"title=Complements"`
 
 	// Additional data specific for the source system.
@@ -511,31 +503,28 @@ type StatusLine struct {
 
 // Reason helps the recipient of a message determine why they are receiving it.
 type Reason struct {
-	// Key helps identify the reason.
+	// Identifies the type of reason.
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
 
-	// Description contains a simple text that describes the reason why the
-	// original document was not processed.
+	// Text describing why the original document was not processed.
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
 
-	// Faults provides more specific details about what cause the document
-	// to be rejected.
+	// More specific details about what caused the document to be rejected.
 	Faults []*Fault `json:"faults,omitempty" jsonschema:"title=Faults"`
 
-	// Extensions for local or format focussed data
+	// Extensions for local or format specific data.
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
 // Action provides a suggestion about what to do next with the document.
 type Action struct {
-	// Key helps determine what to do next.
+	// Identifies the type of action being suggested.
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
 
-	// Description includes human readable details about what steps should be
-	// taken next.
+	// Human readable details about what steps should be taken next.
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
 
-	// Extensions for local or format focussed data
+	// Extensions for local or format specific data.
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
@@ -548,11 +537,11 @@ type Fault struct {
 	// wrong with the document.
 	Code cbc.Code `json:"code" jsonschema:"title=Code"`
 
-	// Message contains human readable details about the specific condition.
+	// Human readable details about the specific condition.
 	Message string `json:"message,omitempty" jsonschema:"title=Message"`
 
-	// Paths contains an array of JSON paths that maps the GOBL specific error
-	// to a field inside the envelope that the condition is applied to.
+	// JSON paths that map the GOBL specific error to the fields inside the envelope
+	// that the condition applies to.
 	Paths []string `json:"paths,omitempty" jsonschema:"title=Paths"`
 }
 

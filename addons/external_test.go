@@ -67,6 +67,12 @@ func TestApprovedAddons(t *testing.T) {
 				"it-sdi-v1": "github.com/invopop/gobl.it.sdi",
 			},
 		},
+		{
+			name: "AR ARCA",
+			modules: map[cbc.Key]string{
+				"ar-arca-v4": "github.com/invopop/gobl.ar.arca",
+			},
+		},
 	}
 
 	for _, group := range groups {

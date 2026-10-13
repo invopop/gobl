@@ -23,12 +23,12 @@
         "desc": {
           "$ref": "https://gobl.org/draft-0/i18n/string",
           "title": "Description",
-          "description": "Description offering more details about when the key should be used."
+          "description": "More details about when the key should be used."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
           "title": "Meta",
-          "description": "Meta defines any additional details that may be useful or associated\nwith the key."
+          "description": "Any additional details associated with the key."
         },
         "sources": {
           "items": {
@@ -44,17 +44,17 @@
           },
           "type": "array",
           "title": "Values",
-          "description": "Values defines the possible values associated with the key, which themselves will\neither be keys or codes depending on the context."
+          "description": "Possible values associated with the key, which are themselves either keys or codes\ndepending on the context."
         },
         "pattern": {
           "type": "string",
           "title": "Pattern",
-          "description": "Pattern is used to validate the key value instead of using a fixed value\nfrom the code or key definitions."
+          "description": "Regular expression used to validate the value instead of a fixed value from the\ncode or key definitions."
         },
         "map": {
           "$ref": "https://gobl.org/draft-0/cbc/code-map",
           "title": "Code Map",
-          "description": "Map helps map local keys to specific codes, useful for converting the\ndescribed key into a local code."
+          "description": "Maps local keys to specific codes, useful for converting the described key into a\nlocal code."
         }
       },
       "type": "object",

@@ -14,7 +14,7 @@ type Email struct {
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
 	// Electronic mailing address.
 	Address string `json:"addr" jsonschema:"title=Address"`
-	// Additional fields.
+	// Additional semi-structured information.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 

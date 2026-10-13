@@ -18,13 +18,13 @@ const (
 // can be used by addons or tax regimes. This structure is useful for serializing the
 // data into JSON for use in external libraries.
 type CatalogueDef struct {
-	// Key defines a unique identifier for the catalogue.
+	// Unique identifier for the catalogue.
 	Key cbc.Key `json:"key"`
-	// Name is the name of the catalogue.
+	// Name of the catalogue.
 	Name i18n.String `json:"name"`
-	// Description is a human readable description of the catalogue.
+	// Human readable description of the catalogue.
 	Description i18n.String `json:"description,omitempty"`
-	// Extensions defines all the extensions offered by the catalogue.
+	// All the extensions offered by the catalogue.
 	Extensions []*cbc.Definition `json:"extensions"`
 }
 

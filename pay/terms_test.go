@@ -183,6 +183,16 @@ func TestTermsCalculateDues(t *testing.T) {
 	}
 	terms.CalculateDues(zero, sum)
 	assert.Nil(t, terms.DueDates[0].Amount, "should leave unset amounts unset")
+
+	terms.DueDates = []*pay.DueDate{
+		{
+			Date:    cal.NewDate(2021, 11, 10),
+			Percent: num.NewPercentage(100, 2),
+			Amount:  num.NewAmount(100, 2),
+		},
+	}
+	terms.CalculateDues(zero, zero)
+	assert.Nil(t, terms.DueDates[0].Amount, "should remove percent amounts when nothing is due")
 }
 
 func TestTermsJSONSchemaExtend(t *testing.T) {

@@ -36,12 +36,11 @@ type Item struct {
 	Ref cbc.Code `json:"ref,omitempty" jsonschema:"title=Ref"`
 	// Special key used to classify the item sometimes required by some regimes.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
-	// Brief name of the item
+	// Brief name of the item.
 	Name string `json:"name" jsonschema:"title=Name"`
 	// List of additional codes, IDs, or SKUs which can be used to identify the item. They should be agreed upon between supplier and customer.
 	Identities []*Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
-	// Attributes describe named features or properties of the item, such as
-	// color or size.
+	// Named features or properties of the item, such as color or size.
 	Attributes []*Attribute `json:"attributes,omitempty" jsonschema:"title=Attributes"`
 	// Detailed description of the item.
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
@@ -57,8 +56,8 @@ type Item struct {
 	// Price after any price discount, for a single unit or the number of units
 	// defined by per. Must be either zero or positive.
 	Price *num.Amount `json:"price,omitempty" jsonschema:"title=Price"`
-	// AltPrices defines a list of prices with their currencies that may be used
-	// as an alternative to the item's price.
+	// Prices in other currencies that may be used as an alternative to the item's
+	// price.
 	AltPrices []*currency.Amount `json:"alt_prices,omitempty" jsonschema:"title=Alternative Prices"`
 	// Number of units the prices apply to, e.g. 100 for a price per 100 kg.
 	// Assumed to be 1 when empty.
@@ -66,11 +65,11 @@ type Item struct {
 	// Unit of measure using a GOBL key. Standard UN/ECE codes may be preserved
 	// in the untdid-unit extension.
 	Unit cbc.Key `json:"unit,omitempty" jsonschema:"title=Unit"`
-	// Country code of where this item was from originally.
+	// Country code of where the item originates from.
 	Origin l10n.ISOCountryCode `json:"origin,omitempty" jsonschema:"title=Country of Origin"`
 	// Extension code map for any additional regime specific codes that may be required.
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
-	// Additional meta information that may be useful
+	// Additional semi-structured information that may be useful.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 

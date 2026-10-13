@@ -19,7 +19,7 @@
         "label": {
           "type": "string",
           "title": "Label",
-          "description": "Label can be used to provide a custom label for the party in a given\ncontext in a single language, for example \"Supplier\", \"Host\", or similar.",
+          "description": "Custom label for the party in a given context in a single language, for example\n\"Supplier\", \"Host\", or similar.",
           "examples": [
             "Supplier"
           ]
@@ -37,12 +37,12 @@
         "agent": {
           "$ref": "https://gobl.org/draft-0/org/party",
           "title": "Agent",
-          "description": "Agent is a party that acts on behalf of this party. An agent cannot itself have an agent."
+          "description": "Party that acts on behalf of this party. An agent cannot itself have an agent."
         },
         "tax_id": {
           "$ref": "https://gobl.org/draft-0/tax/identity",
           "title": "Tax Identity",
-          "description": "The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax purposes."
+          "description": "Legal identity code used for tax purposes. Other identification numbers belong in\nthe identities list."
         },
         "identities": {
           "items": {
@@ -74,7 +74,7 @@
           },
           "type": "array",
           "title": "Inboxes",
-          "description": "Digital inboxes used for forwarding electronic versions of documents"
+          "description": "Digital inboxes used for forwarding electronic versions of documents."
         },
         "addresses": {
           "items": {
@@ -82,7 +82,7 @@
           },
           "type": "array",
           "title": "Postal Addresses",
-          "description": "Regular post addresses for where information should be sent if needed."
+          "description": "Postal addresses where information should be sent if needed."
         },
         "emails": {
           "items": {
@@ -90,7 +90,7 @@
           },
           "type": "array",
           "title": "Email Addresses",
-          "description": "Electronic mail addresses"
+          "description": "Electronic mail addresses."
         },
         "websites": {
           "items": {
@@ -106,7 +106,7 @@
           },
           "type": "array",
           "title": "Telephone Numbers",
-          "description": "Regular telephone numbers"
+          "description": "Regular telephone numbers."
         },
         "registration": {
           "$ref": "https://gobl.org/draft-0/org/registration",

@@ -16,16 +16,17 @@ type Party struct {
 	tax.Regime
 	uuid.Identify
 
-	// Label can be used to provide a custom label for the party in a given
-	// context in a single language, for example "Supplier", "Host", or similar.
+	// Custom label for the party in a given context in a single language, for example
+	// "Supplier", "Host", or similar.
 	Label string `json:"label,omitempty" jsonschema:"title=Label,example=Supplier"`
 	// Legal name or representation of the organization.
 	Name string `json:"name,omitempty" jsonschema:"title=Name"`
 	// Alternate short name.
 	Alias string `json:"alias,omitempty" jsonschema:"title=Alias"`
-	// Agent is a party that acts on behalf of this party. An agent cannot itself have an agent.
+	// Party that acts on behalf of this party. An agent cannot itself have an agent.
 	Agent *Party `json:"agent,omitempty" jsonschema:"title=Agent"`
-	// The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax purposes.
+	// Legal identity code used for tax purposes. Other identification numbers belong in
+	// the identities list.
 	TaxID *tax.Identity `json:"tax_id,omitempty" jsonschema:"title=Tax Identity"`
 	// Set of codes used to identify the party in other systems.
 	Identities []*Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
@@ -33,15 +34,15 @@ type Party struct {
 	People []*Person `json:"people,omitempty" jsonschema:"title=People"`
 	// Endpoints to which electronic documents may be sent, identified by URI.
 	Endpoints []*Endpoint `json:"endpoints,omitempty" jsonschema:"title=Endpoints"`
-	// Digital inboxes used for forwarding electronic versions of documents
+	// Digital inboxes used for forwarding electronic versions of documents.
 	Inboxes []*Inbox `json:"inboxes,omitempty" jsonschema:"title=Inboxes"`
-	// Regular post addresses for where information should be sent if needed.
+	// Postal addresses where information should be sent if needed.
 	Addresses []*Address `json:"addresses,omitempty" jsonschema:"title=Postal Addresses"`
-	// Electronic mail addresses
+	// Electronic mail addresses.
 	Emails []*Email `json:"emails,omitempty" jsonschema:"title=Email Addresses"`
 	// Public websites that provide further information about the party.
 	Websites []*Website `json:"websites,omitempty" jsonschema:"title=Websites"`
-	// Regular telephone numbers
+	// Regular telephone numbers.
 	Telephones []*Telephone `json:"telephones,omitempty" jsonschema:"title=Telephone Numbers"`
 	// Additional registration details about the company that may need to be included in a document.
 	Registration *Registration `json:"registration,omitempty" jsonschema:"title=Registration"`

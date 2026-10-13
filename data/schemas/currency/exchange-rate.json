@@ -18,12 +18,12 @@
         "at": {
           "$ref": "https://gobl.org/draft-0/cal/date-time",
           "title": "At",
-          "description": "At represents the effective date and time at which the exchange rate\nis determined by the source. The time may be zero if referring to a\nspecific day only."
+          "description": "Effective date and time at which the exchange rate was determined by the source.\nThe time may be zero if referring to a specific day only."
         },
         "source": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Source",
-          "description": "Source key provides a reference to the source the exchange rate was\nobtained from. Typically this will be determined by an application\nused to update exchange rates automatically."
+          "description": "Key identifying the source the exchange rate was obtained from. Typically set by\nan application that updates exchange rates automatically."
         },
         "amount": {
           "$ref": "https://gobl.org/draft-0/num/amount",

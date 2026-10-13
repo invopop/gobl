@@ -12,17 +12,17 @@ import (
 // https://www.w3.org/International/questions/qa-personal-names
 type Name struct {
 	uuid.Identify
-	// What the person would like to be called
+	// What the person would like to be called.
 	Alias string `json:"alias,omitempty" jsonschema:"title=Alias"`
 	// Additional prefix to add to name, like Mrs. or Mr.
 	Prefix string `json:"prefix,omitempty" jsonschema:"title=Prefix"`
-	// Person's given or first name
+	// Person's given or first name.
 	Given string `json:"given,omitempty" jsonschema:"title=Given"`
-	// Middle names or initials
+	// Middle names or initials.
 	Middle string `json:"middle,omitempty" jsonschema:"title=Middle"`
 	// Second or Family name.
 	Surname string `json:"surname,omitempty" jsonschema:"title=Surname"`
-	// Additional second of family name.
+	// Additional second or family name, used in some countries.
 	Surname2 string `json:"surname2,omitempty" jsonschema:"title=Second Surname"`
 	// Titles to include after the name.
 	Suffix string `json:"suffix,omitempty" jsonschema:"title=Suffix"`

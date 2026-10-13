@@ -21,12 +21,12 @@ type Combo struct {
 	Category cbc.Code `json:"cat" jsonschema:"title=Category"`
 	// Country code override when issuing with taxes applied from different countries.
 	Country l10n.TaxCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
-	// Key helps determine the tax situation within the category.
+	// Determines the tax situation within the category.
 	Key cbc.Key `json:"key,omitempty"`
 	// Rate within a category and for a given key to apply.
 	Rate cbc.Key `json:"rate,omitempty" jsonschema:"title=Rate"`
-	// Percent defines the percentage set manually or determined from the
-	// key. A nil percent implies that this tax combo is either exempt or not-subject.
+	// Percentage set manually or determined from the rate or key. A nil percent implies
+	// that the tax combo is either exempt or not subject.
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent" jsonschema_extras:"calculated=true"`
 	// Some countries require an additional surcharge (may be determined if key present).
 	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge" jsonschema_extras:"calculated=true"`

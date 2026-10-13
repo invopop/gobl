@@ -23,16 +23,16 @@ type Tax struct {
 	// the rounding model used.
 	Rounding cbc.Key `json:"rounding,omitempty" jsonschema:"title=Rounding Model"`
 
-	// Point is a code that identifies the event which triggers the tax liability,
-	// such as invoice issuance, delivery of goods, or receipt of payment.
+	// Code that identifies the event which triggers the tax liability, such as invoice
+	// issuance, delivery of goods, or receipt of payment.
 	Point cbc.Key `json:"point,omitempty" jsonschema:"title=Point"`
 
 	// Additional extensions that are applied to the invoice as a whole as opposed to specific
 	// sections.
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 
-	// Notes contains tax-related notes, typically used for exemption reasons
-	// or other tax-specific explanations associated with particular tax categories.
+	// Tax-related notes, typically used for exemption reasons or other tax-specific
+	// explanations associated with particular tax categories.
 	Notes []*tax.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
 
 	// Any additional data that may be required for processing, but should never

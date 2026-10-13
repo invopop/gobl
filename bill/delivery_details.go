@@ -11,8 +11,7 @@ import (
 type DeliveryDetails struct {
 	// The party who will receive delivery of the goods defined in the invoice and is not responsible for taxes.
 	Receiver *org.Party `json:"receiver,omitempty" jsonschema:"title=Receiver"`
-	// Identities is used to define specific codes or IDs that may be used to
-	// identify the delivery.
+	// Specific codes or IDs that may be used to identify the delivery.
 	Identities []*org.Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
 	// When the goods should be expected.
 	Date *cal.Date `json:"date,omitempty" jsonschema:"title=Date"`
