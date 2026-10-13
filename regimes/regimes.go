@@ -11,6 +11,7 @@ import (
 	_ "github.com/invopop/gobl/regimes/au"
 	_ "github.com/invopop/gobl/regimes/be"
 	_ "github.com/invopop/gobl/regimes/br"
+	_ "github.com/invopop/gobl/regimes/bs"
 	_ "github.com/invopop/gobl/regimes/ca"
 	_ "github.com/invopop/gobl/regimes/ch"
 	_ "github.com/invopop/gobl/regimes/co"
