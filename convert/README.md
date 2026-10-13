@@ -166,8 +166,8 @@ and new converters should not rely on it.
 
 ## Regional variants
 
-Most specifications narrow a more general one: Peppol BIS Billing is an EN 16931
-CIUS, and the French CIUS builds on Peppol. The recommended structure is a base
+Most specifications narrow a more general one: Peppol BIS Billing and the
+French CTC CIUS are both EN 16931 CIUSs. The recommended structure is a base
 import and export in the syntax package, with no behavior specific to a format,
 and functions for each format that adjust the documents they produce. The syntax
 package registers the formats that apply in any country. Packages that implement
@@ -190,11 +190,11 @@ For example:
 
 - `ubl+en16931-v2017`, `cii+en16931-v2017`
 - `ubl+peppol+bis-v3`, `cii+peppol+bis-v3`
-- `ubl+peppol+fr-cius-v1`, `ubl+peppol+fr-extended-v1`, `cii+peppol+fr-cius-v1`
+- `ubl+fr-ctc-cius-v1`, `ubl+fr-ctc-extended-v1`, `cii+fr-ctc-cius-v1`
 - `ubl+de-xrechnung-v3`, `cii+de-xrechnung-v3`
 - `cii+fr-facturx-v1`, `cii+fr-facturx-v1+basic`, `cii+de-zugferd-v2+extended`
 - `ubl+sa-zatca-v1`
-- `cdar+peppol+fr-cdv-v1`
+- `cdar+fr-ctc-cdv-v1`, `cdar+fr-ctc-cdv-v1+ppf`
 
 ### Syntax
 
@@ -214,11 +214,16 @@ Each layer names a specification that narrows the one before it:
 - **Regional layers** use the key of the GOBL addon that implements the
   specification, with its major version, such as `de-xrechnung-v3` or
   `sa-zatca-v1`. When there is no addon, or one addon covers several
-  specifications, use a key in the same style: a country code, the short name
-  of the specification, and its major version, such as `fr-cius-v1`.
+  specifications, use a key in the same style: the addon family, the short
+  name of the specification, and its major version, such as `fr-ctc-cius-v1`.
+  A specification exchanged over a network but not built on one of its
+  specifications has no network layer: `ubl+fr-ctc-cius-v1`, not
+  `ubl+peppol+fr-ctc-cius-v1`.
 
 A specification with several profiles, each declared with its own identifier,
-adds the profile as a final layer, such as `+basic` or `+extended`.
+adds the profile as a final layer, such as `+basic` or `+extended`, as does a
+variant the sender chooses, such as `cdar+fr-ctc-cdv-v1+ppf` for copies sent
+to the French PPF.
 
 Only add a layer for the specification a document declares. A layer may be
 left out when the specification it would name adds nothing to tell documents
