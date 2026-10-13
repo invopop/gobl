@@ -185,7 +185,7 @@ func TestIdentityCountryCase(t *testing.T) {
 		assert.Equal(t, "282741168", tID.Code.String())
 		assert.NoError(t, rules.Validate(tID))
 	})
-	t.Run("unknown country is rejected", func(t *testing.T) {
+	t.Run("unnormalized lowercase country is rejected", func(t *testing.T) {
 		tID := &tax.Identity{
 			Country: "de",
 			Code:    "282741168",
