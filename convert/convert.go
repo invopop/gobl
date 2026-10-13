@@ -8,7 +8,7 @@
 //	import _ "github.com/invopop/gobl.ubl"
 //
 //	env, err := convert.Import(data)
-//	out, err := convert.Export(env, "ubl+peppol", "ubl+en16931")
+//	out, err := convert.Export(env, "ubl+peppol+bis-v3", "ubl+en16931-v2017")
 package convert
 
 import (
@@ -49,7 +49,7 @@ var (
 // and/or export: a syntax together with the specification its documents
 // follow, e.g. UBL following Peppol BIS Billing.
 type Format struct {
-	// Key uniquely identifies the format, e.g. "ubl+peppol".
+	// Key uniquely identifies the format, e.g. "ubl+peppol+bis-v3".
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
 	// Name of the format.
 	Name i18n.String `json:"name" jsonschema:"title=Name"`

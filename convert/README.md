@@ -13,7 +13,7 @@ import (
 )
 
 env, err := convert.Import(data)
-out, err := convert.Export(env, "ubl+peppol", "ubl+en16931")
+out, err := convert.Export(env, "ubl+peppol+bis-v3", "ubl+en16931-v2017")
 ```
 
 ## Concepts
@@ -85,8 +85,8 @@ A converter implements the `Converter` interface and registers itself once:
 package ubl
 
 var formatPeppol = &convert.Format{
-	Key:    "ubl+peppol",
-	Name:   i18n.NewString("UBL Peppol BIS Billing 3"),
+	Key:    "ubl+peppol+bis-v3",
+	Name:   i18n.NewString("UBL Peppol BIS 3"),
 	MIME:   "application/xml",
 	Syntax: "ubl",
 	Addons: []cbc.Key{en16931.V2017},
@@ -188,8 +188,8 @@ on, from the most general to the most specific:
 
 For example:
 
-- `ubl+en16931`
-- `ubl+peppol`, `ubl+peppol+self-billing`, `ubl+peppol+invoice-response`
+- `ubl+en16931-v2017`, `cii+en16931-v2017`
+- `ubl+peppol+bis-v3`, `cii+peppol+bis-v3`
 - `ubl+peppol+fr-cius-v1`, `ubl+peppol+fr-extended-v1`, `cii+peppol+fr-cius-v1`
 - `ubl+de-xrechnung-v3`, `cii+de-xrechnung-v3`
 - `cii+fr-facturx-v1`, `cii+fr-facturx-v1+basic`, `cii+de-zugferd-v2+extended`
@@ -206,8 +206,11 @@ formats of a syntax can be found with `key.HasPrefix`.
 
 Each layer names a specification that narrows the one before it:
 
-- **Base and network layers** that apply in any country, such as `en16931`,
-  `peppol`, or `self-billing`, have no version.
+- **Network layers**, such as `peppol`, name where documents are exchanged
+  and have no version.
+- **Specification layers** that apply in any country carry their version,
+  such as `en16931-v2017` or `bis-v3`, so a new edition can be added
+  alongside, as `en16931-v2026` would be.
 - **Regional layers** use the key of the GOBL addon that implements the
   specification, with its major version, such as `de-xrechnung-v3` or
   `sa-zatca-v1`. When there is no addon, or one addon covers several
@@ -220,7 +223,7 @@ adds the profile as a final layer, such as `+basic` or `+extended`.
 Only add a layer for the specification a document declares. A layer may be
 left out when the specification it would name adds nothing to tell documents
 apart, as with `ubl+de-xrechnung-v3`, which is not written as
-`ubl+en16931+de-xrechnung-v3`.
+`ubl+en16931-v2017+de-xrechnung-v3`.
 
 The key describes where the specification comes from. It does not define the
 conversion: each format lists the behavior it applies itself.
@@ -231,9 +234,15 @@ FacturaE or CFDI, use the addon key alone, such as `es-facturae-v3` or
 
 ### Guidelines
 
-- Create **one format per specification identifier**, such as the UBL
-  `CustomizationID` or the CII guideline ID, rather than one per document type.
-  List the document types the format supports in `Import` and `Export`.
+- Create **one format per choice the sender makes**. When the GOBL document
+  decides which specification identifier to write, such as the UBL
+  `CustomizationID` of Peppol BIS Billing, Self-Billing, or Invoice Response,
+  use one format and pick the identifier from the document. When the sender
+  has to choose, as between EN 16931 and Peppol, or between the BASIC and
+  EXTENDED profiles of Factur-X, use one format each.
+- List the document types the format supports in `Import` and `Export`. When
+  the format's `Addons` only apply to some of them, list the addons they all
+  need, and check the others in `Accepts`.
 - Include only the **major version**. Minor versions of a specification are
   handled inside the converter, and should not change the key users store.
 - Use American spelling and the official short name of the specification,
