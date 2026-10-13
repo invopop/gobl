@@ -8,13 +8,14 @@
 
 GOBL Net is a decentralized discovery and delivery protocol for signed GOBL
 documents. A participant is identified by a fully qualified domain name
-(FQDN). HTTPS binds that address to three well-known resources:
+(FQDN). HTTPS binds that address to these well-known resources:
 
 | Resource | Purpose |
 |---|---|
 | `/.well-known/gobl/keys/<kid>` | Publish one verification key. |
 | `/.well-known/gobl/who` | Publish a signed `org.Party` identity. |
 | `/.well-known/gobl/inbox` | Accept signed GOBL envelopes. |
+| `/.well-known/gobl/verification` | Serve a subject the endorsement a verifier issued about it. Verifiers only. |
 
 A signature names its issuer in the signed `iss` claim. A verifier obtains the
 key from the issuer's domain and relies on Web PKI to authenticate the HTTPS
@@ -42,7 +43,7 @@ described in BCP 14 (RFC 2119 and RFC 8174).
 | **Receiver** | The participant operating the inbox to which a document is delivered. For ordinary deliveries, the receiver is also the signature's audience. |
 | **Requester** | The issuer of an HTTP request token. A requester may be an intermediary and need not be the document sender. |
 | **Authority** | A trusted participant that confirms the subject controls its GOBL Net address and countersigns its party envelope. |
-| **Verifier** | A participant, independent of the Authority, that performs KYC/KYB and countersigns the subject's party envelope. |
+| **Verifier** | A participant, independent of the Authority, that establishes who is behind an address and countersigns the subject's party envelope. What it checks, and how, is its own to define and publish; see §7.1. |
 | **Endorsement** | A valid Authority countersignature, optionally supported by a confirmed Verifier countersignature. |
 | **Party envelope** | A signed GOBL envelope containing an `org.Party`. It identifies its Subject and may carry Authority and Verifier countersignatures. |
 
@@ -208,6 +209,43 @@ Authority endorsement is a sender policy, not a prerequisite for receiving.
 A receive-only address may publish only an inbox and keys, and may return `204`
 from `/who`.
 
+### 7.1 The verification exchange
+
+A verifier establishes who is behind an address and countersigns the subject's
+party envelope to say so. The exchange is **subject-mediated**: the subject
+carries its own endorsement to the authority.
+
+1. The subject delivers its registered party envelope — already carrying the
+   authority's countersignature — to the verifier's inbox.
+2. The verifier performs its checks, by whatever means and over whatever
+   period it needs.
+3. On success the verifier countersigns **that exact envelope**, unchanged in
+   `uuid` and digest, with `iss` equal to its own address, `aud` equal to the
+   subject, and an `exp`. It does not set a `verifier` claim: that pointer is
+   the authority's to write.
+4. The subject collects the countersigned envelope from the verifier's
+   `/.well-known/gobl/verification` and submits it to the authority as an
+   ordinary re-registration.
+5. The authority recognises a countersignature from an address on its trusted
+   list, re-countersigns naming it in the `verifier` claim, and delivers the
+   result to the subject, which publishes it at `/who`.
+
+A verifier MAY also POST the countersigned envelope to the subject's own
+inbox, so the subject learns without waiting to poll. That delivery is an
+optimisation and MUST NOT be relied upon: the endorsement is collectable
+regardless, and a verifier that never pushes is conforming.
+
+The subject cannot subvert this by carrying the envelope. The countersignature
+covers the digest, so altering anything invalidates it, and the authority
+verifies it against the verifier's published key. Withholding is the subject's
+right — it is their identity.
+
+Because the authority looks only at the signatures an envelope carries, and
+not at who delivered it, this exchange requires nothing of an authority beyond
+what §7 already specifies. It does mean a verifier needs no outbound delivery
+to conform: a keypair, published keys, an inbox and this one endpoint are the
+whole obligation.
+
 ## 8. Endpoints
 
 ### 8.1 `GET /.well-known/gobl/keys/<kid>`
@@ -262,6 +300,32 @@ changing the request.
 
 `Client.Send` serializes the envelope, adds a fresh request token when the
 client has an identity, and succeeds only on `202`.
+
+### 8.4 `GET /.well-known/gobl/verification`
+
+Served by verifiers only. It requires a valid request token, and returns the
+endorsement the verifier has issued **about the requester**: the address in
+the token's `iss` is the subject whose result is served, so a participant can
+only ever collect its own.
+
+| Status | Meaning |
+|---|---|
+| `200` | Endorsed. The body is the countersigned party envelope. |
+| `204` | Nothing to collect: no verification, or one still in progress. |
+| `401` | Request token missing or invalid. |
+| `410` | The verification settled without an endorsement. |
+| `503` | A required key endpoint is unavailable. |
+
+`204` and `410` are the two answers a waiting subject must tell apart: the
+first means ask again, the second means stop. Neither says why, and a verifier
+SHOULD NOT disclose what its checks found — whoever holds a token for an
+address is not thereby entitled to the evidence behind a refusal.
+
+An absent verification and one still running both answer `204`. A verifier
+SHOULD NOT distinguish them, since whether it has ever heard of an address is
+not something a caller needs and not something to publish.
+
+Responses SHOULD use `Cache-Control: private, no-store`.
 
 ## 9. Client and transport
 
@@ -341,6 +405,17 @@ Callers should classify wrapped errors with `errors.Is`.
   can reveal business relationships.
 - **Routing fields:** unsigned `from` and `to` values are hints only. Security
   decisions must use signed claims.
+- **Verification is not graded.** `Endorsement.Verified()` is a boolean, and
+  `VerifySender` with `requireVerified` is satisfied by any verifier on the
+  authority's trust list. A receiver that wants to distinguish between them
+  must inspect `Endorsement.Verifier` itself and decide which addresses it
+  accepts. It follows that an authority admits a weak verifier at the cost of
+  every verified sender it endorses, and that a verifier's address is the only
+  trust signal a receiver gets: it should name what is being vouched for, and
+  a change in what the verifier checks is a change in what that name means.
+- **Verifier scope:** a verifier attests to the subject's identity at a point
+  in time. It says nothing about any document the subject later sends, and an
+  `exp` bounds how long the attestation may be relied upon at all.
 
 ## 13. References
 
