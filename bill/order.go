@@ -85,8 +85,7 @@ type Order struct {
 	// When the order was created.
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
 	// Optional time of day when the order was issued. Some regions and formats may
-	// require this field. An empty string will be automatically replaced with the current
-	// time; otherwise the field can be left nil.
+	// require this field; otherwise it can be left nil.
 	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time" jsonschema_extras:"calculated=true"`
 	// Date when the operation defined by the order became effective.
 	OperationDate *cal.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
@@ -252,9 +251,6 @@ func (ord *Order) GetExchangeRates() []*currency.ExchangeRate {
 func (ord *Order) getIssueDate() cal.Date {
 	return ord.IssueDate
 }
-func (ord *Order) getIssueTime() *cal.Time {
-	return ord.IssueTime
-}
 func (ord *Order) getValueDate() *cal.Date {
 	return ord.ValueDate
 }
@@ -288,9 +284,6 @@ func (ord *Order) getComplements() []*schema.Object {
 
 func (ord *Order) setIssueDate(d cal.Date) {
 	ord.IssueDate = d
-}
-func (ord *Order) setIssueTime(t *cal.Time) {
-	ord.IssueTime = t
 }
 func (ord *Order) setCurrency(c currency.Code) {
 	ord.Currency = c

@@ -42,8 +42,7 @@ type Invoice struct {
 	// issued.
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
 	// Optional time of day when the invoice was issued. Some regions and formats may
-	// require this field. An empty string will be automatically replaced with the current
-	// time; otherwise the field can be left nil.
+	// require this field; otherwise it can be left nil.
 	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time" jsonschema_extras:"calculated=true"`
 	// Date when the operation defined by the invoice became effective.
 	OperationDate *cal.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
@@ -319,9 +318,6 @@ func (inv *Invoice) GetExchangeRates() []*currency.ExchangeRate {
 func (inv *Invoice) getIssueDate() cal.Date {
 	return inv.IssueDate
 }
-func (inv *Invoice) getIssueTime() *cal.Time {
-	return inv.IssueTime
-}
 func (inv *Invoice) getValueDate() *cal.Date {
 	return inv.ValueDate
 }
@@ -355,9 +351,6 @@ func (inv *Invoice) getComplements() []*schema.Object {
 
 func (inv *Invoice) setIssueDate(d cal.Date) {
 	inv.IssueDate = d
-}
-func (inv *Invoice) setIssueTime(t *cal.Time) {
-	inv.IssueTime = t
 }
 func (inv *Invoice) setCurrency(c currency.Code) {
 	inv.Currency = c

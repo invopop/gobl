@@ -124,7 +124,7 @@
         "issue_time": {
           "$ref": "https://gobl.org/draft-0/cal/time",
           "title": "Issue Time",
-          "description": "Optional time of day when the invoice was issued. Some regions and formats may\nrequire this field. An empty string will be automatically replaced with the current\ntime; otherwise the field can be left nil.",
+          "description": "Optional time of day when the invoice was issued. Some regions and formats may\nrequire this field; otherwise it can be left nil.",
           "calculated": true
         },
         "op_date": {

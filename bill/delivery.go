@@ -116,8 +116,7 @@ type Delivery struct {
 	// When the delivery document is to be issued.
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
 	// Optional time of day when the delivery was issued. Some regions and formats may
-	// require this field. An empty string will be automatically replaced with the current
-	// time; otherwise the field can be left nil.
+	// require this field; otherwise it can be left nil.
 	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time" jsonschema_extras:"calculated=true"`
 	// When the taxes of the delivery become accountable. Defaults to the issue date.
 	ValueDate *cal.Date `json:"value_date,omitempty" jsonschema:"title=Value Date"`
@@ -306,9 +305,6 @@ func (dlv *Delivery) GetExchangeRates() []*currency.ExchangeRate {
 func (dlv *Delivery) getIssueDate() cal.Date {
 	return dlv.IssueDate
 }
-func (dlv *Delivery) getIssueTime() *cal.Time {
-	return dlv.IssueTime
-}
 func (dlv *Delivery) getValueDate() *cal.Date {
 	return dlv.ValueDate
 }
@@ -342,9 +338,6 @@ func (dlv *Delivery) getComplements() []*schema.Object {
 
 func (dlv *Delivery) setIssueDate(d cal.Date) {
 	dlv.IssueDate = d
-}
-func (dlv *Delivery) setIssueTime(t *cal.Time) {
-	dlv.IssueTime = t
 }
 func (dlv *Delivery) setCurrency(c currency.Code) {
 	dlv.Currency = c
