@@ -38,8 +38,7 @@ func New() *tax.RegimeDef {
 				Value Added Tax (VAT) was introduced in The Bahamas in January 2015
 				as part of a broader reform of the tax system. The broad based consumption
 				tax is applied to almost all goods and services that are imported, bought
-				and sold for use in The Bahamas. Three rates of VAT are applied which are
-				the standard rate of 10%, a reduced rate of 5% and a zero rate of 0%.
+				and sold for use in The Bahamas.
 
 				Businesses are identified by their Tax Identification Number, a 9 digit
 				identifier.

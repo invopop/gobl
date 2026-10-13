@@ -17,6 +17,9 @@ func normalizeTaxIdentity(tID *tax.Identity) {
 	tax.NormalizeIdentity(tID)
 }
 
+// A Bahamas TIN is correct if and only if it is composed
+// of 9 digits. There are no additional checksum algorithms
+// which are used to verify its validity.
 func taxIdentityRules() *rules.Set {
 	return rules.For(new(tax.Identity),
 		rules.When(tax.IdentityIn(CountryCode),
