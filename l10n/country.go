@@ -3,6 +3,7 @@ package l10n
 import (
 	"fmt"
 	"slices"
+	"strings"
 
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -56,6 +57,14 @@ func (c TaxCountryCode) Validate() error {
 		return nil
 	}
 	return fmt.Errorf("must be a valid tax country code")
+}
+
+func normalizeISOCountryCode(c *ISOCountryCode) {
+	*c = ISOCountryCode(strings.ToUpper(strings.TrimSpace(string(*c))))
+}
+
+func normalizeTaxCountryCode(c *TaxCountryCode) {
+	*c = TaxCountryCode(strings.ToUpper(strings.TrimSpace(string(*c))))
 }
 
 func isoCountryCodeRules() *rules.Set {

@@ -1,8 +1,6 @@
 package l10n
 
 import (
-	"strings"
-
 	"github.com/invopop/gobl/norm"
 )
 
@@ -12,11 +10,7 @@ import (
 // sees the uppercased code.
 func init() {
 	norm.Register(
-		norm.For(func(c *ISOCountryCode) { *c = ISOCountryCode(normalizeCountryCode(string(*c))) }),
-		norm.For(func(c *TaxCountryCode) { *c = TaxCountryCode(normalizeCountryCode(string(*c))) }),
+		norm.For(normalizeISOCountryCode),
+		norm.For(normalizeTaxCountryCode),
 	)
-}
-
-func normalizeCountryCode(s string) string {
-	return strings.ToUpper(strings.TrimSpace(s))
 }
