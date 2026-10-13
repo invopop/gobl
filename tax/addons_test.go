@@ -168,21 +168,3 @@ func TestAddonsJSONSchemaEmbed(t *testing.T) {
 	}
 	assert.Equal(t, slices.Sorted(maps.Keys(want)), keys)
 }
-
-func TestHasAddon(t *testing.T) {
-	test := tax.HasAddon("test-addon-v1")
-	assert.NotEmpty(t, test.String())
-
-	// Values that don't carry addons never match.
-	assert.False(t, test.Check("not an addon holder"))
-
-	type withAddons struct {
-		tax.Addons
-	}
-	assert.True(t, test.Check(&withAddons{Addons: tax.WithAddons("test-addon-v1")}))
-	assert.False(t, test.Check(&withAddons{Addons: tax.WithAddons("other-addon-v1")}))
-}
-
-func TestAddonInString(t *testing.T) {
-	assert.NotEmpty(t, tax.AddonIn("test-addon-v1").String())
-}

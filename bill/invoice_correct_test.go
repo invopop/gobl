@@ -7,11 +7,11 @@ import (
 	"github.com/invopop/gobl/addons/es/facturae"
 	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/addons/es/verifactu"
-	"github.com/invopop/gobl/addons/it/ticket"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
+	"github.com/invopop/gobl/internal/testaddons"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -108,16 +108,16 @@ func TestInvoiceCorrect(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, i.Type, bill.InvoiceTypeCreditNote)
 
-	// Italy ticket case (corrective with stamps)
+	// Test addon case (only credit note)
 
-	i = testInvoiceITForCorrection(t)
-	err = i.Correct(bill.Corrective)
+	i = testaddons.Invoice(testaddons.CorrectionStamps)
+	err = i.Correct(bill.Credit)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "missing stamp")
 
 	stamps := []*head.Stamp{
 		{
-			Provider: ticket.StampRef,
+			Provider: testaddons.StampRef,
 			Value:    "FOOO",
 		},
 		{
@@ -126,17 +126,23 @@ func TestInvoiceCorrect(t *testing.T) {
 		},
 	}
 
-	i = testInvoiceITForCorrection(t)
+	i = testaddons.Invoice(testaddons.CorrectionStamps)
+	err = i.Correct(bill.Corrective, bill.WithStamps(stamps))
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "invalid correction type: corrective")
+
+	i = testaddons.Invoice(testaddons.CorrectionStamps)
 	err = i.Correct(
-		bill.Corrective,
+		bill.Credit,
 		bill.WithStamps(stamps),
-		bill.WithReason("test correction"),
+		bill.WithReason("test refund"),
 	)
 	require.NoError(t, err)
-	assert.Equal(t, i.Type, bill.InvoiceTypeCorrective)
+	assert.Equal(t, i.Type, bill.InvoiceTypeCreditNote)
 	pre = i.Preceding[0]
 	require.Len(t, pre.Stamps, 1)
-	assert.Equal(t, pre.Stamps[0].Provider, ticket.StampRef)
+	assert.Equal(t, pre.Stamps[0].Provider, testaddons.StampRef)
+	// assert.Equal(t, pre.CorrectionMethod, co.CorrectionMethodKeyRevoked)
 }
 
 func TestCorrectWithOptions(t *testing.T) {
@@ -369,36 +375,4 @@ func testInvoiceFRForCorrection(t *testing.T) *bill.Invoice {
 		},
 	}
 	return i
-}
-
-func testInvoiceITForCorrection(t *testing.T) *bill.Invoice {
-	t.Helper()
-	return &bill.Invoice{
-		Regime: tax.WithRegime("IT"),
-		Addons: tax.WithAddons(ticket.V1),
-		Series: "TEST",
-		Code:   "123",
-		Supplier: &org.Party{
-			TaxID: &tax.Identity{
-				Country: "IT",
-				Code:    "12345678903",
-			},
-		},
-		IssueDate: cal.MakeDate(2024, 7, 12),
-		Lines: []*bill.Line{
-			{
-				Quantity: num.MakeAmount(1, 0),
-				Item: &org.Item{
-					Name:  "Test Item",
-					Price: num.NewAmount(12500, 2),
-				},
-				Taxes: tax.Set{
-					{
-						Category: "VAT",
-						Rate:     "general",
-					},
-				},
-			},
-		},
-	}
 }
