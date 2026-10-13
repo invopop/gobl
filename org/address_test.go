@@ -141,7 +141,7 @@ func TestAddressCountryCase(t *testing.T) {
 		assert.Equal(t, "DE", a.Country.String())
 		assert.NoError(t, rules.Validate(a))
 	})
-	t.Run("unknown country is rejected", func(t *testing.T) {
+	t.Run("unnormalized lowercase country is rejected", func(t *testing.T) {
 		a := &org.Address{
 			Street:  "Hauptstr. 1",
 			Country: "de",
