@@ -3,7 +3,10 @@ package l10n
 import (
 	"fmt"
 	"slices"
+	"strings"
 
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/jsonschema"
 )
 
@@ -14,20 +17,20 @@ type ISOCountryCode Code
 // but may not always coincide.
 type TaxCountryCode Code
 
-func validISOCountryCodes() []ISOCountryCode {
+func validISOCountryValues() []any {
 	defs := countries.ISO()
-	list := make([]ISOCountryCode, len(defs))
+	list := make([]any, len(defs))
 	for i, d := range defs {
-		list[i] = ISOCountryCode(d.Code)
+		list[i] = string(d.Code)
 	}
 	return list
 }
 
-func validTaxCountryCodes() []TaxCountryCode {
+func validTaxCountryValues() []any {
 	defs := countries.Tax()
-	list := make([]TaxCountryCode, len(defs))
+	list := make([]any, len(defs))
 	for i, d := range defs {
-		list[i] = TaxCountryCode(d.Code)
+		list[i] = string(d.Code)
 	}
 	return list
 }
@@ -38,7 +41,7 @@ func (c ISOCountryCode) Validate() error {
 	if c.Empty() {
 		return nil
 	}
-	if slices.Contains(validISOCountryCodes(), c) {
+	if slices.Contains(validISOCountryValues(), any(string(c))) {
 		return nil
 	}
 	return fmt.Errorf("must be a valid ISO country code")
@@ -50,10 +53,34 @@ func (c TaxCountryCode) Validate() error {
 	if c.Empty() {
 		return nil
 	}
-	if slices.Contains(validTaxCountryCodes(), c) {
+	if slices.Contains(validTaxCountryValues(), any(string(c))) {
 		return nil
 	}
 	return fmt.Errorf("must be a valid tax country code")
+}
+
+func normalizeISOCountryCode(c *ISOCountryCode) {
+	*c = ISOCountryCode(strings.ToUpper(strings.TrimSpace(string(*c))))
+}
+
+func normalizeTaxCountryCode(c *TaxCountryCode) {
+	*c = TaxCountryCode(strings.ToUpper(strings.TrimSpace(string(*c))))
+}
+
+func isoCountryCodeRules() *rules.Set {
+	return rules.For(ISOCountryCode(""),
+		rules.AssertIfPresent("01", "must be a valid ISO country code",
+			is.In(validISOCountryValues()...),
+		),
+	)
+}
+
+func taxCountryCodeRules() *rules.Set {
+	return rules.For(TaxCountryCode(""),
+		rules.AssertIfPresent("01", "must be a valid tax country code",
+			is.In(validTaxCountryValues()...),
+		),
+	)
 }
 
 // Empty returns true if the ISO country code is empty.

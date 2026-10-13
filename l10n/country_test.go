@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -113,4 +115,40 @@ func TestTaxCountryCodeSchema(t *testing.T) {
 	assert.Equal(t, 252, len(s.OneOf))
 	assert.Equal(t, l10n.AF, s.OneOf[0].Const)
 	assert.Equal(t, "Afghanistan", s.OneOf[0].Title)
+}
+
+func TestCountryCodeNormalize(t *testing.T) {
+	t.Run("ISO country code", func(t *testing.T) {
+		c := l10n.ISOCountryCode(" de ")
+		norm.Normalize(&c)
+		assert.Equal(t, l10n.ISOCountryCode("DE"), c)
+	})
+	t.Run("tax country code", func(t *testing.T) {
+		c := l10n.TaxCountryCode(" el ")
+		norm.Normalize(&c)
+		assert.Equal(t, l10n.TaxCountryCode("EL"), c)
+	})
+	t.Run("empty stays empty", func(t *testing.T) {
+		c := l10n.TaxCountryCode("")
+		norm.Normalize(&c)
+		assert.Equal(t, l10n.TaxCountryCode(""), c)
+	})
+}
+
+func TestCountryCodeRules(t *testing.T) {
+	t.Run("ISO country code", func(t *testing.T) {
+		assert.NoError(t, rules.Validate(l10n.ISOCountryCode("US")))
+		assert.NoError(t, rules.Validate(l10n.ISOCountryCode("")))
+		assert.ErrorContains(t, rules.Validate(l10n.ISOCountryCode("de")), "GOBL-L10N-ISOCOUNTRYCODE-01")
+		assert.ErrorContains(t, rules.Validate(l10n.ISOCountryCode("XX")), "GOBL-L10N-ISOCOUNTRYCODE-01")
+		// Northern Ireland is a tax country, not an ISO one.
+		assert.ErrorContains(t, rules.Validate(l10n.ISOCountryCode("XI")), "GOBL-L10N-ISOCOUNTRYCODE-01")
+	})
+	t.Run("tax country code", func(t *testing.T) {
+		assert.NoError(t, rules.Validate(l10n.TaxCountryCode("US")))
+		assert.NoError(t, rules.Validate(l10n.TaxCountryCode("XI")))
+		assert.NoError(t, rules.Validate(l10n.TaxCountryCode("")))
+		assert.ErrorContains(t, rules.Validate(l10n.TaxCountryCode("de")), "GOBL-L10N-TAXCOUNTRYCODE-01")
+		assert.ErrorContains(t, rules.Validate(l10n.TaxCountryCode("XX")), "GOBL-L10N-TAXCOUNTRYCODE-01")
+	})
 }
