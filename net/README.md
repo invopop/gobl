@@ -222,19 +222,28 @@ carries its own endorsement to the authority.
    `uuid` and digest, with `iss` equal to its own address, `aud` equal to the
    subject, and an `exp`. It does not set a `verifier` claim: that pointer is
    the authority's to write.
-4. The verifier delivers the countersigned envelope to the subject's inbox
-   (§8.3), the same way the subject delivered it in step 1.
+4. The verifier returns the countersigned envelope to the subject. Delivering
+   it to the subject's inbox (§8.3) is RECOMMENDED.
 5. The subject submits it to the authority as an ordinary re-registration.
    The authority recognises a countersignature from an address on its trusted
    list, re-countersigns naming it in the `verifier` claim, and delivers the
    result to the subject, which publishes it at `/who`.
 
-The exchange introduces no endpoint. A party envelope moving between two
-participants is what §8.3 is for, and the subject already operates an inbox
-by virtue of being on the network, so the return leg is an ordinary delivery
-in the opposite direction. A verifier MAY offer its own interface for
-progress or history; that is a product decision, outside this specification,
-and no participant may be required to use one.
+How the envelope gets back to the subject is not constrained. What the
+exchange requires is that the subject ends up holding that exact envelope;
+the means are between a verifier and its own customers. A verifier that
+returns it by some other route — its own API, a link in an email, a console
+the subject signs into — conforms, as does one that reports progress or
+history however it likes. None of that belongs in this specification.
+
+Inbox delivery is recommended because it costs neither side anything new.
+A party envelope moving between two participants is what §8.3 is for, the
+subject already operates an inbox by virtue of being on the network, and it
+is the same route the authority itself uses in step 5 — so a verifier that
+takes it publishes no endpoint of its own, and a subject that implements
+only the inbox can work with any verifier that follows the recommendation.
+A verifier choosing another route is choosing to require something of its
+own customers, which is its business rather than the network's.
 
 A verifier MAY additionally deliver the countersigned envelope to the
 authority's inbox, where the authority accepts it. This is the older
@@ -243,12 +252,12 @@ is what lets a network replace a verifier without a flag day, running the two
 side by side while endorsements issued under the previous one are still
 within their `exp`.
 
-Delivery to the subject SHOULD be retried on the transient failures of §9.
-An endorsement is a signed statement that has already been made, so a
-verifier MUST NOT treat an undeliverable result as a failed verification, and
-MUST NOT re-sign on retry — that would extend the endorsement's life each
-time. A subject that never received one asks by re-submitting, which is the
-same exchange from step 1.
+Where the inbox is used, delivery SHOULD be retried on the transient failures
+of §9. However the envelope is returned, an endorsement is a signed statement
+that has already been made: a verifier MUST NOT treat an unreturnable result
+as a failed verification, and MUST NOT re-sign on a retry — that would extend
+the endorsement's life each time it was re-sent. A subject that never
+received one asks by re-submitting, which is the same exchange from step 1.
 
 The subject cannot subvert this by carrying the envelope. The countersignature
 covers the digest, so altering anything invalidates it, and the authority
