@@ -211,7 +211,7 @@ var extensions = []*cbc.Definition{
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Classification code for operations that are subject to tax and not exempt, or for operations not subject to tax.
+				Classification code for operations that are subject to tax and not exempt, or for operations not subject to tax. It applies to the VAT, IGIC, and IPSI tax categories.
 
 				GOBL will attempt to automatically assign operation class codes based on tax key, but if your workflow requires more control, you may prefer to let users select the appropriate operation class and exemption code for each case.
 
@@ -290,7 +290,8 @@ var extensions = []*cbc.Definition{
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Exemption code used to explain why the operation is exempt from taxes.
+				Exemption code used to explain why the operation is exempt from taxes. It applies
+				to the VAT, IGIC, and IPSI tax categories.
 
 				This extension maps to the field ~OperacionExenta~, and **cannot** be provided
 				alongside the ~es-verifactu-op-class~ extension. Values correspond to the
@@ -384,16 +385,20 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyRegime,
 		Name: i18n.String{
-			i18n.EN: "VAT/IGIC Regime Code",
-			i18n.ES: "Código de Régimen de IVA/IGIC",
+			i18n.EN: "VAT/IGIC/IPSI Regime Code",
+			i18n.ES: "Código de Régimen de IVA/IGIC/IPSI",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Identify the type of VAT or IGIC regime applied to the operation. This list combines
-				lists L8A which include values for VAT, and L8B for IGIC.
+				Identify the type of VAT, IGIC, or IPSI regime applied to the operation. This list
+				combines lists L8A which include values for VAT, L8B for IGIC, and the subset of
+				codes the AEAT accepts for IPSI (Ceuta and Melilla).
 
-				Maps to the field ~ClaveRegimen~, and is required for all VAT and IGIC operations.
-				Values correspond to L8A (VAT) and L8B (IGIC) lists.
+				Maps to the field ~ClaveRegimen~, and is required for all VAT, IGIC, and IPSI
+				operations. Values correspond to L8A (VAT) and L8B (IGIC) lists. For IPSI only
+				the codes ~01~, ~08~, ~11~, ~18~, ~19~, and ~20~ are accepted, with the meanings
+				given in section 15.6 of the AEAT validation rules; other values are accepted with
+				a warning until 31 December 2026 and rejected from 1 January 2027.
 
 				The regime code must be assigned for each tax combo. If no regime code is provided,
 				GOBL will try to assign a code from the following tax combo contexts:
@@ -401,8 +406,10 @@ var extensions = []*cbc.Definition{
 				| Combo Context				| Regime Code |
 				|---------------------------|-------------|
 				| Key ~standard~			| ~01~        |
-				| Key ~export~			    | ~02~        |
-				| Has surcharge				| ~18~        |
+				| Key ~export~ (VAT, IGIC)	| ~02~        |
+				| Has surcharge (VAT, IGIC)	| ~18~        |
+				| IPSI with exempt code ~E1~	| ~19~        |
+				| IPSI otherwise			| ~01~        |
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -458,8 +465,8 @@ var extensions = []*cbc.Definition{
 			{
 				Code: "08",
 				Name: i18n.String{
-					i18n.EN: "Operations subject to a different regime",
-					i18n.ES: "Operaciones sujetas a un régimen diferente",
+					i18n.EN: "Operations subject to a different regime (VAT, IGIC) / Operations subject to IGIC or VAT (IPSI)",
+					i18n.ES: "Operaciones sujetas a un régimen diferente (IVA, IGIC) / Operaciones sujetas al IGIC o IVA (IPSI)",
 				},
 			},
 			{
@@ -479,8 +486,8 @@ var extensions = []*cbc.Definition{
 			{
 				Code: "11",
 				Name: i18n.String{
-					i18n.EN: "Business premises rental operations",
-					i18n.ES: "Operaciones de arrendamiento de local de negocio",
+					i18n.EN: "Business premises rental operations (VAT, IPSI)",
+					i18n.ES: "Operaciones de arrendamiento de local de negocio (IVA, IPSI)",
 				},
 			},
 			{
@@ -507,22 +514,22 @@ var extensions = []*cbc.Definition{
 			{
 				Code: "18",
 				Name: i18n.String{
-					i18n.EN: "Equivalence surcharge (VAT) / Special regime for small traders or retailers (IGIC)",
-					i18n.ES: "Recargo de equivalencia (IVA) / Régimen especial del pequeño comerciante o minorista (IGIC)",
+					i18n.EN: "Equivalence surcharge (VAT) / Special regime for small traders or retailers (IGIC) / Operations under article 73.4 and 73.5 of the Ceuta IPSI ordinance (IPSI, Ceuta only)",
+					i18n.ES: "Recargo de equivalencia (IVA) / Régimen especial del pequeño comerciante o minorista (IGIC) / Operaciones recogidas en el artículo 73.4 y 5 de la Ordenanza fiscal IPSI (IPSI, sólo Ceuta)",
 				},
 			},
 			{
 				Code: "19",
 				Name: i18n.String{
-					i18n.EN: "Operations included in the Special Regime for Agriculture, Livestock and Fisheries",
-					i18n.ES: "Operaciones de actividades incluidas en el Régimen Especial de Agricultura, Ganadería y Pesca (REAGYP)",
+					i18n.EN: "Operations included in the Special Regime for Agriculture, Livestock and Fisheries (VAT, IGIC) / Exempt domestic operations (IPSI)",
+					i18n.ES: "Operaciones de actividades incluidas en el Régimen Especial de Agricultura, Ganadería y Pesca (REAGYP) (IVA, IGIC) / Operaciones interiores exentas (IPSI)",
 				},
 			},
 			{
 				Code: "20",
 				Name: i18n.String{
-					i18n.EN: "Simplified regime (VAT only)",
-					i18n.ES: "Régimen simplificado (IVA only)",
+					i18n.EN: "Simplified regime (VAT) / Operations subject to IPSI (IGIC) / Objective estimation regime (IPSI)",
+					i18n.ES: "Régimen simplificado (IVA) / Operaciones sujetas al IPSI (IGIC) / Régimen de estimación objetiva (IPSI)",
 				},
 			},
 		},

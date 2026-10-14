@@ -147,7 +147,7 @@
         "es": "Clave de la Operación Sujeta y no Exenta o de la Operación no Sujeta."
       },
       "desc": {
-        "en": "Classification code for operations that are subject to tax and not exempt, or for operations not subject to tax.\n\nGOBL will attempt to automatically assign operation class codes based on tax key, but if your workflow requires more control, you may prefer to let users select the appropriate operation class and exemption code for each case.\n\nTax keys will be normalized as described in the following table. Some keys will set a default value which can be overridden.\n\n| Tax Key          | Operation Classes    |\n|------------------|----------------------|\n| `standard`       | `S1`                 |\n| `zero`           | `S1`                 |\n| `reverse-charge` | `S2`                 |\n| `outside-scope`  | `N2` (default), `N1` |\n| others           | removed              |\n\nThis extension maps to the `CalificacionOperacion` field and must not be used together with the `es-verifactu-exempt` extension. Values correspond to the L9 list.\n\nFor further guidance on applying these codes, refer to the AEAT FAQ:\n * https://sede.agenciatributaria.gob.es/Sede/impuestos-tasas/iva/iva-libros-registro-iva-traves-aeat/preguntas-frecuentes/3-libro-registro-facturas-expedidas.html?faqId=b5556c3d02bc9510VgnVCM100000dc381e0aRCRD"
+        "en": "Classification code for operations that are subject to tax and not exempt, or for operations not subject to tax. It applies to the VAT, IGIC, and IPSI tax categories.\n\nGOBL will attempt to automatically assign operation class codes based on tax key, but if your workflow requires more control, you may prefer to let users select the appropriate operation class and exemption code for each case.\n\nTax keys will be normalized as described in the following table. Some keys will set a default value which can be overridden.\n\n| Tax Key          | Operation Classes    |\n|------------------|----------------------|\n| `standard`       | `S1`                 |\n| `zero`           | `S1`                 |\n| `reverse-charge` | `S2`                 |\n| `outside-scope`  | `N2` (default), `N1` |\n| others           | removed              |\n\nThis extension maps to the `CalificacionOperacion` field and must not be used together with the `es-verifactu-exempt` extension. Values correspond to the L9 list.\n\nFor further guidance on applying these codes, refer to the AEAT FAQ:\n * https://sede.agenciatributaria.gob.es/Sede/impuestos-tasas/iva/iva-libros-registro-iva-traves-aeat/preguntas-frecuentes/3-libro-registro-facturas-expedidas.html?faqId=b5556c3d02bc9510VgnVCM100000dc381e0aRCRD"
       },
       "values": [
         {
@@ -199,7 +199,7 @@
         "es": "Código de Exención de Impuesto de Verifactu"
       },
       "desc": {
-        "en": "Exemption code used to explain why the operation is exempt from taxes.\n\nThis extension maps to the field `OperacionExenta`, and **cannot** be provided\nalongside the `es-verifactu-op-class` extension. Values correspond to the\nL10 list.\n\nThe follow mappings will be made automatically by GOBL during normalization.\n\n| Tax Key           | Exemption Codes            |\n|-------------------|----------------------------|\n| `exempt`          | `E1` (default), `E6`       |\n| `export`          | `E2` (default), `E3`, `E4` |\n| `intra-community` | `E5`                       |\n| others            | removed                    |"
+        "en": "Exemption code used to explain why the operation is exempt from taxes. It applies\nto the VAT, IGIC, and IPSI tax categories.\n\nThis extension maps to the field `OperacionExenta`, and **cannot** be provided\nalongside the `es-verifactu-op-class` extension. Values correspond to the\nL10 list.\n\nThe follow mappings will be made automatically by GOBL during normalization.\n\n| Tax Key           | Exemption Codes            |\n|-------------------|----------------------------|\n| `exempt`          | `E1` (default), `E6`       |\n| `export`          | `E2` (default), `E3`, `E4` |\n| `intra-community` | `E5`                       |\n| others            | removed                    |"
       },
       "values": [
         {
@@ -267,11 +267,11 @@
     {
       "key": "es-verifactu-regime",
       "name": {
-        "en": "VAT/IGIC Regime Code",
-        "es": "Código de Régimen de IVA/IGIC"
+        "en": "VAT/IGIC/IPSI Regime Code",
+        "es": "Código de Régimen de IVA/IGIC/IPSI"
       },
       "desc": {
-        "en": "Identify the type of VAT or IGIC regime applied to the operation. This list combines\nlists L8A which include values for VAT, and L8B for IGIC.\n\nMaps to the field `ClaveRegimen`, and is required for all VAT and IGIC operations.\nValues correspond to L8A (VAT) and L8B (IGIC) lists.\n\nThe regime code must be assigned for each tax combo. If no regime code is provided,\nGOBL will try to assign a code from the following tax combo contexts:\n\n| Combo Context\t\t\t\t| Regime Code |\n|---------------------------|-------------|\n| Key `standard`\t\t\t| `01`        |\n| Key `export`\t\t\t    | `02`        |\n| Has surcharge\t\t\t\t| `18`        |"
+        "en": "Identify the type of VAT, IGIC, or IPSI regime applied to the operation. This list\ncombines lists L8A which include values for VAT, L8B for IGIC, and the subset of\ncodes the AEAT accepts for IPSI (Ceuta and Melilla).\n\nMaps to the field `ClaveRegimen`, and is required for all VAT, IGIC, and IPSI\noperations. Values correspond to L8A (VAT) and L8B (IGIC) lists. For IPSI only\nthe codes `01`, `08`, `11`, `18`, `19`, and `20` are accepted, with the meanings\ngiven in section 15.6 of the AEAT validation rules; other values are accepted with\na warning until 31 December 2026 and rejected from 1 January 2027.\n\nThe regime code must be assigned for each tax combo. If no regime code is provided,\nGOBL will try to assign a code from the following tax combo contexts:\n\n| Combo Context\t\t\t\t| Regime Code |\n|---------------------------|-------------|\n| Key `standard`\t\t\t| `01`        |\n| Key `export` (VAT, IGIC)\t| `02`        |\n| Has surcharge (VAT, IGIC)\t| `18`        |\n| IPSI with exempt code `E1`\t| `19`        |\n| IPSI otherwise\t\t\t| `01`        |"
       },
       "values": [
         {
@@ -326,8 +326,8 @@
         {
           "code": "08",
           "name": {
-            "en": "Operations subject to a different regime",
-            "es": "Operaciones sujetas a un régimen diferente"
+            "en": "Operations subject to a different regime (VAT, IGIC) / Operations subject to IGIC or VAT (IPSI)",
+            "es": "Operaciones sujetas a un régimen diferente (IVA, IGIC) / Operaciones sujetas al IGIC o IVA (IPSI)"
           }
         },
         {
@@ -347,8 +347,8 @@
         {
           "code": "11",
           "name": {
-            "en": "Business premises rental operations",
-            "es": "Operaciones de arrendamiento de local de negocio"
+            "en": "Business premises rental operations (VAT, IPSI)",
+            "es": "Operaciones de arrendamiento de local de negocio (IVA, IPSI)"
           }
         },
         {
@@ -375,22 +375,22 @@
         {
           "code": "18",
           "name": {
-            "en": "Equivalence surcharge (VAT) / Special regime for small traders or retailers (IGIC)",
-            "es": "Recargo de equivalencia (IVA) / Régimen especial del pequeño comerciante o minorista (IGIC)"
+            "en": "Equivalence surcharge (VAT) / Special regime for small traders or retailers (IGIC) / Operations under article 73.4 and 73.5 of the Ceuta IPSI ordinance (IPSI, Ceuta only)",
+            "es": "Recargo de equivalencia (IVA) / Régimen especial del pequeño comerciante o minorista (IGIC) / Operaciones recogidas en el artículo 73.4 y 5 de la Ordenanza fiscal IPSI (IPSI, sólo Ceuta)"
           }
         },
         {
           "code": "19",
           "name": {
-            "en": "Operations included in the Special Regime for Agriculture, Livestock and Fisheries",
-            "es": "Operaciones de actividades incluidas en el Régimen Especial de Agricultura, Ganadería y Pesca (REAGYP)"
+            "en": "Operations included in the Special Regime for Agriculture, Livestock and Fisheries (VAT, IGIC) / Exempt domestic operations (IPSI)",
+            "es": "Operaciones de actividades incluidas en el Régimen Especial de Agricultura, Ganadería y Pesca (REAGYP) (IVA, IGIC) / Operaciones interiores exentas (IPSI)"
           }
         },
         {
           "code": "20",
           "name": {
-            "en": "Simplified regime (VAT only)",
-            "es": "Régimen simplificado (IVA only)"
+            "en": "Simplified regime (VAT) / Operations subject to IPSI (IGIC) / Objective estimation regime (IPSI)",
+            "es": "Régimen simplificado (IVA) / Operaciones sujetas al IPSI (IGIC) / Régimen de estimación objetiva (IPSI)"
           }
         }
       ]

@@ -1,0 +1,172 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "bbc92bdf92cb59c9419a6d436643c7cfa08fbcbe9ce7a4d51d6d973e7ee2b1bd"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$addons": [
+			"es-verifactu-v1"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "IPSI",
+		"code": "001",
+		"issue_date": "2024-12-04",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"es-verifactu-doc-type": "F1"
+			}
+		},
+		"supplier": {
+			"name": "Clínica Ceuta S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "12",
+					"street": "Paseo de las Palmeras",
+					"locality": "Ceuta",
+					"region": "Ceuta",
+					"code": "51001",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Consumer",
+			"tax_id": {
+				"country": "ES",
+				"code": "54387763P"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Hairdressing service",
+					"price": "50.00"
+				},
+				"sum": "50.00",
+				"taxes": [
+					{
+						"cat": "IPSI",
+						"key": "standard",
+						"percent": "4%",
+						"ext": {
+							"es-verifactu-op-class": "S1",
+							"es-verifactu-regime": "01"
+						}
+					}
+				],
+				"total": "50.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Physiotherapy session",
+					"price": "60.00"
+				},
+				"sum": "60.00",
+				"taxes": [
+					{
+						"cat": "IPSI",
+						"key": "exempt",
+						"ext": {
+							"es-verifactu-exempt": "E1",
+							"es-verifactu-regime": "19"
+						}
+					}
+				],
+				"total": "60.00"
+			},
+			{
+				"i": 3,
+				"quantity": "1",
+				"item": {
+					"name": "Multi-purpose gift voucher",
+					"price": "100.00"
+				},
+				"sum": "100.00",
+				"taxes": [
+					{
+						"cat": "IPSI",
+						"key": "outside-scope",
+						"ext": {
+							"es-verifactu-op-class": "N1",
+							"es-verifactu-regime": "01"
+						}
+					}
+				],
+				"total": "100.00"
+			}
+		],
+		"totals": {
+			"sum": "210.00",
+			"total": "210.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "IPSI",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"es-verifactu-op-class": "S1",
+									"es-verifactu-regime": "01"
+								},
+								"base": "50.00",
+								"percent": "4%",
+								"amount": "2.00"
+							},
+							{
+								"key": "exempt",
+								"ext": {
+									"es-verifactu-exempt": "E1",
+									"es-verifactu-regime": "19"
+								},
+								"base": "60.00",
+								"amount": "0.00"
+							},
+							{
+								"key": "outside-scope",
+								"ext": {
+									"es-verifactu-op-class": "N1",
+									"es-verifactu-regime": "01"
+								},
+								"base": "100.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "2.00"
+					}
+				],
+				"sum": "2.00"
+			},
+			"tax": "2.00",
+			"total_with_tax": "212.00",
+			"payable": "212.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Services provided in Ceuta subject to IPSI"
+			}
+		]
+	}
+}
