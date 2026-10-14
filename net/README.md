@@ -15,7 +15,6 @@ documents. A participant is identified by a fully qualified domain name
 | `/.well-known/gobl/keys/<kid>` | Publish one verification key. |
 | `/.well-known/gobl/who` | Publish a signed `org.Party` identity. |
 | `/.well-known/gobl/inbox` | Accept signed GOBL envelopes. |
-| `/.well-known/gobl/verification` | Serve a subject the endorsement a verifier issued about it. Verifiers only. |
 
 A signature names its issuer in the signed `iss` claim. A verifier obtains the
 key from the issuer's domain and relies on Web PKI to authenticate the HTTPS
@@ -223,27 +222,33 @@ carries its own endorsement to the authority.
    `uuid` and digest, with `iss` equal to its own address, `aud` equal to the
    subject, and an `exp`. It does not set a `verifier` claim: that pointer is
    the authority's to write.
-4. The subject collects the countersigned envelope from the verifier's
-   `/.well-known/gobl/verification` and submits it to the authority as an
-   ordinary re-registration.
-5. The authority recognises a countersignature from an address on its trusted
+4. The verifier delivers the countersigned envelope to the subject's inbox
+   (§8.3), the same way the subject delivered it in step 1.
+5. The subject submits it to the authority as an ordinary re-registration.
+   The authority recognises a countersignature from an address on its trusted
    list, re-countersigns naming it in the `verifier` claim, and delivers the
    result to the subject, which publishes it at `/who`.
 
-A verifier MAY also POST the countersigned envelope to the subject's own
-inbox, so the subject learns without waiting to poll. That delivery is an
-optimisation and MUST NOT be relied upon: the endorsement is collectable
-regardless, and a verifier that never pushes is conforming.
+The exchange introduces no endpoint. A party envelope moving between two
+participants is what §8.3 is for, and the subject already operates an inbox
+by virtue of being on the network, so the return leg is an ordinary delivery
+in the opposite direction. A verifier MAY offer its own interface for
+progress or history; that is a product decision, outside this specification,
+and no participant may be required to use one.
 
-A verifier MAY additionally deliver the countersigned envelope straight to
-the authority's inbox, where the authority accepts it. This is the older
+A verifier MAY additionally deliver the countersigned envelope to the
+authority's inbox, where the authority accepts it. This is the older
 arrangement and remains conforming, which matters for more than history: it
-is what lets a network replace a verifier without a flag day, running the
-two side by side while endorsements issued under the previous one are still
-within their `exp`. What it does not do is remove an obligation — a verifier
-MUST serve §8.4 whether or not it pushes anywhere, because that endpoint is
-what the subject relies on, and an endorsement reachable only through an
-authority that happens to accept pushes is not collectable at all.
+is what lets a network replace a verifier without a flag day, running the two
+side by side while endorsements issued under the previous one are still
+within their `exp`.
+
+Delivery to the subject SHOULD be retried on the transient failures of §9.
+An endorsement is a signed statement that has already been made, so a
+verifier MUST NOT treat an undeliverable result as a failed verification, and
+MUST NOT re-sign on retry — that would extend the endorsement's life each
+time. A subject that never received one asks by re-submitting, which is the
+same exchange from step 1.
 
 The subject cannot subvert this by carrying the envelope. The countersignature
 covers the digest, so altering anything invalidates it, and the authority
@@ -253,9 +258,7 @@ right — it is their identity.
 Because the authority looks only at the signatures an envelope carries, and
 not at who delivered it, this exchange requires nothing of an authority beyond
 what §7 already specifies — and it is the same property that makes the two
-delivery paths interchangeable. It does mean a verifier needs no outbound
-delivery to conform: a keypair, published keys, an inbox and this one
-endpoint are the whole obligation.
+delivery paths interchangeable.
 
 ## 8. Endpoints
 
@@ -311,32 +314,6 @@ changing the request.
 
 `Client.Send` serializes the envelope, adds a fresh request token when the
 client has an identity, and succeeds only on `202`.
-
-### 8.4 `GET /.well-known/gobl/verification`
-
-Served by verifiers only. It requires a valid request token, and returns the
-endorsement the verifier has issued **about the requester**: the address in
-the token's `iss` is the subject whose result is served, so a participant can
-only ever collect its own.
-
-| Status | Meaning |
-|---|---|
-| `200` | Endorsed. The body is the countersigned party envelope. |
-| `204` | Nothing to collect: no verification, or one still in progress. |
-| `401` | Request token missing or invalid. |
-| `410` | The verification settled without an endorsement. |
-| `503` | A required key endpoint is unavailable. |
-
-`204` and `410` are the two answers a waiting subject must tell apart: the
-first means ask again, the second means stop. Neither says why, and a verifier
-SHOULD NOT disclose what its checks found — whoever holds a token for an
-address is not thereby entitled to the evidence behind a refusal.
-
-An absent verification and one still running both answer `204`. A verifier
-SHOULD NOT distinguish them, since whether it has ever heard of an address is
-not something a caller needs and not something to publish.
-
-Responses SHOULD use `Cache-Control: private, no-store`.
 
 ## 9. Client and transport
 
