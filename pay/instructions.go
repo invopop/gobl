@@ -50,27 +50,37 @@ func instructionsRules() *rules.Set {
 // PCI compliance requires only the first 6 and last 4 digits of the card number
 // to be stored openly.
 type Card struct {
+	// Short label to help identify this card.
+	Label string `json:"label,omitempty" jsonschema:"title=Label"`
 	// First 6 digits of the card's Primary Account Number (PAN).
 	First6 string `json:"first6,omitempty" jsonschema:"title=First 6"`
 	// Last 4 digits of the card's Primary Account Number (PAN).
 	Last4 string `json:"last4,omitempty" jsonschema:"title=Last 4"`
 	// Name of the person whom the card belongs to.
 	Holder string `json:"holder,omitempty" jsonschema:"title=Holder Name"`
+	// Additional semi-structured data that may be useful.
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // DirectDebit defines the data that will be used to make the direct debit.
 type DirectDebit struct {
+	// Short label to help identify this direct debit.
+	Label string `json:"label,omitempty" jsonschema:"title=Label"`
 	// Unique identifier assigned by the payee for referencing the direct debit.
 	Ref cbc.Code `json:"ref,omitempty" jsonschema:"title=Mandate Reference"`
 	// Unique banking reference that identifies the payee or seller assigned by the bank.
 	Creditor string `json:"creditor,omitempty" jsonschema:"title=Creditor ID"`
 	// Account identifier to be debited by the direct debit.
 	Account string `json:"account,omitempty" jsonschema:"title=Account"`
+	// Additional semi-structured data that may be useful.
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // CreditTransfer contains fields that can be used for making payments via
 // a bank transfer or wire.
 type CreditTransfer struct {
+	// Short label to help identify this credit transfer.
+	Label string `json:"label,omitempty" jsonschema:"title=Label"`
 	// International Bank Account Number.
 	IBAN cbc.Code `json:"iban,omitempty" jsonschema:"title=IBAN"`
 	// Bank Identifier Code used for international transfers.
@@ -84,6 +94,8 @@ type CreditTransfer struct {
 	Name string `json:"name,omitempty" jsonschema:"title=Name"`
 	// Bank office branch address, not normally required.
 	Branch *org.Address `json:"branch,omitempty" jsonschema:"title=Branch"`
+	// Additional semi-structured data that may be useful.
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Online provides the details required to make a payment online using a website
@@ -94,6 +106,8 @@ type Online struct {
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
 	// URL to be used for payment.
 	URL string `json:"url" jsonschema:"title=URL"`
+	// Additional semi-structured data that may be useful.
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 func onlineRules() *rules.Set {
