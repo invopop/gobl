@@ -801,6 +801,128 @@ func TestRemoveIncludedTaxDeep2(t *testing.T) {
 	assert.Equal(t, i.Totals.Payable.String(), i2.Totals.Payable.String())
 }
 
+func TestRemoveIncludedTaxItemListPrice(t *testing.T) {
+	inv := baseInvoice(t,
+		&bill.Line{
+			Quantity: num.MakeAmount(7, 0),
+			Item: &org.Item{
+				Name:     "Item",
+				List:     num.NewAmount(1234, 2),
+				Discount: num.NewAmount(17, 2),
+				Per:      num.NewAmount(2, 0),
+			},
+			Taxes: tax.Set{{Category: tax.CategoryVAT, Rate: tax.RateGeneral}},
+		},
+		&bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item:     &org.Item{Name: "Group"},
+			Breakdown: []*bill.SubLine{
+				{
+					Quantity: num.MakeAmount(3, 0),
+					Item: &org.Item{
+						Name:     "Part",
+						List:     num.NewAmount(777, 2),
+						Discount: num.NewAmount(55, 2),
+					},
+				},
+			},
+			Taxes: tax.Set{{Category: tax.CategoryVAT, Rate: tax.RateGeneral}},
+		},
+	)
+	inv.Tax = &bill.Tax{PricesInclude: tax.CategoryVAT}
+	require.NoError(t, inv.Calculate())
+	payable := inv.Totals.Payable
+
+	require.NoError(t, inv.RemoveIncludedTaxes())
+	item := inv.Lines[0].Item
+	assert.Nil(t, item.List)
+	assert.Nil(t, item.Discount)
+	assert.Equal(t, "2", item.Per.String())
+	sub := inv.Lines[1].Breakdown[0].Item
+	assert.Nil(t, sub.List)
+	assert.Nil(t, sub.Discount)
+	assert.Equal(t, payable.String(), inv.Totals.Payable.String())
+
+	// Prices remain unchanged when calculated again
+	price := item.Price.String()
+	subPrice := sub.Price.String()
+	require.NoError(t, inv.Calculate())
+	assert.Equal(t, price, item.Price.String())
+	assert.Equal(t, subPrice, sub.Price.String())
+	assert.Equal(t, payable.String(), inv.Totals.Payable.String())
+}
+
+func TestRemoveIncludedTaxUncalculatedLines(t *testing.T) {
+	t.Run("list price only", func(t *testing.T) {
+		inv := baseInvoice(t, &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item:     &org.Item{Name: "Item", List: num.NewAmount(1210, 2)},
+			Taxes:    tax.Set{{Category: tax.CategoryVAT, Percent: num.NewPercentage(21, 2)}},
+		})
+		inv.Tax = &bill.Tax{PricesInclude: tax.CategoryVAT}
+		inv.Totals = &bill.Totals{Sum: num.MakeAmount(1210, 2)}
+		require.NoError(t, inv.RemoveIncludedTaxes())
+		assert.Nil(t, inv.Lines[0].Item.List)
+		assert.Equal(t, "10.0000", inv.Lines[0].Item.Price.String())
+		assert.Equal(t, "12.10", inv.Totals.Payable.String())
+	})
+	t.Run("list price only with line total", func(t *testing.T) {
+		inv := baseInvoice(t, &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item:     &org.Item{Name: "Item", List: num.NewAmount(1210, 2)},
+			Total:    num.NewAmount(1210, 2),
+			Taxes:    tax.Set{{Category: tax.CategoryVAT, Percent: num.NewPercentage(21, 2)}},
+		})
+		inv.Tax = &bill.Tax{PricesInclude: tax.CategoryVAT}
+		inv.Currency = currency.EUR
+		inv.Totals = &bill.Totals{Sum: num.MakeAmount(1210, 2), Payable: num.MakeAmount(1210, 2)}
+		require.NoError(t, inv.RemoveIncludedTaxes())
+		assert.Nil(t, inv.Lines[0].Item.List)
+		assert.Equal(t, "10.0000", inv.Lines[0].Item.Price.String())
+		assert.Equal(t, "10.00", inv.Totals.Sum.String())
+		assert.Equal(t, "12.10", inv.Totals.Payable.String())
+	})
+	t.Run("list price only in breakdown with line total", func(t *testing.T) {
+		inv := baseInvoice(t, &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item:     &org.Item{Name: "Group"},
+			Breakdown: []*bill.SubLine{
+				{
+					Quantity: num.MakeAmount(1, 0),
+					Item:     &org.Item{Name: "Part", List: num.NewAmount(1210, 2)},
+				},
+			},
+			Total: num.NewAmount(1210, 2),
+			Taxes: tax.Set{{Category: tax.CategoryVAT, Percent: num.NewPercentage(21, 2)}},
+		})
+		inv.Tax = &bill.Tax{PricesInclude: tax.CategoryVAT}
+		inv.Currency = currency.EUR
+		inv.Totals = &bill.Totals{Sum: num.MakeAmount(1210, 2), Payable: num.MakeAmount(1210, 2)}
+		require.NoError(t, inv.RemoveIncludedTaxes())
+		sub := inv.Lines[0].Breakdown[0].Item
+		assert.Nil(t, sub.List)
+		assert.Equal(t, "10.0000", sub.Price.String())
+		assert.Equal(t, "10.0000", inv.Lines[0].Item.Price.String())
+		assert.Equal(t, "12.10", inv.Totals.Payable.String())
+	})
+	t.Run("no price", func(t *testing.T) {
+		inv := baseInvoice(t, &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item:     &org.Item{Name: "Item"},
+			Breakdown: []*bill.SubLine{
+				{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "Part"}},
+			},
+			Taxes: tax.Set{{Category: tax.CategoryVAT, Percent: num.NewPercentage(21, 2)}},
+		})
+		inv.Tax = &bill.Tax{PricesInclude: tax.CategoryVAT}
+		inv.Totals = &bill.Totals{Sum: num.MakeAmount(1210, 2)}
+		require.NotPanics(t, func() {
+			require.NoError(t, inv.RemoveIncludedTaxes())
+		})
+		assert.Nil(t, inv.Lines[0].Item.Price)
+	})
+}
+
 func TestCalculateTotalsWithFractions(t *testing.T) {
 	i := &bill.Invoice{
 		Code: "123TEST",
