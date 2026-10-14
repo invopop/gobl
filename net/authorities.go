@@ -32,8 +32,17 @@ func RegisterAuthority(addr Address) {
 	Authorities = append(Authorities, addr)
 }
 
-// Endorsement identifies the trusted authority behind an envelope and any
-// confirmed, independent identity verifier it named.
+// Endorsement is this package's representation of the sender status
+// defined in README.md §7.2: the conclusion a receiver reaches about a
+// subject after evaluating the countersignatures its party envelope
+// carries against this client's trust list.
+//
+// There is no "endorsement" on the wire. The envelope carries
+// countersignatures; the status is computed from them, and it is never
+// transmitted — two clients with different trust lists can evaluate the
+// same envelope and reach different conclusions, and both are right. So
+// an Endorsement is always a return value, never something to construct
+// or send.
 type Endorsement struct {
 	// Authority is the trusted address whose countersignature
 	// endorsed the envelope: the subject is a registered identity.
@@ -47,8 +56,13 @@ type Endorsement struct {
 	Verifier Address
 }
 
-// Verified reports whether the endorsement includes confirmed
-// identity verification.
+// Verified reports whether the status is "verified" rather than merely
+// "registered" (README.md §7.2).
+//
+// It is a boolean because the status is one: any verifier the authority
+// names satisfies it, and the protocol does not grade them. A receiver
+// that wants to distinguish between verifiers must read Verifier itself
+// and decide which addresses it accepts.
 func (e *Endorsement) Verified() bool {
 	return e != nil && e.Verifier != ""
 }

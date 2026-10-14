@@ -16,13 +16,18 @@ documents. A participant is identified by a fully qualified domain name
 | `/.well-known/gobl/who` | Publish a signed `org.Party` identity. |
 | `/.well-known/gobl/inbox` | Accept signed GOBL envelopes. |
 
-A signature names its issuer in the signed `iss` claim. A verifier obtains the
-key from the issuer's domain and relies on Web PKI to authenticate the HTTPS
-response. Registration authorities add an optional trust layer by
-countersigning party envelopes.
+A signature names its issuer in the signed `iss` claim. The participant
+checking it obtains the key from the issuer's domain and relies on Web PKI to
+authenticate the HTTPS response. Registration authorities add an optional
+trust layer by countersigning party envelopes.
 
-This package implements the client, address, authentication, and verification
-parts of the protocol. The reference server and CLI live in
+**This document defines the protocol.** It is implementation-neutral and names
+no API of any language: every requirement here is on the wire or on the
+behaviour of a participant. The Go package alongside it is a reference
+implementation from which libraries in other languages can be made; its API is
+documented in the package itself (`go doc github.com/invopop/gobl/net`), which
+maps each section below onto the types and methods implementing it. The
+reference server and CLI live in
 [`github.com/invopop/gobl.dev`](https://github.com/invopop/gobl.dev/#gobl-net).
 
 ## 1. Conventions
@@ -43,14 +48,21 @@ described in BCP 14 (RFC 2119 and RFC 8174).
 | **Requester** | The issuer of an HTTP request token. A requester may be an intermediary and need not be the document sender. |
 | **Authority** | A trusted participant that confirms the subject controls its GOBL Net address and countersigns its party envelope. |
 | **Verifier** | A participant, independent of the Authority, that establishes who is behind an address and countersigns the subject's party envelope. What it checks, and how, is its own to define and publish; see §7.1. |
-| **Endorsement** | A valid Authority countersignature, optionally supported by a confirmed Verifier countersignature. |
-| **Party envelope** | A signed GOBL envelope containing an `org.Party`. It identifies its Subject and may carry Authority and Verifier countersignatures. |
+| **Registration countersignature** | A signature issued by an Authority over a party envelope, binding the Subject. It may name a Verifier. |
+| **Verification countersignature** | A signature issued by a Verifier over the same party envelope. |
+| **Sender status** | What a receiver concludes about a Subject after evaluating the countersignatures its party envelope carries: `unregistered`, `registered`, or `verified`. Determined by §7.2. |
+| **Party envelope** | A signed GOBL envelope containing an `org.Party`. It identifies its Subject and may carry registration and verification countersignatures. |
+
+A countersignature is a signature on the wire; a sender status is a conclusion
+a receiver reaches about one. The distinction matters because status is never
+transmitted — two receivers with different trust lists can read the same
+envelope and reach different conclusions about it, and both are correct.
 
 Issuer, Sender, and Requester often refer to the same participant in a direct
 delivery, but the protocol does not assume they are the same. Audience and
 Receiver are equivalent for ordinary document delivery; in other signatures,
-such as an Authority endorsement, the Audience is the Subject rather than the
-recipient of an HTTP request.
+such as a registration countersignature, the Audience is the Subject rather
+than the recipient of an HTTP request.
 
 An Authority and Verifier MUST be different participants. Other roles may
 overlap where their definitions permit it.
@@ -58,17 +70,19 @@ overlap where their definitions permit it.
 ## 3. Addresses and discovery
 
 A GOBL Net address is an FQDN without a scheme, port, path, query, or fragment.
-`ParseAddress`:
+An address is canonicalized by:
 
-1. trims surrounding whitespace and one trailing dot;
-2. converts internationalized names to lowercase ASCII A-labels using the
+1. trimming surrounding whitespace and one trailing dot;
+2. converting internationalized names to lowercase ASCII A-labels using the
    IDNA2008 lookup profile;
-3. validates DNS label syntax; and
-4. requires at least two labels.
+3. validating DNS label syntax; and
+4. requiring at least two labels.
 
-An empty value returns `ErrAddressEmpty`; other invalid values return
-`ErrAddressInvalid`. Protocol fields and comparisons MUST use the canonical
-ASCII form.
+An empty address and one that fails any of these steps are both invalid, and
+an implementation SHOULD distinguish them so a caller can tell a missing value
+from a malformed one. Protocol fields and comparisons MUST use the canonical
+ASCII form, so that two participants comparing the same address by different
+routes always agree.
 
 For address `supplier.example.com`:
 
@@ -92,9 +106,9 @@ Each signing key MUST be available as a single RFC 7517 JWK at
 optional `/.well-known/jwks.json` endpoint exposes all keys as an RFC 7517 JWK
 Set for generic tooling; GOBL Net verification uses the per-key endpoint.
 
-A published `dsig.PublicKey` may include `valid_from` and `valid_until`.
-When a signature has an `iat`, verification rejects it if the signing time is
-outside those bounds. A missing bound or missing `iat` skips the corresponding
+A published key may include `valid_from` and `valid_until`. When a signature
+has an `iat`, it MUST be rejected if the signing time falls outside those
+bounds. A missing bound or missing `iat` skips the corresponding
 comparison. Retired keys SHOULD remain available when historical signatures
 must remain verifiable.
 
@@ -110,7 +124,7 @@ claims:
 | `iss` | Signer's canonical GOBL Net address. |
 | `aud` | Address to which the signature is bound; optional except for ordinary inbox deliveries. |
 | `iat` | Signing time, as an RFC 7519 NumericDate. |
-| `exp` | Optional expiry, used primarily for endorsements. |
+| `exp` | Optional expiry, used primarily for countersignatures. |
 | `verifier` | Optional verifier named by a registration authority. |
 
 Envelope header `from` and `to` fields are unsigned routing hints and MUST NOT
@@ -122,9 +136,13 @@ MUST NOT assign roles by array position.
 ### 5.1 Party identities
 
 A party envelope contains an `org.Party` with a `gobl:` endpoint. That endpoint
-defines the subject. `Client.VerifyParty` requires a valid signature whose
-`iss` equals the subject and returns the canonical subject address. It does not
-check authority endorsements.
+defines the subject, and it is read from the party document rather than from
+any signature: any holder can reorder or add signatures, so the subject MUST
+NOT be inferred from whichever one appears first.
+
+To accept a party envelope, a participant MUST find a valid signature whose
+`iss` equals the subject. This establishes only that the subject signed its
+own party document; it says nothing about registration, which is §7.
 
 A public `/who` response has the following additional requirements:
 
@@ -135,10 +153,12 @@ Other self-signatures and countersignatures may be present.
 
 ### 5.2 Deliveries
 
-For an ordinary inbox delivery, `Client.VerifyDelivery(ctx, env, receiver)`
-searches for valid signatures with `aud` equal to `receiver`. All matching
-signatures MUST have the same issuer. The method returns that issuer, or fails
-if no issuer or multiple issuers bind the delivery.
+For an ordinary inbox delivery, the receiver MUST consider every valid
+signature whose `aud` equals its own address. All such signatures MUST share
+one issuer, and that issuer is the sender. A delivery that no signature binds,
+or that two different issuers bind, MUST be rejected: the first has nobody
+accountable for it, and the second leaves the receiver to choose, which is not
+a choice a receiver may make.
 
 Registration, verification, and deferred identity workflows may carry party
 envelopes without an audience binding. Their receiver-specific rules must be
@@ -157,21 +177,36 @@ The token contains:
 | `aud` | Destination address. |
 | `iat` | Required issue time. |
 | `exp` | Required expiry. |
-| `jti` | Optional identifier; generated by `NewToken`. |
+| `jti` | Optional unique identifier, to let a receiver detect replay. |
 
 The requester may be an intermediary and need not be the envelope signer.
 Authentication of the HTTP request and verification of the document are
 independent.
 
-`NewToken` uses a one-minute lifetime by default and clamps explicit lifetimes
-to 30 seconds through five minutes. `VerifyToken` verifies the issuer's
-published key, audience, signature, key validity window, and freshness. It
-allows 30 seconds of clock skew and rejects tokens issued more than five
-minutes ago regardless of `exp`. `VerifyAuthorization` additionally parses the
-Bearer header.
+Verifying a token means checking, against the issuer's published key: the
+signature, the audience, the key's validity window, and freshness.
 
-If the issuer's key endpoint is temporarily unavailable, verification returns
-`ErrUnavailable`; a server SHOULD answer `503`, not `401`.
+The freshness parameters are **normative**, because they decide whether two
+independent implementations interoperate at all. A participant that chooses
+its own values will have tokens rejected by conforming peers for no visible
+reason.
+
+| Parameter | Value |
+|---|---|
+| Default token lifetime | 60 seconds |
+| Minimum accepted lifetime | 30 seconds |
+| Maximum accepted lifetime | 5 minutes |
+| Permitted clock skew | 30 seconds |
+| Maximum age, regardless of `exp` | 5 minutes |
+
+An issuer MUST NOT mint a token whose lifetime falls outside the minimum and
+maximum above. A verifier MUST apply the permitted skew to both `iat` and
+`exp`, and MUST reject a token issued more than the maximum age ago even when
+its `exp` has not passed — an over-long `exp` does not extend a token's life.
+
+If the issuer's key endpoint is temporarily unavailable the token cannot be
+checked, which is not the same as being invalid: the server SHOULD answer
+`503`, not `401`, so the caller retries rather than re-authenticates.
 
 ## 7. Authorities and sender policy
 
@@ -184,35 +219,23 @@ A registration authority countersigns a party envelope with:
 The verifier MUST be a different participant from the registration authority
 and MUST countersign the same envelope. Separating these roles prevents the
 authority from attesting to identity checks that no independent verifier
-performed. A self-referential, missing, invalid, or expired verifier claim
-reduces the result to registered; it does not invalidate a valid registration
-endorsement.
+performed.
 
-`Client.VerifyAuthority` checks all candidate authority signatures and prefers
-a confirmed verifier over a registration-only result. An authority signature's
-`exp`, when present, is enforced. The method returns an `Endorsement`:
+Each receiver holds a **trust list** of the authorities it accepts. The
+default live authority is `lookup.gobl.org` and the default sandbox authority
+is `lookup.sandbox.gobl.org`. The two lists are disjoint and MUST NOT be
+combined: a sandbox registration carries the same shape as a live one, so a
+receiver that trusted both could not tell a test identity from a real one.
 
-- `Authority` identifies the trusted registration authority;
-- `Verifier` is set only when verifier evidence is confirmed; and
-- `Endorsement.Verified()` reports whether `Verifier` is set.
-
-The default live authority is `lookup.gobl.org`. `WithAuthorities` replaces the
-client's trust list. `WithSandbox` replaces it with
-`lookup.sandbox.gobl.org`; live and sandbox trust lists are separate.
-
-`Client.VerifySender(ctx, addr, requireVerified)` combines `/who` lookup and
-authority verification. It always requires registration and, when
-`requireVerified` is true, confirmed identity verification.
-
-Authority endorsement is a sender policy, not a prerequisite for receiving.
-A receive-only address may publish only an inbox and keys, and may return `204`
+Sender status is a **policy for sending**, not a prerequisite for receiving. A
+receive-only address may publish only an inbox and keys, and may return `204`
 from `/who`.
 
 ### 7.1 The verification exchange
 
 A verifier establishes who is behind an address and countersigns the subject's
 party envelope to say so. The exchange is **subject-mediated**: the subject
-carries its own endorsement to the authority.
+carries its own verification countersignature to the authority.
 
 1. The subject delivers its registered party envelope — already carrying the
    authority's countersignature — to the verifier's inbox.
@@ -249,14 +272,14 @@ A verifier MAY additionally deliver the countersigned envelope to the
 authority's inbox, where the authority accepts it. This is the older
 arrangement and remains conforming, which matters for more than history: it
 is what lets a network replace a verifier without a flag day, running the two
-side by side while endorsements issued under the previous one are still
+side by side while countersignatures issued under the previous one are still
 within their `exp`.
 
-Where the inbox is used, delivery SHOULD be retried on the transient failures
-of §9. However the envelope is returned, an endorsement is a signed statement
+Where the inbox is used, delivery SHOULD be retried on the temporary failures
+of §11. However the envelope is returned, a countersignature is a statement
 that has already been made: a verifier MUST NOT treat an unreturnable result
 as a failed verification, and MUST NOT re-sign on a retry — that would extend
-the endorsement's life each time it was re-sent. A subject that never
+the countersignature's life each time it was re-sent. A subject that never
 received one asks by re-submitting, which is the same exchange from step 1.
 
 The subject cannot subvert this by carrying the envelope. The countersignature
@@ -268,6 +291,38 @@ Because the authority looks only at the signatures an envelope carries, and
 not at who delivered it, this exchange requires nothing of an authority beyond
 what §7 already specifies — and it is the same property that makes the two
 delivery paths interchangeable.
+
+### 7.2 Determining sender status
+
+A receiver reaches a sender status by evaluating the countersignatures a party
+envelope carries against its own trust list. The procedure is normative: two
+conforming receivers with the same trust list MUST reach the same status for
+the same envelope.
+
+1. Consider every signature whose `iss` is an authority on the trust list. An
+   envelope carrying none is **unregistered**, whatever else it carries — a
+   countersignature from an unknown authority is not evidence.
+2. For each candidate, verify it against that authority's published key and
+   reject it if an `exp` is present and has passed.
+3. A candidate that verifies makes the subject at least **registered**.
+4. If a verifying candidate names a `verifier`, and that verifier is a
+   different participant from the authority, and the same envelope carries a
+   valid, unexpired countersignature issued by that verifier, the subject is
+   **verified**.
+5. Where candidates disagree, the highest status wins: an envelope may carry
+   several authority signatures, and one that establishes `verified` is not
+   cancelled by another that only establishes `registered`.
+
+A `verifier` claim that is absent, malformed, self-referential, or whose
+countersignature is missing, invalid or expired reduces the status to
+**registered**. It MUST NOT invalidate an otherwise valid registration — a
+claim nobody can corroborate is worth nothing, but it does not make the
+authority's own statement worthless.
+
+The one case that is not a downgrade is a verifier key endpoint that cannot be
+reached. "Could not check" is not "not verified": a receiver MUST NOT report
+**registered** on a temporary failure, and SHOULD treat it as §11 does, so a
+verified sender is never quietly demoted by somebody else's outage.
 
 ## 8. Endpoints
 
@@ -295,17 +350,18 @@ envelope or one of these empty responses:
 | `404` | Address does not participate. |
 | `503` | A required key endpoint is unavailable. |
 
-`Client.Who` maps `202` to `ErrPending` and `204` to `ErrNoContent`, then
-verifies a `200` response as described in section 5.1. Authenticated responses
-SHOULD use `Cache-Control: private`. Clients may cache verified identities for
-a bounded period.
+A `200` response MUST be verified as described in §5.1 before anything in it
+is used. Authenticated responses SHOULD use `Cache-Control: private`, and a
+caller may cache a verified identity for a bounded period — bounded because a
+cached identity outliving the countersignature that endorsed it is §12's
+problem.
 
 ### 8.3 `POST /.well-known/gobl/inbox`
 
 This endpoint requires both a valid request token and a signed GOBL envelope.
 For ordinary documents, the envelope MUST have exactly one issuer bound to the
-inbox address as described in section 5.2. The receiver may then apply its
-sender endorsement policy.
+inbox address as described in §5.2. The receiver may then apply its sender
+status policy (§7.2).
 
 | Status | Meaning |
 |---|---|
@@ -317,38 +373,38 @@ sender endorsement policy.
 | `500` | Persistence failed. |
 | `503` | A required key endpoint is unavailable. |
 
-Acceptance MUST be idempotent on the envelope UUID and digest. Clients may
-retry `ErrUnavailable`; they SHOULD NOT retry `ErrInboxRejected` without
-changing the request.
+Acceptance MUST be idempotent on the envelope UUID and digest: the same
+envelope delivered twice is acknowledged twice and stored once, which is what
+makes the retry rule in §11 safe. Only `202` means the envelope was accepted;
+any other `2xx` MUST NOT be read as success.
 
-`Client.Send` serializes the envelope, adds a fresh request token when the
-client has an identity, and succeeds only on `202`.
+## 9. Limits
 
-## 9. Client and transport
+These bound what a participant will do on a peer's behalf. They are a defence
+against a hostile or broken peer rather than a tuning parameter, so an
+implementation that raises them weakens itself and not the protocol.
 
-`NewClient` uses `HTTPFetcher`, the default live authority list, and a
-five-minute public-key cache. Configure it with:
-
-| Option | Effect |
+| Limit | Value |
 |---|---|
-| `WithIdentity` | Sets the address and key used for request tokens. |
-| `WithAuthorities` | Replaces trusted registration authorities. |
-| `WithSandbox` | Replaces live authorities with sandbox authorities. |
-| `WithKeyCacheTTL` | Changes the key cache lifetime; zero disables it. |
-| `WithFetcher` | Replaces the HTTP transport. |
+| Response body accepted from a peer | 1 MiB |
+| Signatures verified per envelope | 32 |
 
-The default `HTTPFetcher` has a 10-second request timeout, a five-second dial
-timeout, and a 1 MiB response limit. It classifies `429`, `5xx`, and transport
-failures as `ErrUnavailable`. Other unsuccessful fetch responses are
-`ErrFetchFailed`; definitive inbox `4xx` responses are `ErrInboxRejected`.
+An envelope carrying more signatures than the limit MUST be rejected rather
+than partially verified. Because each round trip through an authority or
+verifier appends a signature, a party envelope approaching the limit will stop
+being endorsable before it stops being valid; a participant that countersigns
+SHOULD refuse an envelope close enough to the limit that its own signature
+would exhaust it, and say so, rather than produce the signature that breaks
+the document.
 
-To reduce SSRF risk, the default dialer rejects hosts resolving to loopback,
-private, link-local, multicast, or unspecified addresses. Custom `Fetcher`
-implementations SHOULD provide equivalent protection. Tests and local services
-can inject a custom fetcher.
+Fetching a key or an identity means issuing an HTTP request to an address a
+peer chose, which is a server-side request forgery primitive. An implementation
+MUST refuse to fetch from hosts resolving to loopback, private, link-local,
+multicast, or unspecified addresses, except where an operator has deliberately
+configured otherwise for testing or a local service.
 
-Fetched keys are cached by URL, only on success, with a maximum of 1,024
-entries. `FlushKeyCache` forces subsequent verification to fetch keys again.
+Fetched keys MAY be cached, keyed by URL and only on success. A cache SHOULD
+be bounded in both entries and lifetime; see §12 on what a stale entry costs.
 
 ## 10. Typical delivery flow
 
@@ -356,58 +412,69 @@ entries. `FlushKeyCache` forces subsequent verification to fetch keys again.
 2. The sender may call `/who` for the receiver's invoicing details.
 3. The sender signs the envelope with `iss=sender` and `aud=receiver`.
 4. The sender posts it to the receiver's inbox with a request token.
-5. The receiver verifies the token and calls `VerifyDelivery`.
-6. The receiver may call `VerifySender` on the returned issuer.
+5. The receiver verifies the token and resolves the sender (§5.2).
+6. The receiver may look up that sender's `/who` and apply its status policy
+   (§7.2).
 7. A `202` confirms durable receipt.
 
-Only step 6 requires authority endorsement, and that requirement applies to
-the sender. Any response document is a new delivery and is subject to the same
+Only step 6 involves sender status, and that requirement falls on the
+sender. Any response document is a new delivery and is subject to the same
 rules.
 
-## 11. Errors
+## 11. Failure handling
 
-| Error | Meaning |
-|---|---|
-| `ErrAddressEmpty` | Address is empty. |
-| `ErrAddressInvalid` | Address is not a valid FQDN. |
-| `ErrFetchFailed` | Permanent fetch, content, or configuration failure. |
-| `ErrUnavailable` | Retryable network, `429`, or `5xx` failure. |
-| `ErrNoContent` | Endpoint returned `204`. |
-| `ErrPending` | Endpoint returned `202` where a body was expected. |
-| `ErrTokenInvalid` | Request token is malformed or invalid. |
-| `ErrTokenExpired` | Request token failed freshness checks. |
-| `ErrVerifyFailed` | Envelope or signature verification failed. |
-| `ErrUnknownAuthority` | No trusted authority endorsement was found. |
-| `ErrNotVerified` | Registration is valid but verification was required. |
-| `ErrSignatureExpired` | Authority endorsement has expired. |
-| `ErrPartyMissing` | Identity envelope has no `org.Party`. |
-| `ErrInboxRejected` | Inbox returned a definitive `4xx`. |
+Every failure in this protocol falls into one of three classes, and an
+implementation MUST be able to tell them apart — reporting a temporary failure
+as a definitive one turns somebody else's outage into a rejection the caller
+cannot distinguish from a refusal.
 
-Callers should classify wrapped errors with `errors.Is`.
+| Class | Examples | Caller behaviour |
+|---|---|---|
+| **Temporary** | `429`, `5xx`, connection and timeout failures | Retry with backoff. |
+| **Definitive** | a `4xx` other than `429`, a signature that fails verification | Do not retry without changing the request. |
+| **Absent** | `204` from `/who`, `404` for an unknown key or address | Not a failure. The peer answered, and the answer is that there is nothing. |
+
+Two consequences run through the rest of this document.
+
+A check that could not be *performed* is never reported as one that *failed*.
+An unreachable key endpoint means the signature is unknown, not invalid: a
+server answers `503` rather than `401` (§6), and a receiver does not downgrade
+a sender's status (§7.2).
+
+Delivery retries are safe because inbox acceptance is idempotent on the
+envelope UUID and digest (§8.3). A caller that retries a delivery it is unsure
+about cannot create a duplicate; one that does not retry can lose a document
+to a transient failure. Retrying is the correct behaviour.
 
 ## 12. Security considerations
 
 - **Web PKI:** control of an address and its TLS certificate controls its
   published keys. Applications must compare verified issuers with the
-  identities they expect or apply authority policy.
-- **Key removal:** the client cache may continue to accept a removed key until
-  its TTL expires. Use short TTLs and `FlushKeyCache` during incident response.
-- **Endorsement freshness:** authority and verifier `exp` claims bound their
-  lifetimes. Identity caches must also have bounded lifetimes.
-- **Resource limits:** clients limit response bodies to 1 MiB and verification
-  to 32 signatures per envelope. Servers should impose comparable request
-  limits.
+  identities they expect, or apply a sender status policy (§7.2). An
+  implementation MUST authenticate the HTTPS response when fetching a key; a
+  key fetched over an unauthenticated channel proves nothing.
+- **Key removal:** a cached key may continue to be accepted after it is
+  withdrawn, until the cache entry expires. Key caches SHOULD be short-lived
+  and an implementation SHOULD offer a way to flush them during incident
+  response, since removing a key from publication is otherwise not an
+  immediate revocation.
+- **Countersignature freshness:** authority and verifier `exp` claims bound
+  their lifetimes. Identity caches must be bounded too, or a cached identity
+  outlives the countersignature that justified trusting it.
+- **Resource limits:** the limits in §9 are a defence against a hostile peer,
+  not a tuning parameter. Servers should impose comparable limits on the
+  requests they accept.
 - **Privacy:** request tokens identify callers but do not make party data
   public. Operators should limit audit-log retention because requester metadata
   can reveal business relationships.
 - **Routing fields:** unsigned `from` and `to` values are hints only. Security
   decisions must use signed claims.
-- **Verification is not graded.** `Endorsement.Verified()` is a boolean, and
-  `VerifySender` with `requireVerified` is satisfied by any verifier on the
-  authority's trust list. A receiver that wants to distinguish between them
-  must inspect `Endorsement.Verifier` itself and decide which addresses it
-  accepts. It follows that an authority admits a weak verifier at the cost of
-  every verified sender it endorses, and that a verifier's address is the only
+- **Verification is not graded.** Sender status is `verified` or it is not,
+  and any verifier the authority names satisfies it. A receiver that wants to
+  distinguish between verifiers must read the `verifier` claim itself and
+  decide which addresses it accepts. It follows that an authority admits a
+  weak verifier at the cost of every sender it marks verified, and that a
+  verifier's address is the only
   trust signal a receiver gets: it should name what is being vouched for, and
   a change in what the verifier checks is a change in what that name means.
 - **Verifier scope:** a verifier attests to the subject's identity at a point
