@@ -235,25 +235,44 @@ from `/who`.
 
 A verifier establishes who is behind an address and countersigns the subject's
 party envelope to say so. The exchange is **subject-mediated**: the subject
-carries its own verification countersignature to the authority.
+holds its own envelope throughout and presents it to each participant in turn.
 
-1. The subject delivers its registered party envelope — already carrying the
-   authority's countersignature — to the verifier's inbox.
-2. The verifier performs its checks, by whatever means and over whatever
-   period it needs.
+1. The subject prepares its party envelope — an `org.Party` declaring its
+   `gobl:` endpoint, self-signed, with the signing key published at that
+   address (§4).
+2. It asks a verifier of its choosing to verify it. The verifier performs its
+   checks, by whatever means and over whatever period it needs.
 3. On success the verifier countersigns **that exact envelope**, unchanged in
    `uuid` and digest, with `iss` equal to its own address, `aud` equal to the
    subject, and an `exp`. It does not set a `verifier` claim: that pointer is
    the authority's to write.
 4. The verifier returns the countersigned envelope to the subject. Delivering
    it to the subject's inbox (§8.3) is RECOMMENDED.
-5. The subject submits it to the authority as an ordinary re-registration.
-   The authority recognises a countersignature from an address on its trusted
-   list, re-countersigns naming it in the `verifier` claim, and delivers the
-   result to the subject, which publishes it at `/who`.
+5. The subject registers that envelope with the authority, which recognises a
+   countersignature from an address on its trusted list, countersigns naming
+   it in the `verifier` claim, and delivers the result to the subject. The
+   subject publishes it at `/who`.
 
-How the envelope gets back to the subject is not constrained. What the
-exchange requires is that the subject ends up holding that exact envelope;
+Verification comes before registration because the authority's countersignature
+is the last one added. With the verifier's already aboard, a single
+registration produces a fully endorsed identity, and the subject's party
+document is published once rather than twice.
+
+The reverse order remains valid and needs no separate description: a party
+that registered without a verifier, and later wants one, follows exactly these
+steps with the envelope it already holds. The authority supersedes its own
+earlier countersignature when the result comes back. It simply costs a second
+registration to arrive where one would have done.
+
+The same steps also describe keeping an identity current. An authority
+countersignature carries an `exp`, and a subject renews by submitting the
+endorsed envelope again before it passes — the verification countersignature
+travelling with it, since an authority that cannot see one will not name a
+verifier. Registering, adding verification later, and renewing are therefore
+one operation applied at different times, not three.
+
+How the envelope gets back to the subject in step 4 is not constrained. What
+the exchange requires is that the subject ends up holding that exact envelope;
 the means are between a verifier and its own customers. A verifier that
 returns it by some other route — its own API, a link in an email, a console
 the subject signs into — conforms, as does one that reports progress or
@@ -268,24 +287,36 @@ only the inbox can work with any verifier that follows the recommendation.
 A verifier choosing another route is choosing to require something of its
 own customers, which is its business rather than the network's.
 
-A verifier MAY additionally deliver the countersigned envelope to the
-authority's inbox, where the authority accepts it. This is the older
-arrangement and remains conforming, which matters for more than history: it
-is what lets a network replace a verifier without a flag day, running the two
-side by side while countersignatures issued under the previous one are still
-within their `exp`.
-
 Where the inbox is used, delivery SHOULD be retried on the temporary failures
 of §11. However the envelope is returned, a countersignature is a statement
 that has already been made: a verifier MUST NOT treat an unreturnable result
 as a failed verification, and MUST NOT re-sign on a retry — that would extend
 the countersignature's life each time it was re-sent. A subject that never
-received one asks by re-submitting, which is the same exchange from step 1.
+received one asks for it again, which is step 2.
 
-The subject cannot subvert this by carrying the envelope. The countersignature
-covers the digest, so altering anything invalidates it, and the authority
-verifies it against the verifier's published key. Withholding is the subject's
-right — it is their identity.
+A verifier needs no relationship with any authority. It verifies the subject's
+self-signature against the key published at the subject's own address (§5.1),
+which is evidence it can gather alone, and it countersigns on that basis. It
+does not need to know which authority the subject will register with, whether
+the subject has registered at all, or whether that authority would accept its
+countersignature — the last of which is the authority's decision and is made
+in §7.2, after the verifier's work is done. A verifier MAY still require the
+subject to be registered before it will act, but that is its own admission
+policy and not a rule of the protocol.
+
+For an already-registered subject only, a verifier MAY deliver the
+countersigned envelope to the authority's inbox instead of returning it, which
+re-registers the envelope on the subject's behalf. This is the older
+arrangement and remains conforming, which matters for more than history: it is
+what lets a network replace a verifier without a flag day, running the two
+side by side while countersignatures issued under the previous one are still
+within their `exp`. It does not apply before a first registration, where the
+subject has not yet chosen an authority to be registered with.
+
+The subject cannot subvert any of this by carrying the envelope. The
+countersignature covers the digest, so altering anything invalidates it, and
+the authority verifies it against the verifier's published key. Withholding is
+the subject's right — it is their identity.
 
 Because the authority looks only at the signatures an envelope carries, and
 not at who delivered it, this exchange requires nothing of an authority beyond
