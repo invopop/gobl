@@ -235,6 +235,16 @@ inbox, so the subject learns without waiting to poll. That delivery is an
 optimisation and MUST NOT be relied upon: the endorsement is collectable
 regardless, and a verifier that never pushes is conforming.
 
+A verifier MAY additionally deliver the countersigned envelope straight to
+the authority's inbox, where the authority accepts it. This is the older
+arrangement and remains conforming, which matters for more than history: it
+is what lets a network replace a verifier without a flag day, running the
+two side by side while endorsements issued under the previous one are still
+within their `exp`. What it does not do is remove an obligation — a verifier
+MUST serve §8.4 whether or not it pushes anywhere, because that endpoint is
+what the subject relies on, and an endorsement reachable only through an
+authority that happens to accept pushes is not collectable at all.
+
 The subject cannot subvert this by carrying the envelope. The countersignature
 covers the digest, so altering anything invalidates it, and the authority
 verifies it against the verifier's published key. Withholding is the subject's
@@ -242,9 +252,10 @@ right — it is their identity.
 
 Because the authority looks only at the signatures an envelope carries, and
 not at who delivered it, this exchange requires nothing of an authority beyond
-what §7 already specifies. It does mean a verifier needs no outbound delivery
-to conform: a keypair, published keys, an inbox and this one endpoint are the
-whole obligation.
+what §7 already specifies — and it is the same property that makes the two
+delivery paths interchangeable. It does mean a verifier needs no outbound
+delivery to conform: a keypair, published keys, an inbox and this one
+endpoint are the whole obligation.
 
 ## 8. Endpoints
 
