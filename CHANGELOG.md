@@ -6,6 +6,76 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 This file is generated from the change files in the [changes](./changes) directory. Add new entries to `changes/unreleased` instead of editing this file; see [changes/README.md](./changes/README.md).
 
+## [v0.508.0] - 2026-10-14
+
+### Added
+
+- `convert`: a central register of converters between GOBL and external
+  formats. Converter packages call `convert.Register` from `init` to add their
+  formats. `convert.Import` detects the format of incoming data and converts
+  it into an envelope, `convert.Export` converts an envelope into the first of
+  a list of preferred formats that accepts it, and `convert.Formats`,
+  `convert.FormatsFor`, and `convert.Conversions` list what is available.
+- `regimes/bs`: Commonwealth of the Bahamas regime. We contemplate the TIN as the tax identification, plus the VAT at a standard and a reduced rate.
+- `bill`: `Charge` accepts an `informative` flag. An informative charge is
+  calculated, validated, and kept on the document, but is left out of the
+  charge total, the taxable base, and every amount that follows, and cannot
+  carry taxes. It models costs that must be declared on an invoice while being
+  borne by the supplier, such as the Italian *Marca da Bollo* when the issuer
+  absorbs the €2 instead of passing it on to the customer.
+- `org`: `Item` supports the EN 16931 price details (BG-29): `list`, the list
+  price before the price discount (BT-148); `discount`, the amount deducted
+  from the list price (BT-147); and `per`, the number of units the price
+  applies to (BT-149). When a list price is set, the price is calculated as
+  the list price less the discount.
+- `org`: `Item.UnitPrice` provides the item's price for a single unit, taking
+  `per` into account.
+- `bill`: line sums divide the item's price by `per`, so a price per 100 kg
+  applied to 250 kg gives a sum of 2.5 times the price.
+- `tax`: `Filter` selects rate totals by category and, optionally, key and extensions. `Total.FilteredAmount` sums the matching rate amounts.
+- `pay`: `Record.Taxes` takes tax filters as an alternative to `percent`, so the amount is the sum of the matching rate totals. Setting both fails validation, as does using taxes on `bill.Payment` methods.
+- `pay`: `Record.Waiver` gives the reason an amount was waived and not collected from the customer, such as a tax refunded at the point of sale, as an alternative to the means `key`. GOBL doesn't define the values, and `bill.Payment` methods don't accept it.
+- `pay`: `CreditTransfer`, `Card`, and `DirectDebit` accept a `label` and `meta`, and `Online` accepts `meta`.
+
+### Changed
+
+- `co-dian-v2`: **breaking**: the Colombia DIAN addon moved to the standalone
+  [`github.com/invopop/gobl.co.dian`](https://github.com/invopop/gobl.co.dian)
+  module. Add a blank import (`_ "github.com/invopop/gobl.co.dian/addon"`) to
+  keep using the `co-dian-v2` addon key. The key itself is unchanged, and
+  remains a valid `$addons` value through the approved external addon list. The
+  Colombian tax regime (`regimes/co`) stays in GOBL core.
+- `addons/ar/arca`: **breaking**: the Argentina ARCA (`ar-arca-v4`) addon moved to the standalone [`github.com/invopop/gobl.ar.arca`](https://github.com/invopop/gobl.ar.arca) module. Add a blank import (`_ "github.com/invopop/gobl.ar.arca/addon"`) to keep using the `ar-arca-v4` addon key. The key itself is unchanged, and remains a valid `$addons` value through the approved external addon list.
+- `bill`, `org`, `tax`, `head`, `pay`, `cbc`, `cal`, `currency`, `dsig`, `l10n`, `note`: reviewed and shortened the JSON Schema field descriptions. Descriptions no longer repeat the field name, several typos and factual slips were corrected (order issue date and currency described as "invoice", `ISO 3166-2` where `ISO 3166-1 alpha-2` was meant, a truncated `CorrectionDefinition` comment), and long explanations were tightened.
+- `bill`: due date percentages are calculated from the amount due after advances, falling back to the payable amount. When nothing remains due, their amounts are removed.
+- `bill`: advances with tax filters take their amount from the invoice's rounded tax totals.
+- **breaking**: `pay`: `Record.Ref` and `DirectDebit.Ref` are `cbc.Code` instead of `string`, matching `Instructions.Ref`. JSON documents are unchanged, but references are limited to 128 characters and Go code assigning a `string` needs a conversion.
+
+### Removed
+
+- **breaking**: `data`: the generated addon definitions under `data/addons` are
+  gone, along with the generator that produced them. They could only ever
+  describe the addons still compiled into core, so as addons moved to their own
+  modules the directory became a shrinking subset that looked complete: of the
+  25 addon keys GOBL recognises — 13 built in, 12 on the approved external
+  list — only the built-in 13 had a file. Build the definition from the
+  registry instead, which covers every addon a binary has loaded:
+  `schema.NewObject(tax.AddonForKey(key))` marshalled with two-space indent
+  reproduces exactly what these files contained.
+- `data`: `data/regimes/gr.json` is gone. Greece registers under `EL`, so this
+  was a leftover from before that rename, unreachable from the registry and
+  last regenerated in 2024 while `el.json` kept moving. Nothing generates it.
+
+### Fixed
+
+- `num`: `AmountFromString` rejects a sign in the fraction. `1.-25` was read as `0.975`. `-245.12` still parses.
+- `l10n`: country codes are trimmed and uppercased during normalization, so `de` becomes `DE`.
+- `l10n`: `ISOCountryCode` and `TaxCountryCode` are validated by the rules engine (`GOBL-L10N-ISOCOUNTRYCODE-01`, `GOBL-L10N-TAXCOUNTRYCODE-01`).
+- `bill`: an `issue_time` of midnight (`00:00:00`) is no longer treated as unset. Previously the calculators replaced it, along with the `issue_date`, with the current date and time. The issue time is now always kept as provided; only a missing `issue_date` is still filled in with today's date.
+- `bill`: `ConvertInto` converts the items, discounts, and charges of
+  breakdown and substituted sub-lines, not only those of the line itself.
+- `bill`: `RemoveIncludedTaxes` no longer panics on lines without a price.
+
 ## [v0.507.0] - 2026-09-15
 
 ### Added
