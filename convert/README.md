@@ -84,14 +84,31 @@ A converter implements the `Converter` interface and registers itself once:
 ```go
 package ubl
 
+var (
+	invoiceSchema = schema.Lookup(bill.Invoice{})
+	statusSchema  = schema.Lookup(bill.Status{})
+)
+
+var formatEN16931 = &convert.Format{
+	Key:    "ubl+en16931-v2017",
+	Name:   i18n.NewString("UBL EN 16931:2017"),
+	MIME:   "application/xml",
+	Syntax: "ubl",
+	Addons: []cbc.Key{en16931.V2017},
+	Import: []schema.ID{invoiceSchema},
+	Export: []schema.ID{invoiceSchema},
+}
+
+// Invoices are written as Peppol BIS Billing, and statuses as Peppol
+// Invoice Response. Only invoices need the EN 16931 addon, so Accepts
+// checks it.
 var formatPeppol = &convert.Format{
 	Key:    "ubl+peppol+bis-v3",
 	Name:   i18n.NewString("UBL Peppol BIS 3"),
 	MIME:   "application/xml",
 	Syntax: "ubl",
-	Addons: []cbc.Key{en16931.V2017},
-	Import: []schema.ID{schema.Lookup(bill.Invoice{})},
-	Export: []schema.ID{schema.Lookup(bill.Invoice{})},
+	Import: []schema.ID{invoiceSchema, statusSchema},
+	Export: []schema.ID{invoiceSchema, statusSchema},
 }
 
 type converter struct{}
@@ -102,6 +119,31 @@ func init() {
 
 func (converter) Formats() []*convert.Format {
 	return []*convert.Format{formatEN16931, formatPeppol}
+}
+
+func (converter) Accepts(key cbc.Key, env *gobl.Envelope) bool {
+	if inv, ok := env.Extract().(*bill.Invoice); ok && key == formatPeppol.Key {
+		return en16931.V2017.In(inv.GetAddons()...)
+	}
+	return true
+}
+```
+
+A format can cover any GOBL document type. The French CTC lifecycle messages,
+for example, carry both statuses and payments:
+
+```go
+package cdar
+
+var formatCDV = &convert.Format{
+	Key:       "cdar+fr-ctc-cdv-v1",
+	Name:      i18n.NewString("CDAR France CTC CDV"),
+	MIME:      "application/xml",
+	Syntax:    "cdar",
+	Countries: []l10n.Code{l10n.FR},
+	Addons:    []cbc.Key{flow6.V1},
+	Import:    []schema.ID{schema.Lookup(bill.Status{}), schema.Lookup(bill.Payment{})},
+	Export:    []schema.ID{schema.Lookup(bill.Status{}), schema.Lookup(bill.Payment{})},
 }
 ```
 
