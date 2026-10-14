@@ -19,6 +19,11 @@
           "type": "string",
           "title": "URL",
           "description": "URL to be used for payment."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Additional semi-structured data that may be useful."
         }
       },
       "type": "object",
