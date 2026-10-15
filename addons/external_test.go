@@ -68,6 +68,12 @@ func TestApprovedAddons(t *testing.T) {
 			},
 		},
 		{
+			name: "ES FacturaE",
+			modules: map[cbc.Key]string{
+				"es-facturae-v3": "github.com/invopop/gobl.es.facturae",
+			},
+		},
+		{
 			name: "AR ARCA",
 			modules: map[cbc.Key]string{
 				"ar-arca-v4": "github.com/invopop/gobl.ar.arca",

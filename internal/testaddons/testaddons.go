@@ -20,6 +20,11 @@ const (
 	CorrectionStamps cbc.Key = "test-correction-stamps-v1"
 	// StampRef is the stamp required by the CorrectionStamps addon.
 	StampRef cbc.Key = "test-ref"
+	// CorrectionExt is the key of a test addon whose correction rules
+	// accept an extension explaining the correction.
+	CorrectionExt cbc.Key = "test-correction-ext-v1"
+	// ExtKeyCorrection is the extension used by the CorrectionExt addon.
+	ExtKeyCorrection cbc.Key = "test-correction"
 )
 
 func init() {
@@ -35,6 +40,26 @@ func init() {
 				Stamps: []cbc.Key{
 					StampRef,
 				},
+			},
+		},
+	})
+	tax.RegisterAddonDef(&tax.AddonDef{
+		Key:  CorrectionExt,
+		Name: i18n.String{i18n.EN: "Test Correction Extension"},
+		Extensions: []*cbc.Definition{
+			{
+				Key:  ExtKeyCorrection,
+				Name: i18n.String{i18n.EN: "Test Correction"},
+				Values: []*cbc.Definition{
+					{Code: "01", Name: i18n.String{i18n.EN: "Invoice code"}},
+					{Code: "02", Name: i18n.String{i18n.EN: "Invoice series"}},
+				},
+			},
+		},
+		Corrections: tax.CorrectionSet{
+			{
+				Schema:     bill.ShortSchemaInvoice,
+				Extensions: []cbc.Key{ExtKeyCorrection},
 			},
 		},
 	})

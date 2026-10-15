@@ -57,6 +57,13 @@ func init() {
 		Module: "github.com/invopop/gobl.co.dian",
 	})
 	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "es-facturae-v3",
+		Name: i18n.String{
+			i18n.EN: "Spain FacturaE",
+		},
+		Module: "github.com/invopop/gobl.es.facturae",
+	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
 		Key: "sa-zatca-v1",
 		Name: i18n.String{
 			i18n.EN: "Saudi Arabia ZATCA",

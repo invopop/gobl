@@ -58,7 +58,7 @@ GOBL makes it easy to create business documents, like invoices, but check out so
 Conversion to local and international formats:
 
 - [GOBL to HTML](https://github.com/invopop/gobl.html) - generate printable versions of GOBL documents ready to be converted to PDF.
-- [GOBL to FacturaE (Spain)](https://github.com/invopop/gobl.facturae) - convert into the [Spanish FacturaE](https://www.facturae.gob.es/Paginas/Index.aspx) format.
+- [GOBL to FacturaE (Spain)](https://github.com/invopop/gobl.es.facturae) - convert to and from the [Spanish FacturaE](https://www.facturae.gob.es/Paginas/Index.aspx) format.
 - [GOBL to CFDI (Mexico)](https://github.com/invopop/gobl.mx.cfdi) - convert into the Mexican CFDI format.
 - [GOBL to FatturaPA (Italy)](https://github.com/invopop/gobl.fatturapa) - convert into the [Italian FatturaPA](https://www.fatturapa.gov.it/it/index.html) format.
 - [GOBL to FA_VAT / KSeF (Poland)](https://github.com/invopop/gobl.ksef) - convert to the Polish FA_VAT format and send to [KSeF](https://www.podatki.gov.pl/ksef/)
@@ -75,6 +75,7 @@ Addons adapt GOBL documents to a specific format or regulatory regime, adding th
 - [gobl.ar.arca](https://github.com/invopop/gobl.ar.arca) - Argentina ARCA (`ar-arca-v4`)
 - [gobl.br.nfe](https://github.com/invopop/gobl.br.nfe) - Brazil NF-e (`br-nfe-v4`)
 - [gobl.br.nfse](https://github.com/invopop/gobl.br.nfse) - Brazil NFS-e (`br-nfse-v1`)
+- [gobl.es.facturae](https://github.com/invopop/gobl.es.facturae) - Spain FacturaE (`es-facturae-v3`)
 - [gobl.fr.ctc](https://github.com/invopop/gobl.fr.ctc) - France CTC flows (`fr-ctc-flow2-v1`, `fr-ctc-flow6-v1`, `fr-ctc-flow10-v1`)
 - [gobl.mx.cfdi](https://github.com/invopop/gobl.mx.cfdi) - Mexican SAT CFDI (`mx-cfdi-v4`)
 - [gobl.pt.saft](https://github.com/invopop/gobl.pt.saft) - Portugal SAF-T (`pt-saft-v1`)
