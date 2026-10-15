@@ -18,8 +18,11 @@ documents. A participant is identified by a fully qualified domain name
 
 A signature names its issuer in the signed `iss` claim. The participant
 checking it obtains the key from the issuer's domain and relies on Web PKI to
-authenticate the HTTPS response. Registration authorities add an optional
-trust layer by countersigning party envelopes.
+authenticate the HTTPS response. That establishes control of an address and
+nothing more. Two optional roles build on it by countersigning party
+envelopes: a registration authority, which attests that control; and a
+verifier, which establishes which real-world organization is behind the
+address — on a live network, by a KYC/KYB process (§7).
 
 **This document defines the protocol.** It is implementation-neutral and names
 no API of any language: every requirement here is on the wire or on the
@@ -47,7 +50,7 @@ described in BCP 14 (RFC 2119 and RFC 8174).
 | **Receiver** | The participant operating the inbox to which a document is delivered. For ordinary deliveries, the receiver is also the signature's audience. |
 | **Requester** | The issuer of an HTTP request token. A requester may be an intermediary and need not be the document sender. |
 | **Authority** | A trusted participant that confirms the subject controls its GOBL Net address and countersigns its party envelope. |
-| **Verifier** | A participant, independent of the Authority, that establishes who is behind an address and countersigns the subject's party envelope. What it checks, and how, is its own to define and publish; see §7.1. |
+| **Verifier** | A participant, independent of the Authority, that establishes which real-world organization or person is behind an address — on a live network, by a KYC/KYB process — and countersigns the subject's party envelope to say so. It is not a certificate authority: it binds an address to a legal identity, not a key to a name. What it checks, and how, is its own to define and publish; see §7. |
 | **Registration countersignature** | A signature issued by an Authority over a party envelope, binding the Subject. It may name a Verifier. |
 | **Verification countersignature** | A signature issued by a Verifier over the same party envelope. |
 | **Sender status** | What a receiver concludes about a Subject after evaluating the countersignatures its party envelope carries, by the procedure in §7.2. One of the three below. |
@@ -214,7 +217,7 @@ If the issuer's key endpoint is temporarily unavailable the token cannot be
 checked, which is not the same as being invalid: the server SHOULD answer
 `503`, not `401`, so the caller retries rather than re-authenticates.
 
-## 7. Authorities and sender policy
+## 7. Authorities, verifiers, and sender policy
 
 A registration authority countersigns a party envelope with:
 
@@ -226,6 +229,35 @@ The verifier MUST be a different participant from the registration authority
 and MUST countersign the same envelope. Separating these roles prevents the
 authority from attesting to identity checks that no independent verifier
 performed.
+
+**A verifier is not a certificate authority.** The distinction is easy to miss,
+because both sign statements about a name, but they operate on different
+layers and answer different questions. Web PKI binds a key to a domain: the
+keys in §4 are trusted because the TLS certificate at that address vouches for
+them, and the authority's countersignature attests that the subject controls
+the address. None of that says *who* the subject is — a domain anyone can
+register, with keys anyone can publish, proves only that the same party holds
+both.
+
+Establishing the rest is the verifier's job, and it is the only part of this
+protocol whose evidence comes from outside the network. On a live network that
+means a **KYC/KYB process**: confirming the organization exists in a company
+registry, that the identifiers and legal name the party publishes match what
+the registry holds, and that whoever presented it is entitled to act for it.
+A verifier SHOULD publish what it checks, because its address is the only
+signal a receiver gets about the strength of that check (§12).
+
+A sandbox network is deliberately weaker. A verifier there may do something as
+slight as confirming control of the email address the party publishes, because
+the point is to exercise the exchange rather than to establish anything about
+anybody. Such a verifier belongs to a sandbox network only, and a live
+authority MUST NOT name one in a `verifier` claim. The authority is the gate
+here, not the receiver: §7.2 asks only that a named verifier be independent
+and that its countersignature verify, so a receiver takes the authority's word
+on which verifiers are worth naming. An endorsement carries no grade (§12), so
+it cannot tell a mailbox check from a registry check by looking. The disjoint
+trust lists below are the other half of that separation — a receiver trusting
+only live authorities never sees a sandbox endorsement at all.
 
 Each receiver holds a **trust list** of the authorities it accepts. The
 default live authority is `lookup.gobl.org` and the default sandbox authority
@@ -511,9 +543,9 @@ to a transient failure. Retrying is the correct behaviour.
   distinguish between verifiers must read the `verifier` claim itself and
   decide which addresses it accepts. It follows that an authority admits a
   weak verifier at the cost of every sender it marks verified, and that a
-  verifier's address is the only
-  trust signal a receiver gets: it should name what is being vouched for, and
-  a change in what the verifier checks is a change in what that name means.
+  verifier's address is the only trust signal a receiver gets: it should name
+  what is being vouched for, and a change in what the verifier checks is a
+  change in what that name means.
 - **Verifier scope:** a verifier attests to the subject's identity at a point
   in time. It says nothing about any document the subject later sends, and an
   `exp` bounds how long the attestation may be relied upon at all.
