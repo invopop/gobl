@@ -29,26 +29,6 @@ func billInvoiceRules() *rules.Set {
 					),
 				),
 			),
-			rules.When(
-				is.Func("not simplified", invoiceNotSimplified),
-				rules.Field("customer",
-					rules.Assert("03", "invoice customer tax ID code required for Chilean regime",
-						org.PartyHasTaxIDCode(),
-					),
-				),
-			),
-			rules.When(
-				bill.InvoiceTypeIn(bill.InvoiceTypeCreditNote, bill.InvoiceTypeDebitNote),
-				rules.Assert("04", "credit and debit notes cannot be simplified invoices for Chilean regime", is.Func("not simplified", invoiceNotSimplified)),
-			),
 		),
 	)
-}
-
-func invoiceNotSimplified(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	if !ok || inv == nil {
-		return true
-	}
-	return !tax.TagSimplified.In(inv.GetTags()...)
 }

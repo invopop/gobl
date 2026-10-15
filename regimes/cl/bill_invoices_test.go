@@ -56,30 +56,6 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "[GOBL-CL-TAX-IDENTITY-01]")
 	})
 
-	t.Run("missing customer tax ID on standard invoice", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Customer.TaxID = nil
-		require.NoError(t, inv.Calculate())
-		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "[GOBL-CL-BILL-INVOICE-03]")
-	})
-
-	t.Run("customer tax ID without code on standard invoice", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Customer.TaxID = &tax.Identity{Country: "CL"}
-		require.NoError(t, inv.Calculate())
-		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "[GOBL-CL-BILL-INVOICE-03]")
-	})
-
-	t.Run("simplified invoice without customer tax ID is valid", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Customer.TaxID = nil
-		inv.SetTags(tax.TagSimplified)
-		require.NoError(t, inv.Calculate())
-		require.NoError(t, rules.Validate(inv))
-	})
-
 	t.Run("simplified invoice still requires supplier tax ID", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.TaxID = nil

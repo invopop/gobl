@@ -61,31 +61,6 @@
                   ]
                 }
               ]
-            },
-            {
-              "guard": "not simplified",
-              "subsets": [
-                {
-                  "field": "customer",
-                  "assert": [
-                    {
-                      "id": "GOBL-CL-BILL-INVOICE-03",
-                      "desc": "invoice customer tax ID code required for Chilean regime",
-                      "tests": "has tax ID code"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "guard": "invoice type in [credit-note, debit-note]",
-              "assert": [
-                {
-                  "id": "GOBL-CL-BILL-INVOICE-04",
-                  "desc": "credit and debit notes cannot be simplified invoices for Chilean regime",
-                  "tests": "not simplified"
-                }
-              ]
             }
           ]
         }
