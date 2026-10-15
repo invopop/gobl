@@ -50,7 +50,7 @@ described in BCP 14 (RFC 2119 and RFC 8174).
 | **Receiver** | The participant operating the inbox to which a document is delivered. For ordinary deliveries, the receiver is also the signature's audience. |
 | **Requester** | The issuer of an HTTP request token. A requester may be an intermediary and need not be the document sender. |
 | **Authority** | A trusted participant that confirms the subject controls its GOBL Net address and countersigns its party envelope. |
-| **Verifier** | A participant, independent of the Authority, that establishes which real-world organization or person is behind an address — on a live network, by a KYC/KYB process — and countersigns the subject's party envelope to say so. It is not a certificate authority: it binds an address to a legal identity, not a key to a name. What it checks, and how, is its own to define and publish; see §7. |
+| **Verifier** | A participant, independent of the Authority, that establishes which real-world organization or person is behind an address — on a live network, by a KYC/KYB process — and countersigns the subject's party envelope to say so. It binds an address to a legal identity. What it checks, and how, is its own to define and publish; see §7. |
 | **Registration countersignature** | A signature issued by an Authority over a party envelope, binding the Subject. It may name a Verifier. |
 | **Verification countersignature** | A signature issued by a Verifier over the same party envelope. |
 | **Sender status** | What a receiver concludes about a Subject after evaluating the countersignatures its party envelope carries, by the procedure in §7.2. One of the three below. |
@@ -230,22 +230,20 @@ and MUST countersign the same envelope. Separating these roles prevents the
 authority from attesting to identity checks that no independent verifier
 performed.
 
-**A verifier is not a certificate authority.** The distinction is easy to miss,
-because both sign statements about a name, but they operate on different
-layers and answer different questions. Web PKI binds a key to a domain: the
-keys in §4 are trusted because the TLS certificate at that address vouches for
-them, and the authority's countersignature attests that the subject controls
-the address. None of that says *who* the subject is — a domain anyone can
-register, with keys anyone can publish, proves only that the same party holds
-both.
+**A verifier binds an address to a legal identity.** The layers beneath it
+establish control: the keys in §4 are trusted because the TLS certificate at
+that address vouches for them, and the authority's countersignature attests
+that the subject holds the address. A domain anyone can register, with keys
+anyone can publish, shows only that one party holds both. Naming that party is
+the verifier's work, and the only part of this protocol whose evidence comes
+from outside the network.
 
-Establishing the rest is the verifier's job, and it is the only part of this
-protocol whose evidence comes from outside the network. On a live network that
-means a **KYC/KYB process**: confirming the organization exists in a company
-registry, that the identifiers and legal name the party publishes match what
-the registry holds, and that whoever presented it is entitled to act for it.
-A verifier SHOULD publish what it checks, because its address is the only
-signal a receiver gets about the strength of that check (§12).
+On a live network that means a **KYC/KYB process**: confirming the
+organization exists in a company registry, that the identifiers and legal name
+the party publishes match what the registry holds, and that whoever presented
+it is entitled to act for it. A verifier SHOULD publish what it checks,
+because its address is the only signal a receiver gets about the strength of
+that check (§12).
 
 A sandbox network is deliberately weaker. A verifier there may do something as
 slight as confirming control of the email address the party publishes, because
