@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 This file is generated from the change files in the [changes](./changes) directory. Add new entries to `changes/unreleased` instead of editing this file; see [changes/README.md](./changes/README.md).
 
+## [v0.508.1] - 2026-10-15
+
+### Added
+
+- `convert`: `Rules` provides a rule set for a format, with fault codes
+  prefixed by the format key, and `RequireAddons` a rule that faults when a
+  document does not include the addons a format needs.
+- `rules`: `JoinFaults` combines several collections of faults into one.
+
+### Changed
+
+- `convert`: **breaking** `Converter.Accepts` returns an error with the reason
+  a document cannot be exported, preferably as rules faults, instead of a bool.
+  When no requested format accepts a document, `Export` returns
+  `ErrNotSupported` with the reasons from each format, as faults when they all
+  are.
+
+### Removed
+
+- `convert`: **breaking** `Format.Addons`. Converters check the addons each
+  exported schema needs in `Accepts`.
+
 ## [v0.508.0] - 2026-10-14
 
 ### Added
