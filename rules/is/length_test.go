@@ -64,6 +64,9 @@ func TestLength(t *testing.T) {
 
 	t.Run("String returns length description", func(t *testing.T) {
 		assert.Equal(t, "length between 2 and 5", is.Length(2, 5).String())
+		assert.Equal(t, "length at least 2", is.Length(2, 0).String())
+		assert.Equal(t, "length at most 5", is.Length(0, 5).String())
+		assert.Equal(t, "length exactly 0", is.Length(0, 0).String())
 	})
 }
 
@@ -104,5 +107,7 @@ func TestRuneLength(t *testing.T) {
 
 	t.Run("String returns rune length description", func(t *testing.T) {
 		assert.Equal(t, "rune length between 2 and 5", is.RuneLength(2, 5).String())
+		assert.Equal(t, "rune length at least 2", is.RuneLength(2, 0).String())
+		assert.Equal(t, "rune length at most 5", is.RuneLength(0, 5).String())
 	})
 }

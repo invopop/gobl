@@ -290,7 +290,7 @@
             {
               "id": "GOBL-TAX-REGIMEDEF-05",
               "desc": "at least one category is required",
-              "tests": "length between 1 and 0"
+              "tests": "length at least 1"
             }
           ]
         }
