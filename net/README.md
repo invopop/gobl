@@ -50,13 +50,19 @@ described in BCP 14 (RFC 2119 and RFC 8174).
 | **Verifier** | A participant, independent of the Authority, that establishes who is behind an address and countersigns the subject's party envelope. What it checks, and how, is its own to define and publish; see §7.1. |
 | **Registration countersignature** | A signature issued by an Authority over a party envelope, binding the Subject. It may name a Verifier. |
 | **Verification countersignature** | A signature issued by a Verifier over the same party envelope. |
-| **Sender status** | What a receiver concludes about a Subject after evaluating the countersignatures its party envelope carries: `unregistered`, `registered`, or `verified`. Determined by §7.2. |
+| **Sender status** | What a receiver concludes about a Subject after evaluating the countersignatures its party envelope carries, by the procedure in §7.2. One of the three below. |
+| **Unregistered** | The receiver found no valid registration countersignature from an Authority it trusts. It has only the Subject's own account of itself. This is a statement about what *this* receiver can corroborate, not about whether the Subject registered with somebody. |
+| **Registered** | An Authority the receiver trusts has countersigned the party envelope, attesting that the Subject controls its address. Who is behind that address is not established. |
+| **Verified** | Registered, and that Authority named a Verifier whose own countersignature the receiver found valid on the same envelope — so a participant independent of the Authority has established who is behind the address. |
 | **Party envelope** | A signed GOBL envelope containing an `org.Party`. It identifies its Subject and may carry registration and verification countersignatures. |
 
 A countersignature is a signature on the wire; a sender status is a conclusion
-a receiver reaches about one. The distinction matters because status is never
-transmitted — two receivers with different trust lists can read the same
-envelope and reach different conclusions about it, and both are correct.
+a receiver reaches about one. The distinction matters because **no status is
+ever transmitted**. Unregistered, registered and verified name conclusions,
+not values: no field carries them, and nothing in an envelope asserts one.
+Each receiver derives its own from the signatures in front of it and the
+authorities it happens to trust, so two receivers can read the same envelope
+and reach different conclusions about it, and both are correct.
 
 Issuer, Sender, and Requester often refer to the same participant in a direct
 delivery, but the protocol does not assume they are the same. Audience and
@@ -341,8 +347,8 @@ the same envelope.
    valid, unexpired countersignature issued by that verifier, the subject is
    **verified**.
 5. Where candidates disagree, the highest status wins: an envelope may carry
-   several authority signatures, and one that establishes `verified` is not
-   cancelled by another that only establishes `registered`.
+   several authority signatures, and one that establishes **verified** is not
+   cancelled by another that only establishes **registered**.
 
 A `verifier` claim that is absent, malformed, self-referential, or whose
 countersignature is missing, invalid or expired reduces the status to
@@ -500,8 +506,8 @@ to a transient failure. Retrying is the correct behaviour.
   can reveal business relationships.
 - **Routing fields:** unsigned `from` and `to` values are hints only. Security
   decisions must use signed claims.
-- **Verification is not graded.** Sender status is `verified` or it is not,
-  and any verifier the authority names satisfies it. A receiver that wants to
+- **Verification is not graded.** A subject is verified or it is not, and any
+  verifier the authority names satisfies it. A receiver that wants to
   distinguish between verifiers must read the `verifier` claim itself and
   decide which addresses it accepts. It follows that an authority admits a
   weak verifier at the cost of every sender it marks verified, and that a

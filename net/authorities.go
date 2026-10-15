@@ -56,8 +56,9 @@ type Endorsement struct {
 	Verifier Address
 }
 
-// Verified reports whether the status is "verified" rather than merely
-// "registered" (README.md §7.2).
+// Verified reports whether the subject is verified rather than merely
+// registered (README.md §7.2). Both name conclusions this client reaches,
+// not values carried by the envelope.
 //
 // It is a boolean because the status is one: any verifier the authority
 // names satisfies it, and the protocol does not grade them. A receiver

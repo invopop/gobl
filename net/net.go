@@ -49,13 +49,17 @@
 //	end, err := client.VerifyAuthority(ctx, env)
 //	// end.Authority  which trusted authority the conclusion rests on
 //	// end.Verifier   set only when verification was confirmed
-//	// end.Verified() whether the status is "verified" rather than
-//	//                merely "registered"
+//	// end.Verified() whether the subject is verified rather than
+//	//                merely registered
 //
 // Verified reports a boolean because the status is one: any verifier the
 // authority names satisfies it. A receiver that wants to distinguish between
 // verifiers must read end.Verifier and decide for itself which addresses it
 // accepts.
+//
+// Unregistered, registered and verified are names for conclusions, not
+// values. Nothing transmits them and no field carries them, so there is no
+// status to parse off the wire and none to put back on it.
 //
 // Client.VerifySender combines the /who lookup with this evaluation, and is
 // usually what an application wants:
