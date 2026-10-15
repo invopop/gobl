@@ -102,6 +102,18 @@ func newFaults(faults ...*Fault) Faults {
 	return faultList(mergeFaults(faults))
 }
 
+// JoinFaults combines several collections of faults into one, merging faults
+// with the same code and message. It returns nil when there are no faults.
+func JoinFaults(fss ...Faults) Faults {
+	var faults []*Fault
+	for _, fs := range fss {
+		if fs != nil {
+			faults = append(faults, fs.List()...)
+		}
+	}
+	return newFaults(faults...)
+}
+
 // Error implements the error interface.
 func (fs faultList) Error() string {
 	var b strings.Builder

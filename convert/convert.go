@@ -12,12 +12,14 @@
 package convert
 
 import (
+	"errors"
 	"slices"
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
 )
 
@@ -62,8 +64,6 @@ type Format struct {
 	// Countries where the format applies, including unions such as "EU".
 	// Empty means no country restriction.
 	Countries []l10n.Code `json:"countries,omitempty" jsonschema:"title=Countries"`
-	// Addons the GOBL document must include to be exported into this format.
-	Addons []cbc.Key `json:"addons,omitempty" jsonschema:"title=Addons"`
 	// Import lists GOBL schemas this format can be converted into.
 	Import []schema.ID `json:"import,omitempty" jsonschema:"title=Import Schemas"`
 	// Export lists GOBL schemas that can be converted into this format.
@@ -80,10 +80,11 @@ type Converter interface {
 	Detect(in *Input) cbc.Key
 	// Import converts data in the given format into a GOBL envelope.
 	Import(key cbc.Key, data []byte) (*gobl.Envelope, error)
-	// Accepts reports whether the envelope can be exported into the format.
-	// It is only called once the document's schema is in the format's Export
-	// list and the document includes the format's Addons.
-	Accepts(key cbc.Key, env *gobl.Envelope) bool
+	// Accepts checks the envelope can be exported into the format, and
+	// otherwise returns the reason, preferably as rules faults from the
+	// format's Rules. It is only called once the document's schema is in the
+	// format's Export list.
+	Accepts(key cbc.Key, env *gobl.Envelope) error
 	// Export converts the envelope into the given format.
 	Export(key cbc.Key, env *gobl.Envelope) ([]byte, error)
 }
@@ -107,25 +108,9 @@ type Conversion struct {
 }
 
 // exports checks if the envelope's document has one of the format's export
-// schemas and includes all of its addons.
+// schemas.
 func (c *Format) exports(env *gobl.Envelope) bool {
-	if env == nil || env.Document == nil || !slices.Contains(c.Export, env.Document.Schema) {
-		return false
-	}
-	if len(c.Addons) == 0 {
-		return true
-	}
-	doc, ok := env.Extract().(interface{ GetAddons() []cbc.Key })
-	if !ok {
-		return false
-	}
-	addons := doc.GetAddons()
-	for _, a := range c.Addons {
-		if !a.In(addons...) {
-			return false
-		}
-	}
-	return true
+	return env != nil && env.Document != nil && slices.Contains(c.Export, env.Document.Schema)
 }
 
 // appliesTo checks if the format can be used in the country, either directly,
@@ -200,8 +185,9 @@ func Import(data []byte, keys ...cbc.Key) (*gobl.Envelope, error) {
 }
 
 // Export converts the envelope into the first of the keys, in order of
-// preference, that exports the document's schema, whose addons the document
-// includes, and whose converter accepts it.
+// preference, that exports the document's schema and whose converter accepts
+// it. When none does, the error includes the reasons given by each converter,
+// with their rules faults combined.
 func Export(env *gobl.Envelope, keys ...cbc.Key) (*Output, error) {
 	if len(keys) == 0 {
 		return nil, ErrUnknownFormat.WithReason("no formats provided")
@@ -211,9 +197,14 @@ func Export(env *gobl.Envelope, keys ...cbc.Key) (*Output, error) {
 			return nil, ErrUnknownFormat.WithReason("format %s not registered", k)
 		}
 	}
+	var refusals []error
 	for _, k := range keys {
 		e := converters.entryFor(k)
-		if !e.format.exports(env) || !e.converter.Accepts(k, env) {
+		if !e.format.exports(env) {
+			continue
+		}
+		if err := e.converter.Accepts(k, env); err != nil {
+			refusals = append(refusals, err)
 			continue
 		}
 		data, err := e.converter.Export(k, env)
@@ -222,5 +213,22 @@ func Export(env *gobl.Envelope, keys ...cbc.Key) (*Output, error) {
 		}
 		return &Output{Format: e.format, Data: data}, nil
 	}
-	return nil, ErrNotSupported.WithReason("no format in %v accepts the envelope", keys)
+	if len(refusals) == 0 {
+		return nil, ErrNotSupported.WithReason("no format in %v exports the document", keys)
+	}
+	return nil, ErrNotSupported.WithCause(joinRefusals(refusals))
+}
+
+// joinRefusals combines the reasons converters gave for refusing an envelope,
+// keeping them as rules faults when they all are.
+func joinRefusals(errs []error) error {
+	list := make([]rules.Faults, 0, len(errs))
+	for _, err := range errs {
+		fs, ok := err.(rules.Faults)
+		if !ok {
+			return errors.Join(errs...)
+		}
+		list = append(list, fs)
+	}
+	return rules.JoinFaults(list...)
 }

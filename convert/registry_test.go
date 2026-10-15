@@ -16,7 +16,7 @@ type stubConverter struct {
 func (c *stubConverter) Formats() []*Format                                 { return c.formats }
 func (c *stubConverter) Detect(_ *Input) cbc.Key                            { return cbc.KeyEmpty }
 func (c *stubConverter) Import(_ cbc.Key, _ []byte) (*gobl.Envelope, error) { return nil, nil }
-func (c *stubConverter) Accepts(_ cbc.Key, _ *gobl.Envelope) bool           { return false }
+func (c *stubConverter) Accepts(_ cbc.Key, _ *gobl.Envelope) error          { return ErrNotSupported }
 func (c *stubConverter) Export(_ cbc.Key, _ *gobl.Envelope) ([]byte, error) { return nil, nil }
 
 func stub(keys ...cbc.Key) *stubConverter {
@@ -78,7 +78,7 @@ type valueConverter struct {
 func (c valueConverter) Formats() []*Format                                 { return c.formats }
 func (c valueConverter) Detect(_ *Input) cbc.Key                            { return c.detect }
 func (c valueConverter) Import(_ cbc.Key, _ []byte) (*gobl.Envelope, error) { return nil, nil }
-func (c valueConverter) Accepts(_ cbc.Key, _ *gobl.Envelope) bool           { return false }
+func (c valueConverter) Accepts(_ cbc.Key, _ *gobl.Envelope) error          { return ErrNotSupported }
 func (c valueConverter) Export(_ cbc.Key, _ *gobl.Envelope) ([]byte, error) { return nil, nil }
 
 func TestRegistryDetectValueConverters(t *testing.T) {

@@ -73,7 +73,9 @@ Errors are GOBL errors that can be compared with `errors.Is`:
 
 - `ErrUnknownFormat`: a key is not registered, or no converter recognizes the data.
 - `ErrAmbiguous`: more than one converter recognizes the data.
-- `ErrNotSupported`: none of the requested formats can take the envelope.
+- `ErrNotSupported`: none of the requested formats can take the envelope. The
+  error carries the reasons each format gave, as rules faults when they all
+  are, so they can be shown in the same way as validation faults.
 - `ErrConversion`: the converter failed. GOBL errors returned by a converter,
   such as validation faults, are passed on unchanged.
 
@@ -94,14 +96,12 @@ var formatEN16931 = &convert.Format{
 	Name:   i18n.NewString("UBL EN 16931:2017"),
 	MIME:   "application/xml",
 	Syntax: "ubl",
-	Addons: []cbc.Key{en16931.V2017},
 	Import: []schema.ID{invoiceSchema},
 	Export: []schema.ID{invoiceSchema},
 }
 
 // Invoices are written as Peppol BIS Billing, and statuses as Peppol
-// Invoice Response. Only invoices need the EN 16931 addon, so Accepts
-// checks it.
+// Invoice Response.
 var formatPeppol = &convert.Format{
 	Key:    "ubl+peppol+bis-v3",
 	Name:   i18n.NewString("UBL Peppol BIS 3"),
@@ -109,6 +109,16 @@ var formatPeppol = &convert.Format{
 	Syntax: "ubl",
 	Import: []schema.ID{invoiceSchema, statusSchema},
 	Export: []schema.ID{invoiceSchema, statusSchema},
+}
+
+// Only invoices need the EN 16931 addon.
+var formatRules = map[cbc.Key]*rules.Set{
+	formatEN16931.Key: convert.Rules(formatEN16931.Key,
+		rules.For(new(bill.Invoice), convert.RequireAddons("01", en16931.V2017)),
+	),
+	formatPeppol.Key: convert.Rules(formatPeppol.Key,
+		rules.For(new(bill.Invoice), convert.RequireAddons("01", en16931.V2017)),
+	),
 }
 
 type converter struct{}
@@ -121,11 +131,11 @@ func (converter) Formats() []*convert.Format {
 	return []*convert.Format{formatEN16931, formatPeppol}
 }
 
-func (converter) Accepts(key cbc.Key, env *gobl.Envelope) bool {
-	if inv, ok := env.Extract().(*bill.Invoice); ok && key == formatPeppol.Key {
-		return en16931.V2017.In(inv.GetAddons()...)
+func (converter) Accepts(key cbc.Key, env *gobl.Envelope) error {
+	if fs := formatRules[key].Validate(env.Extract()); fs != nil {
+		return fs
 	}
-	return true
+	return nil
 }
 ```
 
@@ -141,10 +151,14 @@ var formatCDV = &convert.Format{
 	MIME:      "application/xml",
 	Syntax:    "cdar",
 	Countries: []l10n.Code{l10n.FR},
-	Addons:    []cbc.Key{flow6.V1},
 	Import:    []schema.ID{schema.Lookup(bill.Status{}), schema.Lookup(bill.Payment{})},
 	Export:    []schema.ID{schema.Lookup(bill.Status{}), schema.Lookup(bill.Payment{})},
 }
+
+var rulesCDV = convert.Rules(formatCDV.Key,
+	rules.For(new(bill.Status), convert.RequireAddons("01", flow6.V1)),
+	rules.For(new(bill.Payment), convert.RequireAddons("01", flow6.V1)),
+)
 ```
 
 ### Detection
@@ -197,10 +211,22 @@ It is only called for a key the converter returned from `Detect`.
 ### Export
 
 Before asking the converter, the register checks that the document's schema is
-in the format's `Export` list and that the document includes every addon in
-`Addons`. `Accepts` only needs to cover any further conditions specific to the
-format, such as a document type the format cannot represent. `Export` then
-returns the converted data.
+in the format's `Export` list. `Accepts` then checks every other condition the
+format has, such as the addons, document types, or tags each schema needs, and
+returns the reason when the document does not meet them. `Export` then returns
+the converted data.
+
+Express the conditions as rules where possible, so that the reasons are
+returned as faults with codes and paths, just like validation faults:
+
+- `convert.Rules(key, sets...)` provides a rule set whose fault codes are
+  prefixed with the format key, such as `UBL-PEPPOL-BIS-V3-BILL-INVOICE-01`.
+  The set is not added to the global rules registry, so it only applies when
+  the converter validates documents with it.
+- `convert.RequireAddons(id, keys...)` provides a rule for the `$addons` field
+  that faults when the document does not include every addon.
+
+Return any other error for conditions that rules cannot express.
 
 Formats expect documents to already include their addons. A converter that
 adds missing addons during export does so only to help existing users migrate,
@@ -287,9 +313,8 @@ FacturaE or CFDI, use the addon key alone, such as `es-facturae-v3` or
   use one format and pick the identifier from the document. When the sender
   has to choose, as between EN 16931 and Peppol, or between the BASIC and
   EXTENDED profiles of Factur-X, use one format each.
-- List the document types the format supports in `Import` and `Export`. When
-  the format's `Addons` only apply to some of them, list the addons they all
-  need, and check the others in `Accepts`.
+- List the document types the format supports in `Import` and `Export`, and
+  check what each of them needs, such as addons, in `Accepts`.
 - Include only the **major version**. Minor versions of a specification are
   handled inside the converter, and should not change the key users store.
 - Use American spelling and the official short name of the specification,

@@ -11,6 +11,7 @@ import (
 	"github.com/invopop/gobl/convert"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/note"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -38,8 +39,15 @@ func header(in *convert.Input) string {
 }
 
 // alphaConverter handles "alpha:" data, and "alpha-fr:" for the FR variant
-// that requires the "test-fr" addon on export.
+// that requires the "test-fr" addon on export. The plain format refuses
+// documents with the "test-refuse" addon.
 type alphaConverter struct{}
+
+var alphaFRRules = convert.Rules("test+alpha-fr",
+	rules.For(new(bill.Invoice),
+		convert.RequireAddons("01", "test-fr"),
+	),
+)
 
 func (alphaConverter) Formats() []*convert.Format {
 	return []*convert.Format{
@@ -53,7 +61,6 @@ func (alphaConverter) Formats() []*convert.Format {
 			Key:       "test+alpha-fr",
 			Syntax:    "test",
 			Countries: []l10n.Code{"FR"},
-			Addons:    []cbc.Key{"test-fr"},
 			Export:    []schema.ID{invoiceSchema},
 		},
 	}
@@ -79,8 +86,15 @@ func (alphaConverter) Import(_ cbc.Key, data []byte) (*gobl.Envelope, error) {
 	return gobl.Envelop(&note.Message{Content: string(data)})
 }
 
-func (alphaConverter) Accepts(_ cbc.Key, _ *gobl.Envelope) bool {
-	return true
+func (alphaConverter) Accepts(key cbc.Key, env *gobl.Envelope) error {
+	inv := env.Extract().(*bill.Invoice)
+	if key == "test+alpha-fr" {
+		return alphaFRRules.Validate(inv)
+	}
+	if cbc.Key("test-refuse").In(inv.GetAddons()...) {
+		return errors.New("alpha refuses")
+	}
+	return nil
 }
 
 func (alphaConverter) Export(key cbc.Key, _ *gobl.Envelope) ([]byte, error) {
@@ -88,9 +102,15 @@ func (alphaConverter) Export(key cbc.Key, _ *gobl.Envelope) ([]byte, error) {
 }
 
 // betaConverter handles "beta:" data, and claims "alpha" data as gamma to
-// produce an ambiguous match. Beta has no export schemas, and gamma's
-// converter refuses every envelope.
+// produce an ambiguous match. Beta has no export schemas, and gamma
+// requires the "test-gamma" addon on export.
 type betaConverter struct{}
+
+var gammaRules = convert.Rules("test+gamma",
+	rules.For(new(bill.Invoice),
+		convert.RequireAddons("01", "test-gamma"),
+	),
+)
 
 func (betaConverter) Formats() []*convert.Format {
 	return []*convert.Format{
@@ -122,12 +142,12 @@ func (betaConverter) Import(_ cbc.Key, data []byte) (*gobl.Envelope, error) {
 	return gobl.Envelop(&note.Message{Content: string(data)})
 }
 
-func (betaConverter) Accepts(key cbc.Key, _ *gobl.Envelope) bool {
-	return key != "test+gamma"
+func (betaConverter) Accepts(_ cbc.Key, env *gobl.Envelope) error {
+	return gammaRules.Validate(env.Extract())
 }
 
 func (betaConverter) Export(_ cbc.Key, _ *gobl.Envelope) ([]byte, error) {
-	return nil, errors.New("not expected")
+	return nil, errors.New("export failed")
 }
 
 func init() {
@@ -272,15 +292,46 @@ func TestExport(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, cbc.Key("test+alpha-fr"), out.Format.Key)
 	})
-	t.Run("not supported", func(t *testing.T) {
+	t.Run("faults", func(t *testing.T) {
+		_, err := convert.Export(invoiceEnvelope(t), "test+alpha-fr")
+		assert.ErrorIs(t, err, convert.ErrNotSupported)
+		var ge *gobl.Error
+		require.ErrorAs(t, err, &ge)
+		fs := ge.Faults()
+		require.NotNil(t, fs)
+		assert.Equal(t, rules.Code("TEST-ALPHA-FR-BILL-INVOICE-01"), fs.First().Code())
+		assert.Equal(t, []string{"$.$addons"}, fs.First().Paths())
+		assert.Equal(t, "requires addon test-fr", fs.First().Message())
+	})
+	t.Run("faults combined", func(t *testing.T) {
 		_, err := convert.Export(invoiceEnvelope(t), "test+beta", "test+gamma", "test+alpha-fr")
 		assert.ErrorIs(t, err, convert.ErrNotSupported)
+		var ge *gobl.Error
+		require.ErrorAs(t, err, &ge)
+		fs := ge.Faults()
+		require.NotNil(t, fs)
+		assert.True(t, fs.HasCode("TEST-GAMMA-BILL-INVOICE-01"))
+		assert.True(t, fs.HasCode("TEST-ALPHA-FR-BILL-INVOICE-01"))
+	})
+	t.Run("other reasons", func(t *testing.T) {
+		_, err := convert.Export(invoiceEnvelope(t, "test-refuse"), "test+gamma", "test+alpha")
+		assert.ErrorIs(t, err, convert.ErrNotSupported)
+		assert.ErrorContains(t, err, "alpha refuses")
+		assert.ErrorContains(t, err, "TEST-GAMMA-BILL-INVOICE-01")
+		var ge *gobl.Error
+		require.ErrorAs(t, err, &ge)
+		assert.Nil(t, ge.Faults())
 	})
 	t.Run("schema not exported", func(t *testing.T) {
 		env, err := gobl.Envelop(&note.Message{Content: "hello"})
 		require.NoError(t, err)
 		_, err = convert.Export(env, "test+alpha")
 		assert.ErrorIs(t, err, convert.ErrNotSupported)
+		assert.ErrorContains(t, err, "no format in [test+alpha] exports the document")
+	})
+	t.Run("converter error", func(t *testing.T) {
+		_, err := convert.Export(invoiceEnvelope(t, "test-gamma"), "test+gamma")
+		assert.ErrorIs(t, err, convert.ErrConversion)
 	})
 	t.Run("unknown key", func(t *testing.T) {
 		_, err := convert.Export(invoiceEnvelope(t), "test+alpha", "test+unknown")
