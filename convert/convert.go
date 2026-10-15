@@ -7,7 +7,7 @@
 //
 //	import _ "github.com/invopop/gobl.ubl"
 //
-//	env, err := convert.Import(data)
+//	res, err := convert.Import(data)
 //	out, err := convert.Export(env, "ubl+peppol+bis-v3",
 //		convert.WithAlternatives("ubl+en16931-v2017"),
 //	)
@@ -83,8 +83,10 @@ type Converter interface {
 	// Detect returns the key of the format the input belongs to, or an
 	// empty key if it is not recognized. It should not fully parse the data.
 	Detect(in *Input) cbc.Key
-	// Import converts data in the given format into a GOBL envelope.
-	Import(key cbc.Key, data []byte) (*gobl.Envelope, error)
+	// Import converts data in the given format into a GOBL envelope, and
+	// provides the files embedded in it as attachments. The register sets
+	// the result's Format.
+	Import(key cbc.Key, data []byte) (*ImportResult, error)
 	// Accepts checks the envelope can be exported into the format, and
 	// otherwise returns the reason, preferably as rules faults from the
 	// format's Rules. It is only called once the document's schema is in the
@@ -96,8 +98,8 @@ type Converter interface {
 	Export(key cbc.Key, env *gobl.Envelope, opts *ExportOptions) ([]byte, error)
 }
 
-// Attachment is a file to embed in an exported document, such as a PDF
-// version of an invoice.
+// Attachment is a file embedded in a document, such as a PDF version of an
+// invoice, given to embed on export and provided on import.
 type Attachment struct {
 	// ID identifies the attachment in the document.
 	ID string `json:"id,omitempty" jsonschema:"title=ID"`
@@ -139,12 +141,39 @@ func WithAttachments(atts ...*Attachment) ExportOption {
 	}
 }
 
-// Output is the result of an export.
-type Output struct {
+// ExportResult is the result of an export.
+type ExportResult struct {
 	// Format the envelope was exported into.
 	Format *Format
 	// Data of the exported document.
 	Data []byte
+}
+
+// ImportOptions configure an import.
+type ImportOptions struct {
+	// Formats limit detection to the formats with these keys.
+	Formats []cbc.Key
+}
+
+// ImportOption sets an import option.
+type ImportOption func(*ImportOptions)
+
+// WithFormats limits detection to the formats with the keys.
+func WithFormats(keys ...cbc.Key) ImportOption {
+	return func(o *ImportOptions) {
+		o.Formats = append(o.Formats, keys...)
+	}
+}
+
+// ImportResult is the result of an import.
+type ImportResult struct {
+	// Format the data was detected as.
+	Format *Format
+	// Envelope with the imported document.
+	Envelope *gobl.Envelope
+	// Attachments embedded in the data, such as a PDF version of the
+	// document, which are not included in the envelope.
+	Attachments []*Attachment
 }
 
 // Conversion describes a single 1:1 conversion available in the register.
@@ -221,17 +250,25 @@ func Detect(data []byte, keys ...cbc.Key) (*Format, error) {
 }
 
 // Import detects the format of the incoming data and converts it into a GOBL
-// envelope. Keys, if provided, limit detection to those formats.
-func Import(data []byte, keys ...cbc.Key) (*gobl.Envelope, error) {
-	e, err := converters.detect(data, keys)
+// envelope, providing any files embedded in the data as attachments.
+func Import(data []byte, opts ...ImportOption) (*ImportResult, error) {
+	o := new(ImportOptions)
+	for _, opt := range opts {
+		opt(o)
+	}
+	e, err := converters.detect(data, o.Formats)
 	if err != nil {
 		return nil, err
 	}
-	env, err := e.converter.Import(e.format.Key, data)
+	res, err := e.converter.Import(e.format.Key, data)
 	if err != nil {
 		return nil, ErrConversion.WithCause(err)
 	}
-	return env, nil
+	if res == nil || res.Envelope == nil {
+		return nil, ErrConversion.WithReason("format %s provided no envelope", e.format.Key)
+	}
+	res.Format = e.format
+	return res, nil
 }
 
 // Export converts the envelope into the format with the key or, when it does
@@ -240,7 +277,7 @@ func Import(data []byte, keys ...cbc.Key) (*gobl.Envelope, error) {
 // attachments, and its converter accepts it. When none does, the error
 // includes the reasons given by each converter, with their rules faults
 // combined.
-func Export(env *gobl.Envelope, key cbc.Key, opts ...ExportOption) (*Output, error) {
+func Export(env *gobl.Envelope, key cbc.Key, opts ...ExportOption) (*ExportResult, error) {
 	o := new(ExportOptions)
 	for _, opt := range opts {
 		opt(o)
@@ -269,7 +306,7 @@ func Export(env *gobl.Envelope, key cbc.Key, opts ...ExportOption) (*Output, err
 		if err != nil {
 			return nil, ErrConversion.WithCause(err)
 		}
-		return &Output{Format: e.format, Data: data}, nil
+		return &ExportResult{Format: e.format, Data: data}, nil
 	}
 	if len(refusals) == 0 {
 		return nil, ErrNotSupported.WithReason("no format in %v exports the document", keys)
