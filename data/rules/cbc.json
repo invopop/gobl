@@ -9,7 +9,7 @@
         {
           "id": "GOBL-CBC-CODE-01",
           "desc": "codes must be no longer than 128 characters",
-          "tests": "length between 0 and 128"
+          "tests": "length at most 128"
         },
         {
           "id": "GOBL-CBC-CODE-02",
@@ -111,7 +111,7 @@
         {
           "id": "GOBL-CBC-URI-01",
           "desc": "uri must be no longer than 2048 characters",
-          "tests": "length between 0 and 2048"
+          "tests": "length at most 2048"
         }
       ],
       "subsets": [

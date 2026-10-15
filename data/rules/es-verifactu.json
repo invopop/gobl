@@ -262,7 +262,7 @@
                         {
                           "id": "GOBL-ES-VERIFACTU-BILL-INVOICE-14",
                           "desc": "general note text must be 500 characters or less",
-                          "tests": "length between 0 and 500"
+                          "tests": "length at most 500"
                         }
                       ]
                     }
