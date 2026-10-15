@@ -1,0 +1,13 @@
+## Added
+
+- `convert`: `Attachment`, a file to embed in an exported document, such as a
+  PDF version of an invoice, passed with the `WithAttachments` export option.
+  `Format.Attachments` says whether a format can embed them; other formats
+  refuse envelopes exported with attachments.
+
+## Changed
+
+- `convert`: **breaking** `Export(env, key, opts...)` takes a single format
+  key, with further keys to try passed with the `WithAlternatives` option.
+- `convert`: **breaking** `Converter.Export` receives the `ExportOptions`,
+  including the attachments to embed.
