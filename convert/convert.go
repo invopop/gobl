@@ -8,11 +8,14 @@
 //	import _ "github.com/invopop/gobl.ubl"
 //
 //	env, err := convert.Import(data)
-//	out, err := convert.Export(env, "ubl+peppol+bis-v3", "ubl+en16931-v2017")
+//	out, err := convert.Export(env, "ubl+peppol+bis-v3",
+//		convert.WithAlternatives("ubl+en16931-v2017"),
+//	)
 package convert
 
 import (
 	"errors"
+	"fmt"
 	"slices"
 
 	"github.com/invopop/gobl"
@@ -68,6 +71,8 @@ type Format struct {
 	Import []schema.ID `json:"import,omitempty" jsonschema:"title=Import Schemas"`
 	// Export lists GOBL schemas that can be converted into this format.
 	Export []schema.ID `json:"export,omitempty" jsonschema:"title=Export Schemas"`
+	// Attachments is true when exported documents can embed attachments.
+	Attachments bool `json:"attachments,omitempty" jsonschema:"title=Attachments"`
 }
 
 // Converter is implemented by packages that convert between GOBL and one
@@ -85,8 +90,53 @@ type Converter interface {
 	// format's Rules. It is only called once the document's schema is in the
 	// format's Export list.
 	Accepts(key cbc.Key, env *gobl.Envelope) error
-	// Export converts the envelope into the given format.
-	Export(key cbc.Key, env *gobl.Envelope) ([]byte, error)
+	// Export converts the envelope into the given format, embedding the
+	// options' attachments, which are only provided to formats that
+	// declare Attachments.
+	Export(key cbc.Key, env *gobl.Envelope, opts *ExportOptions) ([]byte, error)
+}
+
+// Attachment is a file to embed in an exported document, such as a PDF
+// version of an invoice.
+type Attachment struct {
+	// ID identifies the attachment in the document.
+	ID string `json:"id,omitempty" jsonschema:"title=ID"`
+	// Name of the file, such as "invoice.pdf".
+	Name string `json:"name,omitempty" jsonschema:"title=Name"`
+	// Description of what the file contains.
+	Description string `json:"description,omitempty" jsonschema:"title=Description"`
+	// MIME type of the file, such as "application/pdf".
+	MIME string `json:"mime,omitempty" jsonschema:"title=MIME Type"`
+	// Data of the file, encoded in base64 in JSON.
+	Data []byte `json:"data" jsonschema:"title=Data"`
+}
+
+// ExportOptions configure an export.
+type ExportOptions struct {
+	// Alternatives are further format keys to try, in order of preference,
+	// when the requested format does not take the envelope.
+	Alternatives []cbc.Key
+	// Attachments to embed in the exported document.
+	Attachments []*Attachment
+}
+
+// ExportOption sets an export option.
+type ExportOption func(*ExportOptions)
+
+// WithAlternatives adds format keys to try, in order of preference, when the
+// requested format does not take the envelope.
+func WithAlternatives(keys ...cbc.Key) ExportOption {
+	return func(o *ExportOptions) {
+		o.Alternatives = append(o.Alternatives, keys...)
+	}
+}
+
+// WithAttachments adds files to embed in the exported document. Formats
+// that do not declare Attachments refuse the envelope.
+func WithAttachments(atts ...*Attachment) ExportOption {
+	return func(o *ExportOptions) {
+		o.Attachments = append(o.Attachments, atts...)
+	}
 }
 
 // Output is the result of an export.
@@ -184,14 +234,18 @@ func Import(data []byte, keys ...cbc.Key) (*gobl.Envelope, error) {
 	return env, nil
 }
 
-// Export converts the envelope into the first of the keys, in order of
-// preference, that exports the document's schema and whose converter accepts
-// it. When none does, the error includes the reasons given by each converter,
-// with their rules faults combined.
-func Export(env *gobl.Envelope, keys ...cbc.Key) (*Output, error) {
-	if len(keys) == 0 {
-		return nil, ErrUnknownFormat.WithReason("no formats provided")
+// Export converts the envelope into the format with the key or, when it does
+// not take the envelope, the first of the alternatives that does. A format
+// takes the envelope when it exports the document's schema, can embed any
+// attachments, and its converter accepts it. When none does, the error
+// includes the reasons given by each converter, with their rules faults
+// combined.
+func Export(env *gobl.Envelope, key cbc.Key, opts ...ExportOption) (*Output, error) {
+	o := new(ExportOptions)
+	for _, opt := range opts {
+		opt(o)
 	}
+	keys := append([]cbc.Key{key}, o.Alternatives...)
 	for _, k := range keys {
 		if converters.entryFor(k) == nil {
 			return nil, ErrUnknownFormat.WithReason("format %s not registered", k)
@@ -203,11 +257,15 @@ func Export(env *gobl.Envelope, keys ...cbc.Key) (*Output, error) {
 		if !e.format.exports(env) {
 			continue
 		}
+		if len(o.Attachments) > 0 && !e.format.Attachments {
+			refusals = append(refusals, fmt.Errorf("format %s does not embed attachments", k))
+			continue
+		}
 		if err := e.converter.Accepts(k, env); err != nil {
 			refusals = append(refusals, err)
 			continue
 		}
-		data, err := e.converter.Export(k, env)
+		data, err := e.converter.Export(k, env, o)
 		if err != nil {
 			return nil, ErrConversion.WithCause(err)
 		}

@@ -40,7 +40,8 @@ func header(in *convert.Input) string {
 
 // alphaConverter handles "alpha:" data, and "alpha-fr:" for the FR variant
 // that requires the "test-fr" addon on export. The plain format refuses
-// documents with the "test-refuse" addon.
+// documents with the "test-refuse" addon, and embeds attachments by adding
+// their names to the output.
 type alphaConverter struct{}
 
 var alphaFRRules = convert.Rules("test+alpha-fr",
@@ -52,10 +53,11 @@ var alphaFRRules = convert.Rules("test+alpha-fr",
 func (alphaConverter) Formats() []*convert.Format {
 	return []*convert.Format{
 		{
-			Key:    "test+alpha",
-			Syntax: "test",
-			Import: []schema.ID{invoiceSchema},
-			Export: []schema.ID{invoiceSchema},
+			Key:         "test+alpha",
+			Syntax:      "test",
+			Import:      []schema.ID{invoiceSchema},
+			Export:      []schema.ID{invoiceSchema},
+			Attachments: true,
 		},
 		{
 			Key:       "test+alpha-fr",
@@ -97,8 +99,12 @@ func (alphaConverter) Accepts(key cbc.Key, env *gobl.Envelope) error {
 	return nil
 }
 
-func (alphaConverter) Export(key cbc.Key, _ *gobl.Envelope) ([]byte, error) {
-	return []byte(key.String()), nil
+func (alphaConverter) Export(key cbc.Key, _ *gobl.Envelope, opts *convert.ExportOptions) ([]byte, error) {
+	out := key.String()
+	for _, a := range opts.Attachments {
+		out += ":" + a.Name
+	}
+	return []byte(out), nil
 }
 
 // betaConverter handles "beta:" data, and claims "alpha" data as gamma to
@@ -146,7 +152,7 @@ func (betaConverter) Accepts(_ cbc.Key, env *gobl.Envelope) error {
 	return gammaRules.Validate(env.Extract())
 }
 
-func (betaConverter) Export(_ cbc.Key, _ *gobl.Envelope) ([]byte, error) {
+func (betaConverter) Export(_ cbc.Key, _ *gobl.Envelope, _ *convert.ExportOptions) ([]byte, error) {
 	return nil, errors.New("export failed")
 }
 
@@ -282,13 +288,13 @@ func TestImport(t *testing.T) {
 
 func TestExport(t *testing.T) {
 	t.Run("skips format missing addon", func(t *testing.T) {
-		out, err := convert.Export(invoiceEnvelope(t), "test+alpha-fr", "test+alpha")
+		out, err := convert.Export(invoiceEnvelope(t), "test+alpha-fr", convert.WithAlternatives("test+alpha"))
 		require.NoError(t, err)
 		assert.Equal(t, cbc.Key("test+alpha"), out.Format.Key)
 		assert.Equal(t, []byte("test+alpha"), out.Data)
 	})
 	t.Run("chooses format with addon", func(t *testing.T) {
-		out, err := convert.Export(invoiceEnvelope(t, "test-fr"), "test+alpha-fr", "test+alpha")
+		out, err := convert.Export(invoiceEnvelope(t, "test-fr"), "test+alpha-fr", convert.WithAlternatives("test+alpha"))
 		require.NoError(t, err)
 		assert.Equal(t, cbc.Key("test+alpha-fr"), out.Format.Key)
 	})
@@ -304,7 +310,7 @@ func TestExport(t *testing.T) {
 		assert.Equal(t, "requires addon test-fr", fs.First().Message())
 	})
 	t.Run("faults combined", func(t *testing.T) {
-		_, err := convert.Export(invoiceEnvelope(t), "test+beta", "test+gamma", "test+alpha-fr")
+		_, err := convert.Export(invoiceEnvelope(t), "test+beta", convert.WithAlternatives("test+gamma", "test+alpha-fr"))
 		assert.ErrorIs(t, err, convert.ErrNotSupported)
 		var ge *gobl.Error
 		require.ErrorAs(t, err, &ge)
@@ -314,7 +320,7 @@ func TestExport(t *testing.T) {
 		assert.True(t, fs.HasCode("TEST-ALPHA-FR-BILL-INVOICE-01"))
 	})
 	t.Run("other reasons", func(t *testing.T) {
-		_, err := convert.Export(invoiceEnvelope(t, "test-refuse"), "test+gamma", "test+alpha")
+		_, err := convert.Export(invoiceEnvelope(t, "test-refuse"), "test+gamma", convert.WithAlternatives("test+alpha"))
 		assert.ErrorIs(t, err, convert.ErrNotSupported)
 		assert.ErrorContains(t, err, "alpha refuses")
 		assert.ErrorContains(t, err, "TEST-GAMMA-BILL-INVOICE-01")
@@ -334,11 +340,45 @@ func TestExport(t *testing.T) {
 		assert.ErrorIs(t, err, convert.ErrConversion)
 	})
 	t.Run("unknown key", func(t *testing.T) {
-		_, err := convert.Export(invoiceEnvelope(t), "test+alpha", "test+unknown")
+		_, err := convert.Export(invoiceEnvelope(t), "test+alpha", convert.WithAlternatives("test+unknown"))
 		assert.ErrorIs(t, err, convert.ErrUnknownFormat)
 	})
-	t.Run("no keys", func(t *testing.T) {
-		_, err := convert.Export(invoiceEnvelope(t))
+	t.Run("empty key", func(t *testing.T) {
+		_, err := convert.Export(invoiceEnvelope(t), "")
 		assert.ErrorIs(t, err, convert.ErrUnknownFormat)
+	})
+	t.Run("alternatives in order", func(t *testing.T) {
+		out, err := convert.Export(invoiceEnvelope(t), "test+alpha-fr",
+			convert.WithAlternatives("test+gamma"),
+			convert.WithAlternatives("test+alpha"),
+		)
+		require.NoError(t, err)
+		assert.Equal(t, cbc.Key("test+alpha"), out.Format.Key)
+	})
+}
+
+func TestExportAttachments(t *testing.T) {
+	pdf := &convert.Attachment{Name: "invoice.pdf", MIME: "application/pdf", Data: []byte("%PDF")}
+	csv := &convert.Attachment{Name: "lines.csv", MIME: "text/csv", Data: []byte("a,b")}
+	t.Run("embedded", func(t *testing.T) {
+		out, err := convert.Export(invoiceEnvelope(t), "test+alpha",
+			convert.WithAttachments(pdf),
+			convert.WithAttachments(csv),
+		)
+		require.NoError(t, err)
+		assert.Equal(t, []byte("test+alpha:invoice.pdf:lines.csv"), out.Data)
+	})
+	t.Run("skips formats that cannot embed them", func(t *testing.T) {
+		out, err := convert.Export(invoiceEnvelope(t, "test-fr"), "test+alpha-fr",
+			convert.WithAlternatives("test+alpha"),
+			convert.WithAttachments(pdf),
+		)
+		require.NoError(t, err)
+		assert.Equal(t, cbc.Key("test+alpha"), out.Format.Key)
+	})
+	t.Run("refused", func(t *testing.T) {
+		_, err := convert.Export(invoiceEnvelope(t, "test-fr"), "test+alpha-fr", convert.WithAttachments(pdf))
+		assert.ErrorIs(t, err, convert.ErrNotSupported)
+		assert.ErrorContains(t, err, "format test+alpha-fr does not embed attachments")
 	})
 }

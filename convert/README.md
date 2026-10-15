@@ -13,7 +13,9 @@ import (
 )
 
 env, err := convert.Import(data)
-out, err := convert.Export(env, "ubl+peppol+bis-v3", "ubl+en16931-v2017")
+out, err := convert.Export(env, "ubl+peppol+bis-v3",
+	convert.WithAlternatives("ubl+en16931-v2017"),
+)
 ```
 
 ## Concepts
@@ -63,11 +65,30 @@ act and this package's name, as it implies no direction.
 | Function | Purpose |
 | --- | --- |
 | `Import(data, keys...)` | Detect the format of the data and convert it into a GOBL envelope. Keys, if given, limit detection to those formats. |
-| `Export(env, keys...)` | Convert the envelope into the first of the keys, in order of preference, that can take it. |
+| `Export(env, key, opts...)` | Convert the envelope into the format with the key, or the first of the alternatives that can take it. |
 | `Detect(data, keys...)` | Detect the format without converting. |
 | `Formats()`, `FormatFor(key)` | List all formats, or look one up. |
 | `FormatsFor(country)` | List the formats that apply in a country, including through unions such as the EU, and those without a country restriction. |
 | `Conversions()` | List every conversion available. |
+
+`Export` takes options:
+
+- `WithAlternatives(keys...)`: further formats to try, in order of preference,
+  when the requested format does not take the envelope.
+- `WithAttachments(atts...)`: files to embed in the exported document, such as
+  a PDF version of the invoice. Only formats with `Attachments` set can embed
+  them, and other formats refuse the envelope.
+
+```go
+pdf := &convert.Attachment{
+	ID:          "INV-001-PDF",
+	Name:        "INV-001.pdf",
+	Description: "Invoice INV-001",
+	MIME:        "application/pdf",
+	Data:        data,
+}
+out, err := convert.Export(env, "ubl+peppol+bis-v3", convert.WithAttachments(pdf))
+```
 
 Errors are GOBL errors that can be compared with `errors.Is`:
 
@@ -136,6 +157,10 @@ func (converter) Accepts(key cbc.Key, env *gobl.Envelope) error {
 		return fs
 	}
 	return nil
+}
+
+func (converter) Export(key cbc.Key, env *gobl.Envelope, opts *convert.ExportOptions) ([]byte, error) {
+	// Convert, embedding opts.Attachments, and encode.
 }
 ```
 
@@ -227,6 +252,10 @@ returned as faults with codes and paths, just like validation faults:
   that faults when the document does not include every addon.
 
 Return any other error for conditions that rules cannot express.
+
+`Export` receives the options the caller gave. Formats that set `Attachments`
+embed `opts.Attachments` in the document. The register only provides
+attachments to those formats, so others can ignore them.
 
 Formats expect documents to already include their addons. A converter that
 adds missing addons during export does so only to help existing users migrate,
@@ -331,3 +360,4 @@ The remaining fields help user interfaces list and filter formats:
 - `MIME`: the media type of the data, such as `application/xml`.
 - `Countries`: where the format applies, including unions such as `EU`. Leave
   it empty for formats that apply anywhere, such as plain EN 16931.
+- `Attachments`: whether exported documents can embed attachments.
