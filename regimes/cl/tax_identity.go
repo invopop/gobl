@@ -38,12 +38,9 @@ func isValidRUT(value any) bool {
 		return false
 	}
 	s := code.String()
-	// Chilean law does not fix an exact digit count for the RUT body. Numbers
-	// have been assigned sequentially for decades, so older RUTs can be shorter
-	// than the 7-8 digits typical of RUTs issued today. We accept a body of
-	// 1 to 8 digits plus 1 check digit (total length 2-9) as a practical bound,
-	// not a legal requirement, to avoid rejecting older but mathematically
-	// valid RUTs.
+	// RUT body length isn't legally fixed; older RUTs can be shorter than
+	// today's typical 7-8 digits, so we accept 1-8 digits (total length 2-9)
+	// rather than enforcing an exact count.
 	if len(s) < 2 || len(s) > 9 {
 		return false
 	}

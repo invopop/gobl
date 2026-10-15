@@ -77,9 +77,7 @@ func New() *tax.RegimeDef {
 		TimeZone:   "America/Santiago",
 		Categories: taxCategories(),
 		// A reason is required for every credit and debit note per Art. 57 of
-		// the D.L. 825 and Art. 71 of its Reglamento; the SII's official guides
-		// confirm these documents only correct standard invoices (never
-		// boletas — see the "not simplified" rule in bill_invoices.go).
+		// the D.L. 825 and Art. 71 of its Reglamento.
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
