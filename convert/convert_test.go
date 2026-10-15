@@ -38,7 +38,8 @@ func header(in *convert.Input) string {
 	return h
 }
 
-// alphaConverter handles "alpha:" data, and "alpha-fr:" for the FR variant
+// alphaConverter handles "alpha:" data, provides an attachment for data
+// ending in ":attach", and no result for ":empty", and "alpha-fr:" for the FR variant
 // that requires the "test-fr" addon on export. The plain format refuses
 // documents with the "test-refuse" addon, and embeds attachments by adding
 // their names to the output.
@@ -78,14 +79,24 @@ func (alphaConverter) Detect(in *convert.Input) cbc.Key {
 	return cbc.KeyEmpty
 }
 
-func (alphaConverter) Import(_ cbc.Key, data []byte) (*gobl.Envelope, error) {
-	if strings.HasSuffix(string(data), ":fail") {
+func (alphaConverter) Import(_ cbc.Key, data []byte) (*convert.ImportResult, error) {
+	switch {
+	case strings.HasSuffix(string(data), ":fail"):
 		return nil, errors.New("boom")
-	}
-	if strings.HasSuffix(string(data), ":invalid") {
+	case strings.HasSuffix(string(data), ":invalid"):
 		return nil, gobl.ErrValidation.WithReason("bad document")
+	case strings.HasSuffix(string(data), ":empty"):
+		return nil, nil
 	}
-	return gobl.Envelop(&note.Message{Content: string(data)})
+	env, err := gobl.Envelop(&note.Message{Content: string(data)})
+	if err != nil {
+		return nil, err
+	}
+	res := &convert.ImportResult{Envelope: env}
+	if strings.HasSuffix(string(data), ":attach") {
+		res.Attachments = []*convert.Attachment{{Name: "invoice.pdf", Data: []byte("%PDF")}}
+	}
+	return res, nil
 }
 
 func (alphaConverter) Accepts(key cbc.Key, env *gobl.Envelope) error {
@@ -144,8 +155,12 @@ func (betaConverter) Detect(in *convert.Input) cbc.Key {
 	return cbc.KeyEmpty
 }
 
-func (betaConverter) Import(_ cbc.Key, data []byte) (*gobl.Envelope, error) {
-	return gobl.Envelop(&note.Message{Content: string(data)})
+func (betaConverter) Import(_ cbc.Key, data []byte) (*convert.ImportResult, error) {
+	env, err := gobl.Envelop(&note.Message{Content: string(data)})
+	if err != nil {
+		return nil, err
+	}
+	return &convert.ImportResult{Envelope: env}, nil
 }
 
 func (betaConverter) Accepts(_ cbc.Key, env *gobl.Envelope) error {
@@ -260,20 +275,34 @@ func TestDetect(t *testing.T) {
 
 func TestImport(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		env, err := convert.Import([]byte("alpha-fr:data"))
+		res, err := convert.Import([]byte("alpha-fr:data"))
 		require.NoError(t, err)
-		msg, ok := env.Extract().(*note.Message)
+		assert.Equal(t, cbc.Key("test+alpha-fr"), res.Format.Key)
+		msg, ok := res.Envelope.Extract().(*note.Message)
 		require.True(t, ok)
 		assert.Equal(t, "alpha-fr:data", msg.Content)
+		assert.Empty(t, res.Attachments)
 	})
-	t.Run("keys", func(t *testing.T) {
-		env, err := convert.Import([]byte("alpha:data"), "test+alpha")
+	t.Run("formats", func(t *testing.T) {
+		res, err := convert.Import([]byte("alpha:data"), convert.WithFormats("test+alpha"))
 		require.NoError(t, err)
-		assert.NotNil(t, env)
+		assert.Equal(t, cbc.Key("test+alpha"), res.Format.Key)
 	})
-	t.Run("keys not matching data", func(t *testing.T) {
-		_, err := convert.Import([]byte("alpha:data"), "test+beta")
+	t.Run("formats not matching data", func(t *testing.T) {
+		_, err := convert.Import([]byte("alpha:data"), convert.WithFormats("test+beta"))
 		assert.ErrorIs(t, err, convert.ErrUnknownFormat)
+	})
+	t.Run("attachments", func(t *testing.T) {
+		res, err := convert.Import([]byte("alpha-fr:attach"))
+		require.NoError(t, err)
+		require.Len(t, res.Attachments, 1)
+		assert.Equal(t, "invoice.pdf", res.Attachments[0].Name)
+		assert.Equal(t, []byte("%PDF"), res.Attachments[0].Data)
+	})
+	t.Run("no result", func(t *testing.T) {
+		_, err := convert.Import([]byte("alpha-fr:empty"))
+		assert.ErrorIs(t, err, convert.ErrConversion)
+		assert.ErrorContains(t, err, "format test+alpha-fr provided no envelope")
 	})
 	t.Run("converter error", func(t *testing.T) {
 		_, err := convert.Import([]byte("alpha-fr:fail"))

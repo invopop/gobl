@@ -12,7 +12,7 @@ import (
 	_ "github.com/invopop/gobl.ubl"
 )
 
-env, err := convert.Import(data)
+res, err := convert.Import(data)
 out, err := convert.Export(env, "ubl+peppol+bis-v3",
 	convert.WithAlternatives("ubl+en16931-v2017"),
 )
@@ -64,7 +64,7 @@ act and this package's name, as it implies no direction.
 
 | Function | Purpose |
 | --- | --- |
-| `Import(data, keys...)` | Detect the format of the data and convert it into a GOBL envelope. Keys, if given, limit detection to those formats. |
+| `Import(data, opts...)` | Detect the format of the data and convert it into a GOBL envelope, with any files embedded in the data. |
 | `Export(env, key, opts...)` | Convert the envelope into the format with the key, or the first of the alternatives that can take it. |
 | `Detect(data, keys...)` | Detect the format without converting. |
 | `Formats()`, `FormatFor(key)` | List all formats, or look one up. |
@@ -88,6 +88,23 @@ pdf := &convert.Attachment{
 	Data:        data,
 }
 out, err := convert.Export(env, "ubl+peppol+bis-v3", convert.WithAttachments(pdf))
+```
+
+`Export` returns an `ExportResult` with the `Format` used and the exported
+`Data`.
+
+`Import` returns an `ImportResult` with the detected `Format`, the
+`Envelope`, and the `Attachments` embedded in the data, such as a PDF version
+of the invoice. The envelope does not include them, so they can be stored
+separately. `Import` takes options:
+
+- `WithFormats(keys...)`: limit detection to these formats.
+
+```go
+res, err := convert.Import(data, convert.WithFormats("ubl+peppol+bis-v3"))
+for _, a := range res.Attachments {
+	// store a.Data as a.Name, of type a.MIME
+}
 ```
 
 Errors are GOBL errors that can be compared with `errors.Is`:
@@ -230,8 +247,10 @@ Store errors along with values, so that a malformed document is only read once.
 
 ### Import
 
-`Import` receives the detected key and the raw data, and returns an envelope.
-It is only called for a key the converter returned from `Detect`.
+`Import` receives the detected key and the raw data, and returns an
+`ImportResult` with the envelope and the files embedded in the data as
+`Attachments`. The register sets the result's `Format`. It is only called for
+a key the converter returned from `Detect`.
 
 ### Export
 
