@@ -14,6 +14,8 @@ This file is generated from the change files in the [changes](./changes) directo
   PDF version of an invoice, passed with the `WithAttachments` export option.
   `Format.Attachments` says whether a format can embed them; other formats
   refuse envelopes exported with attachments.
+- `convert`: `Import` provides the files embedded in the data, such as a PDF
+  version of an invoice, as `Attachments` in its `ImportResult`.
 
 ### Changed
 
@@ -21,6 +23,11 @@ This file is generated from the change files in the [changes](./changes) directo
   key, with further keys to try passed with the `WithAlternatives` option.
 - `convert`: **breaking** `Converter.Export` receives the `ExportOptions`,
   including the attachments to embed.
+- `convert`: **breaking** `Import(data, opts...)` returns an `ImportResult`
+  with the detected `Format`, the `Envelope` and the `Attachments`. Detection
+  is limited to some formats with the `WithFormats` option.
+- `convert`: **breaking** `Converter.Import` returns an `ImportResult`.
+- `convert`: **breaking** `Output` is renamed `ExportResult`.
 
 ## [v0.509.0] - 2026-10-15
 
