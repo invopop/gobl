@@ -86,6 +86,14 @@ func init() {
 		Module: "github.com/invopop/gobl.es.facturae",
 	})
 	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "es-verifactu-v1",
+		Name: i18n.String{
+			i18n.EN: "Spain VERI*FACTU V1",
+			i18n.ES: "España VERI*FACTU V1",
+		},
+		Module: "github.com/invopop/gobl.es.verifactu",
+	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
 		Key: "sa-zatca-v1",
 		Name: i18n.String{
 			i18n.EN: "Saudi Arabia ZATCA",

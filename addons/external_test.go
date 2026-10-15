@@ -82,6 +82,12 @@ func TestApprovedAddons(t *testing.T) {
 			},
 		},
 		{
+			name: "ES VeriFactu",
+			modules: map[cbc.Key]string{
+				"es-verifactu-v1": "github.com/invopop/gobl.es.verifactu",
+			},
+		},
+		{
 			name: "AR ARCA",
 			modules: map[cbc.Key]string{
 				"ar-arca-v4": "github.com/invopop/gobl.ar.arca",
