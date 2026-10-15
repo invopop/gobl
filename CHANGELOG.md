@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 This file is generated from the change files in the [changes](./changes) directory. Add new entries to `changes/unreleased` instead of editing this file; see [changes/README.md](./changes/README.md).
 
+## [v0.510.0] - 2026-10-15
+
+### Added
+
+- `convert`: `Attachment`, a file to embed in an exported document, such as a
+  PDF version of an invoice, passed with the `WithAttachments` export option.
+  `Format.Attachments` says whether a format can embed them; other formats
+  refuse envelopes exported with attachments.
+- `convert`: `Import` provides the files embedded in the data, such as a PDF
+  version of an invoice, as `Attachments` in its `ImportResult`.
+
+### Changed
+
+- `convert`: **breaking** `Export(env, key, opts...)` takes a single format
+  key, with further keys to try passed with the `WithAlternatives` option.
+- `convert`: **breaking** `Converter.Export` receives the `ExportOptions`,
+  including the attachments to embed.
+- `convert`: **breaking** `Import(data, opts...)` returns an `ImportResult`
+  with the detected `Format`, the `Envelope` and the `Attachments`. Detection
+  is limited to some formats with the `WithFormats` option.
+- `convert`: **breaking** `Converter.Import` returns an `ImportResult`.
+- `convert`: **breaking** `Output` is renamed `ExportResult`.
+
 ## [v0.509.0] - 2026-10-15
 
 ### Changed
