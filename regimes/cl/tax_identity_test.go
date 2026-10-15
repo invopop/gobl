@@ -42,6 +42,15 @@ func TestTaxIdentityRules(t *testing.T) {
 		err := validate("1234567A")
 		assert.ErrorContains(t, err, "CL-TAX-IDENTITY-01")
 	})
+
+	t.Run("letter inside the body", func(t *testing.T) {
+		err := validate("1A345678")
+		assert.ErrorContains(t, err, "CL-TAX-IDENTITY-01")
+	})
+
+	t.Run("check digit resolves from remainder zero", func(t *testing.T) {
+		assert.NoError(t, validate("450"))
+	})
 }
 
 func TestTaxIdentityNormalization(t *testing.T) {
