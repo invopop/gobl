@@ -28,6 +28,14 @@ func TestApprovedAddons(t *testing.T) {
 				"fr-ctc-flow2-v1":  "github.com/invopop/gobl.fr.ctc",
 				"fr-ctc-flow6-v1":  "github.com/invopop/gobl.fr.ctc",
 				"fr-ctc-flow10-v1": "github.com/invopop/gobl.fr.ctc",
+				"fr-facturx-v1":    "github.com/invopop/gobl.fr.ctc",
+			},
+		},
+		{
+			name: "DE XInvoice",
+			modules: map[cbc.Key]string{
+				"de-xrechnung-v3": "github.com/invopop/gobl.de.xinvoice",
+				"de-zugferd-v2":   "github.com/invopop/gobl.de.xinvoice",
 			},
 		},
 		{
@@ -65,6 +73,24 @@ func TestApprovedAddons(t *testing.T) {
 			name: "IT SDI",
 			modules: map[cbc.Key]string{
 				"it-sdi-v1": "github.com/invopop/gobl.it.sdi",
+			},
+		},
+		{
+			name: "ES FacturaE",
+			modules: map[cbc.Key]string{
+				"es-facturae-v3": "github.com/invopop/gobl.es.facturae",
+			},
+		},
+		{
+			name: "ES VeriFactu",
+			modules: map[cbc.Key]string{
+				"es-verifactu-v1": "github.com/invopop/gobl.es.verifactu",
+			},
+		},
+		{
+			name: "AR ARCA",
+			modules: map[cbc.Key]string{
+				"ar-arca-v4": "github.com/invopop/gobl.ar.arca",
 			},
 		},
 	}

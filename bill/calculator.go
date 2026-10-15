@@ -29,7 +29,6 @@ type billable interface {
 
 	// private methods
 	getIssueDate() cal.Date
-	getIssueTime() *cal.Time
 	getValueDate() *cal.Date
 	getTax() *Tax
 	getPreceding() []*org.DocumentRef
@@ -43,7 +42,6 @@ type billable interface {
 
 	// private setters
 	setIssueDate(cal.Date)
-	setIssueTime(*cal.Time)
 	setCurrency(currency.Code)
 	setTax(*Tax)
 	setTotals(*Totals)
@@ -77,7 +75,7 @@ func isCalculated(doc billable) bool {
 		if l == nil || l.Total != nil {
 			continue
 		}
-		if len(l.Breakdown) > 0 || (l.Item != nil && l.Item.Price != nil) {
+		if len(l.Breakdown) > 0 || (l.Item != nil && (l.Item.Price != nil || l.Item.List != nil)) {
 			return false
 		}
 	}
@@ -216,7 +214,7 @@ func roundTotalsAndPreparePayments(doc billable, cur currency.Code, t *Totals) {
 		t.Payable = t.Payable.Add(*t.Rounding)
 	}
 	if pd := doc.getPaymentDetails(); pd != nil {
-		pd.calculateAdvances(zero, t.Payable)
+		pd.calculateAdvances(zero, t.Payable, t.Taxes)
 		// Deal with advances, if any. Note that in the current
 		// implementation multiple percentage advances are likely to
 		// suffer rounding errors. It usually better for users to use
@@ -225,8 +223,12 @@ func roundTotalsAndPreparePayments(doc billable, cur currency.Code, t *Totals) {
 			v := t.Payable.Subtract(*t.Advances)
 			t.Due = &v
 		}
-		// Calculate any due date amounts
-		pd.Terms.CalculateDues(zero, t.Payable)
+		// Calculate any due date amounts from what remains to be paid
+		due := t.Payable
+		if t.Due != nil {
+			due = *t.Due
+		}
+		pd.Terms.CalculateDues(zero, due)
 	}
 	doc.setTotals(t)
 }
@@ -245,7 +247,7 @@ func prepareTaxableLines(doc billable) []tax.TaxableLine {
 		}
 	}
 	for _, l := range doc.getCharges() {
-		if l != nil {
+		if l != nil && !l.Informative {
 			tls = append(tls, l)
 		}
 	}
@@ -253,14 +255,8 @@ func prepareTaxableLines(doc billable) []tax.TaxableLine {
 }
 
 func calculateIssueDateAndTime(r *tax.RegimeDef, doc billable) *cal.Date {
-	tz := r.TimeLocation()
-	if doc.getIssueTime() != nil && doc.getIssueTime().IsZero() {
-		dn := cal.ThisSecondIn(tz)
-		tn := dn.Time()
-		doc.setIssueDate(dn.Date())
-		doc.setIssueTime(&tn)
-	} else if doc.getIssueDate().IsZero() {
-		doc.setIssueDate(cal.TodayIn(tz))
+	if doc.getIssueDate().IsZero() {
+		doc.setIssueDate(cal.TodayIn(r.TimeLocation()))
 	}
 
 	// Get the date used for tax calculations

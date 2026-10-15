@@ -14,7 +14,7 @@
         "i": {
           "type": "integer",
           "title": "Index",
-          "description": "Line number inside the list of discounts (calculated)",
+          "description": "Line number inside the list of discounts (calculated).",
           "calculated": true
         },
         "key": {
@@ -87,17 +87,17 @@
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Code",
-          "description": "Code to used to refer to the this discount by the issuer"
+          "description": "Code used by the issuer to refer to this discount."
         },
         "reason": {
           "type": "string",
           "title": "Reason",
-          "description": "Text description as to why the discount was applied"
+          "description": "Reason why the discount was applied."
         },
         "base": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Base",
-          "description": "Base represents the value used as a base for percent calculations instead\nof the invoice's sum of lines."
+          "description": "Value used as the base for percent calculations instead of the invoice's sum of lines."
         },
         "percent": {
           "$ref": "https://gobl.org/draft-0/num/percentage",
@@ -113,12 +113,12 @@
         "taxes": {
           "$ref": "https://gobl.org/draft-0/tax/set",
           "title": "Taxes",
-          "description": "List of taxes to apply to the discount"
+          "description": "List of taxes to apply to the discount."
         },
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",
           "title": "Extensions",
-          "description": "Extension codes that apply to the discount"
+          "description": "Extension codes that apply to the discount."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",

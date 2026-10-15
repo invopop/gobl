@@ -233,6 +233,25 @@ func TestStringMarshalJSON(t *testing.T) {
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "json: unsupported value")
 	})
+
+	t.Run("with a replacement character", func(t *testing.T) {
+		// U+FFFD is an ordinary rune with a defined encoding, and documents
+		// whose text was damaged before it reached us carry one in place of
+		// the character that was lost. It is not invalid UTF-8.
+		s := c14n.String("This is a test with a replacement character: \uFFFD")
+		d, err := s.MarshalJSON()
+		require.NoError(t, err)
+		assert.Equal(t, "\"This is a test with a replacement character: \uFFFD\"", string(d))
+	})
+
+	t.Run("with a truncated multi-byte rune", func(t *testing.T) {
+		// The leading byte of a three byte rune with its continuation bytes
+		// missing: still invalid, and still refused.
+		s := c14n.String("This is a test with a truncated rune: \xef")
+		_, err := s.MarshalJSON()
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "json: unsupported value")
+	})
 }
 
 func TestNullMarshalJSON(t *testing.T) {

@@ -17,6 +17,25 @@ func TestFaults(t *testing.T) {
 	})
 }
 
+func TestJoinFaults(t *testing.T) {
+	set := rules.For(new(Email),
+		rules.Field("addr",
+			rules.Assert("01", "email required", is.Present),
+		),
+	)
+	other := rules.NewSet("OTHER", set)
+	t.Run("combines", func(t *testing.T) {
+		fs := rules.JoinFaults(set.Validate(&Email{}), nil, other.Validate(&Email{}))
+		require.Error(t, fs)
+		assert.Equal(t, 2, fs.Len())
+		assert.Equal(t, rules.Code("OTHER-EMAIL-01"), fs.Last().Code())
+	})
+	t.Run("nil when empty", func(t *testing.T) {
+		assert.Nil(t, rules.JoinFaults())
+		assert.Nil(t, rules.JoinFaults(nil, set.Validate(&Email{Addr: "a@b.com"})))
+	})
+}
+
 func TestFaultMarshalJSON(t *testing.T) {
 	t.Run("field-level fault", func(t *testing.T) {
 		set := rules.For(new(Email),

@@ -37,7 +37,7 @@
           },
           "type": "array",
           "title": "Tax Categories",
-          "description": "Categories is an optional list of tax category codes that acts as a filter.\nWhen set, at least one of the specified categories must be present in the\ndocument's line taxes for the scenario to match."
+          "description": "Optional list of tax category codes that acts as a filter. When set, at least\none of the specified categories must be present in the document's line taxes\nfor the scenario to match."
         },
         "ext_key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
@@ -47,7 +47,7 @@
         "ext_code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Extension Code",
-          "description": "Extension code that along side the key must be present for a match\nto happen. This cannot be used without an `cbc.Code`. The value will\nbe copied to the note code if needed."
+          "description": "Extension code that, alongside the key, must be present for a match. Cannot be\nused without the extension key. The value will be copied to the note code if\nneeded."
         },
         "note": {
           "$ref": "https://gobl.org/draft-0/tax/note",
@@ -57,12 +57,12 @@
         "codes": {
           "$ref": "https://gobl.org/draft-0/cbc/code-map",
           "title": "Codes",
-          "description": "Codes is used to define additional codes for regime specific\nsituations."
+          "description": "Additional codes for regime specific situations."
         },
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",
           "title": "Extensions",
-          "description": "Ext represents a set of tax extensions that should be applied to\nthe document in the appropriate \"tax\" context."
+          "description": "Tax extensions that should be applied to the document in the appropriate \"tax\"\ncontext."
         }
       },
       "type": "object",

@@ -4,26 +4,17 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "77210118a44b619012c0647cafb15e1a5a24a8d8ef63dfe61380f61acc79a4fe"
+			"val": "50e898866779a30e1b87acb45dd9ad1c8bb51ad847bc02083594ea4a8dc36f5d"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "ES",
-		"$addons": [
-			"es-facturae-v3"
-		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"code": "SAMPLE-001",
 		"issue_date": "2022-02-01",
 		"currency": "EUR",
-		"tax": {
-			"ext": {
-				"es-facturae-doc-type": "FC",
-				"es-facturae-invoice-class": "OO"
-			}
-		},
 		"supplier": {
 			"name": "Provide One S.L.",
 			"tax_id": {

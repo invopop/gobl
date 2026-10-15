@@ -24,12 +24,12 @@
         "name": {
           "type": "string",
           "title": "Name",
-          "description": "Filename of the attachment, will override name retrieved from URL."
+          "description": "Filename of the attachment. Overrides the name retrieved from the URL."
         },
         "description": {
           "type": "string",
           "title": "Description",
-          "description": "Details of why the attachment is being included and details on\nwhat it contains."
+          "description": "Why the attachment is included and what it contains."
         },
         "url": {
           "type": "string",
@@ -40,7 +40,7 @@
         "digest": {
           "$ref": "https://gobl.org/draft-0/dsig/digest",
           "title": "Digest",
-          "description": "Digest is used to verify the integrity of the attachment\nwhen downloaded from the URL."
+          "description": "Used to verify the integrity of the attachment when downloaded from the URL."
         },
         "mime": {
           "type": "string",

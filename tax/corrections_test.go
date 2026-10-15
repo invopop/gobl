@@ -3,10 +3,10 @@ package tax_test
 import (
 	"testing"
 
-	"github.com/invopop/gobl/addons/es/facturae"
 	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/internal/testaddons"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -16,7 +16,7 @@ func TestCorrectionSetDef(t *testing.T) {
 	cs := tax.CorrectionSet{
 		{
 			Schema:     bill.ShortSchemaInvoice,
-			Extensions: []cbc.Key{facturae.ExtKeyCorrection},
+			Extensions: []cbc.Key{testaddons.ExtKeyCorrection},
 		},
 		{
 			Schema:  "note/message",
@@ -27,7 +27,7 @@ func TestCorrectionSetDef(t *testing.T) {
 	t.Run("finds matching schema", func(t *testing.T) {
 		cd := cs.Def(bill.ShortSchemaInvoice)
 		require.NotNil(t, cd)
-		assert.Equal(t, facturae.ExtKeyCorrection, cd.Extensions[0])
+		assert.Equal(t, testaddons.ExtKeyCorrection, cd.Extensions[0])
 	})
 
 	t.Run("finds by suffix", func(t *testing.T) {
@@ -48,7 +48,7 @@ func TestCorrectionDefinitionMerge(t *testing.T) {
 	t.Run("merges extensions and flags", func(t *testing.T) {
 		cd1 := &tax.CorrectionDefinition{
 			Schema:     bill.ShortSchemaInvoice,
-			Extensions: []cbc.Key{facturae.ExtKeyCorrection},
+			Extensions: []cbc.Key{testaddons.ExtKeyCorrection},
 		}
 		cd2 := &tax.CorrectionDefinition{
 			Schema:     bill.ShortSchemaInvoice,
@@ -57,7 +57,7 @@ func TestCorrectionDefinitionMerge(t *testing.T) {
 		}
 		merged := cd1.Merge(cd2)
 		assert.Len(t, merged.Extensions, 2)
-		assert.Contains(t, merged.Extensions, facturae.ExtKeyCorrection)
+		assert.Contains(t, merged.Extensions, testaddons.ExtKeyCorrection)
 		assert.Contains(t, merged.Extensions, tbai.ExtKeyCorrection)
 		assert.True(t, merged.CopyTax)
 	})
@@ -122,7 +122,7 @@ func TestCorrectionDefinitionMerge(t *testing.T) {
 		cd := &tax.CorrectionDefinition{
 			Schema:     bill.ShortSchemaInvoice,
 			Types:      []cbc.Key{"a"},
-			Extensions: []cbc.Key{facturae.ExtKeyCorrection},
+			Extensions: []cbc.Key{testaddons.ExtKeyCorrection},
 			Stamps:     []cbc.Key{"s1"},
 			CopyTax:    false,
 		}
@@ -138,7 +138,7 @@ func TestCorrectionDefinitionMerge(t *testing.T) {
 		// Receiver must remain unchanged
 		assert.False(t, cd.CopyTax, "receiver CopyTax must not be mutated")
 		assert.Equal(t, []cbc.Key{"a"}, cd.Types)
-		assert.Equal(t, []cbc.Key{facturae.ExtKeyCorrection}, cd.Extensions)
+		assert.Equal(t, []cbc.Key{testaddons.ExtKeyCorrection}, cd.Extensions)
 		assert.Equal(t, []cbc.Key{"s1"}, cd.Stamps)
 
 		// Other must remain unchanged
@@ -172,21 +172,21 @@ func TestCorrectionDefinitionHasType(t *testing.T) {
 func TestCorrectionDefinitionHasExtension(t *testing.T) {
 	t.Run("returns true for matching key", func(t *testing.T) {
 		cd := &tax.CorrectionDefinition{
-			Extensions: []cbc.Key{facturae.ExtKeyCorrection},
+			Extensions: []cbc.Key{testaddons.ExtKeyCorrection},
 		}
-		assert.True(t, cd.HasExtension(facturae.ExtKeyCorrection))
+		assert.True(t, cd.HasExtension(testaddons.ExtKeyCorrection))
 	})
 
 	t.Run("returns false for non-matching key", func(t *testing.T) {
 		cd := &tax.CorrectionDefinition{
-			Extensions: []cbc.Key{facturae.ExtKeyCorrection},
+			Extensions: []cbc.Key{testaddons.ExtKeyCorrection},
 		}
 		assert.False(t, cd.HasExtension("unknown-key"))
 	})
 
 	t.Run("returns false for nil definition", func(t *testing.T) {
 		var cd *tax.CorrectionDefinition
-		assert.False(t, cd.HasExtension(facturae.ExtKeyCorrection))
+		assert.False(t, cd.HasExtension(testaddons.ExtKeyCorrection))
 	})
 }
 

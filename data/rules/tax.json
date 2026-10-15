@@ -290,7 +290,7 @@
             {
               "id": "GOBL-TAX-REGIMEDEF-05",
               "desc": "at least one category is required",
-              "tests": "length between 1 and 0"
+              "tests": "length at least 1"
             }
           ]
         }
@@ -343,6 +343,22 @@
             {
               "id": "GOBL-TAX-NOTE-01",
               "desc": "tax note text is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-TAX-FILTER",
+      "object": "tax.Filter",
+      "subsets": [
+        {
+          "field": "cat",
+          "assert": [
+            {
+              "id": "GOBL-TAX-FILTER-01",
+              "desc": "tax filter category is required",
               "tests": "present"
             }
           ]

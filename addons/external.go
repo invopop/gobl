@@ -50,6 +50,50 @@ func init() {
 		Module: frCTCModule,
 	})
 	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "fr-facturx-v1",
+		Name: i18n.String{
+			i18n.EN: "French Factur-X v1",
+		},
+		Module: frCTCModule,
+	})
+	const deXInvoiceModule = "github.com/invopop/gobl.de.xinvoice"
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "de-xrechnung-v3",
+		Name: i18n.String{
+			i18n.EN: "German XRechnung 3.X",
+		},
+		Module: deXInvoiceModule,
+	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "de-zugferd-v2",
+		Name: i18n.String{
+			i18n.EN: "German ZUGFeRD 2.X",
+		},
+		Module: deXInvoiceModule,
+	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "co-dian-v2",
+		Name: i18n.String{
+			i18n.EN: "Colombia DIAN UBL 2.X",
+		},
+		Module: "github.com/invopop/gobl.co.dian",
+	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "es-facturae-v3",
+		Name: i18n.String{
+			i18n.EN: "Spain FacturaE",
+		},
+		Module: "github.com/invopop/gobl.es.facturae",
+	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "es-verifactu-v1",
+		Name: i18n.String{
+			i18n.EN: "Spain VERI*FACTU V1",
+			i18n.ES: "España VERI*FACTU V1",
+		},
+		Module: "github.com/invopop/gobl.es.verifactu",
+	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
 		Key: "sa-zatca-v1",
 		Name: i18n.String{
 			i18n.EN: "Saudi Arabia ZATCA",
@@ -117,11 +161,10 @@ func init() {
 		Module: "github.com/invopop/gobl.it.sdi",
 	})
 	tax.RegisterApprovedAddon(&tax.ExternalAddon{
-		Key: "es-verifactu-v1",
+		Key: "ar-arca-v4",
 		Name: i18n.String{
-			i18n.EN: "Spain VERI*FACTU V1",
-			i18n.ES: "España VERI*FACTU V1",
+			i18n.EN: "Argentina ARCA V4",
 		},
-		Module: "github.com/invopop/gobl.es.verifactu",
+		Module: "github.com/invopop/gobl.ar.arca",
 	})
 }

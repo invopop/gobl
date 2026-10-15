@@ -3,7 +3,7 @@ package data
 
 import "embed"
 
-//go:embed currency regimes schemas addons catalogues rules
+//go:embed currency regimes schemas catalogues rules
 
 // Content contains the generated regimes and schemes
 // ready to serve as an embed.FS.

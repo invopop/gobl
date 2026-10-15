@@ -65,8 +65,18 @@ func (t LengthTest) Check(value any) bool {
 }
 
 func (t LengthTest) String() string {
+	name := "length"
 	if t.rune {
-		return fmt.Sprintf("rune length between %d and %d", t.min, t.max)
+		name = "rune length"
 	}
-	return fmt.Sprintf("length between %d and %d", t.min, t.max)
+	switch {
+	case t.min == 0 && t.max == 0:
+		return fmt.Sprintf("%s exactly 0", name)
+	case t.max == 0:
+		return fmt.Sprintf("%s at least %d", name, t.min)
+	case t.min == 0:
+		return fmt.Sprintf("%s at most %d", name, t.max)
+	default:
+		return fmt.Sprintf("%s between %d and %d", name, t.min, t.max)
+	}
 }

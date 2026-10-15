@@ -32,18 +32,16 @@ type Attachment struct {
 	// Code used to identify the payload of the attachment.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 
-	// Filename of the attachment, will override name retrieved from URL.
+	// Filename of the attachment. Overrides the name retrieved from the URL.
 	Name string `json:"name,omitempty" jsonschema:"title=Name"`
 
-	// Details of why the attachment is being included and details on
-	// what it contains.
+	// Why the attachment is included and what it contains.
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
 
 	// URL of where to find the attachment.
 	URL string `json:"url" jsonschema:"title=URL,format=uri"`
 
-	// Digest is used to verify the integrity of the attachment
-	// when downloaded from the URL.
+	// Used to verify the integrity of the attachment when downloaded from the URL.
 	Digest *dsig.Digest `json:"digest,omitempty" jsonschema:"title=Digest"`
 
 	// MIME type of the attachment.

@@ -22,9 +22,8 @@ type RegimeDef struct {
 	// Introductory details about the regime.
 	Description i18n.String `json:"description,omitempty" jsonschema:"title=Description"`
 
-	// Sources is a list of references to tax authority or other relevant documentation that
-	// can be used to validate the regime's data and be used in the future to check for updates
-	// and changes.
+	// References to tax authority or other relevant documentation that can be used to
+	// validate the regime's data and to check for updates and changes in the future.
 	Sources []*cbc.Source `json:"sources,omitempty" jsonschema:"title=Sources"`
 
 	// Location name for the country's central time zone. Accepted
@@ -47,10 +46,9 @@ type RegimeDef struct {
 	// Currency used by the country.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
 
-	// TaxScheme defines the principal scheme of consumption tax that should be
-	// applied to the regime and associated with Tax IDs in some export formats
-	// such as UBL or CII. Some regimes may not have a Tax Scheme and as a
-	// consequence will not use tax identities, like the US.
+	// Principal scheme of consumption tax that applies to the regime and is associated
+	// with tax IDs in some export formats such as UBL or CII. Some regimes, like the
+	// US, may not have a tax scheme and as a consequence will not use tax identities.
 	TaxScheme cbc.Code `json:"tax_scheme,omitempty" jsonschema:"title=Tax Scheme"`
 
 	// Rounding rule to use when calculating the tax totals. See the RoundingRule
@@ -61,26 +59,25 @@ type RegimeDef struct {
 	// considerations.
 	Tags []*TagSet `json:"tags,omitempty" jsonschema:"title=Tags"`
 
-	// Extensions defines the keys that can be used for extended or extra data inside the regime that
-	// is specific to the regime and cannot be easily determined from other GOBL structures.
-	// Typically these are used to define local codes for suppliers, customers, products, or tax rates.
+	// Keys that can be used for extended or extra data specific to the regime that
+	// cannot be easily determined from other GOBL structures. Typically used to define
+	// local codes for suppliers, customers, products, or tax rates.
 	Extensions []*cbc.Definition `json:"extensions,omitempty" jsonschema:"title=Extensions"`
 
 	// Identities used in addition to regular tax identities and specific for the
 	// regime that may be validated against.
 	Identities []*cbc.Definition `json:"identities,omitempty" jsonschema:"title=Identities"`
 
-	// PaymentMeansKeys specific for the regime that extend the original
-	// base payment means keys.
+	// Payment means keys specific to the regime that extend the base set.
 	PaymentMeansKeys []*cbc.Definition `json:"payment_means_keys,omitempty" jsonschema:"title=Payment Means Keys"`
 
-	// InboxKeys specific to the regime that can be used to identify where a document
-	// should be forwarded to.
+	// Inbox keys specific to the regime that identify where a document should be
+	// forwarded to.
 	InboxKeys []*cbc.Definition `json:"inbox_keys,omitempty" jsonschema:"title=Inbox Keys"`
 
-	// Scenarios are used to describe a specific set of conditions and rules that apply to a specific
-	// document schema. These provide a more generic solution for normalization and validation of documents
-	// in regimes with specific requirements.
+	// Sets of conditions and rules that apply to a specific document schema. These
+	// provide a more generic solution for normalization and validation of documents in
+	// regimes with specific requirements.
 	Scenarios []*ScenarioSet `json:"scenarios,omitempty" jsonschema:"title=Scenarios"`
 
 	// Configuration details for corrections to be used with correction options.

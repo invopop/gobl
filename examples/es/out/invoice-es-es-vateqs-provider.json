@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "8e43085b35411786426734af6a0038dc8dd02ab9a17aa30bdb0c0686e4a31e51"
+			"val": "6c1bfca889a45d578f5f20262379c11f40ca05aaa4dc51ec89517d40c66cd011"
 		}
 	},
 	"doc": {
@@ -96,21 +96,6 @@
 			}
 		],
 		"payment": {
-			"terms": {
-				"key": "due-date",
-				"due_dates": [
-					{
-						"date": "2021-10-30",
-						"amount": "45.72",
-						"percent": "40%"
-					},
-					{
-						"date": "2021-11-30",
-						"amount": "68.58",
-						"percent": "60%"
-					}
-				]
-			},
 			"advances": [
 				{
 					"date": "2021-09-01",
@@ -118,6 +103,21 @@
 					"amount": "25.00"
 				}
 			],
+			"terms": {
+				"key": "due-date",
+				"due_dates": [
+					{
+						"date": "2021-10-30",
+						"amount": "35.72",
+						"percent": "40%"
+					},
+					{
+						"date": "2021-11-30",
+						"amount": "53.58",
+						"percent": "60%"
+					}
+				]
+			},
 			"instructions": {
 				"key": "credit-transfer",
 				"credit_transfer": [
