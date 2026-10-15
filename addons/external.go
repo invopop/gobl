@@ -50,6 +50,28 @@ func init() {
 		Module: frCTCModule,
 	})
 	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "fr-facturx-v1",
+		Name: i18n.String{
+			i18n.EN: "French Factur-X v1",
+		},
+		Module: frCTCModule,
+	})
+	const deXInvoiceModule = "github.com/invopop/gobl.de.xinvoice"
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "de-xrechnung-v3",
+		Name: i18n.String{
+			i18n.EN: "German XRechnung 3.X",
+		},
+		Module: deXInvoiceModule,
+	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "de-zugferd-v2",
+		Name: i18n.String{
+			i18n.EN: "German ZUGFeRD 2.X",
+		},
+		Module: deXInvoiceModule,
+	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
 		Key: "co-dian-v2",
 		Name: i18n.String{
 			i18n.EN: "Colombia DIAN UBL 2.X",

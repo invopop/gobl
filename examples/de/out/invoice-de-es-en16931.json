@@ -4,15 +4,14 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "bc93ceab8383fb00eeef3f018232ad5133e1c213943064133dfe365b0a89884f"
+			"val": "84df9b70cd7bb49c9e3caea75b42b59b66603b79701316131e677f5e8c8067af"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "DE",
 		"$addons": [
-			"eu-en16931-v2017",
-			"de-xrechnung-v3"
+			"eu-en16931-v2017"
 		],
 		"$tags": [
 			"reverse-charge"
