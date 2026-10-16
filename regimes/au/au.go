@@ -18,6 +18,7 @@ func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("au", rules.GOBL.Add(CountryCode),
 		taxIdentityRules(),
+		billInvoiceRules(),
 	)
 	norm.Register(
 		norm.When(tax.IdentityIn(CountryCode), norm.For(normalizeTaxIdentity)),
@@ -48,6 +49,10 @@ func New() *tax.RegimeDef {
 			{
 				Title: i18n.NewString("ATO - GST"),
 				URL:   "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst",
+			},
+			{
+				Title: i18n.NewString("ATO - Tax invoices"),
+				URL:   "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/tax-invoices",
 			},
 		},
 		TimeZone:   "Australia/Sydney",
