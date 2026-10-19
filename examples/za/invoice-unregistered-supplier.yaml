@@ -1,0 +1,39 @@
+# Demonstrates a supplier trading below the VAT registration threshold (ZAR
+# 120,000 voluntary / ZAR 2.3 million compulsory, since 1 April 2026). Such a
+# business has no VAT number and may not charge VAT at all, so the invoice
+# carries no supplier tax_id and no tax category on its lines - a state GOBL
+# core already supports without any ZA-specific rule forcing a tax ID.
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "019035bd-4524-73ab-bf44-6037841ce6a2"
+issue_date: "2026-06-20"
+currency: "ZAR"
+series: "SAMPLE"
+code: "002"
+
+supplier:
+  name: "Kalahari Crafts"
+  emails:
+    - addr: "hello@example.co.za"
+  addresses:
+    - num: "3"
+      street: "Church Street"
+      locality: "Upington"
+      region: "Northern Cape"
+      code: "8801"
+      country: "ZA"
+
+customer:
+  name: "Jane's Retail Shop"
+  addresses:
+    - num: "9"
+      street: "Market Street"
+      locality: "Kimberley"
+      region: "Northern Cape"
+      code: "8301"
+      country: "ZA"
+
+lines:
+  - quantity: 50
+    item:
+      name: "Handmade woven baskets"
+      price: "120.00"
