@@ -1,0 +1,127 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "6e6eb71ff6a44bad51e42b7652735541f8ec4bfefe9adc2736b4cd44284cebc6"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "CL",
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852c1",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "001",
+		"issue_date": "2026-03-01",
+		"currency": "CLP",
+		"supplier": {
+			"name": "Comercial Andina Limitada",
+			"tax_id": {
+				"country": "CL",
+				"code": "760864285"
+			},
+			"addresses": [
+				{
+					"num": "1234",
+					"street": "Avenida Providencia",
+					"locality": "Providencia",
+					"region": "Región Metropolitana",
+					"code": "7500000",
+					"country": "CL"
+				}
+			],
+			"emails": [
+				{
+					"addr": "facturacion@andina.example.cl"
+				}
+			]
+		},
+		"customer": {
+			"name": "Distribuidora del Sur SpA",
+			"tax_id": {
+				"country": "CL",
+				"code": "187654327"
+			},
+			"addresses": [
+				{
+					"num": "88",
+					"street": "Calle Los Alerces",
+					"locality": "Concepción",
+					"region": "Biobío",
+					"code": "4030000",
+					"country": "CL"
+				}
+			],
+			"emails": [
+				{
+					"addr": "compras@delsur.example.cl"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "15",
+				"item": {
+					"name": "Consultoría en logística",
+					"price": "45000",
+					"unit": "h"
+				},
+				"sum": "675000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "19.0%"
+					}
+				],
+				"total": "675000"
+			},
+			{
+				"i": 2,
+				"quantity": "3",
+				"item": {
+					"name": "Licencia anual de software",
+					"price": "120000"
+				},
+				"sum": "360000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "19.0%"
+					}
+				],
+				"total": "360000"
+			}
+		],
+		"totals": {
+			"sum": "1035000",
+			"total": "1035000",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "1035000",
+								"percent": "19.0%",
+								"amount": "196650"
+							}
+						],
+						"amount": "196650"
+					}
+				],
+				"sum": "196650"
+			},
+			"tax": "196650",
+			"total_with_tax": "1231650",
+			"payable": "1231650"
+		}
+	}
+}
