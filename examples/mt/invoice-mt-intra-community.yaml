@@ -1,0 +1,47 @@
+# An intra-Community supply from Malta to a VAT-registered customer in Ireland.
+#
+# This is the case that makes Malta's exemption vocabulary worth modelling. Item 3
+# of Part One of the Fifth Schedule to the VAT Act makes intra-Community supplies
+# "exempt with credit": no VAT is charged, but the supplier keeps the right to
+# deduct input tax under article 22(4). That is not the same as an exempt supply
+# in GOBL's sense, which is Part Two of the same Schedule and carries no right of
+# deduction. The intra-community key expresses the first; the exempt key would
+# wrongly express the second.
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "01994b64-9a1f-7a3e-8f0d-2c5e1b7d4a61"
+series: "SAMPLE"
+code: "002"
+issue_date: "2026-03-01"
+
+supplier:
+  name: "Baystreet Advisory Ltd"
+  tax_id:
+    country: "MT"
+    code: "11679112"
+  addresses:
+    - num: "42"
+      street: "Triq ir-Repubblika"
+      locality: "Valletta"
+      code: "VLT 1117"
+      country: "MT"
+
+customer:
+  name: "Liffey Systems Ltd"
+  tax_id:
+    country: "IE"
+    code: "3628739L"
+  addresses:
+    - num: "12"
+      street: "Dame Street"
+      locality: "Dublin"
+      code: "D02 HX67"
+      country: "IE"
+
+lines:
+  - quantity: "5"
+    item:
+      name: "Networking equipment"
+      price: "900.00"
+    taxes:
+      - cat: VAT
+        key: intra-community

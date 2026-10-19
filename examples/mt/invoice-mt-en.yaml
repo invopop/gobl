@@ -1,0 +1,62 @@
+# A domestic Maltese B2B invoice exercising three of the four positive VAT rates.
+# The item descriptions are drawn from the Eighth Schedule to the VAT Act so the
+# rates can be checked against the statute rather than taken on trust:
+#   - consultancy       -> no Schedule entry, so the 18% residual rate of art. 19(1)
+#   - securities custody -> Eighth Schedule item 12, 12%
+#   - accommodation      -> Eighth Schedule item 1, 7%
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "01994b64-9a1f-7a3e-8f0d-2c5e1b7d4a60"
+series: "SAMPLE"
+code: "001"
+issue_date: "2026-03-01"
+
+supplier:
+  name: "Baystreet Advisory Ltd"
+  tax_id:
+    country: "MT"
+    code: "11679112"
+  addresses:
+    - num: "42"
+      street: "Triq ir-Repubblika"
+      locality: "Valletta"
+      code: "VLT 1117"
+      country: "MT"
+  emails:
+    - addr: "billing@example.mt"
+
+customer:
+  name: "Marsaxlokk Holdings Ltd"
+  tax_id:
+    country: "MT"
+    code: "12345634"
+  addresses:
+    - num: "8"
+      street: "Triq il-Kbira"
+      locality: "Birkirkara"
+      code: "BKR 1420"
+      country: "MT"
+
+lines:
+  - quantity: "20"
+    item:
+      name: "Corporate advisory services"
+      price: "150.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: "standard"
+  - quantity: "1"
+    item:
+      name: "Custody and management of securities"
+      price: "2500.00"
+    taxes:
+      - cat: VAT
+        rate: "intermediate"
+  - quantity: "3"
+    item:
+      name: "Licensed guest accommodation, nightly rate"
+      price: "180.00"
+      unit: "day"
+    taxes:
+      - cat: VAT
+        rate: "reduced"
