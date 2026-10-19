@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/legal/assent",
+  "$ref": "#/$defs/legal.Assent",
+  "$defs": {
+    "legal.Assent": {
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "contract": {
+          "$ref": "https://gobl.org/draft-0/legal/reference",
+          "title": "Contract"
+        },
+        "party": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Party"
+        },
+        "entity": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Entity",
+          "description": "Entity identifies the concrete legal person taking an open party role.\nIt may be omitted when the Contract already identifies that entity."
+        },
+        "signatory": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Signatory"
+        },
+        "representative": {
+          "$ref": "https://gobl.org/draft-0/org/person",
+          "title": "Representative",
+          "description": "Representative identifies a person acting for Entity when the contract\ndid not name that person in advance."
+        },
+        "intent": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Intent"
+        },
+        "capacity": {
+          "type": "string",
+          "title": "Capacity"
+        },
+        "statement": {
+          "type": "string",
+          "title": "Statement"
+        }
+      },
+      "type": "object",
+      "required": [
+        "contract",
+        "party",
+        "intent"
+      ],
+      "description": "Assent is a separately signed declaration of intent concerning one exact contract artifact."
+    }
+  }
+}

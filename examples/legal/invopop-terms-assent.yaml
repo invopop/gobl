@@ -1,0 +1,22 @@
+$schema: "https://gobl.org/draft-0/legal/assent"
+uuid: "0198a981-8c00-75b1-bba4-d3901409f752"
+contract:
+  relation: "agreement"
+  uuid: "0198a981-8c00-7c21-b104-8f680640d163"
+  title: "Invopop Terms & Conditions — illustrative abridged representation"
+  digest:
+    alg: "sha256"
+    val: "152a9aa0185cc1888b58ec5eca223ee9534915f93f5b4628a1ce53a88bd199a7"
+party: "user"
+entity:
+  name: "Example Customer S.L."
+representative:
+  name:
+    given: "Alex"
+    surname: "Example"
+  role: "Director"
+intent: "execute"
+capacity: "Director"
+statement: >-
+  Example assent only: the representative accepts the identified contract
+  version for the named entity.

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/legal/annotation",
+  "$ref": "#/$defs/legal.Annotation",
+  "$defs": {
+    "legal.Annotation": {
+      "properties": {
+        "anchor": {
+          "type": "string",
+          "title": "Anchor"
+        },
+        "kind": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Kind"
+        },
+        "subject": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Subject Party"
+        },
+        "object": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Object Party"
+        },
+        "summary": {
+          "type": "string",
+          "title": "Summary"
+        },
+        "data": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Data"
+        }
+      },
+      "type": "object",
+      "required": [
+        "anchor",
+        "kind",
+        "summary"
+      ],
+      "description": "Annotation links a semantic observation to an anchored fragment."
+    }
+  }
+}

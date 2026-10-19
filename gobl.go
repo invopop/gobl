@@ -9,6 +9,7 @@ import (
 	_ "github.com/invopop/gobl/currency"
 	_ "github.com/invopop/gobl/dsig"
 	_ "github.com/invopop/gobl/i18n"
+	_ "github.com/invopop/gobl/legal"
 	_ "github.com/invopop/gobl/note"
 	_ "github.com/invopop/gobl/num"
 	_ "github.com/invopop/gobl/org"
