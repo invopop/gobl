@@ -1,11 +1,18 @@
 package convert
 
+import "github.com/invopop/gobl/cbc"
+
 // Input wraps incoming data during detection and lets detectors share
 // values they extract from it, so that data read by one detector does
 // not need to be parsed again by the next.
 type Input struct {
 	// Data is the raw incoming document.
 	Data []byte
+	// Requested are the format keys the caller limited the import to, in
+	// order of preference. A detector may claim a requested format it would
+	// not pick on its own, such as one whose documents only differ from
+	// another's by their container.
+	Requested []cbc.Key
 
 	values map[any]any
 }

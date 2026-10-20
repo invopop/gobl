@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/schema"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type stubConverter struct {
@@ -118,4 +119,25 @@ func TestRegistryConversions(t *testing.T) {
 		{Format: "a", Schema: inv, Direction: DirectionExport},
 		{Format: "b", Schema: inv, Direction: DirectionExport},
 	}, r.conversions())
+}
+
+// requestConverter claims its on-request format only when it is asked for.
+type requestConverter struct{ valueConverter }
+
+func (c requestConverter) Detect(in *Input) cbc.Key {
+	if cbc.Key("on-request").In(in.Requested...) {
+		return "on-request"
+	}
+	return c.detect
+}
+
+func TestRegistryDetectRequested(t *testing.T) {
+	r := newRegistry()
+	r.add(requestConverter{valueConverter{formats: []*Format{{Key: "auto"}, {Key: "on-request"}}, detect: "auto"}})
+	e, err := r.detect(nil, nil)
+	require.NoError(t, err)
+	assert.Equal(t, cbc.Key("auto"), e.format.Key, "detected on its own")
+	e, err = r.detect(nil, []cbc.Key{"on-request"})
+	require.NoError(t, err)
+	assert.Equal(t, cbc.Key("on-request"), e.format.Key, "claimed when requested")
 }
