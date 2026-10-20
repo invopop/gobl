@@ -17,6 +17,10 @@ This file is generated from the change files in the [changes](./changes) directo
 - `convert`: `Import` provides the files embedded in the data, such as a PDF
   version of an invoice, as `Attachments` in its `ImportResult`.
 
+### Added
+
+- `il`: Israel tax regime with VAT (Ma'am) support, tax identity validation, org identity support, and invoice scenarios
+
 ### Changed
 
 - `convert`: **breaking** `Export(env, key, opts...)` takes a single format
