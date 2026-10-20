@@ -20,6 +20,7 @@ import (
 
 //go:generate go run ./schema/generate.go
 //go:generate go run ./regimes/generate.go
+//go:generate go run ./head/generate.go
 //go:generate go run ./catalogues/generate.go
 //go:generate go run ./currency/generate.go
 //go:generate go run ./rules/generate.go
