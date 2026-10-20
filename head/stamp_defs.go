@@ -26,9 +26,8 @@ func (sd *StampDef) owner() string {
 	return "regime '" + sd.Regime.String() + "'"
 }
 
-// stampDefs is the global register of all the stamp definitions, so that
-// tools and agents can discover which stamp provider keys exist, what they
-// mean, and where they come from.
+// stampDefs is a global register of all stamp definitions that have been
+// registered by regimes and addons.
 var stampDefs = newStampDefCollection()
 
 type stampDefCollection struct {
