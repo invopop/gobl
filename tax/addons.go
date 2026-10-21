@@ -53,6 +53,11 @@ type AddonDef struct {
 	// used during conversion processes.
 	Identities []*cbc.Definition `json:"identities,omitempty" jsonschema:"title=Identities"`
 
+	// Keys of the stamps that may be added to documents by the agency or
+	// intermediary the add-on targets. Definitions are registered in the head
+	// package.
+	Stamps []cbc.Key `json:"stamps,omitempty" jsonschema:"title=Stamps"`
+
 	// Keys used to identify where copies of documents can be sent.
 	Inboxes []*cbc.Definition `json:"inboxes,omitempty" jsonschema:"title=Inboxes"`
 

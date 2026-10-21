@@ -31,6 +31,15 @@
   "country": "MX",
   "currency": "MXN",
   "tax_scheme": "VAT",
+  "stamps": [
+    "sat-uuid",
+    "sat-sig",
+    "sat-serial",
+    "sat-timestamp",
+    "sat-url",
+    "sat-provider-rfc",
+    "sat-chain"
+  ],
   "corrections": [
     {
       "schema": "bill/invoice",

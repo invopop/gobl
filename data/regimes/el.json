@@ -29,6 +29,13 @@
   "currency": "EUR",
   "tax_scheme": "VAT",
   "calculator_rounding_rule": "currency",
+  "stamps": [
+    "iapr-mark",
+    "iapr-uid",
+    "iapr-hash",
+    "iapr-qr",
+    "iapr-provider"
+  ],
   "scenarios": [
     {
       "schema": "bill/invoice",

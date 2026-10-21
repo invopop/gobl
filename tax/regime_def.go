@@ -68,6 +68,10 @@ type RegimeDef struct {
 	// regime that may be validated against.
 	Identities []*cbc.Definition `json:"identities,omitempty" jsonschema:"title=Identities"`
 
+	// Keys of the stamps that may be added to documents by the regime's tax
+	// agency or intermediaries. Definitions are registered in the head package.
+	Stamps []cbc.Key `json:"stamps,omitempty" jsonschema:"title=Stamps"`
+
 	// Payment means keys specific to the regime that extend the base set.
 	PaymentMeansKeys []*cbc.Definition `json:"payment_means_keys,omitempty" jsonschema:"title=Payment Means Keys"`
 

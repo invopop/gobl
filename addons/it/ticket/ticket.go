@@ -4,6 +4,7 @@ package ticket
 
 import (
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/rules"
@@ -34,6 +35,7 @@ const (
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	head.RegisterStamps(stamps...)
 	rules.RegisterWithGuard(
 		Key.String(),
 		rules.GOBL.Add("IT-TICKET"),
@@ -71,6 +73,7 @@ func newAddon() *tax.AddonDef {
 			},
 		},
 		Extensions:  extensions,
+		Stamps:      cbc.DefinitionKeys(stamps),
 		Corrections: invoiceCorrectionDefinitions,
 	}
 }
