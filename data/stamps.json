@@ -1,6 +1,5 @@
 [
   {
-    "addon": "it-ticket-v1",
     "key": "ade-ref",
     "name": {
       "en": "AdE Reference"
@@ -10,7 +9,6 @@
     }
   },
   {
-    "addon": "it-ticket-v1",
     "key": "ade-void-ref",
     "name": {
       "en": "AdE Void Reference"
@@ -20,7 +18,6 @@
     }
   },
   {
-    "regime": "PT",
     "key": "at-app-id",
     "name": {
       "en": "Application ID"
@@ -30,7 +27,6 @@
     }
   },
   {
-    "regime": "PT",
     "key": "at-atcud",
     "name": {
       "en": "ATCUD",
@@ -41,7 +37,6 @@
     }
   },
   {
-    "regime": "PT",
     "key": "at-doc-code",
     "name": {
       "en": "AT Document Code"
@@ -51,7 +46,6 @@
     }
   },
   {
-    "regime": "PT",
     "key": "at-hash",
     "name": {
       "en": "Signature Hash"
@@ -61,7 +55,6 @@
     }
   },
   {
-    "regime": "PT",
     "key": "at-hash-full",
     "name": {
       "en": "Full Signature Hash"
@@ -71,7 +64,6 @@
     }
   },
   {
-    "regime": "PT",
     "key": "at-qr",
     "name": {
       "en": "AT QR Code",
@@ -82,7 +74,6 @@
     }
   },
   {
-    "regime": "PT",
     "key": "at-ts",
     "name": {
       "en": "Timestamp"
@@ -92,7 +83,6 @@
     }
   },
   {
-    "regime": "EL",
     "key": "iapr-hash",
     "name": {
       "el": "Σήμανση",
@@ -103,7 +93,6 @@
     }
   },
   {
-    "regime": "EL",
     "key": "iapr-mark",
     "name": {
       "el": "ΜΑΡΚ",
@@ -114,7 +103,6 @@
     }
   },
   {
-    "regime": "EL",
     "key": "iapr-provider",
     "name": {
       "el": "Υ.ΠΑ.Η.Ε.Σ",
@@ -125,7 +113,6 @@
     }
   },
   {
-    "regime": "EL",
     "key": "iapr-qr",
     "name": {
       "en": "QR Code URL"
@@ -135,7 +122,6 @@
     }
   },
   {
-    "regime": "EL",
     "key": "iapr-uid",
     "name": {
       "en": "Unique ID"
@@ -145,7 +131,6 @@
     }
   },
   {
-    "regime": "MX",
     "key": "sat-chain",
     "name": {
       "en": "SAT Certification Original Chain",
@@ -156,7 +141,6 @@
     }
   },
   {
-    "regime": "MX",
     "key": "sat-provider-rfc",
     "name": {
       "en": "Certification Provider RFC",
@@ -167,7 +151,6 @@
     }
   },
   {
-    "regime": "MX",
     "key": "sat-serial",
     "name": {
       "en": "SAT Certificate Serial",
@@ -178,7 +161,6 @@
     }
   },
   {
-    "regime": "MX",
     "key": "sat-sig",
     "name": {
       "en": "SAT Digital Seal",
@@ -189,7 +171,6 @@
     }
   },
   {
-    "regime": "MX",
     "key": "sat-timestamp",
     "name": {
       "en": "SAT Certification Timestamp",
@@ -200,7 +181,6 @@
     }
   },
   {
-    "regime": "MX",
     "key": "sat-url",
     "name": {
       "en": "SAT Verification URL"
@@ -210,7 +190,6 @@
     }
   },
   {
-    "regime": "MX",
     "key": "sat-uuid",
     "name": {
       "en": "Fiscal Folio",
@@ -221,7 +200,6 @@
     }
   },
   {
-    "addon": "es-tbai-v1",
     "key": "tbai-code",
     "name": {
       "en": "TicketBAI Code",
@@ -232,7 +210,6 @@
     }
   },
   {
-    "addon": "es-tbai-v1",
     "key": "tbai-qr",
     "name": {
       "en": "TicketBAI QR Code",

@@ -9,15 +9,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestStampOwners(t *testing.T) {
-	for _, sd := range head.AllStampDefs() {
-		t.Run(sd.Key.String(), func(t *testing.T) {
-			if sd.Addon != "" {
-				assert.Empty(t, sd.Regime)
-				assert.NotNil(t, tax.AddonForKey(sd.Addon), "unknown addon '%s'", sd.Addon)
-				return
-			}
-			assert.NotNil(t, tax.RegimeDefFor(sd.Regime.Code()), "unknown regime '%s'", sd.Regime)
-		})
+func TestStampsRegistered(t *testing.T) {
+	for _, r := range tax.AllRegimeDefs() {
+		for _, k := range r.Stamps {
+			assert.NotNil(t, head.StampDefForKey(k), "regime '%s' stamp '%s' not registered", r.Code(), k)
+		}
+	}
+	for _, a := range tax.AllAddonDefs() {
+		for _, k := range a.Stamps {
+			assert.NotNil(t, head.StampDefForKey(k), "addon '%s' stamp '%s' not registered", a.Key, k)
+		}
 	}
 }

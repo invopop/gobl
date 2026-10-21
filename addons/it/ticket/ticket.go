@@ -35,7 +35,7 @@ const (
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
-	head.RegisterAddonStamps(V1, stamps...)
+	head.RegisterStamps(stamps...)
 	rules.RegisterWithGuard(
 		Key.String(),
 		rules.GOBL.Add("IT-TICKET"),
@@ -73,6 +73,7 @@ func newAddon() *tax.AddonDef {
 			},
 		},
 		Extensions:  extensions,
+		Stamps:      cbc.DefinitionKeys(stamps),
 		Corrections: invoiceCorrectionDefinitions,
 	}
 }

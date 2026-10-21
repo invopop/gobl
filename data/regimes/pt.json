@@ -1548,6 +1548,15 @@
       ]
     }
   ],
+  "stamps": [
+    "at-atcud",
+    "at-qr",
+    "at-hash",
+    "at-hash-full",
+    "at-app-id",
+    "at-ts",
+    "at-doc-code"
+  ],
   "corrections": [
     {
       "schema": "bill/invoice",

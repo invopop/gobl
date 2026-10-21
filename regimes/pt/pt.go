@@ -19,7 +19,7 @@ const CountryCode = "PT"
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	head.RegisterRegimeStamps(CountryCode, stamps...)
+	head.RegisterStamps(stamps...)
 	rules.Register("pt", rules.GOBL.Add(CountryCode),
 		billInvoiceRules(),
 		taxComboRules(),
@@ -86,6 +86,7 @@ func New() *tax.RegimeDef {
 		},
 		TimeZone:   "Europe/Lisbon",
 		Extensions: extensionKeys,
+		Stamps:     cbc.DefinitionKeys(stamps),
 		Tags: []*tax.TagSet{
 			invoiceTags,
 		},

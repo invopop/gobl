@@ -21,7 +21,7 @@ const CountryISOCode = "GR"
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	head.RegisterRegimeStamps(CountryCode, stamps...)
+	head.RegisterStamps(stamps...)
 	rules.Register("gr", rules.GOBL.Add(CountryISOCode), taxIdentityRules())
 	norm.Register(
 		// "GR" is the ISO code; "EL" is the tax code Greece uses. Both resolve
@@ -86,6 +86,7 @@ func New() *tax.RegimeDef {
 		TimeZone:               "Europe/Athens",
 		CalculatorRoundingRule: tax.RoundingRuleCurrency,
 		Scenarios:              scenarios,
+		Stamps:                 cbc.DefinitionKeys(stamps),
 		Corrections:            corrections,
 		Categories:             taxCategories,
 	}

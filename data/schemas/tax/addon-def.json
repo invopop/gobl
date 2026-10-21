@@ -68,6 +68,14 @@
           "title": "Identities",
           "description": "Identities that are specific for the add-on and may be validated against or\nused during conversion processes."
         },
+        "stamps": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Stamps",
+          "description": "Keys of the stamps that may be added to documents by the agency or\nintermediary the add-on targets. Definitions are registered in the head\npackage."
+        },
         "inboxes": {
           "items": {
             "$ref": "https://gobl.org/draft-0/cbc/definition"

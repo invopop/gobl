@@ -18,7 +18,7 @@ const CountryCode = "MX"
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	head.RegisterRegimeStamps(CountryCode, stamps...)
+	head.RegisterStamps(stamps...)
 	rules.Register("mx", rules.GOBL.Add(CountryCode), taxIdentityRules())
 	norm.Register(
 		norm.When(tax.IdentityIn(CountryCode),
@@ -99,6 +99,7 @@ func New() *tax.RegimeDef {
 		},
 		TimeZone:    "America/Mexico_City",
 		Categories:  taxCategories,
+		Stamps:      cbc.DefinitionKeys(stamps),
 		Corrections: correctionDefinitions,
 	}
 }
