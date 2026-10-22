@@ -41,8 +41,4 @@ const (
 
 	// ExtKeyCharge is used to identify the UNTDID 7161 charge codes.
 	ExtKeyCharge cbc.Key = "untdid-charge"
-
-	// ExtKeyIncotermDeliveryTerms is used to identify the delivery terms, as the
-	// Incoterms and UNTDID 4053 codes accepted by the French CTC Extended rules.
-	ExtKeyIncotermDeliveryTerms cbc.Key = "incoterm-delivery-terms"
 )
