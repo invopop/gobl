@@ -1,0 +1,83 @@
+{
+  "id": "GOBL-HR",
+  "package": "hr",
+  "subsets": [
+    {
+      "id": "GOBL-HR-ORG-IDENTITY",
+      "object": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [HR]",
+          "subsets": [
+            {
+              "guard": "type in [OIB]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "subsets": [
+                    {
+                      "guard": "present",
+                      "assert": [
+                        {
+                          "id": "GOBL-HR-ORG-IDENTITY-01",
+                          "desc": "Croatian OIB identity code must be 11 digits",
+                          "tests": "matches ^\\d{11}$"
+                        }
+                      ]
+                    },
+                    {
+                      "guard": "present",
+                      "assert": [
+                        {
+                          "id": "GOBL-HR-ORG-IDENTITY-02",
+                          "desc": "Croatian OIB identity code failed the ISO 7064 MOD 11,10 checksum",
+                          "tests": "checksum"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-HR-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [HR]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-HR-TAX-IDENTITY-01",
+                      "desc": "tax identity code for HR must be 11 digits",
+                      "tests": "matches ^\\d{11}$"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-HR-TAX-IDENTITY-02",
+                      "desc": "tax identity code for HR failed the ISO 7064 MOD 11,10 checksum",
+                      "tests": "checksum"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

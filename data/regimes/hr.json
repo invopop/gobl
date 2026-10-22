@@ -4,6 +4,32 @@
     "en": "Croatia",
     "hr": "Hrvatska"
   },
+  "description": {
+    "en": "Croatia's tax system is administered by the Tax Administration (Porezna\nuprava). Croatia joined the European Union on 1 July 2013 and adopted the\neuro on 1 January 2023, replacing the Croatian kuna (HRK).\n\nVAT (porez na dodanu vrijednost, PDV) is regulated by the VAT Act (Zakon o\nporezu na dodanu vrijednost). It applies at a general rate, with reduced\nrates for the goods and services listed in Article 38 of the Act.\n\nEvery legal and natural person in Croatia is assigned a personal\nidentification number (osobni identifikacijski broj, OIB): 10 digits\nfollowed by a check digit calculated with ISO 7064 MOD 11,10. The OIB is\nthe tax identification number, and the Croatian VAT number is the OIB with\nthe HR prefix (e.g. HR12345678903)."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Porezna uprava - Porez na dodanu vrijednost (VAT)"
+      },
+      "url": "https://porezna-uprava.gov.hr/en/vat/7362",
+      "at": "2026-10-19T00:00:00"
+    },
+    {
+      "title": {
+        "en": "Narodne novine 60/2008 - Zakon o osobnom identifikacijskom broju"
+      },
+      "url": "https://narodne-novine.nn.hr/clanci/sluzbeni/2008_05_60_2033.html",
+      "at": "2026-10-19T00:00:00"
+    },
+    {
+      "title": {
+        "en": "Narodne novine 1/2009 - Pravilnik o osobnom identifikacijskom broju"
+      },
+      "url": "https://narodne-novine.nn.hr/clanci/sluzbeni/2009_01_1_6.html",
+      "at": "2026-10-19T00:00:00"
+    }
+  ],
   "time_zone": "Europe/Zagreb",
   "country": "HR",
   "currency": "EUR",
@@ -15,6 +41,26 @@
         "en": "Personal Identification Number",
         "hr": "Osobni identifikacijski broj"
       }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
     }
   ],
   "categories": [
@@ -89,7 +135,7 @@
           },
           "values": [
             {
-              "since": "2013-07-17",
+              "since": "2013-07-01",
               "percent": "25.0%"
             }
           ]
@@ -105,8 +151,12 @@
           },
           "values": [
             {
-              "since": "2013-07-17",
+              "since": "2014-01-01",
               "percent": "13.0%"
+            },
+            {
+              "since": "2013-07-01",
+              "percent": "10.0%"
             }
           ]
         },
@@ -121,24 +171,8 @@
           },
           "values": [
             {
-              "since": "2013-07-17",
+              "since": "2013-07-01",
               "percent": "5.0%"
-            }
-          ]
-        },
-        {
-          "rate": "zero",
-          "keys": [
-            "standard"
-          ],
-          "name": {
-            "en": "Zero Rate",
-            "hr": "Nulta stopa"
-          },
-          "values": [
-            {
-              "since": "2013-07-17",
-              "percent": "0.0%"
             }
           ]
         }
@@ -146,10 +180,25 @@
       "sources": [
         {
           "title": {
+            "en": "Narodne novine 73/2013 - Zakon o porezu na dodanu vrijednost, članak 38"
+          },
+          "url": "https://narodne-novine.nn.hr/clanci/sluzbeni/2013_06_73_1451.html",
+          "at": "2026-10-19T00:00:00"
+        },
+        {
+          "title": {
+            "en": "Narodne novine 148/2013 - Zakon o izmjenama i dopunama Zakona o porezu na dodanu vrijednost"
+          },
+          "url": "https://narodne-novine.nn.hr/clanci/sluzbeni/2013_12_148_3138.html",
+          "at": "2026-10-19T00:00:00"
+        },
+        {
+          "title": {
             "en": "Croatian Tax Administration - VAT",
             "hr": "Porezna uprava - Porez na dodanu vrijednost"
           },
-          "url": "https://porezna-uprava.gov.hr/en/vat/7362"
+          "url": "https://porezna-uprava.gov.hr/en/vat/7362",
+          "at": "2026-10-19T00:00:00"
         }
       ]
     }

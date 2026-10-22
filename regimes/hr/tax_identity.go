@@ -1,46 +1,46 @@
 package hr
 
 import (
-	"errors"
 	"regexp"
 
-	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // The personal identification number consists of eleven digits,
-// ten digits that are determined at random and one control digit
+// ten digits that are determined at random and one control digit.
+// The "HR" country prefix, spaces and hyphens are removed during
+// normalization (tax.NormalizeIdentity), so only the digits reach
+// this validation.
 // Reference: https://narodne-novine.nn.hr/clanci/sluzbeni/2008_05_60_2033.html
-var (
-	oibRegexp = regexp.MustCompile(`^\d{11}$`)
-)
+var oibRegexp = regexp.MustCompile(`^\d{11}$`)
 
-// validateTaxIdentity checks to ensure the Croatian OIB tax code is valid.
-func validateTaxIdentity(tID *tax.Identity) error {
-	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.By(validateTaxCode)),
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn(CountryCode),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "tax identity code for HR must be 11 digits",
+					is.MatchesRegexp(oibRegexp),
+				),
+				rules.AssertIfPresent("02", "tax identity code for HR failed the ISO 7064 MOD 11,10 checksum",
+					is.StringFunc("checksum", validOIBChecksum),
+				),
+			),
+		),
 	)
 }
 
-// validateTaxCode validates the format and checksum of a Croatian OIB code.
-func validateTaxCode(value any) error {
-	code, ok := value.(cbc.Code)
-	if !ok || code == "" {
-		return nil
-	}
-	val := code.String()
-
-	if !oibRegexp.MatchString(val) {
-		return errors.New("invalid format, expected 11 digits")
-	}
-
-	return validateOIBChecksum(val)
-}
-
-// validateOIBChecksum verifies the OIB check digit using the ISO 7064 MOD 11.10 algorithm.
+// validOIBChecksum verifies the OIB check digit using the ISO 7064 MOD 11,10
+// algorithm, the same check as u:ctrlOIB in the Tax Administration's
+// HR-CIUS-EXT-EN16931-UBL schematron. Each assertion is evaluated
+// independently, so a code that already failed the format rule still reaches
+// this function and is rejected here too.
 // Reference: https://narodne-novine.nn.hr/clanci/sluzbeni/2009_01_1_6.html
-func validateOIBChecksum(val string) error {
+func validOIBChecksum(val string) bool {
+	if !oibRegexp.MatchString(val) {
+		return false
+	}
 	r := 10
 	for i := range 10 {
 		a := (r + int(val[i]-'0')) % 10
@@ -53,8 +53,5 @@ func validateOIBChecksum(val string) error {
 	if check == 10 {
 		check = 0
 	}
-	if check != int(val[10]-'0') {
-		return errors.New("invalid checksum")
-	}
-	return nil
+	return check == int(val[10]-'0')
 }

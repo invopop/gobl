@@ -4,7 +4,9 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/tax"
 )
 
 const (
@@ -23,11 +25,21 @@ var identityTypeDefinitions = []*cbc.Definition{
 	},
 }
 
-func validateIdentity(id *org.Identity) error {
-	if id == nil || id.Type != IdentityTypeOIB {
-		return nil
-	}
-	return validation.ValidateStruct(id,
-		validation.Field(&id.Code, validation.By(validateTaxCode)),
+func orgIdentityRules() *rules.Set {
+	return rules.For(new(org.Identity),
+		rules.When(
+			is.InContext(tax.RegimeIn(CountryCode)),
+			rules.When(
+				org.IdentityTypeIn(IdentityTypeOIB),
+				rules.Field("code",
+					rules.AssertIfPresent("01", "Croatian OIB identity code must be 11 digits",
+						is.MatchesRegexp(oibRegexp),
+					),
+					rules.AssertIfPresent("02", "Croatian OIB identity code failed the ISO 7064 MOD 11,10 checksum",
+						is.StringFunc("checksum", validOIBChecksum),
+					),
+				),
+			),
+		),
 	)
 }

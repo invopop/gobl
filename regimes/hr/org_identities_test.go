@@ -5,6 +5,8 @@ import (
 
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/hr"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -39,6 +41,7 @@ func TestValidateIdentity(t *testing.T) {
 				Type: hr.IdentityTypeOIB,
 				Code: "",
 			},
+			err: "[GOBL-ORG-IDENTITY-01]",
 		},
 		{
 			name: "too short",
@@ -46,7 +49,7 @@ func TestValidateIdentity(t *testing.T) {
 				Type: hr.IdentityTypeOIB,
 				Code: "1234567890",
 			},
-			err: "invalid format",
+			err: "[GOBL-HR-ORG-IDENTITY-01]",
 		},
 		{
 			name: "too long",
@@ -54,7 +57,7 @@ func TestValidateIdentity(t *testing.T) {
 				Type: hr.IdentityTypeOIB,
 				Code: "123456789012",
 			},
-			err: "invalid format",
+			err: "[GOBL-HR-ORG-IDENTITY-01]",
 		},
 		{
 			name: "contains letters",
@@ -62,7 +65,7 @@ func TestValidateIdentity(t *testing.T) {
 				Type: hr.IdentityTypeOIB,
 				Code: "1234567890A",
 			},
-			err: "invalid format",
+			err: "[GOBL-HR-ORG-IDENTITY-01]",
 		},
 		{
 			name: "invalid checksum",
@@ -70,7 +73,7 @@ func TestValidateIdentity(t *testing.T) {
 				Type: hr.IdentityTypeOIB,
 				Code: "12345678900",
 			},
-			err: "invalid checksum",
+			err: "[GOBL-HR-ORG-IDENTITY-02]",
 		},
 		{
 			name: "non-OIB identity type is not validated",
@@ -79,21 +82,19 @@ func TestValidateIdentity(t *testing.T) {
 				Code: "invalid_code",
 			},
 		},
-		{
-			name:     "nil identity",
-			identity: nil,
-		},
+	}
+
+	opts := []rules.WithContext{
+		tax.RegimeContext(hr.CountryCode),
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := hr.Validate(tt.identity)
+			err := rules.Validate(tt.identity, opts...)
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {
-				if assert.Error(t, err) {
-					assert.Contains(t, err.Error(), tt.err)
-				}
+				assert.ErrorContains(t, err, tt.err)
 			}
 		})
 	}
