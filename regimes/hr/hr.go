@@ -39,8 +39,8 @@ func New() *tax.RegimeDef {
 		Description: i18n.String{
 			i18n.EN: here.Doc(`
 				Croatia's tax system is administered by the Tax Administration (Porezna
-				uprava). Croatia joined the European Union on 1 July 2013 and adopted the
-				euro on 1 January 2023, replacing the Croatian kuna (HRK).
+				uprava). Croatia is a member of the European Union and uses the euro, which
+				replaced the Croatian kuna (HRK).
 
 				VAT (porez na dodanu vrijednost, PDV) is regulated by the VAT Act (Zakon o
 				porezu na dodanu vrijednost). It applies at a general rate, with reduced

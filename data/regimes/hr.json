@@ -5,7 +5,7 @@
     "hr": "Hrvatska"
   },
   "description": {
-    "en": "Croatia's tax system is administered by the Tax Administration (Porezna\nuprava). Croatia joined the European Union on 1 July 2013 and adopted the\neuro on 1 January 2023, replacing the Croatian kuna (HRK).\n\nVAT (porez na dodanu vrijednost, PDV) is regulated by the VAT Act (Zakon o\nporezu na dodanu vrijednost). It applies at a general rate, with reduced\nrates for the goods and services listed in Article 38 of the Act.\n\nEvery legal and natural person in Croatia is assigned a personal\nidentification number (osobni identifikacijski broj, OIB): 10 digits\nfollowed by a check digit calculated with ISO 7064 MOD 11,10. The OIB is\nthe tax identification number, and the Croatian VAT number is the OIB with\nthe HR prefix (e.g. HR12345678903)."
+    "en": "Croatia's tax system is administered by the Tax Administration (Porezna\nuprava). Croatia is a member of the European Union and uses the euro, which\nreplaced the Croatian kuna (HRK).\n\nVAT (porez na dodanu vrijednost, PDV) is regulated by the VAT Act (Zakon o\nporezu na dodanu vrijednost). It applies at a general rate, with reduced\nrates for the goods and services listed in Article 38 of the Act.\n\nEvery legal and natural person in Croatia is assigned a personal\nidentification number (osobni identifikacijski broj, OIB): 10 digits\nfollowed by a check digit calculated with ISO 7064 MOD 11,10. The OIB is\nthe tax identification number, and the Croatian VAT number is the OIB with\nthe HR prefix (e.g. HR12345678903)."
   },
   "sources": [
     {
