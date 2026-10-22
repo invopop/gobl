@@ -10,7 +10,6 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// Tax tags that can be applied in Croatia.
 const (
 	// TagCashBasis marks an invoice issued by a supplier that applies the
 	// cash accounting scheme (Article 125.i of the VAT Act).
@@ -38,8 +37,6 @@ var invoiceTags = &tax.TagSet{
 	},
 }
 
-// invoiceScenarios extends the default invoice scenarios, which provide the
-// reverse charge note, with the Croatian ones.
 var invoiceScenarios = &tax.ScenarioSet{
 	Schema: bill.ShortSchemaInvoice,
 	List: slices.Concat(bill.InvoiceScenarios().List, []*tax.Scenario{
