@@ -2,7 +2,6 @@
 package hr
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
@@ -72,8 +71,9 @@ func New() *tax.RegimeDef {
 			},
 		},
 		TimeZone:   "Europe/Zagreb",
+		Tags:       []*tax.TagSet{invoiceTags},
 		Identities: identityTypeDefinitions,
 		Categories: taxCategories,
-		Scenarios:  []*tax.ScenarioSet{bill.InvoiceScenarios()},
+		Scenarios:  []*tax.ScenarioSet{invoiceScenarios},
 	}
 }

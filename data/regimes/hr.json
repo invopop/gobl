@@ -34,6 +34,23 @@
   "country": "HR",
   "currency": "EUR",
   "tax_scheme": "VAT",
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "cash-basis",
+          "name": {
+            "en": "Cash accounting scheme",
+            "hr": "Postupak oporezivanja prema naplaćenim naknadama"
+          },
+          "desc": {
+            "en": "The supplier accounts for VAT when payment is received rather than\nwhen the invoice is issued, under Article 125.i of the VAT Act. The\nAct requires such invoices to state \"obračun prema naplaćenim\nnaknadama\", which this tag adds as a VAT note."
+          }
+        }
+      ]
+    }
+  ],
   "identities": [
     {
       "code": "OIB",
@@ -58,6 +75,19 @@
             "cat": "VAT",
             "key": "reverse-charge",
             "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        },
+        {
+          "tags": [
+            "cash-basis"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "cash-basis",
+            "text": "Obračun prema naplaćenim naknadama"
           }
         }
       ]
