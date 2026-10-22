@@ -18,6 +18,11 @@ func TestInit(t *testing.T) {
 	assert.Equal(t, "AAS", ed.Code.String())
 	assert.Equal(t, "Acceptance", ed.Name.String())
 
+	ext = tax.ExtensionForKey("incoterm-delivery-terms")
+	ed = ext.CodeDef("DDP")
+	assert.NotNil(t, ed)
+	assert.Equal(t, "Delivered Duty Paid", ed.Name.String())
+
 	ext = tax.ExtensionForKey("untdid-unit")
 	assert.NotNil(t, ext)
 	assert.Equal(t, "^[A-Z0-9]{2,3}$", ext.Pattern)
