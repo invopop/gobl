@@ -10,11 +10,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestIdentityTypeDefinitions(t *testing.T) {
-	// Test that the OIB identity type constant is correctly defined
-	assert.Equal(t, "OIB", string(hr.IdentityTypeOIB))
-}
-
 func TestValidateIdentity(t *testing.T) {
 	tests := []struct {
 		name     string

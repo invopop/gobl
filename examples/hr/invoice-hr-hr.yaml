@@ -52,7 +52,7 @@ lines:
 
   - quantity: 1
     item:
-      name: "Fiber optic cable"
+      name: "Printed book: Optical networks handbook"
       price: "100.00"
     taxes:
       - cat: VAT

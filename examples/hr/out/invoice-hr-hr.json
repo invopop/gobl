@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "d0dfc47e053c007b6c5b8f1413ff3f38a8513518c9f0cc0af87022cf6b7c4288"
+			"val": "1c16326bdb455600f6b04e000664821add802234570978e00f5f4d6748dce466"
 		}
 	},
 	"doc": {
@@ -91,7 +91,7 @@
 				"i": 2,
 				"quantity": "1",
 				"item": {
-					"name": "Fiber optic cable",
+					"name": "Printed book: Optical networks handbook",
 					"price": "100.00"
 				},
 				"sum": "100.00",
