@@ -182,11 +182,4 @@ func init() {
 		},
 		Module: peppolModule,
 	})
-	tax.RegisterApprovedAddon(&tax.ExternalAddon{
-		Key: "peppol-pint-aunz-v1",
-		Name: i18n.String{
-			i18n.EN: "Peppol PINT A-NZ",
-		},
-		Module: peppolModule,
-	})
 }

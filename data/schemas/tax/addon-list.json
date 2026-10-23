@@ -100,10 +100,6 @@
             "title": "Peppol BIS Billing 3.0"
           },
           {
-            "const": "peppol-pint-aunz-v1",
-            "title": "Peppol PINT A-NZ"
-          },
-          {
             "const": "peppol-pint-v1",
             "title": "Peppol PINT"
           },
