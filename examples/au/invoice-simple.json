@@ -1,0 +1,30 @@
+{
+    "$schema": "https://gobl.org/draft-0/bill/invoice",
+    "$regime": "AU",
+    "uuid": "3b0f1e8c-6a55-4f7e-9d0c-2c7b9e4a1f21",
+    "code": "1002",
+    "currency": "AUD",
+    "issue_date": "2026-08-03",
+    "supplier": {
+      "name": "EXAMPLE SUPPLIER PTY LTD",
+      "tax_id": {
+        "country": "AU",
+        "code": "18123456789"
+      }
+    },
+    "lines": [
+      {
+        "quantity": "2",
+        "item": {
+          "name": "Deadlock",
+          "price": "40.00"
+        },
+        "taxes": [
+          {
+            "cat": "GST",
+            "rate": "general"
+          }
+        ]
+      }
+    ]
+  }
