@@ -86,7 +86,8 @@ func NormalizeCode(c Code) Code {
 
 // NormalizeStrictCode cleans the code into its canonical strict form: leading
 // and trailing whitespace is trimmed, repeated separators are collapsed, and
-// any character outside the permitted set is removed.
+// any character outside the permitted set is removed. `_` is not a separator,
+// so runs of it are kept.
 func NormalizeStrictCode(c Code) Code {
 	code := strings.TrimSpace(c.String())
 	code = codeSeparatorRegexp.ReplaceAllString(code, "$1")
@@ -118,7 +119,7 @@ func NormalizeNumericalCode(c Code) Code {
 }
 
 // StrictCode is a validation test that ensures a code matches the strict
-// canonical pattern (letters, numbers, and single separators). Use it on the
+// canonical pattern (letters, numbers, `_`, and single separators). Use it on the
 // fields of machine-readable identifiers that require the stricter format; the
 // default code validation only rejects leading or trailing whitespace.
 var StrictCode = is.MatchesRegexp(CodePatternRegexp)

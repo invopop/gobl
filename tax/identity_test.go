@@ -67,6 +67,14 @@ func TestTaxIdentity(t *testing.T) {
 		}
 		assert.ErrorContains(t, rules.Validate(tID), "GOBL-TAX-IDENTITY-03")
 	})
+	t.Run("with repeated underscores in scheme", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "ES",
+			Code:    "X3157928M",
+			Scheme:  "Fo__o",
+		}
+		assert.NoError(t, rules.Validate(tID))
+	})
 
 	t.Run("in EU", func(t *testing.T) {
 		tID := &tax.Identity{
