@@ -35,7 +35,7 @@
           },
           "type": "array",
           "title": "Paths",
-          "description": "JSON paths inside a document where the definition may be used, with \"[*]\"\nmatching any array index, for when only some of the schema's locations apply."
+          "description": "JSON paths inside a document under which the definition may be used, with\n\"[*]\" matching any array index, for when only some of the schema's locations\napply."
         }
       },
       "type": "object",

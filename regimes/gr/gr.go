@@ -4,7 +4,6 @@ package gr
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
-	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/norm"
@@ -21,7 +20,6 @@ const CountryISOCode = "GR"
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	head.RegisterStampDef(stamps...)
 	rules.Register("gr", rules.GOBL.Add(CountryISOCode), taxIdentityRules())
 	norm.Register(
 		// "GR" is the ISO code; "EL" is the tax code Greece uses. Both resolve
@@ -77,6 +75,7 @@ func New() *tax.RegimeDef {
 		TimeZone:               "Europe/Athens",
 		CalculatorRoundingRule: tax.RoundingRuleCurrency,
 		Scenarios:              scenarios,
+		Stamps:                 stamps,
 		Corrections:            corrections,
 		Categories:             taxCategories,
 	}

@@ -4,7 +4,6 @@ package mx
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
-	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
@@ -18,7 +17,6 @@ const CountryCode = "MX"
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	head.RegisterStampDef(stamps...)
 	rules.Register("mx", rules.GOBL.Add(CountryCode), taxIdentityRules())
 	norm.Register(
 		norm.When(tax.IdentityIn(CountryCode),
@@ -87,6 +85,7 @@ func New() *tax.RegimeDef {
 			},
 		},
 		TimeZone:    "America/Mexico_City",
+		Stamps:      stamps,
 		Categories:  taxCategories,
 		Corrections: correctionDefinitions,
 	}

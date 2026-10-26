@@ -98,7 +98,7 @@ var extensions = []*cbc.Definition{
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
 			Schemas: []string{"tax/combo"},
-			Paths:   []string{"$.lines[*].taxes[*].ext"},
+			Paths:   []string{"$.lines[*].taxes[*]"},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -489,7 +489,7 @@ var extensions = []*cbc.Definition{
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
 			Schemas: []string{"org/party"},
-			Paths:   []string{"$.supplier.ext"},
+			Paths:   []string{"$.supplier"},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -527,7 +527,7 @@ var extensions = []*cbc.Definition{
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
 			Schemas: []string{"org/identity"},
-			Paths:   []string{"$.customer.identities[*].ext"},
+			Paths:   []string{"$.customer.identities[*]"},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`

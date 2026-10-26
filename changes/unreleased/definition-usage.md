@@ -5,10 +5,12 @@
   or regimes that offer it and the objects that may contain it.
 - `cbc`: `DefinitionRegistry`, an ordered set of definitions by key that can
   be filtered by usage.
-- `head`: stamp definitions register, with `RegisterStampDef`, `StampDefFor`,
+- `head`: stamp definitions register, with `RegisterStamp`, `StampDefFor`,
   `AllStampDefs`, and `FilterStampDefs`. Stamp names are prefixed with the
   issuer, such as "TicketBAI: QR Code".
 - `tax`: `AllExtensionDefs` and `FilterExtensionDefs`.
+- `tax`: `Stamps` in `RegimeDef` and `AddonDef`, registered as stamp
+  definitions in `head`.
 - `tax`, `bill`: schemas for `Combo`, `RateTotal`, `LineCharge`, and
   `LineDiscount`, so every object with extensions has a schema ID.
 - `pt`, `mx`, `el`: stamp definitions for the stamps issued by the AT, SAT,
@@ -28,3 +30,4 @@
   the issuer, such as "SII: Invoice Type" or "UNTDID 1001: Document Type".
 - `tax`: **breaking** registering a different extension definition with a key
   that is already in use panics.
+- `tax`: `RegisterExtension` accepts multiple definitions.

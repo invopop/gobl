@@ -5,7 +5,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
-	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
@@ -19,7 +18,6 @@ const CountryCode = "PT"
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	head.RegisterStampDef(stamps...)
 	rules.Register("pt", rules.GOBL.Add(CountryCode),
 		billInvoiceRules(),
 		taxComboRules(),
@@ -75,6 +73,7 @@ func New() *tax.RegimeDef {
 		},
 		TimeZone:   "Europe/Lisbon",
 		Extensions: extensionKeys,
+		Stamps:     stamps,
 		Tags: []*tax.TagSet{
 			invoiceTags,
 		},

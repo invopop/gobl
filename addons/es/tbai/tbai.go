@@ -3,7 +3,6 @@ package tbai
 
 import (
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/rules"
@@ -23,7 +22,6 @@ const (
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
-	head.RegisterStampDef(stamps...)
 	rules.RegisterWithGuard(
 		Key.String(),
 		rules.GOBL.Add("ES-TBAI"),
@@ -46,6 +44,7 @@ func newAddon() *tax.AddonDef {
 			i18n.EN: "Spain TicketBAI",
 		},
 		Extensions:  extensions,
+		Stamps:      stamps,
 		Corrections: invoiceCorrectionDefinitions,
 	}
 }

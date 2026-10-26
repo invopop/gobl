@@ -30,8 +30,9 @@ type Usage struct {
 	// Schema IDs, relative to the GOBL base, of the objects in which the definition
 	// may be used, such as "tax/combo" or "org/party".
 	Schemas []string `json:"schemas,omitempty" jsonschema:"title=Schemas"`
-	// JSON paths inside a document where the definition may be used, with "[*]"
-	// matching any array index, for when only some of the schema's locations apply.
+	// JSON paths inside a document under which the definition may be used, with
+	// "[*]" matching any array index, for when only some of the schema's locations
+	// apply.
 	Paths []string `json:"paths,omitempty" jsonschema:"title=Paths"`
 }
 
@@ -81,7 +82,8 @@ func (u *Usage) MatchesSchema(schema string) bool {
 }
 
 // MatchesPath returns true if the usage has no paths, or if the provided
-// JSON path, such as "$.lines[0].taxes[1].ext", matches one of them.
+// JSON path, such as "$.lines[0].taxes[1].ext", is one of them or is
+// located under one of them.
 func (u *Usage) MatchesPath(path string) bool {
 	if u == nil || len(u.Paths) == 0 {
 		return true
@@ -92,12 +94,14 @@ func (u *Usage) MatchesPath(path string) bool {
 }
 
 // matchUsagePath compares the path with the pattern, where each "[*]" in the
-// pattern matches any array index, or "[*]", in the path.
+// pattern matches any array index, or "[*]", in the path, and anything after
+// the pattern in the path must start a new property or index.
 func matchUsagePath(pattern, path string) bool {
 	for {
 		i := strings.Index(pattern, "[*]")
 		if i < 0 {
-			return pattern == path
+			rest, ok := strings.CutPrefix(path, pattern)
+			return ok && (rest == "" || rest[0] == '.' || rest[0] == '[')
 		}
 		if !strings.HasPrefix(path, pattern[:i+1]) {
 			return false

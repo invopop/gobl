@@ -15,7 +15,7 @@ func TestStampDefs(t *testing.T) {
 		Name:  i18n.NewString("Test Code"),
 		Usage: &cbc.Usage{Keys: []cbc.Key{"test-addon"}},
 	}
-	head.RegisterStampDef(sd)
+	head.RegisterStamp(sd)
 
 	assert.Equal(t, sd, head.StampDefFor("test-stamp-code"))
 	assert.Nil(t, head.StampDefFor("test-stamp-missing"))

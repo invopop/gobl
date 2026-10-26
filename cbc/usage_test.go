@@ -99,6 +99,34 @@ func TestUsageMatches(t *testing.T) {
 	})
 }
 
+func TestUsageMatchesPathPrefix(t *testing.T) {
+	u := &cbc.Usage{
+		Paths: []string{
+			"$.supplier",
+			"$.lines[*].taxes[*]",
+		},
+	}
+	tests := []struct {
+		path string
+		ok   bool
+	}{
+		{"$.supplier", true},
+		{"$.supplier.ext", true},
+		{"$.supplier.identities[0].ext", true},
+		{"$.suppliers", false},
+		{"$.customer.ext", false},
+		{"$.lines[0].taxes[1]", true},
+		{"$.lines[0].taxes[1].ext", true},
+		{"$.lines[0].taxes", false},
+		{"$.lines[0].ext", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.path, func(t *testing.T) {
+			assert.Equal(t, tt.ok, u.MatchesPath(tt.path))
+		})
+	}
+}
+
 func TestUsageMatchesPath(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		var u *cbc.Usage
@@ -123,12 +151,13 @@ func TestUsageMatchesPath(t *testing.T) {
 		{"$.lines[*].taxes[*].ext", true},
 		{"$.lines[3].taxes[*].ext", true},
 		{"$.tax", false},
-		{"$.tax.ext.foo", false},
+		{"$.tax.ext.foo", true},
+		{"$.tax.extra", false},
 		{"$.lines[0].ext", false},
 		{"$.lines.taxes[0].ext", false},
 		{"$.lines[].taxes[0].ext", false},
 		{"$.lines[a].taxes[0].ext", false},
-		{"$.lines[0].taxes[0].ext.foo", false},
+		{"$.lines[0].taxes[0].ext.foo", true},
 		{"$.lines[0", false},
 	}
 	for _, tt := range tests {

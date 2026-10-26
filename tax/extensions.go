@@ -78,8 +78,8 @@ var extensionDefs = cbc.NewDefinitionRegistry()
 // RegisterExtension is used to add any extension definitions to the global
 // register. This is not expected to be called directly, but rather will
 // be used by the regimes and addons during their registration processes.
-func RegisterExtension(kd *cbc.Definition) {
-	extensionDefs.Add(kd)
+func RegisterExtension(defs ...*cbc.Definition) {
+	extensionDefs.Add(defs...)
 }
 
 // ExtensionForKey returns the extension definition for the given key or nil.

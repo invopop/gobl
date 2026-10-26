@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	_ "github.com/invopop/gobl"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/rules"
@@ -29,5 +30,29 @@ func TestStampDefs(t *testing.T) {
 				assert.NotNil(t, tax.RegimeDefFor(l10n.Code(c)), "regime '%s' not registered", c)
 			}
 		})
+	}
+}
+
+func TestRegimeStampUsage(t *testing.T) {
+	for _, rd := range tax.AllRegimeDefs() {
+		for _, sd := range rd.Stamps {
+			t.Run(sd.Key.String(), func(t *testing.T) {
+				if assert.NotNil(t, sd.Usage) {
+					assert.Contains(t, sd.Usage.Codes, cbc.Code(rd.Country))
+				}
+			})
+		}
+	}
+}
+
+func TestAddonStampUsage(t *testing.T) {
+	for _, ad := range tax.AllAddonDefs() {
+		for _, sd := range ad.Stamps {
+			t.Run(sd.Key.String(), func(t *testing.T) {
+				if assert.NotNil(t, sd.Usage) {
+					assert.Contains(t, sd.Usage.Keys, ad.Key)
+				}
+			})
+		}
 	}
 }
