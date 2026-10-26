@@ -60,9 +60,11 @@ func invoiceTags() *tax.TagSet {
 	}
 }
 
-// invoiceScenarios adds the wording that VAT Act 222/2004 § 74(1) h) to n) and
+// invoiceScenarios adds the wording that VAT Act 222/2004 § 74(1) j) to n) and
 // § 68d(4) require on the invoice in each special situation. The text is the
-// phrase of the law, which is also what the Peppol BIS carries in BT-120 or BT-22.
+// phrase of the law. For exempt supplies, § 74(1) h) also accepts a reference to
+// the provision, which formats carry as the exemption reason (e.g. VATEX in
+// Peppol BIS), so no note is added.
 func invoiceScenarios() *tax.ScenarioSet {
 	return &tax.ScenarioSet{
 		Schema: bill.ShortSchemaInvoice,
@@ -83,17 +85,6 @@ func invoiceScenarios() *tax.ScenarioSet {
 				Note: &tax.Note{
 					Key:  tax.TagSelfBilled,
 					Text: "Vyhotovenie faktúry odberateľom",
-				},
-			},
-			// § 74 ods. 1 písm. h): a reference to the provision is also valid, so
-			// this note is only the fallback phrase of the law.
-			{
-				Categories: []cbc.Code{tax.CategoryVAT},
-				Filter:     invoiceHasExemptLine,
-				Note: &tax.Note{
-					Category: tax.CategoryVAT,
-					Key:      tax.KeyExempt,
-					Text:     "Dodanie je oslobodené od dane",
 				},
 			},
 			// § 74 ods. 1 písm. m)
@@ -136,23 +127,4 @@ func invoiceScenarios() *tax.ScenarioSet {
 			},
 		},
 	}
-}
-
-// invoiceHasExemptLine is true when a line uses the exempt VAT key.
-func invoiceHasExemptLine(doc any) bool {
-	inv, ok := doc.(*bill.Invoice)
-	if !ok || inv == nil {
-		return false
-	}
-	for _, l := range inv.Lines {
-		if l == nil {
-			continue
-		}
-		for _, c := range l.Taxes {
-			if c != nil && c.Category == tax.CategoryVAT && c.Key == tax.KeyExempt {
-				return true
-			}
-		}
-	}
-	return false
 }

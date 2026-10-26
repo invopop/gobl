@@ -2,6 +2,7 @@ package sk
 
 import (
 	"regexp"
+	"strings"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
@@ -22,8 +23,9 @@ const (
 // icoRegexp matches a normalized IČO: exactly 8 digits.
 var icoRegexp = regexp.MustCompile(`^\d{8}$`)
 
-// nonDigitRegexp matches everything that is not a digit.
-var nonDigitRegexp = regexp.MustCompile(`\D`)
+// icoSeparators are the characters an IČO may be written with, such as the
+// spaces of "36 396 567". Any other character stays and fails the format rule.
+var icoSeparators = strings.NewReplacer(" ", "", "\u00a0", "", ".", "", "-", "", "/", "")
 
 var identityDefinitions = []*cbc.Definition{
 	{
@@ -35,15 +37,15 @@ var identityDefinitions = []*cbc.Definition{
 	},
 }
 
-// normalizeICO removes spaces and other separators from an IČO, which is often
-// written in groups of three digits such as "36 396 567". The IČO is the legal
+// normalizeICO removes the separators from an IČO, which is often written in
+// groups of three digits such as "36 396 567". The IČO is the legal
 // registration identifier of the party, so it gets the legal scope that formats
 // such as UBL use for BT-30 and BT-47.
 func normalizeICO(id *org.Identity) {
 	if id == nil || id.Key != IdentityKeyICO {
 		return
 	}
-	id.Code = cbc.Code(nonDigitRegexp.ReplaceAllString(id.Code.String(), ""))
+	id.Code = cbc.Code(icoSeparators.Replace(id.Code.String()))
 	if id.Scope == cbc.KeyEmpty {
 		id.Scope = org.IdentityScopeLegal
 	}

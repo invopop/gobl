@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "9ca1689b61102ce5418ac499c968be5ea932765b9eb1f40e7b464de3f8a8d3f1"
+			"val": "c5b84ff268d9c25a72d900d1f38d682169dffdb6eee418731bbdddd7c4fc53d9"
 		}
 	},
 	"doc": {
@@ -16,15 +16,6 @@
 		"code": "001",
 		"issue_date": "2027-01-15",
 		"currency": "EUR",
-		"tax": {
-			"notes": [
-				{
-					"cat": "VAT",
-					"key": "exempt",
-					"text": "Dodanie je oslobodené od dane"
-				}
-			]
-		},
 		"supplier": {
 			"name": "Vzorová s.r.o.",
 			"tax_id": {

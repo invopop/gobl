@@ -26,7 +26,9 @@ func TestICOIdentity(t *testing.T) {
 		{name: "with dashes", code: "36-396-567", want: "36396567"},
 		{name: "too short", code: "3639656", want: "3639656", err: "[GOBL-SK-ORG-IDENTITY-01]"},
 		{name: "too long", code: "363965670", want: "363965670", err: "[GOBL-SK-ORG-IDENTITY-01]"},
-		{name: "letters", code: "3639656A", want: "3639656", err: "[GOBL-SK-ORG-IDENTITY-01]"},
+		{name: "with dots and slashes", code: "36.396/567", want: "36396567"},
+		{name: "letter at the end", code: "3639656A", want: "3639656A", err: "[GOBL-SK-ORG-IDENTITY-01]"},
+		{name: "letter in the middle", code: "36A396567", want: "36A396567", err: "[GOBL-SK-ORG-IDENTITY-01]"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -60,8 +60,8 @@ func New() *tax.RegimeDef {
 				eight digit number of the business register.
 
 				Invoice content follows § 74 of the VAT Act 222/2004. The supplier needs a tax ID,
-				and the invoice carries the wording of the law for reverse charge, exemption,
-				self-billing and the special schemes.
+				and the invoice carries the wording of the law for reverse charge, self-billing
+				and the special schemes.
 			`),
 		},
 		Sources: []*cbc.Source{

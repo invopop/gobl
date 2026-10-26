@@ -48,15 +48,3 @@ func TestInvoiceScenarios(t *testing.T) {
 		assert.Empty(t, noteTexts(t))
 	})
 }
-
-func TestExemptNote(t *testing.T) {
-	inv := validInvoice()
-	inv.Lines[0].Taxes = tax.Set{
-		{Category: tax.CategoryVAT, Key: tax.KeyExempt},
-	}
-	require.NoError(t, inv.Calculate())
-	require.NotNil(t, inv.Tax)
-	require.Len(t, inv.Tax.Notes, 1)
-	assert.Equal(t, "Dodanie je oslobodené od dane", inv.Tax.Notes[0].Text)
-	assert.Equal(t, tax.KeyExempt, inv.Tax.Notes[0].Key)
-}
