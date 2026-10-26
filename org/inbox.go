@@ -105,7 +105,7 @@ func normalizeInbox(i *Inbox) {
 	i.Label = cbc.NormalizeString(i.Label)
 	i.Scheme = cbc.NormalizeUpperCode(i.Scheme)
 	if participant {
-		// Strict normalization would collapse repeated separators, 
+		// Strict normalization would collapse repeated separators,
 		// turning a routing code like "X__Y" into "X_Y"
 		i.Code = cbc.NormalizeCode(i.Code)
 	} else {
