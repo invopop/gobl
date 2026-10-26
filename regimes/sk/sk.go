@@ -59,10 +59,9 @@ func New() *tax.RegimeDef {
 				by the same ten digits (e.g. SK2020273893). The IČO (identity key "sk-ico") is the
 				eight digit number of the business register.
 
-				Invoice content follows § 74 of the VAT Act 222/2004: both parties need a postal
-				address, and the invoice carries the wording of the law for reverse charge,
-				exemption, self-billing and the special schemes. An invoice not in euros needs an
-				exchange rate to EUR to state the VAT in euros.
+				Invoice content follows § 74 of the VAT Act 222/2004. The supplier needs a tax ID,
+				and the invoice carries the wording of the law for reverse charge, exemption,
+				self-billing and the special schemes.
 			`),
 		},
 		Sources: []*cbc.Source{

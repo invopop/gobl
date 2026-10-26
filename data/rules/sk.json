@@ -16,41 +16,6 @@
                   "id": "GOBL-SK-BILL-INVOICE-01",
                   "desc": "invoice SK supplier must have a tax ID code (DIČ or IČ DPH)",
                   "tests": "has tax ID code"
-                },
-                {
-                  "id": "GOBL-SK-BILL-INVOICE-02",
-                  "desc": "invoice SK supplier must have an address with street, locality and code (§ 74 ods. 1 písm. a, column R BT-35, BT-37, BT-38)",
-                  "tests": "has postal address"
-                }
-              ]
-            },
-            {
-              "guard": "not (is simplified)",
-              "subsets": [
-                {
-                  "field": "customer",
-                  "assert": [
-                    {
-                      "id": "GOBL-SK-BILL-INVOICE-03",
-                      "desc": "invoice SK customer must have an address with street, locality and code (§ 74 ods. 1 písm. b, column R BT-50, BT-52, BT-53)",
-                      "tests": "has postal address"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "guard": "currency is not EUR",
-              "subsets": [
-                {
-                  "field": "exchange_rates",
-                  "assert": [
-                    {
-                      "id": "GOBL-SK-BILL-INVOICE-04",
-                      "desc": "invoice SK not in EUR must have an exchange rate to EUR to state the VAT in euros (§ 74 ods. 1 písm. i)",
-                      "tests": "has rate to EUR"
-                    }
-                  ]
                 }
               ]
             }
