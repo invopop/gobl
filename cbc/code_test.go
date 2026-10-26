@@ -185,22 +185,12 @@ func TestNormalizeStrictCode(t *testing.T) {
 			code: cbc.Code("0088:1234567891234"),
 			want: cbc.Code("0088:1234567891234"),
 		},
-		{
-			name: "repeated underscores",
-			code: cbc.Code("DEF0__CODIAL"),
-			want: cbc.Code("DEF0__CODIAL"),
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.Equal(t, tt.want, cbc.NormalizeStrictCode(tt.code))
 		})
 	}
-}
-
-func TestStrictCode(t *testing.T) {
-	assert.True(t, cbc.StrictCode.Check(cbc.Code("DEF0__CODIAL")))
-	assert.False(t, cbc.StrictCode.Check(cbc.Code("DEF0--CODIAL")))
 }
 
 func TestNormalizeUpperCode(t *testing.T) {

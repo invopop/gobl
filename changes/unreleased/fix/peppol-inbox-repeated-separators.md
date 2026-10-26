@@ -1,5 +1,5 @@
 ## Fixed
 
-- `cbc`: `NormalizeStrictCode` no longer collapses repeated `_`, so codes such as
-  the Peppol participant ID `533304358_53330435800013_DEF0__CODIAL` are kept as
-  issued.
+- `org`: `Inbox` codes use the default `cbc.NormalizeCode` instead of strict
+  normalization, so participant IDs such as
+  `0225:533304358_53330435800013_DEF0__CODIAL` are kept as issued.
