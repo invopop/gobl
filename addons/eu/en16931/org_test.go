@@ -334,6 +334,21 @@ func TestOrgPartyNormalizeEndpoints(t *testing.T) {
 		assert.Equal(t, "x3157928m", p.Inboxes[0].Code.String())
 	})
 
+	t.Run("keeps repeated separators in the participant code", func(t *testing.T) {
+		p := &org.Party{
+			Inboxes: []*org.Inbox{
+				{Key: org.InboxKeyPeppol, Scheme: "0225", Code: "533304358_53330435800013_DEF0__CODIAL"},
+			},
+		}
+		norm.Normalize(p, tax.AddonContext(en16931.V2017))
+		require.Len(t, p.Endpoints, 1)
+		assert.Equal(t,
+			"iso6523-actorid-upis::0225:533304358_53330435800013_DEF0__CODIAL",
+			p.Endpoints[0].URI.String(),
+		)
+		assert.Equal(t, "533304358_53330435800013_DEF0__CODIAL", p.Inboxes[0].Code.String())
+	})
+
 	t.Run("copies the inbox label across", func(t *testing.T) {
 		p := &org.Party{
 			Inboxes: []*org.Inbox{

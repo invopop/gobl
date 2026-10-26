@@ -95,7 +95,8 @@ func normalizeInbox(i *Inbox) {
 	// re-interpreted, as dotted IDs (e.g. French 0225 routing codes) would
 	// otherwise be mistaken for URLs.
 	code := i.Code.String()
-	if i.Scheme == "" && i.Key != InboxKeyPeppol {
+	participant := i.Scheme != "" || i.Key == InboxKeyPeppol
+	if !participant {
 		if is.EmailFormat.Check(code) {
 			i.Email = code
 			i.Code = ""
@@ -106,7 +107,15 @@ func normalizeInbox(i *Inbox) {
 	}
 	i.Label = cbc.NormalizeString(i.Label)
 	i.Scheme = cbc.NormalizeUpperCode(i.Scheme)
-	i.Code = cbc.NormalizeStrictCode(i.Code)
+	if participant {
+		// Participant IDs are opaque and must be kept as issued, so only apply
+		// lenient normalization. Strict normalization would collapse repeated
+		// separators, turning a routing code like "DEF0__CODIAL" into
+		// "DEF0_CODIAL" and pointing to a different participant.
+		i.Code = cbc.NormalizeCode(i.Code)
+	} else {
+		i.Code = cbc.NormalizeStrictCode(i.Code)
+	}
 
 	// Custom normalizations
 	switch i.Key {
