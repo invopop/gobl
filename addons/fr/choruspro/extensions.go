@@ -1,8 +1,10 @@
 package choruspro
 
 import (
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
 )
 
@@ -23,8 +25,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyFramework,
 		Name: i18n.String{
-			i18n.EN: "General Information Framework",
-			i18n.FR: "Informations générales",
+			i18n.EN: "Chorus Pro: General Information Framework",
+			i18n.FR: "Chorus Pro: Informations générales",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{bill.ShortSchemaTax},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -220,8 +226,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyScheme,
 		Name: i18n.String{
-			i18n.EN: "Scheme",
-			i18n.FR: "Schéma",
+			i18n.EN: "Chorus Pro: Scheme",
+			i18n.FR: "Chorus Pro: Schéma",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{org.ShortSchemaParty},
 		},
 		Values: []*cbc.Definition{
 			{

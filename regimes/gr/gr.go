@@ -28,15 +28,6 @@ func init() {
 	)
 }
 
-// Official IAPR codes to include in stamps.
-const (
-	StampIAPRQR       cbc.Key = "iapr-qr"
-	StampIAPRMark     cbc.Key = "iapr-mark"
-	StampIAPRHash     cbc.Key = "iapr-hash"
-	StampIAPRUID      cbc.Key = "iapr-uid"
-	StampIAPRProvider cbc.Key = "iapr-provider"
-)
-
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
@@ -84,6 +75,7 @@ func New() *tax.RegimeDef {
 		TimeZone:               "Europe/Athens",
 		CalculatorRoundingRule: tax.RoundingRuleCurrency,
 		Scenarios:              scenarios,
+		Stamps:                 stamps,
 		Corrections:            corrections,
 		Categories:             taxCategories,
 	}

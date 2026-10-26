@@ -22,6 +22,8 @@ func init() {
 		Discount{},
 		Fault{},
 		Line{},
+		LineCharge{},
+		LineDiscount{},
 		Ordering{},
 		PaymentDetails{},
 		Reason{},
@@ -60,4 +62,19 @@ const (
 	ShortSchemaInvoice  = "bill/invoice"
 	ShortSchemaPayment  = "bill/payment"
 	ShortSchemaStatus   = "bill/status"
+)
+
+// Short schema IDs of objects used inside documents
+const (
+	ShortSchemaAction            = "bill/action"
+	ShortSchemaCharge            = "bill/charge"
+	ShortSchemaCorrectionOptions = "bill/correction-options"
+	ShortSchemaDeliveryDetails   = "bill/delivery-details"
+	ShortSchemaDiscount          = "bill/discount"
+	ShortSchemaLine              = "bill/line"
+	ShortSchemaLineCharge        = "bill/line-charge"
+	ShortSchemaLineDiscount      = "bill/line-discount"
+	ShortSchemaReason            = "bill/reason"
+	ShortSchemaStatusLine        = "bill/status-line"
+	ShortSchemaTax               = "bill/tax"
 )
