@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -19,10 +20,15 @@ const CountryCode = "SK"
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("sk", rules.GOBL.Add(CountryCode),
+		billInvoiceRules(),
+		orgIdentityRules(),
 		taxIdentityRules(),
 	)
 	norm.Register(
 		norm.When(tax.IdentityIn(CountryCode), norm.For(func(tID *tax.Identity) { tax.NormalizeIdentity(tID) })),
+	)
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn(CountryCode)),
+		norm.For(normalizeICO),
 	)
 }
 
@@ -44,11 +50,19 @@ func New() *tax.RegimeDef {
 
 				VAT (daň z pridanej hodnoty, DPH) applies at a standard rate, with reduced rates
 				for certain goods and services such as foodstuffs, medicines, medical devices,
-				books, and accommodation. Exports and intra-EU supplies to VAT-registered buyers
-				are zero-rated.
+				books, and accommodation. Exports are exempt with the right to deduct, and intra-EU
+				supplies to VAT-registered buyers are exempt in Slovakia and taxed in the country
+				of the buyer.
 
-				Businesses registered for VAT are identified by their IČ DPH, formed by the
-				prefix SK followed by ten digits (e.g. SK2020273893).
+				Every entrepreneur has a DIČ, the ten digit number that the tax code field holds.
+				Businesses registered for VAT also have an IČ DPH, formed by the prefix SK followed
+				by the same ten digits (e.g. SK2020273893). The IČO (identity key "sk-ico") is the
+				eight digit number of the business register.
+
+				Invoice content follows § 74 of the VAT Act 222/2004: both parties need a postal
+				address, and the invoice carries the wording of the law for reverse charge,
+				exemption, self-billing and the special schemes. An invoice not in euros needs an
+				exchange rate to EUR to state the VAT in euros.
 			`),
 		},
 		Sources: []*cbc.Source{
@@ -70,6 +84,13 @@ func New() *tax.RegimeDef {
 		},
 		TimeZone:   "Europe/Bratislava",
 		Categories: taxCategories,
-		Scenarios:  []*tax.ScenarioSet{bill.InvoiceScenarios()},
+		Identities: identityDefinitions,
+		Tags: []*tax.TagSet{
+			invoiceTags(),
+		},
+		Scenarios: []*tax.ScenarioSet{
+			bill.InvoiceScenarios(),
+			invoiceScenarios(),
+		},
 	}
 }

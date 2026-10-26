@@ -1,0 +1,47 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "0190a3f4-7c1e-7a5b-9d2e-4b8f6c1a2d01"
+series: "ICO"
+code: "001"
+issue_date: "2027-01-15"
+
+supplier:
+  name: "Vzorová s.r.o."
+  tax_id:
+    country: "SK"
+    code: "2020273893"
+  addresses:
+    - num: "12"
+      street: "Hlavná"
+      locality: "Bratislava"
+      code: "81101"
+      country: "SK"
+  emails:
+    - addr: "fakturacia@example.sk"
+  identities:
+    - key: "sk-ico"
+      code: "36 396 567"
+
+customer:
+  name: "Zákazník s.r.o."
+  tax_id:
+    country: "SK"
+    code: "7120001713"
+  addresses:
+    - num: "5"
+      street: "Štúrova"
+      locality: "Košice"
+      code: "04001"
+      country: "SK"
+  identities:
+    - key: "sk-ico"
+      code: "31322832"
+
+lines:
+  - quantity: "10"
+    item:
+      name: "Softvérové služby"
+      price: "120.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: "general"

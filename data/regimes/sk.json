@@ -5,7 +5,7 @@
     "sk": "Slovensko"
   },
   "description": {
-    "en": "Slovakia's tax system is administered by the Financial Administration of the\nSlovak Republic (Finančná správa Slovenskej republiky). As an EU member state,\nSlovakia follows the EU VAT Directive.\n\nVAT (daň z pridanej hodnoty, DPH) applies at a standard rate, with reduced rates\nfor certain goods and services such as foodstuffs, medicines, medical devices,\nbooks, and accommodation. Exports and intra-EU supplies to VAT-registered buyers\nare zero-rated.\n\nBusinesses registered for VAT are identified by their IČ DPH, formed by the\nprefix SK followed by ten digits (e.g. SK2020273893)."
+    "en": "Slovakia's tax system is administered by the Financial Administration of the\nSlovak Republic (Finančná správa Slovenskej republiky). As an EU member state,\nSlovakia follows the EU VAT Directive.\n\nVAT (daň z pridanej hodnoty, DPH) applies at a standard rate, with reduced rates\nfor certain goods and services such as foodstuffs, medicines, medical devices,\nbooks, and accommodation. Exports are exempt with the right to deduct, and intra-EU\nsupplies to VAT-registered buyers are exempt in Slovakia and taxed in the country\nof the buyer.\n\nEvery entrepreneur has a DIČ, the ten digit number that the tax code field holds.\nBusinesses registered for VAT also have an IČ DPH, formed by the prefix SK followed\nby the same ten digits (e.g. SK2020273893). The IČO (identity key \"sk-ico\") is the\neight digit number of the business register.\n\nInvoice content follows § 74 of the VAT Act 222/2004: both parties need a postal\naddress, and the invoice carries the wording of the law for reverse charge,\nexemption, self-billing and the special schemes. An invoice not in euros needs an\nexchange rate to EUR to state the VAT in euros."
   },
   "sources": [
     {
@@ -34,6 +34,57 @@
   "country": "SK",
   "currency": "EUR",
   "tax_scheme": "VAT",
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "travel-agency",
+          "name": {
+            "en": "Special scheme for travel agencies",
+            "sk": "Úprava zdaňovania prirážky - cestovné kancelárie"
+          }
+        },
+        {
+          "key": "second-hand-goods",
+          "name": {
+            "en": "Special scheme for second-hand goods",
+            "sk": "Úprava zdaňovania prirážky - použitý tovar"
+          }
+        },
+        {
+          "key": "art",
+          "name": {
+            "en": "Special scheme for works of art",
+            "sk": "Úprava zdaňovania prirážky - umelecké diela"
+          }
+        },
+        {
+          "key": "antiques",
+          "name": {
+            "en": "Special scheme for collectors' items and antiques",
+            "sk": "Úprava zdaňovania prirážky - zberateľské predmety a starožitnosti"
+          }
+        },
+        {
+          "key": "cash-basis",
+          "name": {
+            "en": "VAT on a cash basis",
+            "sk": "Daň sa uplatňuje na základe prijatia platby"
+          }
+        }
+      ]
+    }
+  ],
+  "identities": [
+    {
+      "key": "sk-ico",
+      "name": {
+        "en": "Organisation Identification Number (IČO)",
+        "sk": "Identifikačné číslo organizácie (IČO)"
+      }
+    }
+  ],
   "scenarios": [
     {
       "schema": "bill/invoice",
@@ -49,6 +100,88 @@
             "cat": "VAT",
             "key": "reverse-charge",
             "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    },
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Prenesenie daňovej povinnosti"
+          }
+        },
+        {
+          "tags": [
+            "self-billed"
+          ],
+          "note": {
+            "key": "self-billed",
+            "text": "Vyhotovenie faktúry odberateľom"
+          }
+        },
+        {
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "exempt",
+            "text": "Dodanie je oslobodené od dane"
+          }
+        },
+        {
+          "tags": [
+            "travel-agency"
+          ],
+          "note": {
+            "key": "travel-agency",
+            "text": "Úprava zdaňovania prirážky - cestovné kancelárie"
+          }
+        },
+        {
+          "tags": [
+            "second-hand-goods"
+          ],
+          "note": {
+            "key": "second-hand-goods",
+            "text": "Úprava zdaňovania prirážky - použitý tovar"
+          }
+        },
+        {
+          "tags": [
+            "art"
+          ],
+          "note": {
+            "key": "art",
+            "text": "Úprava zdaňovania prirážky - umelecké diela"
+          }
+        },
+        {
+          "tags": [
+            "antiques"
+          ],
+          "note": {
+            "key": "antiques",
+            "text": "Úprava zdaňovania prirážky - zberateľské predmety a starožitnosti"
+          }
+        },
+        {
+          "tags": [
+            "cash-basis"
+          ],
+          "note": {
+            "key": "cash-basis",
+            "text": "Daň sa uplatňuje na základe prijatia platby"
           }
         }
       ]

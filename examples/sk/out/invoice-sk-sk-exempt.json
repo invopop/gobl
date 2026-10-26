@@ -1,0 +1,107 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "9ca1689b61102ce5418ac499c968be5ea932765b9eb1f40e7b464de3f8a8d3f1"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "SK",
+		"uuid": "0190a3f4-7c1e-7a5b-9d2e-4b8f6c1a2d03",
+		"type": "standard",
+		"series": "EX",
+		"code": "001",
+		"issue_date": "2027-01-15",
+		"currency": "EUR",
+		"tax": {
+			"notes": [
+				{
+					"cat": "VAT",
+					"key": "exempt",
+					"text": "Dodanie je oslobodené od dane"
+				}
+			]
+		},
+		"supplier": {
+			"name": "Vzorová s.r.o.",
+			"tax_id": {
+				"country": "SK",
+				"code": "2020273893"
+			},
+			"addresses": [
+				{
+					"num": "12",
+					"street": "Hlavná",
+					"locality": "Bratislava",
+					"code": "81101",
+					"country": "SK"
+				}
+			],
+			"emails": [
+				{
+					"addr": "fakturacia@example.sk"
+				}
+			]
+		},
+		"customer": {
+			"name": "Zákazník s.r.o.",
+			"tax_id": {
+				"country": "SK",
+				"code": "7120001713"
+			},
+			"addresses": [
+				{
+					"num": "5",
+					"street": "Štúrova",
+					"locality": "Košice",
+					"code": "04001",
+					"country": "SK"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Nájom nebytových priestorov",
+					"price": "800.00"
+				},
+				"sum": "800.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "exempt"
+					}
+				],
+				"total": "800.00"
+			}
+		],
+		"totals": {
+			"sum": "800.00",
+			"total": "800.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "exempt",
+								"base": "800.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "800.00",
+			"payable": "800.00"
+		}
+	}
+}
