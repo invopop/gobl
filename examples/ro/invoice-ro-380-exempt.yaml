@@ -1,5 +1,5 @@
-# 380 - Exempt line. Late payment penalties are outside the taxable base, so
-# they are exempt (E) and the reason is given in a tax note.
+# 380 - Exempt line. Letting of immovable property is exempt from VAT under
+# art. 292 alin. (2) lit. e) Cod fiscal (E), and the reason is given in a tax note.
 $schema: https://gobl.org/draft-0/bill/invoice
 $regime: "RO"
 uuid: "01927639-c1a0-7f3a-88d9-5b1f2a5e4005"
@@ -48,8 +48,8 @@ lines:
         rate: general
   - quantity: "1"
     item:
-      name: Penalități de întârziere
-      price: "45.00"
+      name: Chirie spațiu de birou, octombrie 2026
+      price: "1500.00"
     taxes:
       - cat: VAT
         key: exempt
@@ -58,7 +58,7 @@ tax:
   notes:
     - cat: VAT
       key: exempt
-      text: Penalități, nu intră în baza de impozitare, art. 286 alin. (4) Cod fiscal
+      text: Operațiune scutită de TVA conform art. 292 alin. (2) lit. e) din Codul fiscal
 
 payment:
   terms:

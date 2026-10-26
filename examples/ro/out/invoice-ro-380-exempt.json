@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "22deee92348a56c5bd17860c6dede7eee6415438834de8a8a9e6bf58216059a6"
+			"val": "287fd71e6ae473fb903da4f1c1760712b1b2ac756e11dd34734e96582444358b"
 		}
 	},
 	"doc": {
@@ -21,7 +21,7 @@
 				{
 					"cat": "VAT",
 					"key": "exempt",
-					"text": "Penalități, nu intră în baza de impozitare, art. 286 alin. (4) Cod fiscal"
+					"text": "Operațiune scutită de TVA conform art. 292 alin. (2) lit. e) din Codul fiscal"
 				}
 			]
 		},
@@ -88,17 +88,17 @@
 				"i": 2,
 				"quantity": "1",
 				"item": {
-					"name": "Penalități de întârziere",
-					"price": "45.00"
+					"name": "Chirie spațiu de birou, octombrie 2026",
+					"price": "1500.00"
 				},
-				"sum": "45.00",
+				"sum": "1500.00",
 				"taxes": [
 					{
 						"cat": "VAT",
 						"key": "exempt"
 					}
 				],
-				"total": "45.00"
+				"total": "1500.00"
 			}
 		],
 		"payment": {
@@ -106,7 +106,7 @@
 				"due_dates": [
 					{
 						"date": "2026-10-01",
-						"amount": "1255.00",
+						"amount": "2710.00",
 						"percent": "100%"
 					}
 				]
@@ -122,8 +122,8 @@
 			}
 		},
 		"totals": {
-			"sum": "1045.00",
-			"total": "1045.00",
+			"sum": "2500.00",
+			"total": "2500.00",
 			"taxes": {
 				"categories": [
 					{
@@ -137,7 +137,7 @@
 							},
 							{
 								"key": "exempt",
-								"base": "45.00",
+								"base": "1500.00",
 								"amount": "0.00"
 							}
 						],
@@ -147,8 +147,8 @@
 				"sum": "210.00"
 			},
 			"tax": "210.00",
-			"total_with_tax": "1255.00",
-			"payable": "1255.00"
+			"total_with_tax": "2710.00",
+			"payable": "2710.00"
 		}
 	}
 }
