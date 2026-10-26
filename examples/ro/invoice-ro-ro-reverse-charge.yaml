@@ -1,4 +1,4 @@
-# 380 - Domestic reverse charge (taxare inversă, art. 331 Cod fiscal). Cereals sold
+# Domestic reverse charge (taxare inversă, art. 331 Cod fiscal). Cereals sold
 # between VAT registered companies: the reverse-charge tag adds the legal note.
 $schema: https://gobl.org/draft-0/bill/invoice
 $regime: "RO"

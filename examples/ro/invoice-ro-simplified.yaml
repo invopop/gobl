@@ -1,4 +1,4 @@
-# 380 - Simplified invoice (art. 319 alin. (12) Cod fiscal, up to 100 EUR). The
+# Simplified invoice (art. 319 alin. (12) Cod fiscal, up to 100 EUR). The
 # simplified tag marks a small sale to a buyer whose details are not given.
 $schema: https://gobl.org/draft-0/bill/invoice
 $regime: "RO"

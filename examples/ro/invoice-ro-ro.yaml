@@ -1,4 +1,4 @@
-# 380 - Invoice. The standard invoice for a supply of goods or services.
+# Invoice between two Romanian companies, for a supply of goods and services.
 # Lines use the general rate (21%) and the reduced rate (11%).
 $schema: https://gobl.org/draft-0/bill/invoice
 $regime: "RO"

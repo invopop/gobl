@@ -1,4 +1,4 @@
-# 381 - Credit note. Credits part of an earlier invoice, always with positive
+# Credit note. Credits part of an earlier invoice, always with positive
 # values, and references it by number and date.
 $schema: https://gobl.org/draft-0/bill/invoice
 $regime: "RO"
