@@ -93,6 +93,13 @@ func TestApprovedAddons(t *testing.T) {
 				"ar-arca-v4": "github.com/invopop/gobl.ar.arca",
 			},
 		},
+		{
+			name: "Peppol",
+			modules: map[cbc.Key]string{
+				"peppol-bis-v3":  "github.com/invopop/gobl.peppol",
+				"peppol-pint-v1": "github.com/invopop/gobl.peppol",
+			},
+		},
 	}
 
 	for _, group := range groups {

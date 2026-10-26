@@ -167,4 +167,19 @@ func init() {
 		},
 		Module: "github.com/invopop/gobl.ar.arca",
 	})
+	const peppolModule = "github.com/invopop/gobl.peppol"
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "peppol-bis-v3",
+		Name: i18n.String{
+			i18n.EN: "Peppol BIS Billing 3.0",
+		},
+		Module: peppolModule,
+	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "peppol-pint-v1",
+		Name: i18n.String{
+			i18n.EN: "Peppol PINT",
+		},
+		Module: peppolModule,
+	})
 }
