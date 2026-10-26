@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 This file is generated from the change files in the [changes](./changes) directory. Add new entries to `changes/unreleased` instead of editing this file; see [changes/README.md](./changes/README.md).
 
+## [v0.511.1] - 2026-10-26
+
+### Added
+
+- `bill`, `org`, `pay`, `tax`: `ShortSchema` constants for the objects used
+  inside documents that may contain extensions, such as `tax.ShortSchemaCombo`
+  or `org.ShortSchemaIdentity`.
+
+### Changed
+
+- `cbc`: the `Usage` schema validation message refers to short schema IDs.
+
 ## [v0.511.0] - 2026-10-26
 
 ### Added
