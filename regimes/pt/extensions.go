@@ -68,8 +68,12 @@ var extensionKeys = []*cbc.Definition{
 			`),
 		},
 		Name: i18n.String{
-			i18n.EN: "Region Code",
-			i18n.PT: "Código da Região",
+			i18n.EN: "AT: Region Code",
+			i18n.PT: "AT: Código da Região",
+		},
+		Usage: &cbc.Usage{
+			Codes:   []cbc.Code{CountryCode},
+			Schemas: []string{"tax/combo"},
 		},
 		Values: regionDefs(),
 	},

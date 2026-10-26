@@ -19,8 +19,12 @@ var extensions = []*cbc.Definition{
 		// Used to clarify the reason for the exemption from VAT.
 		Key: ExtKeyExempt,
 		Name: i18n.String{
-			i18n.EN: "Exemption Code",
-			i18n.IT: "Natura Esenzione",
+			i18n.EN: "AdE: Exemption Code",
+			i18n.IT: "AdE: Natura Esenzione",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{"tax/combo"},
 		},
 		Values: []*cbc.Definition{
 			{
@@ -70,8 +74,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyProduct,
 		Name: i18n.String{
-			i18n.EN: "AdE CF Product Key",
-			i18n.IT: "Chiave Prodotto AdE CF",
+			i18n.EN: "AdE: CF Product Key",
+			i18n.IT: "AdE: Chiave Prodotto CF",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{"org/item"},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -99,8 +107,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyLottery,
 		Name: i18n.String{
-			i18n.EN: "AdE Lottery Code",
-			i18n.IT: "Codice Lotteria AdE",
+			i18n.EN: "AdE: Lottery Code",
+			i18n.IT: "AdE: Codice Lotteria",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{"bill/tax"},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -123,8 +135,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyLine,
 		Name: i18n.String{
-			i18n.EN: "AdE Line Reference",
-			i18n.IT: "Riferimento Linea AdE",
+			i18n.EN: "AdE: Line Reference",
+			i18n.IT: "AdE: Riferimento Linea",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{"bill/line"},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`

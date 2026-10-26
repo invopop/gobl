@@ -44,8 +44,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyDocType,
 		Name: i18n.String{
-			i18n.EN: "Invoice Type",
-			i18n.ES: "Tipo de Factura",
+			i18n.EN: "SII: Invoice Type",
+			i18n.ES: "SII: Tipo de Factura",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{"bill/tax"},
 		},
 		Sources: []*cbc.Source{
 			{
@@ -238,8 +242,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyCorrectionType,
 		Name: i18n.String{
-			i18n.EN: "Corrective Invoice Type",
-			i18n.ES: "Tipo de Factura Rectificativa",
+			i18n.EN: "SII: Corrective Invoice Type",
+			i18n.ES: "SII: Tipo de Factura Rectificativa",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{"bill/tax"},
 		},
 		Sources: []*cbc.Source{
 			{
@@ -285,8 +293,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyExempt,
 		Name: i18n.String{
-			i18n.EN: "Exemption Reason",
-			i18n.ES: "Causa de Exención",
+			i18n.EN: "SII: Exemption Reason",
+			i18n.ES: "SII: Causa de Exención",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{"tax/combo"},
 		},
 		Sources: []*cbc.Source{
 			{
@@ -407,8 +419,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyOutsideScope,
 		Name: i18n.String{
-			i18n.EN: "Type of Operation Outside Scope",
-			i18n.ES: "Tipo de Operación No Sujeta",
+			i18n.EN: "SII: Type of Operation Outside Scope",
+			i18n.ES: "SII: Tipo de Operación No Sujeta",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{"tax/combo"},
 		},
 		Sources: []*cbc.Source{
 			{
@@ -476,8 +492,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyRegime,
 		Name: i18n.String{
-			i18n.EN: "Special Regime or Relevance Key",
-			i18n.ES: "Clave de Régimen Especial o Trascendencia",
+			i18n.EN: "SII: Special Regime or Relevance Key",
+			i18n.ES: "SII: Clave de Régimen Especial o Trascendencia",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{"tax/combo"},
 		},
 		Sources: []*cbc.Source{
 			{
@@ -629,8 +649,13 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyIdentityType,
 		Name: i18n.String{
-			i18n.EN: "Identification Type",
-			i18n.ES: "Tipos de Identificación",
+			i18n.EN: "SII: Identification Type",
+			i18n.ES: "SII: Tipos de Identificación",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{"org/identity"},
+			Paths:   []string{"$.customer.identities[*]"},
 		},
 		Sources: []*cbc.Source{
 			{
@@ -752,8 +777,11 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeySimplifiedArt7273,
 		Name: i18n.String{
-			i18n.EN: "Simplified Invoice Art. 7.2 and 7.3, RD 1619/2012",
-			i18n.ES: "Factura Simplificada Articulo 7,2 y 7,3 RD 1619/2012",
+			i18n.EN: "SII: Simplified Invoice Art. 7.2 and 7.3, RD 1619/2012",
+			i18n.ES: "SII: Factura Simplificada Articulo 7,2 y 7,3 RD 1619/2012",
+		},
+		Usage: &cbc.Usage{
+			Keys: []cbc.Key{V1},
 		},
 		Sources: []*cbc.Source{
 			{
@@ -795,8 +823,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyThirdPartyIssuer,
 		Name: i18n.String{
-			i18n.EN: "Issued by Third Party or Recipient",
-			i18n.ES: "Emitida por Tercero o Destinatario",
+			i18n.EN: "SII: Issued by Third Party or Recipient",
+			i18n.ES: "SII: Emitida por Tercero o Destinatario",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{"bill/tax"},
 		},
 		Sources: []*cbc.Source{
 			{
@@ -841,8 +873,13 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyProduct,
 		Name: i18n.String{
-			i18n.EN: "Product Type",
-			i18n.ES: "Tipo de Producto",
+			i18n.EN: "SII: Product Type",
+			i18n.ES: "SII: Tipo de Producto",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{"tax/combo"},
+			Paths:   []string{"$.lines[*].taxes[*]"},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`

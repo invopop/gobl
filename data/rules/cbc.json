@@ -126,6 +126,42 @@
           ]
         }
       ]
+    },
+    {
+      "id": "GOBL-CBC-USAGE",
+      "object": "cbc.Usage",
+      "subsets": [
+        {
+          "field": "schemas",
+          "subsets": [
+            {
+              "each": true,
+              "assert": [
+                {
+                  "id": "GOBL-CBC-USAGE-01",
+                  "desc": "schema must be a relative schema ID",
+                  "tests": "matches ^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*$"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "paths",
+          "subsets": [
+            {
+              "each": true,
+              "assert": [
+                {
+                  "id": "GOBL-CBC-USAGE-02",
+                  "desc": "path must be a JSON path",
+                  "tests": "matches ^\\$(\\.[$a-zA-Z0-9_-]+(\\[\\*\\])*)*$"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

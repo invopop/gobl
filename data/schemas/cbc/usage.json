@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/cbc/usage",
+  "$ref": "#/$defs/cbc.Usage",
+  "$defs": {
+    "cbc.Usage": {
+      "properties": {
+        "keys": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Keys",
+          "description": "Keys used for filtering, such as the addons that offer the definition."
+        },
+        "codes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/code"
+          },
+          "type": "array",
+          "title": "Codes",
+          "description": "Codes used for filtering, such as the tax regime country codes that offer the\ndefinition."
+        },
+        "schemas": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Schemas",
+          "description": "Schema IDs, relative to the GOBL base, of the objects in which the definition\nmay be used, such as \"tax/combo\" or \"org/party\"."
+        },
+        "paths": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Paths",
+          "description": "JSON paths inside a document under which the definition may be used, with\n\"[*]\" matching any array index, for when only some of the schema's locations\napply."
+        }
+      },
+      "type": "object",
+      "description": "Usage describes the context in which a definition may be used."
+    }
+  }
+}
