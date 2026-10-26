@@ -66,6 +66,14 @@ func New() *tax.RegimeDef {
 		},
 		Sources: []*cbc.Source{
 			{
+				Title: i18n.String{
+					i18n.EN: "Act No. 222/2004 Coll. on Value Added Tax (§ 74 invoice content, § 68d cash basis)",
+					i18n.SK: "Zákon č. 222/2004 Z. z. o dani z pridanej hodnoty (§ 74 obsah faktúry, § 68d)",
+				},
+				URL: "https://www.slov-lex.sk/pravne-predpisy/SK/ZZ/2004/222/",
+				At:  cal.NewDateTime(2026, 10, 26, 0, 0, 0),
+			},
+			{
 				Title: i18n.NewString("Finančná správa - Daň z pridanej hodnoty (VAT)"),
 				URL:   "https://www.financnasprava.sk/sk/podnikatelia/dane/dan-z-pridanej-hodnoty",
 				At:    cal.NewDateTime(2026, 8, 6, 0, 0, 0),

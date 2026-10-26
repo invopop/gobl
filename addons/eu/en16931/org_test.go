@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/sk"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -251,6 +252,14 @@ func TestOrgIdentityNormalize(t *testing.T) {
 		assert.Equal(t, "gln", id.Key.String())
 		assert.Equal(t, "1234567890123", id.Code.String())
 		assert.Equal(t, "0088", id.Ext.Get(iso.ExtKeySchemeID).String())
+	})
+	t.Run("normalizes Slovak IČO key", func(t *testing.T) {
+		id := &org.Identity{
+			Key:  sk.IdentityKeyICO,
+			Code: "36396567",
+		}
+		norm.Normalize(id, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, "0158", id.Ext.Get(iso.ExtKeySchemeID).String())
 	})
 	t.Run("normalizes type", func(t *testing.T) {
 		id := &org.Identity{
