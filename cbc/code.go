@@ -29,9 +29,9 @@ const (
 // be no longer than 128 characters and contain no control characters or leading
 // or trailing whitespace.
 //
-// Fields that need a stricter, canonical format (letters, numbers, and single
-// `.`, `-`, `:`, `/`, `,`, `_`, `&`, or space separators between blocks) can opt
-// in using NormalizeStrictCode for normalization and the StrictCode test for
+// Fields that need a stricter, canonical format (letters, numbers, `_`, and
+// single `.`, `-`, `:`, `/`, `,`, `&`, or space separators between blocks) can
+// opt in using NormalizeStrictCode for normalization and the StrictCode test for
 // validation.
 type Code string
 
@@ -41,9 +41,9 @@ type CodeMap map[Key]Code
 
 // Basic code constants.
 var (
-	CodeSeparators           = `.\-:/,_& ` // only escape dash for JS compatibility
-	CodeDigits               = `A-ZÑa-z0-9`
-	CodePattern              = `^[` + CodeDigits + `]+([` + CodeSeparators + `]?_*[` + CodeDigits + `]+)*$`
+	CodeSeparators           = `.\-:/,& ` // only escape dash for JS compatibility
+	CodeDigits               = `A-ZÑa-z0-9_`
+	CodePattern              = `^[` + CodeDigits + `]+([` + CodeSeparators + `]?[` + CodeDigits + `]+)*$`
 	CodePatternRegexp        = regexp.MustCompile(CodePattern)
 	CodeMinLength     uint64 = 1
 	CodeMaxLength     uint64 = 128
@@ -57,7 +57,7 @@ var (
 )
 
 var (
-	codeSeparatorRegexp         = regexp.MustCompile(`([` + CodeSeparators + `])[^` + CodeDigits + `_]+`)
+	codeSeparatorRegexp         = regexp.MustCompile(`([` + CodeSeparators + `])[^` + CodeDigits + `]+`)
 	codeInvalidCharsRegexp      = regexp.MustCompile(`[^` + CodeDigits + CodeSeparators + `]+`)
 	codeNonAlphanumericalRegexp = regexp.MustCompile(`[^A-Z\d]`)
 	codeNonNumericalRegexp      = regexp.MustCompile(`[^\d]`)
