@@ -52,7 +52,7 @@ func init() {
 				Name: i18n.String{i18n.EN: "Test: Correction"},
 				Usage: &cbc.Usage{
 					Keys:    []cbc.Key{CorrectionExt},
-					Schemas: []string{"org/document-ref"},
+					Schemas: []string{org.ShortSchemaDocumentRef},
 				},
 				Values: []*cbc.Definition{
 					{Code: "01", Name: i18n.String{i18n.EN: "Invoice code"}},

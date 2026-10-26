@@ -6,6 +6,13 @@ import (
 	"github.com/invopop/gobl/schema"
 )
 
+// Short schema IDs of objects used inside documents
+const (
+	ShortSchemaCombo     = "tax/combo"
+	ShortSchemaNote      = "tax/note"
+	ShortSchemaRateTotal = "tax/rate-total"
+)
+
 func init() {
 	schema.Register(schema.GOBL.Add("tax"),
 		AddonDef{},

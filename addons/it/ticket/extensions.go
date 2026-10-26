@@ -1,9 +1,12 @@
 package ticket
 
 import (
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/tax"
 )
 
 // Italian extension keys required by the AdE ticket format.
@@ -24,7 +27,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"tax/combo"},
+			Schemas: []string{tax.ShortSchemaCombo},
 		},
 		Values: []*cbc.Definition{
 			{
@@ -79,7 +82,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"org/item"},
+			Schemas: []string{org.ShortSchemaItem},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -112,7 +115,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"bill/tax"},
+			Schemas: []string{bill.ShortSchemaTax},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -140,7 +143,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"bill/line"},
+			Schemas: []string{bill.ShortSchemaLine},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`

@@ -24,9 +24,10 @@ for a document. Each definition must have:
 - **A `Usage`** describing where the definition applies:
   - `Keys` with the addon's key, such as `[]cbc.Key{V1}`. Tax regimes use
     `Codes` with their country code instead.
-  - `Schemas` (extensions only) with the schema IDs, relative to the GOBL base,
-    of the objects whose `ext` holds the extension, such as `tax/combo`,
-    `bill/tax`, or `org/party`. Each must be a registered schema that has
+  - `Schemas` (extensions only) with the short schema IDs of the objects whose
+    `ext` holds the extension, using the `ShortSchema` constants in each
+    package, such as `tax.ShortSchemaCombo`, `bill.ShortSchemaTax`, or
+    `org.ShortSchemaParty`. Each must be a registered schema that has
     extensions.
   - `Paths` (optional) with JSON paths, only when the extension applies to some
     of a schema's locations. A path also covers everything under it, so
@@ -42,7 +43,7 @@ for a document. Each definition must have:
 	},
 	Usage: &cbc.Usage{
 		Keys:    []cbc.Key{V1},
-		Schemas: []string{"org/party"},
+		Schemas: []string{org.ShortSchemaParty},
 		Paths:   []string{"$.supplier"},
 	},
 	// ...

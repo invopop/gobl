@@ -3,6 +3,7 @@ package br
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
 )
 
@@ -20,7 +21,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Codes:   []cbc.Code{CountryCode},
-			Schemas: []string{"org/party"},
+			Schemas: []string{org.ShortSchemaParty},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`

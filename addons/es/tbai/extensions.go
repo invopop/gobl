@@ -1,9 +1,12 @@
 package tbai
 
 import (
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/tax"
 )
 
 // Extension keys for TicketBAI
@@ -56,7 +59,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"bill/tax"},
+			Schemas: []string{bill.ShortSchemaTax},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -97,7 +100,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"tax/combo"},
+			Schemas: []string{tax.ShortSchemaCombo},
 			Paths:   []string{"$.lines[*].taxes[*]"},
 		},
 		Desc: i18n.String{
@@ -145,7 +148,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"tax/combo"},
+			Schemas: []string{tax.ShortSchemaCombo},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -264,7 +267,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"org/document-ref"},
+			Schemas: []string{org.ShortSchemaDocumentRef},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -325,7 +328,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"tax/combo"},
+			Schemas: []string{tax.ShortSchemaCombo},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -488,7 +491,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"org/party"},
+			Schemas: []string{org.ShortSchemaParty},
 			Paths:   []string{"$.supplier"},
 		},
 		Desc: i18n.String{
@@ -526,7 +529,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"org/identity"},
+			Schemas: []string{org.ShortSchemaIdentity},
 			Paths:   []string{"$.customer.identities[*]"},
 		},
 		Desc: i18n.String{
@@ -630,7 +633,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"bill/tax"},
+			Schemas: []string{bill.ShortSchemaTax},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`

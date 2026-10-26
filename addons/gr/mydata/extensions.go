@@ -1,9 +1,13 @@
 package mydata
 
 import (
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/tax"
 )
 
 // Regime extension codes.
@@ -48,7 +52,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"tax/combo"},
+			Schemas: []string{tax.ShortSchemaCombo},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -174,7 +178,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"bill/tax"},
+			Schemas: []string{bill.ShortSchemaTax},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -566,7 +570,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"pay/instructions", "pay/record"},
+			Schemas: []string{pay.ShortSchemaInstructions, pay.ShortSchemaRecord},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -665,7 +669,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"tax/combo"},
+			Schemas: []string{tax.ShortSchemaCombo},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -975,7 +979,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"org/item", "tax/combo"},
+			Schemas: []string{org.ShortSchemaItem, tax.ShortSchemaCombo},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -1105,7 +1109,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"org/item", "tax/combo"},
+			Schemas: []string{org.ShortSchemaItem, tax.ShortSchemaCombo},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -1370,7 +1374,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"bill/charge"},
+			Schemas: []string{bill.ShortSchemaCharge},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -1458,7 +1462,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"bill/charge"},
+			Schemas: []string{bill.ShortSchemaCharge},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -1656,7 +1660,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"bill/charge"},
+			Schemas: []string{bill.ShortSchemaCharge},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -1910,7 +1914,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"bill/charge"},
+			Schemas: []string{bill.ShortSchemaCharge},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -1982,7 +1986,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"org/party"},
+			Schemas: []string{org.ShortSchemaParty},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`

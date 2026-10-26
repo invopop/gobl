@@ -6,6 +6,13 @@ import (
 	"github.com/invopop/gobl/schema"
 )
 
+// Short schema IDs of objects used inside documents
+const (
+	ShortSchemaInstructions = "pay/instructions"
+	ShortSchemaRecord       = "pay/record"
+	ShortSchemaTerms        = "pay/terms"
+)
+
 func init() {
 	schema.Register(schema.GOBL.Add("pay"),
 		Card{},
