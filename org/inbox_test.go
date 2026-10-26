@@ -157,6 +157,14 @@ func TestInboxNormalize(t *testing.T) {
 		assert.Equal(t, "0225", id.Scheme.String())
 		assert.Equal(t, "533304358_53330435800013_DEF0__CODIAL", id.Code.String())
 	})
+	t.Run("with scheme only and repeated separators", func(t *testing.T) {
+		id := &org.Inbox{
+			Scheme: "0225",
+			Code:   "533304358_53330435800013_DEF0__CODIAL",
+		}
+		norm.Normalize(id)
+		assert.Equal(t, "533304358_53330435800013_DEF0__CODIAL", id.Code.String())
+	})
 	t.Run("without scheme or key collapses repeated separators", func(t *testing.T) {
 		id := &org.Inbox{
 			Key:  "test",
