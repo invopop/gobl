@@ -6,6 +6,51 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 This file is generated from the change files in the [changes](./changes) directory. Add new entries to `changes/unreleased` instead of editing this file; see [changes/README.md](./changes/README.md).
 
+## [v0.511.0] - 2026-10-26
+
+### Added
+
+- `addons`: approved `peppol-bis-v3` and `peppol-pint-v1` as external addons implemented by [`github.com/invopop/gobl.peppol`](https://github.com/invopop/gobl.peppol), so they are now valid `$addons` values.
+- `cbc`: `Usage` on `Definition`, with keys, codes, schema IDs, and JSON
+  paths that describe where a definition may be used, such as the addons
+  or regimes that offer it and the objects that may contain it.
+- `cbc`: `DefinitionRegistry`, an ordered set of definitions by key that can
+  be filtered by usage.
+- `head`: stamp definitions register, with `RegisterStamp`, `StampDefFor`,
+  `AllStampDefs`, and `FilterStampDefs`. Stamp names are prefixed with the
+  issuer, such as "TicketBAI: QR Code".
+- `tax`: `AllExtensionDefs` and `FilterExtensionDefs`.
+- `tax`: `Stamps` in `RegimeDef` and `AddonDef`, registered as stamp
+  definitions in `head`.
+- `tax`, `bill`: schemas for `Combo`, `RateTotal`, `LineCharge`, and
+  `LineDiscount`, so every object with extensions has a schema ID.
+- `pt`, `mx`, `el`: stamp definitions for the stamps issued by the AT, SAT,
+  and IAPR.
+- `es-tbai-v1`, `it-ticket-v1`: stamp definitions for the TicketBAI and AdE
+  stamps.
+- `pt`, `br`, `es-sii-v1`, `es-tbai-v1`, `fr-choruspro-v1`, `gr-mydata-v1`,
+  `it-ticket-v1`: extension usage with the addon key or regime code, and the
+  schemas of the objects that contain each extension.
+- `cef`, `iso`, `untdid`: extension usage with the schemas of the objects
+  that contain each extension.
+- `bill`: `DeliveryDetails` gains `ext` for extension codes that apply to the
+  delivery, such as the delivery terms a format or addon defines.
+
+### Changed
+
+- `pt`, `br`, `es-sii-v1`, `es-tbai-v1`, `fr-choruspro-v1`, `gr-mydata-v1`,
+  `it-ticket-v1`, `cef`, `iso`, `untdid`: extension names are prefixed with
+  the issuer, such as "SII: Invoice Type" or "UNTDID 1001: Document Type".
+- `tax`: **breaking** registering a different extension definition with a key
+  that is already in use panics.
+- `tax`: `RegisterExtension` accepts multiple definitions.
+
+### Fixed
+
+- `org`: `Inbox` codes use the default `cbc.NormalizeCode` instead of strict
+  normalization, so participant IDs such as
+  `0225:533304358_53330435800013_DEF0__CODIAL` are kept as issued.
+
 ## [v0.510.0] - 2026-10-15
 
 ### Added
