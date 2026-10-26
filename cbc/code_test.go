@@ -198,6 +198,11 @@ func TestNormalizeStrictCode(t *testing.T) {
 	}
 }
 
+func TestStrictCode(t *testing.T) {
+	assert.True(t, cbc.StrictCode.Check(cbc.Code("DEF0__CODIAL")))
+	assert.False(t, cbc.StrictCode.Check(cbc.Code("DEF0--CODIAL")))
+}
+
 func TestNormalizeUpperCode(t *testing.T) {
 	tests := []struct {
 		name string
