@@ -25,14 +25,45 @@ func TestUsageValidation(t *testing.T) {
 		u := &cbc.Usage{
 			Paths: []string{"tax.ext"},
 		}
-		assert.ErrorContains(t, rules.Validate(u), "[GOBL-CBC-USAGE-01] ($.paths[0]) path must be a JSON path")
+		assert.ErrorContains(t, rules.Validate(u), "[GOBL-CBC-USAGE-02] ($.paths[0]) path must be a JSON path")
 	})
 	t.Run("index instead of wildcard", func(t *testing.T) {
 		u := &cbc.Usage{
 			Paths: []string{"$.lines[0].ext"},
 		}
-		assert.ErrorContains(t, rules.Validate(u), "[GOBL-CBC-USAGE-01]")
+		assert.ErrorContains(t, rules.Validate(u), "[GOBL-CBC-USAGE-02]")
 	})
+}
+
+func TestUsageSchemaValidation(t *testing.T) {
+	t.Run("valid schemas", func(t *testing.T) {
+		u := &cbc.Usage{
+			Schemas: []string{"tax/combo", "org/document-ref", "bill/tax"},
+		}
+		assert.NoError(t, rules.Validate(u))
+	})
+	t.Run("invalid schemas", func(t *testing.T) {
+		for _, s := range []string{"combo", "Tax/Combo", "https://gobl.org/draft-0/tax/combo", "tax/combo/ext"} {
+			u := &cbc.Usage{Schemas: []string{s}}
+			assert.ErrorContains(t, rules.Validate(u), "[GOBL-CBC-USAGE-01] ($.schemas[0]) schema must be a relative schema ID", s)
+		}
+	})
+}
+
+func TestUsageMatchesSchema(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var u *cbc.Usage
+		assert.True(t, u.MatchesSchema("tax/combo"))
+	})
+	t.Run("no schemas", func(t *testing.T) {
+		u := &cbc.Usage{Keys: []cbc.Key{"foo"}}
+		assert.True(t, u.MatchesSchema("tax/combo"))
+	})
+	u := &cbc.Usage{Schemas: []string{"tax/combo", "org/party"}}
+	assert.True(t, u.MatchesSchema("tax/combo"))
+	assert.True(t, u.MatchesSchema("https://gobl.org/draft-0/org/party"))
+	assert.False(t, u.MatchesSchema("org/item"))
+	assert.False(t, u.MatchesSchema("https://gobl.org/draft-0/org/third-party"))
 }
 
 func TestUsageMatches(t *testing.T) {

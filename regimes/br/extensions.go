@@ -15,8 +15,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyMunicipality,
 		Name: i18n.String{
-			i18n.EN: "IBGE Municipality Code",
-			i18n.PT: "Código do Município do IBGE",
+			i18n.EN: "IBGE: Municipality Code",
+			i18n.PT: "IBGE: Código do Município",
+		},
+		Usage: &cbc.Usage{
+			Codes:   []cbc.Code{CountryCode},
+			Schemas: []string{"org/party"},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`

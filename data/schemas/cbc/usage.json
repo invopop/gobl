@@ -21,13 +21,21 @@
           "title": "Codes",
           "description": "Codes used for filtering, such as the tax regime country codes that offer the\ndefinition."
         },
+        "schemas": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Schemas",
+          "description": "Schema IDs, relative to the GOBL base, of the objects in which the definition\nmay be used, such as \"tax/combo\" or \"org/party\"."
+        },
         "paths": {
           "items": {
             "type": "string"
           },
           "type": "array",
           "title": "Paths",
-          "description": "JSON paths inside a document where the definition may be used, with \"[*]\"\nmatching any array index."
+          "description": "JSON paths inside a document where the definition may be used, with \"[*]\"\nmatching any array index, for when only some of the schema's locations apply."
         }
       },
       "type": "object",

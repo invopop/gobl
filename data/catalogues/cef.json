@@ -8,13 +8,18 @@
     {
       "key": "cef-vatex",
       "name": {
-        "en": "CEF VATEX - VAT exemption reason codes"
+        "en": "CEF: VATEX Exemption Reason"
       },
       "desc": {
         "en": "Codes for the reasons for VAT exemption as defined by the Connecting Europe Facility (CEF)."
       },
       "meta": {
         "version": "8.0"
+      },
+      "usage": {
+        "schemas": [
+          "tax/combo"
+        ]
       },
       "sources": [
         {

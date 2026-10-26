@@ -8,6 +8,10 @@ import (
 	"github.com/invopop/gobl/rules/is"
 )
 
+// UsageSchemaPattern defines the format of the schema IDs used in a Usage,
+// relative to the GOBL base, such as "tax/combo" or "org/party".
+const UsageSchemaPattern = `^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*$`
+
 // UsagePathPattern defines the format of the JSON paths used in a Usage:
 // a "$" root followed by property names, with "[*]" to match any array index.
 const UsagePathPattern = `^\$(\.[$a-zA-Z0-9_-]+(\[\*\])*)*$`
@@ -23,16 +27,24 @@ type Usage struct {
 	// Codes used for filtering, such as the tax regime country codes that offer the
 	// definition.
 	Codes []Code `json:"codes,omitempty" jsonschema:"title=Codes"`
+	// Schema IDs, relative to the GOBL base, of the objects in which the definition
+	// may be used, such as "tax/combo" or "org/party".
+	Schemas []string `json:"schemas,omitempty" jsonschema:"title=Schemas"`
 	// JSON paths inside a document where the definition may be used, with "[*]"
-	// matching any array index.
+	// matching any array index, for when only some of the schema's locations apply.
 	Paths []string `json:"paths,omitempty" jsonschema:"title=Paths"`
 }
 
 func usageRules() *rules.Set {
 	return rules.For(new(Usage),
+		rules.Field("schemas",
+			rules.Each(
+				rules.Assert("01", "schema must be a relative schema ID", is.Matches(UsageSchemaPattern)),
+			),
+		),
 		rules.Field("paths",
 			rules.Each(
-				rules.Assert("01", "path must be a JSON path", is.Matches(UsagePathPattern)),
+				rules.Assert("02", "path must be a JSON path", is.Matches(UsagePathPattern)),
 			),
 		),
 	)
@@ -55,6 +67,17 @@ func (u *Usage) Matches(keys []Key, codes []Code) bool {
 		}
 	}
 	return false
+}
+
+// MatchesSchema returns true if the usage has no schemas, or if the provided
+// schema ID, either relative like "tax/combo" or complete, matches one of them.
+func (u *Usage) MatchesSchema(schema string) bool {
+	if u == nil || len(u.Schemas) == 0 {
+		return true
+	}
+	return slices.ContainsFunc(u.Schemas, func(s string) bool {
+		return schema == s || strings.HasSuffix(schema, "/"+s)
+	})
 }
 
 // MatchesPath returns true if the usage has no paths, or if the provided

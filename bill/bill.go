@@ -22,6 +22,8 @@ func init() {
 		Discount{},
 		Fault{},
 		Line{},
+		LineCharge{},
+		LineDiscount{},
 		Ordering{},
 		PaymentDetails{},
 		Reason{},
