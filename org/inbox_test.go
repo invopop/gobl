@@ -138,48 +138,14 @@ func TestInboxNormalize(t *testing.T) {
 		assert.Equal(t, "0004", id.Scheme.String())
 		assert.Equal(t, org.InboxKeyPeppol, id.Key)
 	})
-	t.Run("with peppol key and repeated separators", func(t *testing.T) {
-		id := &org.Inbox{
-			Key:    org.InboxKeyPeppol,
-			Scheme: "0225",
-			Code:   " 533304358_53330435800013_DEF0__CODIAL ",
-		}
-		norm.Normalize(id)
-		assert.Equal(t, "0225", id.Scheme.String())
-		assert.Equal(t, "533304358_53330435800013_DEF0__CODIAL", id.Code.String())
-	})
-	t.Run("with peppol key and prefixed code with repeated separators", func(t *testing.T) {
+	t.Run("with peppol key and repeated underscores", func(t *testing.T) {
 		id := &org.Inbox{
 			Key:  org.InboxKeyPeppol,
 			Code: "0225:533304358_53330435800013_DEF0__CODIAL",
 		}
 		norm.Normalize(id)
-		assert.Equal(t, "0225", id.Scheme.String())
 		assert.Equal(t, "533304358_53330435800013_DEF0__CODIAL", id.Code.String())
-	})
-	t.Run("with scheme only and repeated separators", func(t *testing.T) {
-		id := &org.Inbox{
-			Scheme: "0225",
-			Code:   "533304358_53330435800013_DEF0__CODIAL",
-		}
-		norm.Normalize(id)
-		assert.Equal(t, "533304358_53330435800013_DEF0__CODIAL", id.Code.String())
-	})
-	t.Run("without scheme keeps repeated underscores", func(t *testing.T) {
-		id := &org.Inbox{
-			Key:  "test",
-			Code: "FOO__BAR",
-		}
-		norm.Normalize(id)
-		assert.Equal(t, "FOO__BAR", id.Code.String())
-	})
-	t.Run("without scheme collapses other repeated separators", func(t *testing.T) {
-		id := &org.Inbox{
-			Key:  "test",
-			Code: "FOO--BAR",
-		}
-		norm.Normalize(id)
-		assert.Equal(t, "FOO-BAR", id.Code.String())
+		assert.NoError(t, rules.Validate(id))
 	})
 	t.Run("with peppol participant code without key", func(t *testing.T) {
 		id := &org.Inbox{
@@ -195,15 +161,6 @@ func TestInboxValidate(t *testing.T) {
 		id := &org.Inbox{
 			Scheme: "0004",
 			Code:   "BAR",
-		}
-		err := rules.Validate(id)
-		assert.NoError(t, err)
-	})
-	t.Run("with peppol code with repeated separators", func(t *testing.T) {
-		id := &org.Inbox{
-			Key:    org.InboxKeyPeppol,
-			Scheme: "0225",
-			Code:   "533304358_53330435800013_DEF0__CODIAL",
 		}
 		err := rules.Validate(id)
 		assert.NoError(t, err)

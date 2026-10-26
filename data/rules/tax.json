@@ -177,7 +177,7 @@
                 {
                   "id": "GOBL-TAX-IDENTITY-03",
                   "desc": "tax id scheme must be a valid code",
-                  "tests": "matches ^[A-ZÑa-z0-9]+((_+|[.\\-:/,_\u0026 ])?[A-ZÑa-z0-9]+)*$"
+                  "tests": "matches ^[A-ZÑa-z0-9]+([.\\-:/,_\u0026 ]?_*[A-ZÑa-z0-9]+)*$"
                 }
               ]
             }
