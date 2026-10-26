@@ -165,13 +165,21 @@ func TestInboxNormalize(t *testing.T) {
 		norm.Normalize(id)
 		assert.Equal(t, "533304358_53330435800013_DEF0__CODIAL", id.Code.String())
 	})
-	t.Run("without scheme or key collapses repeated separators", func(t *testing.T) {
+	t.Run("without scheme keeps repeated underscores", func(t *testing.T) {
 		id := &org.Inbox{
 			Key:  "test",
 			Code: "FOO__BAR",
 		}
 		norm.Normalize(id)
-		assert.Equal(t, "FOO_BAR", id.Code.String())
+		assert.Equal(t, "FOO__BAR", id.Code.String())
+	})
+	t.Run("without scheme collapses other repeated separators", func(t *testing.T) {
+		id := &org.Inbox{
+			Key:  "test",
+			Code: "FOO--BAR",
+		}
+		norm.Normalize(id)
+		assert.Equal(t, "FOO-BAR", id.Code.String())
 	})
 	t.Run("with peppol participant code without key", func(t *testing.T) {
 		id := &org.Inbox{

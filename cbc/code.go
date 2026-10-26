@@ -30,9 +30,9 @@ const (
 // or trailing whitespace.
 //
 // Fields that need a stricter, canonical format (letters, numbers, and single
-// `.`, `-`, `:`, `/`, `,`, `_`, `&`, or space separators between blocks) can opt
-// in using NormalizeStrictCode for normalization and the StrictCode test for
-// validation.
+// `.`, `-`, `:`, `/`, `,`, `&`, or space separators, or one or more `_`, between
+// blocks) can opt in using NormalizeStrictCode for normalization and the
+// StrictCode test for validation.
 type Code string
 
 // CodeMap is a map of keys to specific codes, useful to determine regime specific
@@ -43,7 +43,7 @@ type CodeMap map[Key]Code
 var (
 	CodeSeparators           = `.\-:/,_& ` // only escape dash for JS compatibility
 	CodeDigits               = `A-ZÑa-z0-9`
-	CodePattern              = `^[` + CodeDigits + `]+([` + CodeSeparators + `]?[` + CodeDigits + `]+)*$`
+	CodePattern              = `^[` + CodeDigits + `]+((_+|[` + CodeSeparators + `])?[` + CodeDigits + `]+)*$`
 	CodePatternRegexp        = regexp.MustCompile(CodePattern)
 	CodeMinLength     uint64 = 1
 	CodeMaxLength     uint64 = 128
@@ -86,12 +86,23 @@ func NormalizeCode(c Code) Code {
 
 // NormalizeStrictCode cleans the code into its canonical strict form: leading
 // and trailing whitespace is trimmed, repeated separators are collapsed, and
-// any character outside the permitted set is removed.
+// any character outside the permitted set is removed. Runs of `_` are kept, as
+// they're closer to regular characters and appear in identifiers such as
+// Peppol participant IDs.
 func NormalizeStrictCode(c Code) Code {
 	code := strings.TrimSpace(c.String())
-	code = codeSeparatorRegexp.ReplaceAllString(code, "$1")
+	code = codeSeparatorRegexp.ReplaceAllStringFunc(code, collapseCodeSeparators)
 	code = codeInvalidCharsRegexp.ReplaceAllString(code, "")
 	return Code(code)
+}
+
+// collapseCodeSeparators reduces a run of separators and other symbols to
+// its first separator, or to its leading underscores if it starts with any.
+func collapseCodeSeparators(s string) string {
+	if n := len(s) - len(strings.TrimLeft(s, "_")); n > 0 {
+		return s[:n]
+	}
+	return s[:1]
 }
 
 // NormalizeUpperCode cleans and normalizes the code to its strict form, ensuring

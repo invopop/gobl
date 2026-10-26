@@ -90,10 +90,12 @@ func AddInbox(in []*Inbox, i *Inbox) []*Inbox {
 func normalizeInbox(i *Inbox) {
 	uuid.Normalize(&i.UUID)
 	// Only sniff the code for an email or URL when there is no scheme and the
-	// inbox is not a Peppol participant.
+	// inbox is not a Peppol participant. Once a scheme is present (or the key is
+	// peppol), the code is a participant ID by definition and must not be
+	// re-interpreted, as dotted IDs (e.g. French 0225 routing codes) would
+	// otherwise be mistaken for URLs.
 	code := i.Code.String()
-	participant := i.Scheme != "" || i.Key == InboxKeyPeppol
-	if !participant {
+	if i.Scheme == "" && i.Key != InboxKeyPeppol {
 		if is.EmailFormat.Check(code) {
 			i.Email = code
 			i.Code = ""
@@ -104,13 +106,7 @@ func normalizeInbox(i *Inbox) {
 	}
 	i.Label = cbc.NormalizeString(i.Label)
 	i.Scheme = cbc.NormalizeUpperCode(i.Scheme)
-	if participant {
-		// Strict normalization would collapse repeated separators,
-		// turning a routing code like "X__Y" into "X_Y"
-		i.Code = cbc.NormalizeCode(i.Code)
-	} else {
-		i.Code = cbc.NormalizeStrictCode(i.Code)
-	}
+	i.Code = cbc.NormalizeStrictCode(i.Code)
 
 	// Custom normalizations
 	switch i.Key {

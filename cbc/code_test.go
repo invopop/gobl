@@ -185,11 +185,50 @@ func TestNormalizeStrictCode(t *testing.T) {
 			code: cbc.Code("0088:1234567891234"),
 			want: cbc.Code("0088:1234567891234"),
 		},
+		{
+			name: "repeated underscores",
+			code: cbc.Code("533304358_53330435800013_DEF0__CODIAL"),
+			want: cbc.Code("533304358_53330435800013_DEF0__CODIAL"),
+		},
+		{
+			name: "underscores followed by symbols",
+			code: cbc.Code("FOO__-$BAR"),
+			want: cbc.Code("FOO__BAR"),
+		},
+		{
+			name: "separator followed by underscores",
+			code: cbc.Code("FOO-__BAR"),
+			want: cbc.Code("FOO-BAR"),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.Equal(t, tt.want, cbc.NormalizeStrictCode(tt.code))
 		})
+	}
+}
+
+func TestStrictCode(t *testing.T) {
+	valid := []cbc.Code{
+		"ABC123",
+		"0088:1234567891234",
+		"FOO BAR-DOME",
+		"FOO_BAR",
+		"533304358_53330435800013_DEF0__CODIAL",
+	}
+	for _, c := range valid {
+		assert.True(t, cbc.StrictCode.Check(c), "expected %q to be valid", c)
+	}
+	invalid := []cbc.Code{
+		"AB--CD",
+		"AB/.CD",
+		"AB__-CD",
+		"AB-__CD",
+		"_AB",
+		"AB__",
+	}
+	for _, c := range invalid {
+		assert.False(t, cbc.StrictCode.Check(c), "expected %q to be invalid", c)
 	}
 }
 
