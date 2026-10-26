@@ -22,8 +22,8 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampIAPRMark,
 		Name: i18n.String{
-			i18n.EN: "MARK",
-			i18n.EL: "ΜΑΡΚ",
+			i18n.EN: "IAPR: MARK",
+			i18n.EL: "ΑΑΔΕ: ΜΑΡΚ",
 		},
 		Desc: i18n.String{
 			i18n.EN: "Unique registration number assigned by myDATA to the document.",
@@ -34,8 +34,8 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampIAPRUID,
 		Name: i18n.String{
-			i18n.EN: "Unique ID",
-			i18n.EL: "Μοναδικός Κωδικός",
+			i18n.EN: "IAPR: Unique ID",
+			i18n.EL: "ΑΑΔΕ: Μοναδικός Κωδικός",
 		},
 		Desc: i18n.String{
 			i18n.EN: "Unique identifier of the document registered in myDATA.",
@@ -46,8 +46,8 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampIAPRHash,
 		Name: i18n.String{
-			i18n.EN: "Authentication Code",
-			i18n.EL: "Σήμανση",
+			i18n.EN: "IAPR: Authentication Code",
+			i18n.EL: "ΑΑΔΕ: Σήμανση",
 		},
 		Desc: i18n.String{
 			i18n.EN: "Authentication code of the document issued through an e-invoicing provider.",
@@ -58,8 +58,8 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampIAPRProvider,
 		Name: i18n.String{
-			i18n.EN: "E-Invoicing Provider",
-			i18n.EL: "Πάροχος Ηλεκτρονικής Τιμολόγησης",
+			i18n.EN: "IAPR: E-Invoicing Provider",
+			i18n.EL: "ΑΑΔΕ: Πάροχος Ηλεκτρονικής Τιμολόγησης",
 		},
 		Desc: i18n.String{
 			i18n.EN: "E-invoicing provider that issued the document.",
@@ -70,8 +70,8 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampIAPRQR,
 		Name: i18n.String{
-			i18n.EN: "QR Code",
-			i18n.EL: "Κωδικός QR",
+			i18n.EN: "IAPR: QR Code",
+			i18n.EL: "ΑΑΔΕ: Κωδικός QR",
 		},
 		Desc: i18n.String{
 			i18n.EN: "URL included in the QR code to verify the document.",

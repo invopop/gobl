@@ -6,9 +6,8 @@
 - `cbc`: `DefinitionRegistry`, an ordered set of definitions by key that can
   be filtered by usage.
 - `head`: stamp definitions register, with `RegisterStampDef`, `StampDefFor`,
-  `AllStampDefs`, and `FilterStampDefs`.
-- `tax`: `Stamps` in `RegimeDef` and `AddonDef`, registered as stamp
-  definitions in `head`.
+  `AllStampDefs`, and `FilterStampDefs`. Stamp names are prefixed with the
+  issuer, such as "TicketBAI: QR Code".
 - `tax`: `AllExtensionDefs` and `FilterExtensionDefs`.
 - `pt`, `mx`, `el`: stamp definitions for the stamps issued by the AT, SAT,
   and IAPR.

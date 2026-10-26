@@ -270,14 +270,6 @@
           "title": "Extensions",
           "description": "Keys that can be used for extended or extra data specific to the regime that\ncannot be easily determined from other GOBL structures. Typically used to define\nlocal codes for suppliers, customers, products, or tax rates."
         },
-        "stamps": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/definition"
-          },
-          "type": "array",
-          "title": "Stamps",
-          "description": "Stamp providers that may be included in envelope headers by the regime."
-        },
         "identities": {
           "items": {
             "$ref": "https://gobl.org/draft-0/cbc/definition"

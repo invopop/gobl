@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/rules"
@@ -31,13 +30,6 @@ func init() {
 				},
 			},
 		},
-		Stamps: []*cbc.Definition{
-			{
-				Key:   "test-addon-code",
-				Name:  i18n.String{i18n.EN: "Code"},
-				Usage: &cbc.Usage{Keys: []cbc.Key{"test-addon-v1"}},
-			},
-		},
 	})
 	tax.RegisterAddonDef(&tax.AddonDef{
 		Key:  "test-addon-alt-v1",
@@ -54,16 +46,12 @@ func init() {
 	})
 }
 
-func TestAddonDefRegistersDefinitions(t *testing.T) {
+func TestAddonDefRegistersExtensions(t *testing.T) {
 	ext := tax.ExtensionForKey("test-addon-doc-type")
 	require.NotNil(t, ext)
 	assert.Contains(t, tax.AllExtensionDefs(), ext)
 	assert.Contains(t, tax.FilterExtensionDefs([]cbc.Key{"test-addon-v1"}, nil), ext)
 	assert.NotContains(t, tax.FilterExtensionDefs([]cbc.Key{"test-addon-alt-v1"}, nil), ext)
-
-	stamp := head.StampDefFor("test-addon-code")
-	require.NotNil(t, stamp)
-	assert.Equal(t, "Code", stamp.Name.String())
 }
 
 func TestEmbeddingAddons(t *testing.T) {

@@ -24,8 +24,8 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampSATUUID,
 		Name: i18n.String{
-			i18n.EN: "Fiscal Folio",
-			i18n.ES: "Folio Fiscal",
+			i18n.EN: "SAT: Fiscal Folio",
+			i18n.ES: "SAT: Folio Fiscal",
 		},
 		Desc: i18n.String{
 			i18n.EN: "UUID assigned to the CFDI when it is certified.",
@@ -36,8 +36,8 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampSATSignature,
 		Name: i18n.String{
-			i18n.EN: "SAT Signature",
-			i18n.ES: "Sello Digital del SAT",
+			i18n.EN: "SAT: Signature",
+			i18n.ES: "SAT: Sello Digital",
 		},
 		Desc: i18n.String{
 			i18n.EN: "Digital signature of the SAT included in the certification of the CFDI.",
@@ -48,8 +48,8 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampSATSerial,
 		Name: i18n.String{
-			i18n.EN: "SAT Certificate Number",
-			i18n.ES: "Número de Certificado del SAT",
+			i18n.EN: "SAT: Certificate Number",
+			i18n.ES: "SAT: Número de Certificado",
 		},
 		Desc: i18n.String{
 			i18n.EN: "Serial number of the SAT certificate used to certify the CFDI.",
@@ -60,8 +60,8 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampSATTimestamp,
 		Name: i18n.String{
-			i18n.EN: "Certification Date",
-			i18n.ES: "Fecha y Hora de Certificación",
+			i18n.EN: "SAT: Certification Date",
+			i18n.ES: "SAT: Fecha y Hora de Certificación",
 		},
 		Desc: i18n.String{
 			i18n.EN: "Date and time the CFDI was certified.",
@@ -72,8 +72,8 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampSATProviderRFC,
 		Name: i18n.String{
-			i18n.EN: "Certification Provider RFC",
-			i18n.ES: "RFC del Proveedor de Certificación",
+			i18n.EN: "SAT: Certification Provider RFC",
+			i18n.ES: "SAT: RFC del Proveedor de Certificación",
 		},
 		Desc: i18n.String{
 			i18n.EN: "RFC of the authorized certification provider (PAC) that certified the CFDI.",
@@ -84,8 +84,8 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampSATChain,
 		Name: i18n.String{
-			i18n.EN: "Original Certification Chain",
-			i18n.ES: "Cadena Original del Complemento de Certificación",
+			i18n.EN: "SAT: Original Certification Chain",
+			i18n.ES: "SAT: Cadena Original del Complemento de Certificación",
 		},
 		Desc: i18n.String{
 			i18n.EN: "Original chain of the SAT digital certification complement.",
@@ -96,8 +96,8 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampSATURL,
 		Name: i18n.String{
-			i18n.EN: "QR Code URL",
-			i18n.ES: "URL del Código QR",
+			i18n.EN: "SAT: QR Code URL",
+			i18n.ES: "SAT: URL del Código QR",
 		},
 		Desc: i18n.String{
 			i18n.EN: "URL to verify the CFDI with the SAT, included in the QR code.",

@@ -22,9 +22,9 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampCode,
 		Name: i18n.String{
-			i18n.EN: "TicketBAI Code",
-			i18n.ES: "Código TicketBAI",
-			i18n.EU: "TicketBAI Kodea",
+			i18n.EN: "TicketBAI: Code",
+			i18n.ES: "TicketBAI: Código",
+			i18n.EU: "TicketBAI: Kodea",
 		},
 		Desc: i18n.String{
 			i18n.EN: "Identifier of the TicketBAI invoice that must be presented alongside the QR code.",
@@ -35,9 +35,9 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampQR,
 		Name: i18n.String{
-			i18n.EN: "QR Code",
-			i18n.ES: "Código QR",
-			i18n.EU: "QR Kodea",
+			i18n.EN: "TicketBAI: QR Code",
+			i18n.ES: "TicketBAI: Código QR",
+			i18n.EU: "TicketBAI: QR Kodea",
 		},
 		Desc: i18n.String{
 			i18n.EN: "URL included in the QR code to verify the invoice with the tax agency.",

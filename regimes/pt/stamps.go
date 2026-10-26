@@ -24,8 +24,8 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampProviderATATCUD,
 		Name: i18n.String{
-			i18n.EN: "ATCUD",
-			i18n.PT: "ATCUD",
+			i18n.EN: "AT: ATCUD",
+			i18n.PT: "AT: ATCUD",
 		},
 		Desc: i18n.String{
 			i18n.EN: "Unique document code formed by the series validation code assigned by the AT and the document's sequential number.",
@@ -36,8 +36,8 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampProviderATQR,
 		Name: i18n.String{
-			i18n.EN: "QR Code",
-			i18n.PT: "Código QR",
+			i18n.EN: "AT: QR Code",
+			i18n.PT: "AT: Código QR",
 		},
 		Desc: i18n.String{
 			i18n.EN: "Contents of the QR code that must be printed on the document.",
@@ -48,8 +48,8 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampProviderATHash,
 		Name: i18n.String{
-			i18n.EN: "Hash Characters",
-			i18n.PT: "Caracteres do Hash",
+			i18n.EN: "AT: Hash Characters",
+			i18n.PT: "AT: Caracteres do Hash",
 		},
 		Desc: i18n.String{
 			i18n.EN: "Characters extracted from the document's signature that must be printed on the document.",
@@ -60,8 +60,8 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampProviderATHashFull,
 		Name: i18n.String{
-			i18n.EN: "Hash",
-			i18n.PT: "Hash",
+			i18n.EN: "AT: Hash",
+			i18n.PT: "AT: Hash",
 		},
 		Desc: i18n.String{
 			i18n.EN: "Complete signature of the document, chained to the signature of the previous document in the series.",
@@ -72,8 +72,8 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampProviderATAppID,
 		Name: i18n.String{
-			i18n.EN: "Software Certificate Number",
-			i18n.PT: "Número de Certificado do Programa",
+			i18n.EN: "AT: Software Certificate Number",
+			i18n.PT: "AT: Número de Certificado do Programa",
 		},
 		Desc: i18n.String{
 			i18n.EN: "Number of the certificate assigned by the AT to the invoicing software that issued the document.",
@@ -84,8 +84,8 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampProviderATTimestamp,
 		Name: i18n.String{
-			i18n.EN: "System Entry Date",
-			i18n.PT: "Data de Gravação",
+			i18n.EN: "AT: System Entry Date",
+			i18n.PT: "AT: Data de Gravação",
 		},
 		Desc: i18n.String{
 			i18n.EN: "Date and time the document was signed and recorded by the invoicing software.",
@@ -96,8 +96,8 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampProviderATDocCode,
 		Name: i18n.String{
-			i18n.EN: "AT Document Code",
-			i18n.PT: "Código de Identificação AT",
+			i18n.EN: "AT: Document Code",
+			i18n.PT: "AT: Código de Identificação",
 		},
 		Desc: i18n.String{
 			i18n.EN: "Identification code returned by the AT when a transport document is communicated.",

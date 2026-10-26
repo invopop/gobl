@@ -6,9 +6,11 @@ import "github.com/invopop/gobl/cbc"
 // been registered via regimes and addons.
 var stampDefs = cbc.NewDefinitionRegistry()
 
-// RegisterStampDef adds the stamp definitions to the global register. This
-// is not expected to be called directly, but rather will be used by the
-// regimes and addons during their registration processes.
+// RegisterStampDef adds the stamp definitions to the global register, and
+// is expected to be called from the init functions of the regimes and addons
+// that issue them. Names are prefixed with the issuer, such as
+// "TicketBAI: QR Code", and the usage identifies the addon keys or regime
+// codes.
 func RegisterStampDef(defs ...*cbc.Definition) {
 	stampDefs.Add(defs...)
 }

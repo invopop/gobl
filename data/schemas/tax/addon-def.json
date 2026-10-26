@@ -44,14 +44,6 @@
           "title": "Extensions",
           "description": "Extensions associated with the add-on."
         },
-        "stamps": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/definition"
-          },
-          "type": "array",
-          "title": "Stamps",
-          "description": "Stamp providers that may be included in envelope headers by the add-on."
-        },
         "tags": {
           "items": {
             "$ref": "https://gobl.org/draft-0/tax/tag-set"

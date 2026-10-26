@@ -23,8 +23,8 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampRef,
 		Name: i18n.String{
-			i18n.EN: "AdE Reference",
-			i18n.IT: "Riferimento AdE",
+			i18n.EN: "AdE: Reference",
+			i18n.IT: "AdE: Riferimento",
 		},
 		Desc: i18n.String{
 			i18n.EN: "Reference provided by the AdE once the ticket is accepted, to be printed on the ticket.",
@@ -35,8 +35,8 @@ var stamps = []*cbc.Definition{
 	{
 		Key: StampVoidRef,
 		Name: i18n.String{
-			i18n.EN: "AdE Void Reference",
-			i18n.IT: "Riferimento Annullo AdE",
+			i18n.EN: "AdE: Void Reference",
+			i18n.IT: "AdE: Riferimento Annullo",
 		},
 		Desc: i18n.String{
 			i18n.EN: "Reference provided by the AdE once the ticket is voided, to be printed on the void ticket.",
