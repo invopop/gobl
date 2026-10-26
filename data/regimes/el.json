@@ -29,6 +29,88 @@
   "currency": "EUR",
   "tax_scheme": "VAT",
   "calculator_rounding_rule": "currency",
+  "stamps": [
+    {
+      "key": "iapr-mark",
+      "name": {
+        "el": "ΜΑΡΚ",
+        "en": "MARK"
+      },
+      "desc": {
+        "el": "Μοναδικός αριθμός καταχώρησης που αποδίδεται από το myDATA στο παραστατικό.",
+        "en": "Unique registration number assigned by myDATA to the document."
+      },
+      "usage": {
+        "codes": [
+          "EL"
+        ]
+      }
+    },
+    {
+      "key": "iapr-uid",
+      "name": {
+        "el": "Μοναδικός Κωδικός",
+        "en": "Unique ID"
+      },
+      "desc": {
+        "el": "Μοναδικός κωδικός του παραστατικού που καταχωρήθηκε στο myDATA.",
+        "en": "Unique identifier of the document registered in myDATA."
+      },
+      "usage": {
+        "codes": [
+          "EL"
+        ]
+      }
+    },
+    {
+      "key": "iapr-hash",
+      "name": {
+        "el": "Σήμανση",
+        "en": "Authentication Code"
+      },
+      "desc": {
+        "el": "Κωδικός αυθεντικοποίησης του παραστατικού που εκδόθηκε μέσω παρόχου ηλεκτρονικής τιμολόγησης.",
+        "en": "Authentication code of the document issued through an e-invoicing provider."
+      },
+      "usage": {
+        "codes": [
+          "EL"
+        ]
+      }
+    },
+    {
+      "key": "iapr-provider",
+      "name": {
+        "el": "Πάροχος Ηλεκτρονικής Τιμολόγησης",
+        "en": "E-Invoicing Provider"
+      },
+      "desc": {
+        "el": "Πάροχος ηλεκτρονικής τιμολόγησης που εξέδωσε το παραστατικό.",
+        "en": "E-invoicing provider that issued the document."
+      },
+      "usage": {
+        "codes": [
+          "EL"
+        ]
+      }
+    },
+    {
+      "key": "iapr-qr",
+      "name": {
+        "el": "Κωδικός QR",
+        "en": "QR Code"
+      },
+      "desc": {
+        "el": "URL που περιλαμβάνεται στον κωδικό QR για την επαλήθευση του παραστατικού.",
+        "en": "URL included in the QR code to verify the document."
+      },
+      "usage": {
+        "codes": [
+          "EL"
+        ]
+      }
+    }
+  ],
   "scenarios": [
     {
       "schema": "bill/invoice",

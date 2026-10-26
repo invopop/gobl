@@ -126,6 +126,27 @@
           ]
         }
       ]
+    },
+    {
+      "id": "GOBL-CBC-USAGE",
+      "object": "cbc.Usage",
+      "subsets": [
+        {
+          "field": "paths",
+          "subsets": [
+            {
+              "each": true,
+              "assert": [
+                {
+                  "id": "GOBL-CBC-USAGE-01",
+                  "desc": "path must be a JSON path",
+                  "tests": "matches ^\\$(\\.[$a-zA-Z0-9_-]+(\\[\\*\\])*)*$"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

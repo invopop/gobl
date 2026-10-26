@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -41,6 +42,9 @@ type AddonDef struct {
 
 	// Extensions associated with the add-on.
 	Extensions []*cbc.Definition `json:"extensions" jsonschema:"title=Extensions"`
+
+	// Stamp providers that may be included in envelope headers by the add-on.
+	Stamps []*cbc.Definition `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 
 	// Tag sets that define what can be assigned to each document schema.
 	Tags []*TagSet `json:"tags,omitempty" jsonschema:"title=Tags"`
@@ -180,6 +184,7 @@ func RegisterAddonDef(addon *AddonDef) {
 	for _, ext := range addon.Extensions {
 		RegisterExtension(ext)
 	}
+	head.RegisterStampDef(addon.Stamps...)
 	addons.add(addon)
 }
 

@@ -1548,6 +1548,120 @@
       ]
     }
   ],
+  "stamps": [
+    {
+      "key": "at-atcud",
+      "name": {
+        "en": "ATCUD",
+        "pt": "ATCUD"
+      },
+      "desc": {
+        "en": "Unique document code formed by the series validation code assigned by the AT and the document's sequential number.",
+        "pt": "Código único do documento formado pelo código de validação da série atribuído pela AT e o número sequencial do documento."
+      },
+      "usage": {
+        "codes": [
+          "PT"
+        ]
+      }
+    },
+    {
+      "key": "at-qr",
+      "name": {
+        "en": "QR Code",
+        "pt": "Código QR"
+      },
+      "desc": {
+        "en": "Contents of the QR code that must be printed on the document.",
+        "pt": "Conteúdo do código QR que deve ser impresso no documento."
+      },
+      "usage": {
+        "codes": [
+          "PT"
+        ]
+      }
+    },
+    {
+      "key": "at-hash",
+      "name": {
+        "en": "Hash Characters",
+        "pt": "Caracteres do Hash"
+      },
+      "desc": {
+        "en": "Characters extracted from the document's signature that must be printed on the document.",
+        "pt": "Caracteres extraídos da assinatura do documento que devem ser impressos no documento."
+      },
+      "usage": {
+        "codes": [
+          "PT"
+        ]
+      }
+    },
+    {
+      "key": "at-hash-full",
+      "name": {
+        "en": "Hash",
+        "pt": "Hash"
+      },
+      "desc": {
+        "en": "Complete signature of the document, chained to the signature of the previous document in the series.",
+        "pt": "Assinatura completa do documento, encadeada com a assinatura do documento anterior da série."
+      },
+      "usage": {
+        "codes": [
+          "PT"
+        ]
+      }
+    },
+    {
+      "key": "at-app-id",
+      "name": {
+        "en": "Software Certificate Number",
+        "pt": "Número de Certificado do Programa"
+      },
+      "desc": {
+        "en": "Number of the certificate assigned by the AT to the invoicing software that issued the document.",
+        "pt": "Número do certificado atribuído pela AT ao programa de faturação que emitiu o documento."
+      },
+      "usage": {
+        "codes": [
+          "PT"
+        ]
+      }
+    },
+    {
+      "key": "at-ts",
+      "name": {
+        "en": "System Entry Date",
+        "pt": "Data de Gravação"
+      },
+      "desc": {
+        "en": "Date and time the document was signed and recorded by the invoicing software.",
+        "pt": "Data e hora em que o documento foi assinado e gravado pelo programa de faturação."
+      },
+      "usage": {
+        "codes": [
+          "PT"
+        ]
+      }
+    },
+    {
+      "key": "at-doc-code",
+      "name": {
+        "en": "AT Document Code",
+        "pt": "Código de Identificação AT"
+      },
+      "desc": {
+        "en": "Identification code returned by the AT when a transport document is communicated.",
+        "pt": "Código de identificação devolvido pela AT na comunicação de um documento de transporte."
+      },
+      "usage": {
+        "codes": [
+          "PT"
+        ]
+      }
+    }
+  ],
   "corrections": [
     {
       "schema": "bill/invoice",

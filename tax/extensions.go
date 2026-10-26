@@ -71,34 +71,32 @@ func ExtensionsOf(m cbc.CodeMap) Extensions {
 	return Extensions{m: maps.Clone(m)}
 }
 
-type extensionCollection struct {
-	list map[cbc.Key]*cbc.Definition
-}
-
-// extensionsDefs is a global register of all extension definitions
-// that have been registered via regimes and addons.
-var extensionDefs = newExtensionCollection()
-
-func newExtensionCollection() *extensionCollection {
-	return &extensionCollection{
-		list: make(map[cbc.Key]*cbc.Definition),
-	}
-}
-
-func (c *extensionCollection) add(kd *cbc.Definition) {
-	c.list[kd.Key] = kd
-}
+// extensionDefs is a global register of all extension definitions
+// that have been registered via regimes, addons, and catalogues.
+var extensionDefs = cbc.NewDefinitionRegistry()
 
 // RegisterExtension is used to add any extension definitions to the global
 // register. This is not expected to be called directly, but rather will
 // be used by the regimes and addons during their registration processes.
 func RegisterExtension(kd *cbc.Definition) {
-	extensionDefs.add(kd)
+	extensionDefs.Add(kd)
 }
 
 // ExtensionForKey returns the extension definition for the given key or nil.
 func ExtensionForKey(key cbc.Key) *cbc.Definition {
-	return extensionDefs.list[key]
+	return extensionDefs.For(key)
+}
+
+// AllExtensionDefs provides all the registered extension definitions ordered
+// by key.
+func AllExtensionDefs() []*cbc.Definition {
+	return extensionDefs.All()
+}
+
+// FilterExtensionDefs provides the registered extension definitions whose usage
+// matches the keys, such as addons, or codes, such as tax regime countries.
+func FilterExtensionDefs(keys []cbc.Key, codes []cbc.Code) []*cbc.Definition {
+	return extensionDefs.Filter(keys, codes)
 }
 
 // IsZero returns true when the Extensions has no entries. Used by

@@ -3,6 +3,8 @@ package tax
 import (
 	"sort"
 
+	"github.com/invopop/gobl/head"
+
 	"github.com/invopop/gobl/l10n"
 )
 
@@ -63,6 +65,7 @@ func RegisterRegimeDef(regime *RegimeDef) {
 	for _, ext := range regime.Extensions {
 		RegisterExtension(ext)
 	}
+	head.RegisterStampDef(regime.Stamps...)
 	regimes.add(regime)
 }
 

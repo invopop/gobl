@@ -17,6 +17,7 @@ func init() {
 		Meta{},
 		Source{},
 		URI(""),
+		Usage{},
 	)
 	rules.Register(
 		"cbc",
@@ -27,5 +28,6 @@ func init() {
 		definitionRules(),
 		sourceRules(),
 		uriRules(),
+		usageRules(),
 	)
 }

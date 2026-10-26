@@ -16,3 +16,15 @@ func TestAddons(t *testing.T) {
 		})
 	}
 }
+
+func TestAddonStampUsage(t *testing.T) {
+	for _, ad := range tax.AllAddonDefs() {
+		for _, sd := range ad.Stamps {
+			t.Run(sd.Key.String(), func(t *testing.T) {
+				if assert.NotNil(t, sd.Usage) {
+					assert.Contains(t, sd.Usage.Keys, ad.Key)
+				}
+			})
+		}
+	}
+}

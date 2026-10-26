@@ -22,6 +22,9 @@ type Definition struct {
 	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
 	// Any additional details associated with the key.
 	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+	// Context in which the definition may be used, such as the addons or regimes
+	// that offer it, and where it can be placed inside a document.
+	Usage *Usage `json:"usage,omitempty" jsonschema:"title=Usage"`
 
 	// Where the information was sourced from and where it can be reviewed for updates in the future.
 	Sources []*Source `json:"sources,omitempty" jsonschema:"title=Sources"`
