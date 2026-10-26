@@ -182,26 +182,6 @@
               "percent": "9.0%"
             }
           ]
-        },
-        {
-          "rate": "super-reduced",
-          "keys": [
-            "standard"
-          ],
-          "name": {
-            "en": "Super-Reduced Rate",
-            "ro": "Cota Redusă de 5%"
-          },
-          "values": [
-            {
-              "since": "2025-08-01",
-              "percent": "11.0%"
-            },
-            {
-              "since": "2008-12-15",
-              "percent": "5.0%"
-            }
-          ]
         }
       ],
       "sources": [
@@ -240,12 +220,6 @@
             "en": "OUG nr. 58/2010, art. 44 (TVA 24% din 1 iulie 2010)"
           },
           "url": "https://legislatie.just.ro/Public/DetaliiDocumentAfis/119870"
-        },
-        {
-          "title": {
-            "en": "OUG nr. 200/2008 (TVA 5% pentru locuințe sociale din 15 decembrie 2008)"
-          },
-          "url": "https://legislatie.just.ro/Public/DetaliiDocumentAfis/99787"
         },
         {
           "title": {

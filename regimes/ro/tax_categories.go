@@ -48,10 +48,6 @@ var taxCategories = []*tax.CategoryDef{
 				URL:   "https://legislatie.just.ro/Public/DetaliiDocumentAfis/119870",
 			},
 			{
-				Title: i18n.NewString("OUG nr. 200/2008 (TVA 5% pentru locuințe sociale din 15 decembrie 2008)"),
-				URL:   "https://legislatie.just.ro/Public/DetaliiDocumentAfis/99787",
-			},
-			{
 				Title: i18n.NewString("Legea nr. 571/2003 privind Codul fiscal, art. 140 (TVA 19%, 9% din 1 ianuarie 2004)"),
 				URL:   "https://legislatie.just.ro/Public/DetaliiDocument/48725",
 			},
@@ -128,24 +124,6 @@ var taxCategories = []*tax.CategoryDef{
 					{
 						Since:   cal.NewDate(1995, 1, 1),
 						Percent: num.MakePercentage(90, 3), // 9%
-					},
-				},
-			},
-			{
-				Keys: []cbc.Key{tax.KeyStandard},
-				Rate: tax.RateSuperReduced,
-				Name: i18n.String{
-					i18n.EN: "Super-Reduced Rate",
-					i18n.RO: "Cota Redusă de 5%",
-				},
-				Values: []*tax.RateValueDef{
-					{
-						Since:   cal.NewDate(2025, 8, 1),
-						Percent: num.MakePercentage(110, 3), // 11%
-					},
-					{
-						Since:   cal.NewDate(2008, 12, 15),
-						Percent: num.MakePercentage(50, 3), // 5%
 					},
 				},
 			},
