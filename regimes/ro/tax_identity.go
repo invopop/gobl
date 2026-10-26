@@ -24,9 +24,9 @@ algorithm.
 var taxCodeRegexp = regexp.MustCompile(`^[1-9]\d{1,9}$`)
 
 /*
-	taxCodeWeights are applied right-to-left against the code digits
-(excluding the check digit), once the code has been left-padded with
-zeros to 9 digits.
+	taxCodeWeights are applied left-to-right against the code digits
+	(excluding the check digit), after the code has been left-padded with
+	zeros to 9 digits.
 */
 
 // Tax code weights from the document
