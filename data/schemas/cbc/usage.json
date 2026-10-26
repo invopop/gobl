@@ -27,7 +27,7 @@
           },
           "type": "array",
           "title": "Schemas",
-          "description": "Schema IDs, relative to the GOBL base, of the objects in which the definition\nmay be used, such as \"tax/combo\" or \"org/party\"."
+          "description": "Short schema IDs, without the GOBL base, of the objects in which the\ndefinition may be used, such as \"tax/combo\" or \"org/party\". Packages provide\nconstants for them, such as tax.ShortSchemaCombo."
         },
         "paths": {
           "items": {

@@ -8,8 +8,8 @@ import (
 	"github.com/invopop/gobl/rules/is"
 )
 
-// UsageSchemaPattern defines the format of the schema IDs used in a Usage,
-// relative to the GOBL base, such as "tax/combo" or "org/party".
+// UsageSchemaPattern defines the format of the short schema IDs used in a
+// Usage, without the GOBL base, such as "tax/combo" or "org/party".
 const UsageSchemaPattern = `^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*$`
 
 // UsagePathPattern defines the format of the JSON paths used in a Usage:
@@ -27,8 +27,9 @@ type Usage struct {
 	// Codes used for filtering, such as the tax regime country codes that offer the
 	// definition.
 	Codes []Code `json:"codes,omitempty" jsonschema:"title=Codes"`
-	// Schema IDs, relative to the GOBL base, of the objects in which the definition
-	// may be used, such as "tax/combo" or "org/party".
+	// Short schema IDs, without the GOBL base, of the objects in which the
+	// definition may be used, such as "tax/combo" or "org/party". Packages provide
+	// constants for them, such as tax.ShortSchemaCombo.
 	Schemas []string `json:"schemas,omitempty" jsonschema:"title=Schemas"`
 	// JSON paths inside a document under which the definition may be used, with
 	// "[*]" matching any array index, for when only some of the schema's locations
@@ -40,7 +41,7 @@ func usageRules() *rules.Set {
 	return rules.For(new(Usage),
 		rules.Field("schemas",
 			rules.Each(
-				rules.Assert("01", "schema must be a relative schema ID", is.Matches(UsageSchemaPattern)),
+				rules.Assert("01", "schema must be a short schema ID", is.Matches(UsageSchemaPattern)),
 			),
 		),
 		rules.Field("paths",
@@ -71,7 +72,7 @@ func (u *Usage) Matches(keys []Key, codes []Code) bool {
 }
 
 // MatchesSchema returns true if the usage has no schemas, or if the provided
-// schema ID, either relative like "tax/combo" or complete, matches one of them.
+// schema ID, either short like "tax/combo" or complete, matches one of them.
 func (u *Usage) MatchesSchema(schema string) bool {
 	if u == nil || len(u.Schemas) == 0 {
 		return true

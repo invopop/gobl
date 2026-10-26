@@ -139,7 +139,7 @@
               "assert": [
                 {
                   "id": "GOBL-CBC-USAGE-01",
-                  "desc": "schema must be a relative schema ID",
+                  "desc": "schema must be a short schema ID",
                   "tests": "matches ^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*$"
                 }
               ]

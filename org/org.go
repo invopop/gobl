@@ -50,8 +50,13 @@ func init() {
 	)
 }
 
-// ShortSchemaParty is the short schema name for Party
+// Short schema IDs of objects used inside documents
 const (
-	ShortSchemaParty = "org/party"
-	ShortSchemaItem  = "org/item"
+	ShortSchemaAttribute    = "org/attribute"
+	ShortSchemaDocumentRef  = "org/document-ref"
+	ShortSchemaIdentity     = "org/identity"
+	ShortSchemaItem         = "org/item"
+	ShortSchemaNote         = "org/note"
+	ShortSchemaParty        = "org/party"
+	ShortSchemaRegistration = "org/registration"
 )

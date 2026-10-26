@@ -45,7 +45,7 @@ func TestUsageSchemaValidation(t *testing.T) {
 	t.Run("invalid schemas", func(t *testing.T) {
 		for _, s := range []string{"combo", "Tax/Combo", "https://gobl.org/draft-0/tax/combo", "tax/combo/ext"} {
 			u := &cbc.Usage{Schemas: []string{s}}
-			assert.ErrorContains(t, rules.Validate(u), "[GOBL-CBC-USAGE-01] ($.schemas[0]) schema must be a relative schema ID", s)
+			assert.ErrorContains(t, rules.Validate(u), "[GOBL-CBC-USAGE-01] ($.schemas[0]) schema must be a short schema ID", s)
 		}
 	})
 }

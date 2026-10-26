@@ -1,9 +1,12 @@
 package sii
 
 import (
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/tax"
 )
 
 // Extension keys for SII
@@ -49,7 +52,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"bill/tax"},
+			Schemas: []string{bill.ShortSchemaTax},
 		},
 		Sources: []*cbc.Source{
 			{
@@ -247,7 +250,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"bill/tax"},
+			Schemas: []string{bill.ShortSchemaTax},
 		},
 		Sources: []*cbc.Source{
 			{
@@ -298,7 +301,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"tax/combo"},
+			Schemas: []string{tax.ShortSchemaCombo},
 		},
 		Sources: []*cbc.Source{
 			{
@@ -424,7 +427,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"tax/combo"},
+			Schemas: []string{tax.ShortSchemaCombo},
 		},
 		Sources: []*cbc.Source{
 			{
@@ -497,7 +500,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"tax/combo"},
+			Schemas: []string{tax.ShortSchemaCombo},
 		},
 		Sources: []*cbc.Source{
 			{
@@ -654,7 +657,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"org/identity"},
+			Schemas: []string{org.ShortSchemaIdentity},
 			Paths:   []string{"$.customer.identities[*]"},
 		},
 		Sources: []*cbc.Source{
@@ -828,7 +831,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"bill/tax"},
+			Schemas: []string{bill.ShortSchemaTax},
 		},
 		Sources: []*cbc.Source{
 			{
@@ -878,7 +881,7 @@ var extensions = []*cbc.Definition{
 		},
 		Usage: &cbc.Usage{
 			Keys:    []cbc.Key{V1},
-			Schemas: []string{"tax/combo"},
+			Schemas: []string{tax.ShortSchemaCombo},
 			Paths:   []string{"$.lines[*].taxes[*]"},
 		},
 		Desc: i18n.String{
