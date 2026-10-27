@@ -253,9 +253,9 @@ func TestOrgIdentityNormalize(t *testing.T) {
 		assert.Equal(t, "1234567890123", id.Code.String())
 		assert.Equal(t, "0088", id.Ext.Get(iso.ExtKeySchemeID).String())
 	})
-	t.Run("normalizes Slovak IČO key", func(t *testing.T) {
+	t.Run("normalizes Slovak IČO type", func(t *testing.T) {
 		id := &org.Identity{
-			Key:  sk.IdentityKeyICO,
+			Type: sk.IdentityTypeICO,
 			Code: "36396567",
 		}
 		norm.Normalize(id, tax.AddonContext(en16931.V2017))

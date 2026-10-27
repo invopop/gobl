@@ -2,7 +2,6 @@
 package sk
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
@@ -56,12 +55,10 @@ func New() *tax.RegimeDef {
 
 				Every entrepreneur has a DIČ, the ten digit number that the tax code field holds.
 				Businesses registered for VAT also have an IČ DPH, formed by the prefix SK followed
-				by the same ten digits (e.g. SK2020273893). The IČO (identity key "sk-ico") is the
+				by the same ten digits (e.g. SK2020273893). The IČO (identity type "ICO") is the
 				eight digit number of the business register.
 
-				Invoice content follows § 74 of the VAT Act 222/2004. The supplier needs a tax ID,
-				and the invoice carries the wording of the law for reverse charge, self-billing
-				and the special schemes.
+				Invoice content follows § 74 of the VAT Act 222/2004. The supplier needs a tax ID.
 			`),
 		},
 		Sources: []*cbc.Source{
@@ -91,13 +88,6 @@ func New() *tax.RegimeDef {
 		},
 		TimeZone:   "Europe/Bratislava",
 		Categories: taxCategories,
-		Identities: identityDefinitions,
-		Tags: []*tax.TagSet{
-			invoiceTags(),
-		},
-		Scenarios: []*tax.ScenarioSet{
-			bill.InvoiceScenarios(),
-			invoiceScenarios(),
-		},
+		Identities: identityTypeDefinitions,
 	}
 }

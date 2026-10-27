@@ -13,11 +13,11 @@ import (
 )
 
 const (
-	// IdentityKeyICO is the IČO (Identifikačné číslo organizácie), the number that
+	// IdentityTypeICO is the IČO (Identifikačné číslo organizácie), the number that
 	// the Statistical Office assigns to every legal entity and entrepreneur. It
 	// goes on commercial documents when assigned (§ 3a Commercial Code) and is
 	// the legal registration identifier of the Peppol BIS (BT-30 and BT-47).
-	IdentityKeyICO cbc.Key = "sk-ico"
+	IdentityTypeICO cbc.Code = "ICO"
 )
 
 // icoRegexp matches a normalized IČO: exactly 8 digits.
@@ -27,9 +27,9 @@ var icoRegexp = regexp.MustCompile(`^\d{8}$`)
 // spaces of "36 396 567". Any other character stays and fails the format rule.
 var icoSeparators = strings.NewReplacer(" ", "", "\u00a0", "", ".", "", "-", "", "/", "")
 
-var identityDefinitions = []*cbc.Definition{
+var identityTypeDefinitions = []*cbc.Definition{
 	{
-		Key: IdentityKeyICO,
+		Code: IdentityTypeICO,
 		Name: i18n.String{
 			i18n.EN: "Organisation Identification Number (IČO)",
 			i18n.SK: "Identifikačné číslo organizácie (IČO)",
@@ -42,7 +42,7 @@ var identityDefinitions = []*cbc.Definition{
 // registration identifier of the party, so it gets the legal scope that formats
 // such as UBL use for BT-30 and BT-47.
 func normalizeICO(id *org.Identity) {
-	if id == nil || id.Key != IdentityKeyICO {
+	if id == nil || id.Type != IdentityTypeICO {
 		return
 	}
 	id.Code = cbc.Code(icoSeparators.Replace(id.Code.String()))
@@ -56,9 +56,9 @@ func orgIdentityRules() *rules.Set {
 		rules.When(
 			is.InContext(tax.RegimeIn(CountryCode)),
 			rules.When(
-				org.IdentitiesKeyIn(IdentityKeyICO),
+				org.IdentityTypeIn(IdentityTypeICO),
 				rules.Field("code",
-					rules.Assert("01", "identity code for key sk-ico (IČO) must be 8 digits",
+					rules.Assert("01", "identity code for type ICO (IČO) must be 8 digits",
 						is.MatchesRegexp(icoRegexp),
 					),
 				),

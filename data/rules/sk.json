@@ -31,14 +31,14 @@
           "guard": "context: regime in [SK]",
           "subsets": [
             {
-              "guard": "has a key in [sk-ico]",
+              "guard": "type in [ICO]",
               "subsets": [
                 {
                   "field": "code",
                   "assert": [
                     {
                       "id": "GOBL-SK-ORG-IDENTITY-01",
-                      "desc": "identity code for key sk-ico (IČO) must be 8 digits",
+                      "desc": "identity code for type ICO (IČO) must be 8 digits",
                       "tests": "matches ^\\d{8}$"
                     }
                   ]

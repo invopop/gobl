@@ -18,7 +18,7 @@ supplier:
   emails:
     - addr: "fakturacia@example.sk"
   identities:
-    - key: "sk-ico"
+    - type: "ICO"
       code: "36 396 567"
 
 customer:
@@ -33,7 +33,7 @@ customer:
       code: "04001"
       country: "SK"
   identities:
-    - key: "sk-ico"
+    - type: "ICO"
       code: "31322832"
 
 lines:

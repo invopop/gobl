@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "6d92ef2d322135f265e1774cb002d076b4305986b7d7f535a9719da563638d37"
+			"val": "78a87e181396f891735e710191e6eb6a795910a9d279822dc52ed30d2ff602ae"
 		}
 	},
 	"doc": {
@@ -25,7 +25,7 @@
 			"identities": [
 				{
 					"scope": "legal",
-					"key": "sk-ico",
+					"type": "ICO",
 					"code": "36396567"
 				}
 			],
@@ -53,7 +53,7 @@
 			"identities": [
 				{
 					"scope": "legal",
-					"key": "sk-ico",
+					"type": "ICO",
 					"code": "31322832"
 				}
 			],

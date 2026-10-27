@@ -52,7 +52,6 @@ var orgNoteTextSubjectMap = map[cbc.Key]cbc.Code{
 var orgIdentitySchemeMap = map[cbc.Key]cbc.Code{
 	org.IdentityKeyGLN:  "0088",
 	org.IdentityKeyGTIN: "0160",
-	sk.IdentityKeyICO:   "0158", // Slovak IČO (legal identifier)
 }
 
 // Map of GOBL Identity types (codes) to the corresponding ISO/IEC 6523 code.
@@ -61,6 +60,7 @@ var orgIdentityTypeSchemeMap = map[cbc.Code]cbc.Code{
 	fr.IdentityTypeSIREN: "0002", // French SIREN (legal identifier)
 	fr.IdentityTypeSIRET: "0009", // French SIRET (private identifier)
 	dk.IdentityTypeCVR:   "0184", // Danish CVR-nummer
+	sk.IdentityTypeICO:   "0158", // Slovak IČO (legal identifier)
 }
 
 var (

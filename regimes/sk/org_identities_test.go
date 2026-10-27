@@ -34,7 +34,7 @@ func TestICOIdentity(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			inv := validInvoice()
 			inv.Supplier.Identities = []*org.Identity{
-				{Key: sk.IdentityKeyICO, Code: cbc.Code(tt.code)},
+				{Type: sk.IdentityTypeICO, Code: cbc.Code(tt.code)},
 			}
 			require.NoError(t, inv.Calculate())
 			assert.Equal(t, tt.want, inv.Supplier.Identities[0].Code.String())
@@ -50,7 +50,7 @@ func TestICOIdentity(t *testing.T) {
 	t.Run("gets the legal scope", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Supplier.Identities = []*org.Identity{
-			{Key: sk.IdentityKeyICO, Code: "36396567"},
+			{Type: sk.IdentityTypeICO, Code: "36396567"},
 		}
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, org.IdentityScopeLegal, inv.Supplier.Identities[0].Scope)
@@ -66,7 +66,7 @@ func TestICOIdentity(t *testing.T) {
 	})
 
 	t.Run("not applied outside the SK regime", func(t *testing.T) {
-		id := &org.Identity{Key: sk.IdentityKeyICO, Code: "36 396 567"}
+		id := &org.Identity{Type: sk.IdentityTypeICO, Code: "36 396 567"}
 		norm.Normalize(id, tax.RegimeContext("ES"))
 		assert.Equal(t, "36 396 567", id.Code.String())
 	})
