@@ -1,6 +1,8 @@
 package hr
 
 import (
+	"strings"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
@@ -42,4 +44,16 @@ func orgIdentityRules() *rules.Set {
 			),
 		),
 	)
+}
+
+// normalizeOrgIdentity cleans an OIB the way the tax ID is cleaned: it drops
+// separators and the HR prefix of the VAT number, which shares the OIB's
+// digits, e.g. "HR 1234-5678-903" becomes "12345678903". Any other letter is
+// kept, so that the rules flag the code rather than a typo becoming valid.
+func normalizeOrgIdentity(id *org.Identity) {
+	if id.Type != IdentityTypeOIB {
+		return
+	}
+	code := cbc.NormalizeAlphanumericalCode(id.Code)
+	id.Code = cbc.Code(strings.TrimPrefix(code.String(), CountryCode))
 }

@@ -3,6 +3,8 @@ package hr_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/hr"
 	"github.com/invopop/gobl/rules"
@@ -91,6 +93,28 @@ func TestValidateIdentity(t *testing.T) {
 			} else {
 				assert.ErrorContains(t, err, tt.err)
 			}
+		})
+	}
+}
+
+func TestNormalizeOrgIdentity(t *testing.T) {
+	tests := []struct {
+		name string
+		typ  cbc.Code
+		code cbc.Code
+		want cbc.Code
+	}{
+		{"VAT number prefix", hr.IdentityTypeOIB, "HR12345678903", "12345678903"},
+		{"lowercase prefix", hr.IdentityTypeOIB, "hr12345678903", "12345678903"},
+		{"separators", hr.IdentityTypeOIB, " 123 4567-8903 ", "12345678903"},
+		{"other letters kept", hr.IdentityTypeOIB, "1234567890A", "1234567890A"},
+		{"other type ignored", "OTHER", "HR12345678903", "HR12345678903"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			id := &org.Identity{Type: tt.typ, Code: tt.code}
+			norm.Normalize(id, tax.RegimeContext(hr.CountryCode))
+			assert.Equal(t, tt.want, id.Code)
 		})
 	}
 }
