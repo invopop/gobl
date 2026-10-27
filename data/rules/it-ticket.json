@@ -53,6 +53,66 @@
                   "tests": "present"
                 }
               ]
+            },
+            {
+              "field": "addresses",
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "street",
+                      "assert": [
+                        {
+                          "id": "GOBL-IT-TICKET-BILL-INVOICE-09",
+                          "desc": "supplier address street is required",
+                          "tests": "present"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "locality",
+                      "assert": [
+                        {
+                          "id": "GOBL-IT-TICKET-BILL-INVOICE-10",
+                          "desc": "supplier address locality is required",
+                          "tests": "present"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "code",
+                      "assert": [
+                        {
+                          "id": "GOBL-IT-TICKET-BILL-INVOICE-11",
+                          "desc": "supplier address code is required",
+                          "tests": "present"
+                        },
+                        {
+                          "id": "GOBL-IT-TICKET-BILL-INVOICE-12",
+                          "desc": "supplier address code must be 5 digits",
+                          "tests": "matches ^\\d{5}$"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "region",
+                      "assert": [
+                        {
+                          "id": "GOBL-IT-TICKET-BILL-INVOICE-13",
+                          "desc": "supplier address region is required",
+                          "tests": "present"
+                        },
+                        {
+                          "id": "GOBL-IT-TICKET-BILL-INVOICE-14",
+                          "desc": "supplier address region must be a 2-letter province code",
+                          "tests": "matches ^[A-Z]{2}$"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },
