@@ -125,6 +125,7 @@ func (r *registry) detect(data []byte, keys []cbc.Key) (*entry, error) {
 		return nil, err
 	}
 	in := NewInput(data)
+	in.Requested = keys
 	var match *entry
 	for _, i := range cs {
 		k := r.converters[i].Detect(in)
