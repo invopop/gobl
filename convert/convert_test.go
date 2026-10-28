@@ -298,6 +298,18 @@ func TestImport(t *testing.T) {
 		msg := res.Envelope.Extract().(*note.Message)
 		assert.Equal(t, "alpha-fr:data:test+alpha-fr:test+beta", msg.Content)
 	})
+	t.Run("routing", func(t *testing.T) {
+		res, err := convert.Import([]byte("alpha-fr:data"), convert.WithRouting("iso6523-actorid-upis::0088:sender", "iso6523-actorid-upis::0088:receiver"))
+		require.NoError(t, err)
+		assert.Equal(t, cbc.URI("iso6523-actorid-upis::0088:sender"), res.Envelope.Head.From)
+		assert.Equal(t, cbc.URI("iso6523-actorid-upis::0088:receiver"), res.Envelope.Head.To)
+	})
+	t.Run("routing keeps unset address", func(t *testing.T) {
+		res, err := convert.Import([]byte("alpha-fr:data"), convert.WithRouting("", "iso6523-actorid-upis::0088:receiver"))
+		require.NoError(t, err)
+		assert.Empty(t, res.Envelope.Head.From)
+		assert.Equal(t, cbc.URI("iso6523-actorid-upis::0088:receiver"), res.Envelope.Head.To)
+	})
 	t.Run("formats not matching data", func(t *testing.T) {
 		_, err := convert.Import([]byte("alpha:data"), convert.WithFormats("test+beta"))
 		assert.ErrorIs(t, err, convert.ErrUnknownFormat)

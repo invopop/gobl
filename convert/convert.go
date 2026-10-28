@@ -20,6 +20,7 @@ import (
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/rules"
@@ -86,8 +87,10 @@ type Converter interface {
 	// Import converts data in the given format into a GOBL envelope, and
 	// provides the files embedded in it as attachments. The options carry
 	// the formats requested, so the converter may use them to pick between
-	// formats it cannot tell apart from the data. The register sets the
-	// result's Format.
+	// formats it cannot tell apart from the data. Converters that support
+	// routing should set the options' From and To on the envelope's head
+	// before calculating it. The register sets the result's Format, and any
+	// routing the converter did not.
 	Import(key cbc.Key, data []byte, opts *ImportOptions) (*ImportResult, error)
 	// Accepts checks the envelope can be exported into the format, and
 	// otherwise returns the reason, preferably as rules faults from the
@@ -155,6 +158,11 @@ type ExportResult struct {
 type ImportOptions struct {
 	// Formats limit detection to the formats with these keys.
 	Formats []cbc.Key
+	// From and To are the transport addresses the document was received
+	// with, such as Peppol participant URIs, recorded on the envelope's
+	// head.
+	From cbc.URI
+	To   cbc.URI
 }
 
 // ImportOption sets an import option.
@@ -164,6 +172,16 @@ type ImportOption func(*ImportOptions)
 func WithFormats(keys ...cbc.Key) ImportOption {
 	return func(o *ImportOptions) {
 		o.Formats = append(o.Formats, keys...)
+	}
+}
+
+// WithRouting sets the transport addresses the document was received with,
+// recorded verbatim on the envelope's Head.From and Head.To instead of those
+// GOBL would derive from the document, which are those of an outgoing one.
+func WithRouting(from, to cbc.URI) ImportOption {
+	return func(o *ImportOptions) {
+		o.From = from
+		o.To = to
 	}
 }
 
@@ -270,7 +288,26 @@ func Import(data []byte, opts ...ImportOption) (*ImportResult, error) {
 		return nil, ErrConversion.WithReason("format %s provided no envelope", e.format.Key)
 	}
 	res.Format = e.format
+	setRouting(res.Envelope, o)
 	return res, nil
+}
+
+// setRouting records the requested routing on the envelope, for converters
+// that do not. From and To are not covered by the envelope's signatures, so
+// they may be set once the envelope is calculated.
+func setRouting(env *gobl.Envelope, o *ImportOptions) {
+	if o.From == "" && o.To == "" {
+		return
+	}
+	if env.Head == nil {
+		env.Head = head.NewHeader()
+	}
+	if o.From != "" {
+		env.Head.From = o.From
+	}
+	if o.To != "" {
+		env.Head.To = o.To
+	}
 }
 
 // Export converts the envelope into the format with the key or, when it does
