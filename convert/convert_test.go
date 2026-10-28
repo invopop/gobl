@@ -79,7 +79,7 @@ func (alphaConverter) Detect(in *convert.Input) cbc.Key {
 	return cbc.KeyEmpty
 }
 
-func (alphaConverter) Import(_ cbc.Key, data []byte) (*convert.ImportResult, error) {
+func (alphaConverter) Import(_ cbc.Key, data []byte, _ *convert.ImportOptions) (*convert.ImportResult, error) {
 	switch {
 	case strings.HasSuffix(string(data), ":fail"):
 		return nil, errors.New("boom")
@@ -155,7 +155,7 @@ func (betaConverter) Detect(in *convert.Input) cbc.Key {
 	return cbc.KeyEmpty
 }
 
-func (betaConverter) Import(_ cbc.Key, data []byte) (*convert.ImportResult, error) {
+func (betaConverter) Import(_ cbc.Key, data []byte, _ *convert.ImportOptions) (*convert.ImportResult, error) {
 	env, err := gobl.Envelop(&note.Message{Content: string(data)})
 	if err != nil {
 		return nil, err
@@ -291,6 +291,18 @@ func TestImport(t *testing.T) {
 	t.Run("formats not matching data", func(t *testing.T) {
 		_, err := convert.Import([]byte("alpha:data"), convert.WithFormats("test+beta"))
 		assert.ErrorIs(t, err, convert.ErrUnknownFormat)
+	})
+	t.Run("routing", func(t *testing.T) {
+		res, err := convert.Import([]byte("alpha-fr:data"), convert.WithRouting("iso6523-actorid-upis::0088:sender", "iso6523-actorid-upis::0088:receiver"))
+		require.NoError(t, err)
+		assert.Equal(t, cbc.URI("iso6523-actorid-upis::0088:sender"), res.Envelope.Head.From)
+		assert.Equal(t, cbc.URI("iso6523-actorid-upis::0088:receiver"), res.Envelope.Head.To)
+	})
+	t.Run("routing keeps unset address", func(t *testing.T) {
+		res, err := convert.Import([]byte("alpha-fr:data"), convert.WithRouting("", "iso6523-actorid-upis::0088:receiver"))
+		require.NoError(t, err)
+		assert.Empty(t, res.Envelope.Head.From)
+		assert.Equal(t, cbc.URI("iso6523-actorid-upis::0088:receiver"), res.Envelope.Head.To)
 	})
 	t.Run("attachments", func(t *testing.T) {
 		res, err := convert.Import([]byte("alpha-fr:attach"))
