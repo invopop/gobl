@@ -256,6 +256,10 @@ returns an `ImportResult` with the envelope and the files embedded in the data
 as `Attachments`. The register sets the result's `Format`. It is only called
 for a key the converter returned from `Detect`.
 
+The options' `Formats` are those requested, if any. Converters may use them
+to import in a format they cannot tell apart from the data alone, such as a
+profile only identified by its PDF container, or ignore them.
+
 Converters that know where a document came from set the options' `From` and
 `To` on the envelope's head before calculating it, as GOBL otherwise derives
 them from the document as if it were being sent. The register sets them on

@@ -85,10 +85,12 @@ type Converter interface {
 	// empty key if it is not recognized. It should not fully parse the data.
 	Detect(in *Input) cbc.Key
 	// Import converts data in the given format into a GOBL envelope, and
-	// provides the files embedded in it as attachments. Converters that
-	// support routing should set the options' From and To on the envelope's
-	// head before calculating it. The register sets the result's Format, and
-	// any routing the converter did not.
+	// provides the files embedded in it as attachments. The options carry
+	// the formats requested, so the converter may use them to pick between
+	// formats it cannot tell apart from the data. Converters that support
+	// routing should set the options' From and To on the envelope's head
+	// before calculating it. The register sets the result's Format, and any
+	// routing the converter did not.
 	Import(key cbc.Key, data []byte, opts *ImportOptions) (*ImportResult, error)
 	// Accepts checks the envelope can be exported into the format, and
 	// otherwise returns the reason, preferably as rules faults from the
