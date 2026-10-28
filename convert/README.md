@@ -99,6 +99,10 @@ of the invoice. The envelope does not include them, so they can be stored
 separately. `Import` takes options:
 
 - `WithFormats(keys...)`: limit detection to these formats.
+- `WithRouting(from, to)`: the transport addresses the document was received
+  with, such as Peppol participant URIs, recorded on the envelope's
+  `Head.From` and `Head.To`. Converters receive them to set before
+  calculating the envelope; the register sets them on the result otherwise.
 
 ```go
 res, err := convert.Import(data, convert.WithFormats("ubl+peppol+bis-v3"))
@@ -255,6 +259,11 @@ for a key the converter returned from `Detect`.
 The options' `Formats` are those requested, if any. Converters may use them
 to import in a format they cannot tell apart from the data alone, such as a
 profile only identified by its PDF container, or ignore them.
+
+Converters that know where a document came from set the options' `From` and
+`To` on the envelope's head before calculating it, as GOBL otherwise derives
+them from the document as if it were being sent. The register sets them on
+the result for converters that do not.
 
 ### Export
 
