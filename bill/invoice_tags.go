@@ -103,6 +103,22 @@ var defaultInvoiceTags = &tax.TagSet{
 				`),
 			},
 		},
+
+		// Documents that carry their totals but not their lines.
+		{
+			Key: tax.TagNoLines,
+			Name: i18n.String{
+				i18n.EN: "No Lines",
+			},
+			Desc: i18n.String{
+				i18n.EN: here.Doc(`
+					Indicates that the invoice's lines are not part of the document, so none are required.
+					This is the case for formats that only carry the totals beside a visual representation
+					of the invoice, such as the Factur-X BASIC WL profile. It requires the bypass tag, so
+					the totals stated by the document are kept.
+				`),
+			},
+		},
 		{
 			Key: tax.TagPrepayment,
 			Name: i18n.String{

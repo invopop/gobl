@@ -1510,6 +1510,23 @@ func TestValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "totals are required")
 	})
 
+	t.Run("no lines with stated totals", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		require.NoError(t, inv.Calculate())
+		inv.Lines = nil
+		inv.SetTags(tax.TagBypass, tax.TagNoLines)
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("no-lines tag without bypass", func(t *testing.T) {
+		inv := baseInvoice(t)
+		inv.SetTags(tax.TagNoLines)
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "no-lines tag requires the bypass tag")
+	})
+
 	t.Run("missing line item prices", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
 		inv.Lines[0].Item.Price = nil

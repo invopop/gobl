@@ -124,9 +124,12 @@ func billInvoiceRules() *rules.Set {
 				return validateExemptionNotesCheck(inv)
 			}),
 		),
-		// Lines: BR-16 requires at least one line
-		rules.Field("lines",
-			rules.Assert("03", "at least one line is required (BR-16)", is.Present),
+		// Lines: BR-16 requires at least one line, unless the document
+		// declares it carries none
+		rules.When(is.Func("no no-lines tag", invoiceExpectsLines),
+			rules.Field("lines",
+				rules.Assert("03", "at least one line is required (BR-16)", is.Present),
+			),
 		),
 		// Supplier: BR-8 requires addresses
 		rules.Field("supplier",
@@ -254,6 +257,11 @@ func isDue(inv *bill.Invoice) bool {
 	return inv.Totals != nil &&
 		((inv.Totals.Due != nil && !inv.Totals.Due.IsZero()) ||
 			(inv.Totals.Due == nil && !inv.Totals.Payable.IsZero()))
+}
+
+func invoiceExpectsLines(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	return ok && inv != nil && !inv.HasTags(tax.TagNoLines)
 }
 
 func isDueStandardInvoice(val any) bool {

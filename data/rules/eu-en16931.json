@@ -37,12 +37,17 @@
           ]
         },
         {
-          "field": "lines",
-          "assert": [
+          "guard": "no no-lines tag",
+          "subsets": [
             {
-              "id": "GOBL-EU-EN16931-BILL-INVOICE-03",
-              "desc": "at least one line is required (BR-16)",
-              "tests": "present"
+              "field": "lines",
+              "assert": [
+                {
+                  "id": "GOBL-EU-EN16931-BILL-INVOICE-03",
+                  "desc": "at least one line is required (BR-16)",
+                  "tests": "present"
+                }
+              ]
             }
           ]
         },

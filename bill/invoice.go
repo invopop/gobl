@@ -153,10 +153,13 @@ func invoiceRules() *rules.Set {
 		rules.Field("totals",
 			rules.Assert("09", "invoice totals are required", is.Present),
 		),
-		rules.When(is.Func("no discounts or charges", invoiceNeedsLines),
+		rules.When(is.Func("no discounts, charges or no-lines tag", invoiceNeedsLines),
 			rules.Field("lines",
 				rules.Assert("10", "invoice lines are required without discounts or charges", is.Present),
 			),
+		),
+		rules.Assert("12", "invoice with the no-lines tag requires the bypass tag",
+			is.Func("no-lines with bypass", invoiceNoLinesHasBypass),
 		),
 	)
 }
@@ -184,7 +187,23 @@ func invoiceNeedsLines(val any) bool {
 	default:
 		return false
 	}
-	return inv != nil && len(inv.Discounts) == 0 && len(inv.Charges) == 0
+	return inv != nil && !inv.HasTags(tax.TagNoLines) && len(inv.Discounts) == 0 && len(inv.Charges) == 0
+}
+
+// invoiceNoLinesHasBypass reports whether an invoice tagged no-lines also has
+// bypass: with no lines to calculate from, only bypass keeps the totals its
+// document states.
+func invoiceNoLinesHasBypass(val any) bool {
+	var inv *Invoice
+	switch v := val.(type) {
+	case *Invoice:
+		inv = v
+	case Invoice:
+		inv = &v
+	default:
+		return true
+	}
+	return inv == nil || !inv.HasTags(tax.TagNoLines) || inv.HasTags(tax.TagBypass)
 }
 
 // Invert effectively reverses the invoice by inverting the sign of all quantity

@@ -78,6 +78,24 @@ func TestInvoiceValidation(t *testing.T) {
 		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
+	t.Run("no lines", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		inv.Lines = nil
+		inv.SetTags(tax.TagBypass)
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "at least one line is required (BR-16)")
+	})
+	t.Run("no lines with the no-lines tag", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		inv.Lines = nil
+		inv.SetTags(tax.TagBypass, tax.TagNoLines)
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.NoError(t, err)
+	})
 }
 
 func TestExemptionNoteValidation(t *testing.T) {

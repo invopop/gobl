@@ -5,6 +5,13 @@
     {
       "id": "GOBL-BILL-INVOICE",
       "object": "bill.Invoice",
+      "assert": [
+        {
+          "id": "GOBL-BILL-INVOICE-12",
+          "desc": "invoice with the no-lines tag requires the bypass tag",
+          "tests": "no-lines with bypass"
+        }
+      ],
       "subsets": [
         {
           "field": "type",
@@ -134,7 +141,7 @@
           ]
         },
         {
-          "guard": "no discounts or charges",
+          "guard": "no discounts, charges or no-lines tag",
           "subsets": [
             {
               "field": "lines",

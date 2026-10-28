@@ -45,6 +45,7 @@ const (
 	TagReplacement   cbc.Key = "replacement"
 	TagPartial       cbc.Key = "partial"
 	TagBypass        cbc.Key = "bypass"
+	TagNoLines       cbc.Key = "no-lines"
 	TagB2G           cbc.Key = "b2g"
 	TagExport        cbc.Key = "export"
 	TagEEA           cbc.Key = "eea" // European Economic Area

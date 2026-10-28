@@ -44,6 +44,10 @@
                 "title": "Bypass"
               },
               {
+                "const": "no-lines",
+                "title": "No Lines"
+              },
+              {
                 "const": "prepayment",
                 "title": "Prepayment"
               },
