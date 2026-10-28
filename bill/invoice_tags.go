@@ -127,6 +127,21 @@ var defaultInvoiceTags = &tax.TagSet{
 				`),
 			},
 		},
+		// Summarized invoices have had their lines replaced by a summary
+		// line for each group of lines taxed in the same way.
+		{
+			Key: tax.TagSummarized,
+			Name: i18n.String{
+				i18n.EN: "Summarized",
+			},
+			Desc: i18n.String{
+				i18n.EN: here.Doc(`
+					Indicates that the invoice's lines have been replaced by summary lines with the same
+					totals and taxes, usually because the original document had too many lines to be
+					handled in full. The original document should be consulted for the detail of each line.
+				`),
+			},
+		},
 	},
 }
 

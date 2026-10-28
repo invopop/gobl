@@ -52,6 +52,10 @@
                 "title": "Factoring"
               },
               {
+                "const": "summarized",
+                "title": "Summarized"
+              },
+              {
                 "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",
                 "title": "Any"
               }
