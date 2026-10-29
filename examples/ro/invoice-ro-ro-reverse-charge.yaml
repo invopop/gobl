@@ -1,5 +1,3 @@
-# Domestic reverse charge (taxare inversă, art. 331 Cod fiscal). Cereals sold
-# between VAT registered companies: the reverse-charge tag adds the legal note.
 $schema: https://gobl.org/draft-0/bill/invoice
 $regime: "RO"
 $tags:
@@ -40,10 +38,10 @@ customer:
       country: "RO"
 
 lines:
-  - quantity: "20000"
+  - quantity: "5000"
     item:
-      name: Grâu de panificație
-      price: "1.15"
+      name: Deșeuri feroase
+      price: "1.40"
       unit: kg
     taxes:
       - cat: VAT

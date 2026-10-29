@@ -4,27 +4,25 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "00a17445f4934bf93516d2e42ac88cc1e4b67c9d2141e9ebd4de3525aa79ce84"
+			"val": "59e08e55bb9b21be00a4059168dd5665df1a547a2d053a3b028647d7b46113b6"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "RO",
-		"uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e4011",
+		"uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e4002",
 		"type": "standard",
 		"series": "FCT",
-		"code": "2026-0111",
-		"issue_date": "2026-09-08",
-		"currency": "RON",
-		"tax": {
-			"notes": [
-				{
-					"cat": "VAT",
-					"key": "intra-community",
-					"text": "Livrare intracomunitară scutită de TVA conform art. 294 alin. (2) lit. a) din Codul fiscal"
-				}
-			]
-		},
+		"code": "2026-0102",
+		"issue_date": "2026-09-01",
+		"currency": "EUR",
+		"exchange_rates": [
+			{
+				"from": "EUR",
+				"to": "RON",
+				"amount": "5.0850"
+			}
+		],
 		"supplier": {
 			"name": "Furnizor Exemplu S.R.L.",
 			"tax_id": {
@@ -48,45 +46,48 @@
 			]
 		},
 		"customer": {
-			"name": "Beispiel Handels GmbH",
+			"name": "Client Exemplu S.R.L.",
 			"tax_id": {
-				"country": "DE",
-				"code": "282741168"
+				"country": "RO",
+				"code": "23456783"
 			},
 			"addresses": [
 				{
-					"num": "12",
-					"street": "Musterstraße",
-					"locality": "Berlin",
-					"code": "10115",
-					"country": "DE"
+					"num": "5",
+					"street": "Strada Memorandumului",
+					"locality": "Cluj-Napoca",
+					"region": "CJ",
+					"code": "400114",
+					"country": "RO"
 				}
 			]
 		},
 		"lines": [
 			{
 				"i": 1,
-				"quantity": "50",
+				"quantity": "1",
 				"item": {
-					"name": "Mobilier de birou",
-					"price": "320.00"
+					"name": "Licență software anuală",
+					"price": "1200.00"
 				},
-				"sum": "16000.00",
+				"sum": "1200.00",
 				"taxes": [
 					{
 						"cat": "VAT",
-						"key": "intra-community"
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
 					}
 				],
-				"total": "16000.00"
+				"total": "1200.00"
 			}
 		],
 		"payment": {
 			"terms": {
 				"due_dates": [
 					{
-						"date": "2026-10-08",
-						"amount": "16000.00",
+						"date": "2026-10-01",
+						"amount": "1452.00",
 						"percent": "100%"
 					}
 				]
@@ -102,27 +103,28 @@
 			}
 		},
 		"totals": {
-			"sum": "16000.00",
-			"total": "16000.00",
+			"sum": "1200.00",
+			"total": "1200.00",
 			"taxes": {
 				"categories": [
 					{
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "intra-community",
-								"base": "16000.00",
-								"amount": "0.00"
+								"key": "standard",
+								"base": "1200.00",
+								"percent": "21.0%",
+								"amount": "252.00"
 							}
 						],
-						"amount": "0.00"
+						"amount": "252.00"
 					}
 				],
-				"sum": "0.00"
+				"sum": "252.00"
 			},
-			"tax": "0.00",
-			"total_with_tax": "16000.00",
-			"payable": "16000.00"
+			"tax": "252.00",
+			"total_with_tax": "1452.00",
+			"payable": "1452.00"
 		}
 	}
 }

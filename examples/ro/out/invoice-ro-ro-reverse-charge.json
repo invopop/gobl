@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "bea7f37bc71f4d06f8cd543aba10b6cfcab8b370afc9f48958c78476118e55ed"
+			"val": "29fb2d05cd6bbffaff1c74f9ea3016dcefc4d2a4784f8b44a0dab8f1a2546fcd"
 		}
 	},
 	"doc": {
@@ -70,20 +70,20 @@
 		"lines": [
 			{
 				"i": 1,
-				"quantity": "20000",
+				"quantity": "5000",
 				"item": {
-					"name": "Grâu de panificație",
-					"price": "1.15",
+					"name": "Deșeuri feroase",
+					"price": "1.40",
 					"unit": "kg"
 				},
-				"sum": "23000.00",
+				"sum": "7000.00",
 				"taxes": [
 					{
 						"cat": "VAT",
 						"key": "reverse-charge"
 					}
 				],
-				"total": "23000.00"
+				"total": "7000.00"
 			}
 		],
 		"payment": {
@@ -91,7 +91,7 @@
 				"due_dates": [
 					{
 						"date": "2026-10-01",
-						"amount": "23000.00",
+						"amount": "7000.00",
 						"percent": "100%"
 					}
 				]
@@ -107,8 +107,8 @@
 			}
 		},
 		"totals": {
-			"sum": "23000.00",
-			"total": "23000.00",
+			"sum": "7000.00",
+			"total": "7000.00",
 			"taxes": {
 				"categories": [
 					{
@@ -116,7 +116,7 @@
 						"rates": [
 							{
 								"key": "reverse-charge",
-								"base": "23000.00",
+								"base": "7000.00",
 								"amount": "0.00"
 							}
 						],
@@ -126,8 +126,8 @@
 				"sum": "0.00"
 			},
 			"tax": "0.00",
-			"total_with_tax": "23000.00",
-			"payable": "23000.00"
+			"total_with_tax": "7000.00",
+			"payable": "7000.00"
 		}
 	}
 }
