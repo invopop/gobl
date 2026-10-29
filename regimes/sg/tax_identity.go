@@ -16,12 +16,13 @@ import (
 // Singapore’s tax authority does not publish a public checksum algorithm for UEN or GST numbers.
 // Indeed, IRAS directs users to verify UENs via the official portal
 
-// regexpsGSTCode uses the UEN identities as a base and adds the GST format used
-// for international companies.
-var regexpsGSTCode = append(
-	regexpsUENIdentities,
-	regexp.MustCompile(`^M[A-Z0-9]\d{7}[A-Z]$`),
-)
+// regexpGSTNumber covers GST registration numbers assigned directly by IRAS
+// rather than derived from the entity's UEN, including overseas vendor
+// registrations (e.g. "M91234567X") and older assigned numbers in the
+// "M2-XXXXXXX-X" style whose final check character is a digit (e.g.
+// "M201189853"). No checksum algorithm is published for these, so only the
+// format is verified.
+var regexpGSTNumber = regexp.MustCompile(`^M[A-Z0-9]\d{7}[A-Z0-9]$`)
 
 func taxIdentityRules() *rules.Set {
 	return rules.For(new(tax.Identity),
@@ -48,14 +49,12 @@ func validateTaxCode(code cbc.Code) error {
 		return nil
 	}
 	val := code.String()
-	match := false
-	for _, re := range regexpsGSTCode {
-		if re.MatchString(val) {
-			match = true
-			break
-		}
+	// IRAS-assigned "M" numbers have no verifiable check character.
+	if regexpGSTNumber.MatchString(val) {
+		return nil
 	}
-	if !match {
+	// Everything else must be a valid UEN, including its check character.
+	if !validateUENCode(val) {
 		return errors.New("invalid format")
 	}
 	return nil

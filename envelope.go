@@ -21,13 +21,13 @@ import (
 // in the physical world, it keeps the contents safe and helps
 // get the document where its needed.
 type Envelope struct {
-	// Schema identifies the schema that should be used to understand this document
+	// Identifies the schema that should be used to understand this document.
 	Schema schema.ID `json:"$schema" jsonschema:"title=JSON Schema ID"`
-	// Details on what the contents are
+	// Details about the contents of the envelope.
 	Head *head.Header `json:"head" jsonschema:"title=Header"`
-	// The data inside the envelope
+	// Document contained inside the envelope.
 	Document *schema.Object `json:"doc" jsonschema:"title=Document"`
-	// JSON Web Signatures of the header
+	// JSON Web Signatures of the header.
 	Signatures []*dsig.Signature `json:"sigs,omitempty" jsonschema:"title=Signatures"`
 }
 

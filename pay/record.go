@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
@@ -23,8 +24,11 @@ type Record struct {
 	Date *cal.Date `json:"date,omitempty" jsonschema:"title=Date"`
 	// The payment means used.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
+	// Reason the amount was waived and not collected from the customer,
+	// as an alternative to the payment means key.
+	Waiver cbc.Key `json:"waiver,omitempty" jsonschema:"title=Waiver"`
 	// ID or reference for the payment.
-	Ref string `json:"ref,omitempty" jsonschema:"title=Reference"`
+	Ref cbc.Code `json:"ref,omitempty" jsonschema:"title=Reference"`
 	// Description about the payment.
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
 	// Percentage of the total amount payable that was paid. Note that
@@ -32,6 +36,9 @@ type Record struct {
 	// especially when the total sums to 100%. We recommend only including one
 	// record with a percent value per document.
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
+	// Tax rate totals whose sum is used as the amount, as an alternative to
+	// the percent.
+	Taxes []*tax.Filter `json:"taxes,omitempty" jsonschema:"title=Taxes"`
 	// How much was paid.
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
 	// If different from the parent document's base currency.
@@ -55,6 +62,16 @@ func recordRules() *rules.Set {
 		rules.Field("key",
 			rules.AssertIfPresent("01", "key must be valid", HasValidMeansKey),
 		),
+		rules.When(is.Expr(`string(Waiver) != ""`),
+			rules.Field("key",
+				rules.Assert("03", "key must be blank with waiver", is.Empty),
+			),
+		),
+		rules.When(is.Expr("Percent != nil"),
+			rules.Field("taxes",
+				rules.Assert("02", "taxes must be blank with percent", is.Empty),
+			),
+		),
 	)
 }
 
@@ -63,6 +80,14 @@ func recordRules() *rules.Set {
 func (r *Record) CalculateFrom(payable num.Amount) {
 	if r != nil && r.Percent != nil {
 		r.Amount = r.Percent.Of(payable)
+	}
+}
+
+// CalculateFromTaxes will update the amount using the sum of the tax
+// rate totals that match the record's tax filters, if defined.
+func (r *Record) CalculateFromTaxes(zero num.Amount, t *tax.Total) {
+	if r != nil && len(r.Taxes) > 0 {
+		r.Amount = t.FilteredAmount(zero, r.Taxes)
 	}
 }
 

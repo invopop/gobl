@@ -17,11 +17,6 @@ import (
 	"github.com/invopop/jsonschema"
 )
 
-const (
-	defaultTaxRemovalAccuracy         uint32 = 2
-	defaultCurrencyConversionAccuracy uint32 = 2
-)
-
 // Invoice represents a payment claim for goods or services supplied under
 // conditions agreed between the supplier and the customer. In most cases
 // the resulting document describes the actual financial commitment of goods
@@ -34,30 +29,28 @@ type Invoice struct {
 
 	// Type of invoice document. May be restricted by local tax regime requirements.
 	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"calculated=true"`
-	// Series is used to identify groups of invoices by date, business area, project,
-	// type of document, customer type, a combination of any or other company specific data.
-	// If the output format does not support the series as a separate field, it will be
-	// prepended to the code for presentation with a dash (`-`) for separation.
+	// Identifies groups of invoices by date, business area, project, type of document,
+	// customer type, a combination of any, or other company specific data. If the output
+	// format does not support the series as a separate field, it will be prepended to the
+	// code with a dash (`-`) for separation.
 	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
-	// Code is a sequential identifier that uniquely identifies the invoice. The code can
-	// be left empty initially, but is **required** to **sign** the invoice.
+	// Sequential identifier that uniquely identifies the invoice. May be left empty
+	// initially, but is **required** to **sign** the invoice.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
-	// Issue date for when the invoice was created and issued. Todays date is used if
-	// none is set. There are often legal restrictions on how far back or in the future an
-	// invoice can be issued.
+	// Date when the invoice was created and issued. Today's date is used if none is set.
+	// There are often legal restrictions on how far back or in the future an invoice can be
+	// issued.
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
-	// IssueTime is an optional field that may be useful to indicate the time of day when
-	// the invoice was issued. Some regions and formats may require this field to be set.
-	// An empty string will be automatically updated to reflect the current time, otherwise
-	// the field can be left with a nil value.
+	// Optional time of day when the invoice was issued. Some regions and formats may
+	// require this field; otherwise it can be left nil.
 	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time" jsonschema_extras:"calculated=true"`
 	// Date when the operation defined by the invoice became effective.
 	OperationDate *cal.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
-	// When the taxes of this invoice become accountable, if none set, the issue date is used.
+	// When the taxes of the document become accountable. Defaults to the issue date.
 	ValueDate *cal.Date `json:"value_date,omitempty" jsonschema:"title=Value Date"`
 	// Currency for all invoice amounts and totals, unless explicitly stated otherwise.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency" jsonschema_extras:"calculated=true"`
-	// Exchange rates to be used when converting the invoices monetary values into other currencies.
+	// Exchange rates to be used when converting the document's monetary values into other currencies.
 	ExchangeRates []*currency.ExchangeRate `json:"exchange_rates,omitempty" jsonschema:"title=Exchange Rates"`
 
 	// Document references for previous invoices that this document replaces or extends.
@@ -99,9 +92,8 @@ type Invoice struct {
 	// Additional semi-structured data that doesn't fit into the body of the invoice.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 
-	// Attachments provide additional information or supporting documents that are not included
-	// in the main document. It is important that attachments are not used for alternative
-	// versions of the PDF, for that, see "links" inside the envelope headers.
+	// Supporting documents that are not included in the main document. Do not use for
+	// alternative versions of the PDF; use "links" inside the envelope headers instead.
 	Attachments []*org.Attachment `json:"attachments,omitempty" jsonschema:"title=Attachments"`
 }
 
@@ -300,9 +292,11 @@ func (inv *Invoice) supportedTags() []cbc.Key {
 // If after removing taxes the totals don't match, a rounding error will be added to the
 // invoice totals. In most scenarios this shouldn't be more than a cent or two.
 //
-// Documents using the `currency` rounding rule are switched to `precise`, as the
-// tax-exclusive prices need more decimal places than the currency to reproduce the
-// original tax amounts.
+// Documents that inherit the `currency` rounding rule from their tax regime are
+// switched to `precise`, as the tax-exclusive prices need more decimal places than
+// the currency to reproduce the original tax amounts. A rounding rule set on the
+// document itself is respected. Use RoundToCurrency afterwards when every amount
+// needs to fit the currency's precision.
 //
 // This method will replace the invoice contents in place, or return an error.
 func (inv *Invoice) RemoveIncludedTaxes() error {
@@ -323,9 +317,6 @@ func (inv *Invoice) GetExchangeRates() []*currency.ExchangeRate {
 
 func (inv *Invoice) getIssueDate() cal.Date {
 	return inv.IssueDate
-}
-func (inv *Invoice) getIssueTime() *cal.Time {
-	return inv.IssueTime
 }
 func (inv *Invoice) getValueDate() *cal.Date {
 	return inv.ValueDate
@@ -361,11 +352,11 @@ func (inv *Invoice) getComplements() []*schema.Object {
 func (inv *Invoice) setIssueDate(d cal.Date) {
 	inv.IssueDate = d
 }
-func (inv *Invoice) setIssueTime(t *cal.Time) {
-	inv.IssueTime = t
-}
 func (inv *Invoice) setCurrency(c currency.Code) {
 	inv.Currency = c
+}
+func (inv *Invoice) setTax(tx *Tax) {
+	inv.Tax = tx
 }
 func (inv *Invoice) setTotals(t *Totals) {
 	inv.Totals = t
@@ -403,8 +394,8 @@ func (inv *Invoice) ToEndpoint() *org.Endpoint {
 // UnmarshalJSON implements the json.Unmarshaler interface and provides any
 // data migrations that might be required.
 func (inv *Invoice) UnmarshalJSON(data []byte) error {
-	type Alias *Invoice
-	if err := json.Unmarshal(data, (Alias)(inv)); err != nil {
+	type Alias Invoice
+	if err := json.Unmarshal(data, (*Alias)(inv)); err != nil {
 		return err
 	}
 	// Ensure there is regime set when coming in from a raw JSON source.

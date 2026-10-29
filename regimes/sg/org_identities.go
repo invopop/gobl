@@ -22,11 +22,25 @@ const (
 )
 
 var (
-	regexpsUENIdentities = []*regexp.Regexp{
-		regexp.MustCompile(`^(19[0-9]{2}|20[0-9]{2})\d{5}[A-Z]$`), // UEN (ROC)
-		regexp.MustCompile(`^\d{8}[A-Z]$`),                        // UEN (ROB)
-		regexp.MustCompile(`^[TS]\d{2}[A-Z]{2}\d{4}[A-Z]$`),       // UEN (Others)
-	}
+	regexpUENLocalCompany = regexp.MustCompile(`^(19[0-9]{2}|20[0-9]{2})\d{5}[A-Z]$`) // UEN (ROC)
+	regexpUENBusiness     = regexp.MustCompile(`^\d{8}[A-Z]$`)                        // UEN (ROB)
+	regexpUENOther        = regexp.MustCompile(`^[TS]\d{2}[A-Z]{2}\d{4}[A-Z]$`)       // UEN (Others)
+)
+
+// UEN check character tables. ACRA does not publish the algorithms
+// officially; these are the community reverse-engineered versions also used
+// by python-stdnum and verified against real registered entities. The final
+// character of every UEN is a check character over the preceding ones.
+const (
+	uenBusinessCheckAlphabet     = "XMKECAWLJDB"
+	uenLocalCompanyCheckAlphabet = "ZKCMDNERGWH"
+	uenOtherCheckAlphabet        = "ABCDEFGHJKLMNPQRSTUVWX0123456789"
+)
+
+var (
+	uenBusinessWeights     = []int{10, 4, 9, 3, 8, 2, 7, 1}
+	uenLocalCompanyWeights = []int{10, 8, 6, 4, 9, 7, 5, 3, 1}
+	uenOtherWeights        = []int{4, 3, 5, 3, 10, 2, 2, 5, 7}
 )
 
 var identityDefinitions = []*cbc.Definition{
@@ -76,13 +90,43 @@ func orgIdentityCheckUEN(value any) bool {
 	if !ok || code == "" {
 		return false
 	}
-	val := code.String()
-	match := false
-	for _, re := range regexpsUENIdentities {
-		if re.MatchString(val) {
-			match = true
-			break
-		}
+	return validateUENCode(code.String())
+}
+
+// validateUENCode determines the UEN sub-format from the code's shape and
+// verifies both the format and the trailing check character.
+func validateUENCode(val string) bool {
+	switch {
+	case regexpUENLocalCompany.MatchString(val):
+		return uenDigitChecksum(val, uenLocalCompanyWeights, uenLocalCompanyCheckAlphabet)
+	case regexpUENBusiness.MatchString(val):
+		return uenDigitChecksum(val, uenBusinessWeights, uenBusinessCheckAlphabet)
+	case regexpUENOther.MatchString(val):
+		return uenOtherChecksum(val)
 	}
-	return match
+	return false
+}
+
+// uenDigitChecksum verifies the check letter of the all-digit UEN formats
+// (ROB and ROC): a weighted sum of the digits, mod 11, indexes into the
+// format's check alphabet.
+func uenDigitChecksum(val string, weights []int, alphabet string) bool {
+	sum := 0
+	for i, w := range weights {
+		sum += int(val[i]-'0') * w
+	}
+	return val[len(val)-1] == alphabet[sum%11]
+}
+
+// uenOtherChecksum verifies the check character of the "Others" UEN format
+// ([TS]yyPQnnnnX). Characters map to positions in a 32-character alphabet,
+// are combined in a weighted sum, and (sum - 5) mod 11 indexes back into
+// the same alphabet.
+func uenOtherChecksum(val string) bool {
+	sum := 0
+	for i, w := range uenOtherWeights {
+		sum += strings.IndexByte(uenOtherCheckAlphabet, val[i]) * w
+	}
+	idx := ((sum-5)%11 + 11) % 11
+	return val[len(val)-1] == uenOtherCheckAlphabet[idx]
 }

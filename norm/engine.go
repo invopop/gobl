@@ -42,7 +42,7 @@ func Normalize(doc any, opts ...rules.WithContext) {
 	}
 	prepare(doc)
 	collectContext(rc, doc)
-	walk(rc, rv)
+	walk(rc, rv, make(map[pointerVisit]struct{}))
 }
 
 // prepare gives the root and its exported fields a chance to finalise their
@@ -79,19 +79,30 @@ func prepare(obj any) {
 }
 
 // walk visits v, normalizing children first (post-order) and then v itself.
-func walk(rc *rules.Context, v reflect.Value) {
+type pointerVisit struct {
+	typ reflect.Type
+	ptr uintptr
+}
+
+func walk(rc *rules.Context, v reflect.Value, active map[pointerVisit]struct{}) {
 	switch v.Kind() {
 	case reflect.Pointer:
 		if v.IsNil() {
 			return
 		}
-		walk(rc, v.Elem())
+		visit := pointerVisit{typ: v.Type(), ptr: v.Pointer()}
+		if _, ok := active[visit]; ok {
+			return
+		}
+		active[visit] = struct{}{}
+		walk(rc, v.Elem(), active)
+		delete(active, visit)
 		return
 	case reflect.Interface:
 		if v.IsNil() {
 			return
 		}
-		walk(rc, v.Elem())
+		walk(rc, v.Elem(), active)
 		return
 	case reflect.Struct:
 		t := v.Type()
@@ -99,18 +110,18 @@ func walk(rc *rules.Context, v reflect.Value) {
 			if !t.Field(i).IsExported() {
 				continue
 			}
-			walk(rc, v.Field(i))
+			walk(rc, v.Field(i), active)
 		}
 	case reflect.Slice:
 		if v.CanSet() {
 			pruneNilElements(v)
 		}
 		for i := range v.Len() {
-			walk(rc, v.Index(i))
+			walk(rc, v.Index(i), active)
 		}
 	case reflect.Array:
 		for i := range v.Len() {
-			walk(rc, v.Index(i))
+			walk(rc, v.Index(i), active)
 		}
 	case reflect.Map:
 		// Map values are not addressable, so only pointer (or interface)
@@ -120,7 +131,7 @@ func walk(rc *rules.Context, v reflect.Value) {
 		for iter.Next() {
 			mv := iter.Value()
 			if mv.Kind() == reflect.Pointer || mv.Kind() == reflect.Interface {
-				walk(rc, mv)
+				walk(rc, mv, active)
 			}
 		}
 	}

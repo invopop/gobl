@@ -15,11 +15,6 @@
           "title": "Payer",
           "description": "The party responsible for making payment of the invoice, if not the customer."
         },
-        "terms": {
-          "$ref": "https://gobl.org/draft-0/pay/terms",
-          "title": "Terms",
-          "description": "Payment terms or conditions."
-        },
         "advances": {
           "items": {
             "$ref": "https://gobl.org/draft-0/pay/record"
@@ -27,6 +22,11 @@
           "type": "array",
           "title": "Advances",
           "description": "Any amounts that have been paid in advance and should be deducted from the amount due."
+        },
+        "terms": {
+          "$ref": "https://gobl.org/draft-0/pay/terms",
+          "title": "Terms",
+          "description": "Payment terms or conditions."
         },
         "instructions": {
           "$ref": "https://gobl.org/draft-0/pay/instructions",

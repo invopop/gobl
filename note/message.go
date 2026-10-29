@@ -15,7 +15,7 @@ import (
 // content meant.
 type Message struct {
 	uuid.Identify
-	// Summary of the message content
+	// Summary of the message content.
 	Title string `json:"title,omitempty" jsonschema:"title=Title"`
 	// Details of what exactly this message wants to communicate.
 	Content string `json:"content" jsonschema:"title=Content"`

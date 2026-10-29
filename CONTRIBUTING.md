@@ -68,6 +68,7 @@ The GOBL repository is organized into key directories, each serving a distinct r
 - **c14n** (Canonicalization): Ensures consistent JSON formatting for digital signatures and verification.
 - **cal**: Utilities for date, time, and calendar calculations.
 - **catalogues**: Standardized lists and code sets (e.g., country codes, tax categories) used throughout GOBL and its extensions.
+- **changes**: Release notes, split into the pending changes of each pull request and the notes published with each version.
 - **cbc** (Common Basic Components): Shared building blocks such as keys, codes, and reusable definitions.
 - **cmd**: Command-line tools for interacting with and processing GOBL documents.
 - **currency**: Currency code definitions, exchange rate handling, and monetary value utilities.
@@ -82,7 +83,7 @@ The GOBL repository is organized into key directories, each serving a distinct r
 - **num**: Numeric types and precise arithmetic for financial calculations.
 - **org**: Data structures for organizations, parties, and related business entities.
 - **pay**: Payment methods, terms, and processing logic.
-- **pkg**: Shared utility packages used across multiple parts of the codebase.
+- **pkg**: Shared utility packages used across multiple parts of the codebase, and by other projects such as gobl.dev.
 - **regimes** (Tax Regimes): Country-specific tax rules, rates, and validation logic.
 - **schema**: JSON schema generation and validation logic.
 - **tax**: Core tax structures and logic, used in documents and by regimes or addons.
@@ -106,6 +107,10 @@ mage testrace   # Run all tests with the race detector
 mage build      # Build the CLI binary
 mage install    # Install the CLI binary
 mage check      # Full pipeline: lint + generate + test + verify no uncommitted changes
+
+mage changes:preview   # Show the release notes the pending changes will produce
+mage changes:release   # Publish the pending changes as the version in version.go
+mage changes:format    # Restore the canonical form of the published release notes
 ```
 
 To test a single regime or addon:
@@ -114,6 +119,25 @@ To test a single regime or addon:
 go test ./regimes/<cc>/...
 go test ./addons/<cc>/<format>/...
 ```
+
+### Describing your changes
+
+`CHANGELOG.md` is generated and must not be edited. Instead, add a file named
+after your branch to the `changes/unreleased` directory describing what your
+pull request changes:
+
+```markdown
+## Added
+
+- `bill`: `RoundToCurrency` recalculates an invoice so that every amount fits
+  the currency's precision.
+```
+
+Entries are grouped under `## Added`, `## Changed`, `## Deprecated`,
+`## Removed`, `## Fixed`, or `## Security`, and prefixed with the package,
+regime, or addon key they affect. `mage changes:preview` shows how they will
+read in the release. See [changes/README.md](changes/README.md) for the full
+guide, including how to publish a release.
 
 ### Linting and formatting
 

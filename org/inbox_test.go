@@ -107,6 +107,27 @@ func TestInboxNormalize(t *testing.T) {
 		assert.Empty(t, id.Email)
 		assert.Equal(t, "https://inbox.example.com", id.URL)
 	})
+	t.Run("with scheme and dotted code", func(t *testing.T) {
+		id := &org.Inbox{
+			Scheme: "0225",
+			Code:   "12345678900012.001",
+		}
+		norm.Normalize(id)
+		assert.Equal(t, "0225", id.Scheme.String())
+		assert.Equal(t, "12345678900012.001", id.Code.String())
+		assert.Empty(t, id.URL)
+		assert.Empty(t, id.Email)
+	})
+	t.Run("with peppol key and dotted code", func(t *testing.T) {
+		id := &org.Inbox{
+			Key:  org.InboxKeyPeppol,
+			Code: "0225:12345678900012.001",
+		}
+		norm.Normalize(id)
+		assert.Equal(t, "0225", id.Scheme.String())
+		assert.Equal(t, "12345678900012.001", id.Code.String())
+		assert.Empty(t, id.URL)
+	})
 	t.Run("with peppol participant code", func(t *testing.T) {
 		id := &org.Inbox{
 			Key:  org.InboxKeyPeppol,
@@ -116,6 +137,15 @@ func TestInboxNormalize(t *testing.T) {
 		assert.Equal(t, "1234567890", id.Code.String())
 		assert.Equal(t, "0004", id.Scheme.String())
 		assert.Equal(t, org.InboxKeyPeppol, id.Key)
+	})
+	t.Run("with peppol key and repeated underscores", func(t *testing.T) {
+		id := &org.Inbox{
+			Key:  org.InboxKeyPeppol,
+			Code: "0225:533304358_53330435800013_DEF0__CODIAL",
+		}
+		norm.Normalize(id)
+		assert.Equal(t, "533304358_53330435800013_DEF0__CODIAL", id.Code.String())
+		assert.NoError(t, rules.Validate(id))
 	})
 	t.Run("with peppol participant code without key", func(t *testing.T) {
 		id := &org.Inbox{

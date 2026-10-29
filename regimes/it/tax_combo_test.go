@@ -3,7 +3,6 @@ package it_test
 import (
 	"testing"
 
-	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -25,7 +24,7 @@ func TestTaxComboNormalization(t *testing.T) {
 			}),
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "N1", inv.Lines[0].Taxes[0].Ext.Get(sdi.ExtKeyExempt).String())
+		assert.Equal(t, "N1", inv.Lines[0].Taxes[0].Ext.Get("it-sdi-exempt").String())
 		assert.False(t, inv.Lines[0].Taxes[0].Ext.Has("it-sdi-nature"))
 	})
 
@@ -39,7 +38,7 @@ func TestTaxComboNormalization(t *testing.T) {
 			}),
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "A", inv.Lines[0].Taxes[0].Ext.Get(sdi.ExtKeyRetained).String())
+		assert.Equal(t, "A", inv.Lines[0].Taxes[0].Ext.Get("it-sdi-retained").String())
 		assert.False(t, inv.Lines[0].Taxes[0].Ext.Has("it-sdi-retained-tax"))
 	})
 

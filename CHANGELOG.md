@@ -4,16 +4,334 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
-## [Unreleased]
+This file is generated from the change files in the [changes](./changes) directory. Add new entries to `changes/unreleased` instead of editing this file; see [changes/README.md](./changes/README.md).
+
+## [v0.511.1] - 2026-10-26
 
 ### Added
 
+- `bill`, `org`, `pay`, `tax`: `ShortSchema` constants for the objects used
+  inside documents that may contain extensions, such as `tax.ShortSchemaCombo`
+  or `org.ShortSchemaIdentity`.
+
+### Changed
+
+- `cbc`: the `Usage` schema validation message refers to short schema IDs.
+
+## [v0.511.0] - 2026-10-26
+
+### Added
+
+- `addons`: approved `peppol-bis-v3` and `peppol-pint-v1` as external addons implemented by [`github.com/invopop/gobl.peppol`](https://github.com/invopop/gobl.peppol), so they are now valid `$addons` values.
+- `cbc`: `Usage` on `Definition`, with keys, codes, schema IDs, and JSON
+  paths that describe where a definition may be used, such as the addons
+  or regimes that offer it and the objects that may contain it.
+- `cbc`: `DefinitionRegistry`, an ordered set of definitions by key that can
+  be filtered by usage.
+- `head`: stamp definitions register, with `RegisterStamp`, `StampDefFor`,
+  `AllStampDefs`, and `FilterStampDefs`. Stamp names are prefixed with the
+  issuer, such as "TicketBAI: QR Code".
+- `tax`: `AllExtensionDefs` and `FilterExtensionDefs`.
+- `tax`: `Stamps` in `RegimeDef` and `AddonDef`, registered as stamp
+  definitions in `head`.
+- `tax`, `bill`: schemas for `Combo`, `RateTotal`, `LineCharge`, and
+  `LineDiscount`, so every object with extensions has a schema ID.
+- `pt`, `mx`, `el`: stamp definitions for the stamps issued by the AT, SAT,
+  and IAPR.
+- `es-tbai-v1`, `it-ticket-v1`: stamp definitions for the TicketBAI and AdE
+  stamps.
+- `pt`, `br`, `es-sii-v1`, `es-tbai-v1`, `fr-choruspro-v1`, `gr-mydata-v1`,
+  `it-ticket-v1`: extension usage with the addon key or regime code, and the
+  schemas of the objects that contain each extension.
+- `cef`, `iso`, `untdid`: extension usage with the schemas of the objects
+  that contain each extension.
+- `bill`: `DeliveryDetails` gains `ext` for extension codes that apply to the
+  delivery, such as the delivery terms a format or addon defines.
+
+### Changed
+
+- `pt`, `br`, `es-sii-v1`, `es-tbai-v1`, `fr-choruspro-v1`, `gr-mydata-v1`,
+  `it-ticket-v1`, `cef`, `iso`, `untdid`: extension names are prefixed with
+  the issuer, such as "SII: Invoice Type" or "UNTDID 1001: Document Type".
+- `tax`: **breaking** registering a different extension definition with a key
+  that is already in use panics.
+- `tax`: `RegisterExtension` accepts multiple definitions.
+
+### Fixed
+
+- `org`: `Inbox` codes use the default `cbc.NormalizeCode` instead of strict
+  normalization, so participant IDs such as
+  `0225:533304358_53330435800013_DEF0__CODIAL` are kept as issued.
+
+## [v0.510.0] - 2026-10-15
+
+### Added
+
+- `convert`: `Attachment`, a file to embed in an exported document, such as a
+  PDF version of an invoice, passed with the `WithAttachments` export option.
+  `Format.Attachments` says whether a format can embed them; other formats
+  refuse envelopes exported with attachments.
+- `convert`: `Import` provides the files embedded in the data, such as a PDF
+  version of an invoice, as `Attachments` in its `ImportResult`.
+
+### Changed
+
+- `convert`: **breaking** `Export(env, key, opts...)` takes a single format
+  key, with further keys to try passed with the `WithAlternatives` option.
+- `convert`: **breaking** `Converter.Export` receives the `ExportOptions`,
+  including the attachments to embed.
+- `convert`: **breaking** `Import(data, opts...)` returns an `ImportResult`
+  with the detected `Format`, the `Envelope` and the `Attachments`. Detection
+  is limited to some formats with the `WithFormats` option.
+- `convert`: **breaking** `Converter.Import` returns an `ImportResult`.
+- `convert`: **breaking** `Output` is renamed `ExportResult`.
+
+## [v0.509.0] - 2026-10-15
+
+### Changed
+
+- `es-facturae-v3`: **breaking** the FacturaE addon moved to its own module,
+  [gobl.es.facturae](https://github.com/invopop/gobl.es.facturae), which must
+  be imported (`github.com/invopop/gobl.es.facturae/addon`) to calculate or
+  validate documents that declare it. The key stays valid in the `$addons`
+  JSON Schema as an approved external addon. Fault codes are unchanged.
+- `de-xrechnung-v3`, `de-zugferd-v2`: **breaking** the German addons moved to
+  [gobl.de.xinvoice](https://github.com/invopop/gobl.de.xinvoice), imported
+  from `github.com/invopop/gobl.de.xinvoice/addon/xrechnung` and
+  `github.com/invopop/gobl.de.xinvoice/addon/zugferd`. The keys stay valid as
+  approved external addons. Fault codes are unchanged.
+- `fr-facturx-v1`: **breaking** the Factur-X addon moved to
+  [gobl.fr.ctc](https://github.com/invopop/gobl.fr.ctc), imported from
+  `github.com/invopop/gobl.fr.ctc/addon/facturx`. The key stays valid as an
+  approved external addon.
+- `addons/es/verifactu`: **breaking**: the Spanish VERI*FACTU (`es-verifactu-v1`) addon moved to the standalone [`github.com/invopop/gobl.es.verifactu`](https://github.com/invopop/gobl.es.verifactu) module, alongside the VeriFactu converter that consumes it. Add a blank import (`_ "github.com/invopop/gobl.es.verifactu/addon"`) to keep using the `es-verifactu-v1` addon key. The key itself is unchanged, and remains a valid `$addons` value through the approved external addon list.
+
+### Removed
+
+- `addons/es/facturae`: moved to gobl.es.facturae. The Spanish examples no
+  longer declare the addon.
+- `addons/de/xrechnung`, `addons/de/zugferd`: moved to gobl.de.xinvoice.
+- `addons/fr/facturx`: moved to gobl.fr.ctc.
+- Examples `invoice-de-de-xr`, `invoice-de-es-xr` and `invoice-fr-fr-facturx`
+  are now `invoice-de-de-en16931`, `invoice-de-es-en16931` and
+  `invoice-fr-fr-en16931`, declaring only `eu-en16931-v2017`.
+
+### Fixed
+
+- `rules/is`: `Length` and `RuneLength` describe a bound that is open on one
+  side as "at least" or "at most", where they used to print "between 2 and 0".
+
+## [v0.508.1] - 2026-10-15
+
+### Added
+
+- `convert`: `Rules` provides a rule set for a format, with fault codes
+  prefixed by the format key, and `RequireAddons` a rule that faults when a
+  document does not include the addons a format needs.
+- `rules`: `JoinFaults` combines several collections of faults into one.
+
+### Changed
+
+- `convert`: **breaking** `Converter.Accepts` returns an error with the reason
+  a document cannot be exported, preferably as rules faults, instead of a bool.
+  When no requested format accepts a document, `Export` returns
+  `ErrNotSupported` with the reasons from each format, as faults when they all
+  are.
+
+### Removed
+
+- `convert`: **breaking** `Format.Addons`. Converters check the addons each
+  exported schema needs in `Accepts`.
+
+## [v0.508.0] - 2026-10-14
+
+### Added
+
+- `convert`: a central register of converters between GOBL and external
+  formats. Converter packages call `convert.Register` from `init` to add their
+  formats. `convert.Import` detects the format of incoming data and converts
+  it into an envelope, `convert.Export` converts an envelope into the first of
+  a list of preferred formats that accepts it, and `convert.Formats`,
+  `convert.FormatsFor`, and `convert.Conversions` list what is available.
+- `regimes/bs`: Commonwealth of the Bahamas regime. We contemplate the TIN as the tax identification, plus the VAT at a standard and a reduced rate.
+- `bill`: `Charge` accepts an `informative` flag. An informative charge is
+  calculated, validated, and kept on the document, but is left out of the
+  charge total, the taxable base, and every amount that follows, and cannot
+  carry taxes. It models costs that must be declared on an invoice while being
+  borne by the supplier, such as the Italian *Marca da Bollo* when the issuer
+  absorbs the €2 instead of passing it on to the customer.
+- `org`: `Item` supports the EN 16931 price details (BG-29): `list`, the list
+  price before the price discount (BT-148); `discount`, the amount deducted
+  from the list price (BT-147); and `per`, the number of units the price
+  applies to (BT-149). When a list price is set, the price is calculated as
+  the list price less the discount.
+- `org`: `Item.UnitPrice` provides the item's price for a single unit, taking
+  `per` into account.
+- `bill`: line sums divide the item's price by `per`, so a price per 100 kg
+  applied to 250 kg gives a sum of 2.5 times the price.
+- `tax`: `Filter` selects rate totals by category and, optionally, key and extensions. `Total.FilteredAmount` sums the matching rate amounts.
+- `pay`: `Record.Taxes` takes tax filters as an alternative to `percent`, so the amount is the sum of the matching rate totals. Setting both fails validation, as does using taxes on `bill.Payment` methods.
+- `pay`: `Record.Waiver` gives the reason an amount was waived and not collected from the customer, such as a tax refunded at the point of sale, as an alternative to the means `key`. GOBL doesn't define the values, and `bill.Payment` methods don't accept it.
+- `pay`: `CreditTransfer`, `Card`, and `DirectDebit` accept a `label` and `meta`, and `Online` accepts `meta`.
+
+### Changed
+
+- `co-dian-v2`: **breaking**: the Colombia DIAN addon moved to the standalone
+  [`github.com/invopop/gobl.co.dian`](https://github.com/invopop/gobl.co.dian)
+  module. Add a blank import (`_ "github.com/invopop/gobl.co.dian/addon"`) to
+  keep using the `co-dian-v2` addon key. The key itself is unchanged, and
+  remains a valid `$addons` value through the approved external addon list. The
+  Colombian tax regime (`regimes/co`) stays in GOBL core.
+- `addons/ar/arca`: **breaking**: the Argentina ARCA (`ar-arca-v4`) addon moved to the standalone [`github.com/invopop/gobl.ar.arca`](https://github.com/invopop/gobl.ar.arca) module. Add a blank import (`_ "github.com/invopop/gobl.ar.arca/addon"`) to keep using the `ar-arca-v4` addon key. The key itself is unchanged, and remains a valid `$addons` value through the approved external addon list.
+- `bill`, `org`, `tax`, `head`, `pay`, `cbc`, `cal`, `currency`, `dsig`, `l10n`, `note`: reviewed and shortened the JSON Schema field descriptions. Descriptions no longer repeat the field name, several typos and factual slips were corrected (order issue date and currency described as "invoice", `ISO 3166-2` where `ISO 3166-1 alpha-2` was meant, a truncated `CorrectionDefinition` comment), and long explanations were tightened.
+- `bill`: due date percentages are calculated from the amount due after advances, falling back to the payable amount. When nothing remains due, their amounts are removed.
+- `bill`: advances with tax filters take their amount from the invoice's rounded tax totals.
+- **breaking**: `pay`: `Record.Ref` and `DirectDebit.Ref` are `cbc.Code` instead of `string`, matching `Instructions.Ref`. JSON documents are unchanged, but references are limited to 128 characters and Go code assigning a `string` needs a conversion.
+
+### Removed
+
+- **breaking**: `data`: the generated addon definitions under `data/addons` are
+  gone, along with the generator that produced them. They could only ever
+  describe the addons still compiled into core, so as addons moved to their own
+  modules the directory became a shrinking subset that looked complete: of the
+  25 addon keys GOBL recognises — 13 built in, 12 on the approved external
+  list — only the built-in 13 had a file. Build the definition from the
+  registry instead, which covers every addon a binary has loaded:
+  `schema.NewObject(tax.AddonForKey(key))` marshalled with two-space indent
+  reproduces exactly what these files contained.
+- `data`: `data/regimes/gr.json` is gone. Greece registers under `EL`, so this
+  was a leftover from before that rename, unreachable from the registry and
+  last regenerated in 2024 while `el.json` kept moving. Nothing generates it.
+
+### Fixed
+
+- `num`: `AmountFromString` rejects a sign in the fraction. `1.-25` was read as `0.975`. `-245.12` still parses.
+- `l10n`: country codes are trimmed and uppercased during normalization, so `de` becomes `DE`.
+- `l10n`: `ISOCountryCode` and `TaxCountryCode` are validated by the rules engine (`GOBL-L10N-ISOCOUNTRYCODE-01`, `GOBL-L10N-TAXCOUNTRYCODE-01`).
+- `bill`: an `issue_time` of midnight (`00:00:00`) is no longer treated as unset. Previously the calculators replaced it, along with the `issue_date`, with the current date and time. The issue time is now always kept as provided; only a missing `issue_date` is still filled in with today's date.
+- `bill`: `ConvertInto` converts the items, discounts, and charges of
+  breakdown and substituted sub-lines, not only those of the line itself.
+- `bill`: `RemoveIncludedTaxes` no longer panics on lines without a price.
+
+## [v0.507.0] - 2026-09-15
+
+### Added
+
+- `org`: `Attribute` accepts an `ext` extension map, so codes that accompany an
+  attribute can be preserved alongside its value. During normalization, legacy
+  UN/ECE unit values move to the `untdid-unit` extension without being
+  interpreted, matching `org.Item`.
+- `eu-en16931-v2017`: the `portion` unit maps to the UNTDID `13` (ration) code,
+  so it can satisfy BR-23, which requires a unit code on every invoice line.
+  Every unit GOBL defines now has an exact UNTDID equivalent.
+
+### Changed
+
+- `addons/pl/favat`: **breaking**: the Polish KSeF FA_VAT (`pl-favat-v3`) addon moved to the standalone [`github.com/invopop/gobl.pl.ksef`](https://github.com/invopop/gobl.pl.ksef) module, alongside the KSeF converter that consumes it. Add a blank import (`_ "github.com/invopop/gobl.pl.ksef/addon"`) to keep using the `pl-favat-v3` addon key. The key itself is unchanged, and remains a valid `$addons` value through the approved external addon list.
+- **breaking**: `catalogues/untdid`: the GOBL unit key to UN/ECE unit code
+  mapping lives here rather than in the `eu-en16931-v2017` addon, as `UnitCode`
+  and `UnitKey`, so that formats outside the EN 16931 family built on the same
+  codes, such as the Mexican CFDI's `ClaveUnidad`, can share one table. The
+  addon's `UnitToUNTDID` and `UnitFromUNTDID` are gone; call the catalogue
+  directly.
+- **breaking**: `eu-en16931-v2017`: an item's unit takes priority over its
+  `untdid-unit` extension, which is aligned with the code the unit defines.
+  Only when no unit is given does the extension determine one, which is left
+  empty for a code GOBL has no key for. Normalization corrects the extension
+  but never adds nor removes it, so a document that carries a standard code
+  keeps it alongside the unit, and one that does not is left alone. Item
+  attributes are normalized the same way.
+- **breaking**: `eu-en16931-v2017`: BR-23 accepts a unit code that is
+  determinable, from either the unit key or the extension, rather than one
+  stored in the extension. The generic `one` unit only stands in when the
+  document gives neither, so a code with no GOBL equivalent no longer produces
+  a unit that contradicts it.
+
+### Removed
+
+- **breaking**: `org`: the non-standard `6pack` and `tetrabrik` units, which had
+  no UN/ECE equivalent and so could never satisfy BR-23. Normalization replaces
+  them with `pkg` and `carton` respectively, so existing documents keep
+  validating.
+
+## [v0.506.0] - 2026-09-15
+
+### Added
+
+- `regimes/sk`: added the Slovakia (SK) tax regime: VAT at the 23% standard,
+  19% reduced and 5% super-reduced rates, and IČ DPH tax identity validation
+  with a mod-11 checksum.
+- `bill`: `RoundToCurrency` recalculates an invoice with the `currency` rounding rule so that every amount fits the currency's precision, with any change in the amount payable carried in the totals' `rounding`.
+- `changes`: release notes are now written as one file per pull request in `changes/unreleased`, merged into a dated note in `changes/releases` when a version is published. `CHANGELOG.md` is generated from those notes and is no longer edited by hand; see [changes/README.md](changes/README.md).
+- `pkg/changes`: the tooling behind the changes directory, for any project that lays its release notes out the same way.
+- `regimes/pe`: added the core Peru (PE) tax regime: the general IGV rate,
+  RUC normalization and mod-11 validation, and corrections limited to
+  credit and debit notes.
+- `untdid`: new `untdid-unit` extension for preserving any UN/ECE
+  Recommendations 20 or 21 unit code. The EN16931 addon provides
+  `UnitToUNTDID` and `UnitFromUNTDID` converters.
+- `regimes/cr`: new tax regime for Costa Rica.
+
+### Changed
+
+- `bill`: `RemoveIncludedTaxes` only switches to the `precise` rounding rule when the rule was inherited from the tax regime. A rule set on the document itself is now respected.
+- **breaking**: removed `org.Unit`; unit fields and constants now use `cbc.Key`,
+  consistent with other GOBL key-based vocabularies. `UnitDefinitions`,
+  `HasValidUnitKey`, and `ExtendUnitKeySchema` provide shared definitions,
+  contextual validation, and schema choices. During normalization, `org.Item`
+  moves legacy UN/ECE unit values to the `untdid-unit` extension without
+  interpreting them. The `eu-en16931-v2017` addon owns bidirectional mapping
+  between that extension and GOBL unit keys.
+
+### Fixed
+
+- `bill`: `RemoveIncludedTaxes` maintains the amount payable instead of the total with tax, adds to any `rounding` total already present instead of replacing it, and calculates documents whose totals have not been prepared, which previously panicked when they were absent and took the amount payable from totals assembled by hand.
+- `bill`: fixed discount and charge amounts inside lines are rounded to the currency's precision when the `currency` rounding rule applies, instead of keeping the decimals they were given.
+- `bill`: the delivery `type` is marked as calculated in the JSON schema, which was previously rendered as `"enum": "advice"`.
+- `org`: `Inbox` normalization no longer re-interprets the `code` as a URL or email
+  when a `scheme` is set or the key is `peppol`. Dotted participant IDs such as French
+  `0225` routing codes were previously moved into the `url` field on every save.
+
+## [v0.505.0] - 2026-09-09
+
+### Added
+
+- `regimes/au`: New tax regime for Australia — GST and ABN tax identity validation (weighted modulus-89 checksum).
+- `regimes/nz`: New tax regime for New Zealand — GST, IRD number validation (weighted modulus-11 checksum), and te reo Māori (`mi`) translations.
+- `sg`: UEN check character validation for the ROB, ROC, and "Others" formats,
+  applied to both `UEN` org identities and tax identity codes.
+- `org`/`bill`: parties may now identify a single-level agent acting on their
+  behalf, and ordering details may identify the addressee alongside the document issuer.
+- `addons/eu/en16931`: the party electronic address (BT-34, BT-49) is now
+  validated on `org.Endpoint` instead of the deprecated `org.Inbox`: at most one
+  ISO 6523 endpoint per party, and its URI must carry both a scheme and a code.
+- `cbc`: `URISchemeIn` and `URIOpaqueMatches` rules tests, so a rule can be
+  scoped to one kind of URI, or applied to the address it carries, instead of
+  parsing the URI inside a custom function.
+- `catalogues/iso`: `ActorIDScheme`, the `iso6523-actorid-upis` URI scheme, so
+  addons no longer redeclare the literal.
+- `gr-mydata-v1`: new `gr-mydata-branch` party extension to declare the AADE
+  branch (establishment) number on suppliers and customers. When absent, the
+  headquarters branch (`0`) is assumed. Values are validated on the invoice's
+  supplier and customer extensions.
 - `net`: added `SandboxAuthorities` (defaulting to `lookup.sandbox.gobl.org`)
   and `WithSandbox`. Sandbox and live trust lists remain separate.
 - `regimes/ro`: new tax regime for Romania, and examples for each invoice type GOBL supports natively.
 
 ### Changed
 
+- `addons/eu/en16931`: the deprecated `org.Inbox` no longer carries
+  addon rules. These are now handled by `org.Endpoint`.
+- `cal`: **breaking**: `Period` `start` and `end` are now pointers, and only one
+  of the two is required. A period with neither fails with the new
+  `GOBL-CAL-PERIOD-11`.
+- `addons/it/sdi`: **breaking**: the Italian SDI FatturaPA (`it-sdi-v1`) addon moved to the standalone [`github.com/invopop/gobl.it.sdi`](https://github.com/invopop/gobl.it.sdi) module. Add a blank import (`_ "github.com/invopop/gobl.it.sdi/addon"`) to keep using the `it-sdi-v1` addon key.
+- `gr-mydata-v1`: the `gr-mydata-income-cat` extension may now be set to
+  `category1_95` (Other Income-related Information) without an accompanying
+  `gr-mydata-income-type`, as required by IAPR for informative amounts such as
+  the 0.5% municipality duty. Setting an income type alongside `category1_95`
+  is now rejected. All other income categories still require both extensions.
+- `org`: `Attribute` no longer requires a `key` or `type` when a `label` is present.
 - `net`: signatures are no longer interpreted by position. `Client.VerifyEnvelope`
   is replaced by `Client.VerifyParty`, which verifies the address declared by a
   party, and `Client.VerifyDelivery`, which finds the sole issuer bound to an
@@ -28,16 +346,33 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `net`: `Client.VerifyAuthority` returns `ErrUnavailable`, rather than
   `ErrVerifyFailed`, when authority keys are temporarily unreachable and no
   endorsement can be verified.
+- `catalogues/cef`: the `cef-vatex` extension now reflects the official VATEX code list version 8.0, growing from 59 to 88 enumerated codes. The 26 French codes admitted by the CTC profiles, such as `VATEX-FR-CGI261-1`, are included, along with the new EU codes `VATEX-EU-135-1`, `VATEX-EU-144`, `VATEX-EU-146-1E`, `VATEX-EU-153` and `VATEX-EU-159`, so the shape-only pattern is no longer needed. Every code now carries the source list's `nationality`, `deprecated` and `first-version` columns as metadata — plus `last-version` and `remark` where the list provides them — and its context of exemption as the description. The extension itself records the code list `version` and where it came from.
+- `pay`: `DueDate` no longer requires an `amount`; due dates parsed from
+  documents that don't include partial payment amounts (e.g. CII payment terms)
+  are no longer assigned a zero amount that fails `GOBL-PAY-DUEDATE-02`. An
+  amount that is set must still not be zero, and it is still calculated from
+  `percent` when present.
+- `es-facturae-v3`: due dates now require an `amount`
+  (`GOBL-ES-FACTURAE-PAY-DUEDATE-01`), preserving the guarantee behind
+  FacturaE's mandatory `InstallmentAmount` element — the original reason
+  `pay.DueDate` required an amount globally — now that the core requirement is
+  relaxed.
 
 ### Fixed
 
+- `sg`: tax identity codes now accept IRAS-assigned GST registration numbers
+  ending in a digit (e.g. `M201189853`), previously rejected because a trailing
+  letter was required.
 - `bill`: removing taxes included in prices from a document using the `currency` rounding rule now switches it to `precise`, so that the resulting tax bases and amounts match those of the original document. Before, the tax-exclusive line totals were rounded to the currency's precision, which drifted from the original tax amounts by an amount that grew with the number of lines and left the difference in the document's `rounding` total.
 - `head`: `SignedPayload` and `Header.Verify` now return an error for `null`
   signature entries instead of panicking.
 - `regimes/ar`: CUIT/CUIL tax identities with the `24` prefix (an individual
   contingency prefix) are no longer wrongly rejected as having an invalid prefix.
+- `bill`: unmarshalling an `Invoice` under the `jsonv2` implementation of
+  `encoding/json`, the default from Go 1.27, no longer re-enters
+  `Invoice.UnmarshalJSON` until the process dies with a fatal stack overflow.
 
-## [v0.504.0]
+## [v0.504.0] - 2026-08-05
 
 ### Added
 
@@ -229,8 +564,6 @@ Normalization has been rebuilt around the new `norm` package — the counterpart
 - `es-verifactu-v1`: Migrated doc-type extension routing from normalizer hack to `CorrectionNormalize`.
 - `es-sii-v1`: Migrated doc-type extension routing from normalizer hack to `CorrectionNormalize`.
 
-### Fixed
-
 - `bill`: payment line validation now correctly rejects an `amount` greater than `payable - advances` when advances fully cover the payable, instead of falling through to a misleading "due must be zero or positive" error on the calculated `due` field.
 
 ## [v0.402.0] - 2026-04-30
@@ -357,15 +690,13 @@ In addition, the "serve" CLI command has been improved to offer a self-hosted ve
 
 - `pt-saft-v1`: Added correction definitions
 
-### Removed
-
-- `pkg/template`: removed as no longer used.
-
-### Added
-
 - `fr-ctc-v1`: French CTC Flow 2 B2B e-invoicing addon
 - `fr`: SIREN and SIRET identity types format validation
 - `org`: New note keys: `payment-method` and `payment-term`
+
+### Removed
+
+- `pkg/template`: removed as no longer used.
 
 ### Changed
 
@@ -441,7 +772,7 @@ In addition, the "serve" CLI command has been improved to offer a self-hosted ve
 
 - `es-verifactu-v1`: Simplified invoices no longer require a tax ID.
 
-## Removed
+### Removed
 
 - `org`: `Attachment.Name` field is no longer required.
 - `it-sdi-v1`: removed IBAN length validation.
@@ -568,16 +899,14 @@ In addition, the "serve" CLI command has been improved to offer a self-hosted ve
 - `pt`: added comprehensive validations to regime
 - `pt-saft-v1`: added comprehensive validations to addon
 
+- `cbc`: new `NormalizeString` method to help clean texts used throughout GOBL to trim whitespace and remove invalid or nil UTF-8 characters.
+- `tax`: `Combo`: removing migration of `exempt` `rate` field to `key`, so as not to make assumptions about manually assigned extensions.
+- `pl`: moved to new addon `pl-favat-v2` - only basic implementation at this time to remove restrictions on regime, expect more changes in future.
+
 ### Fixed
 
 - `mx`: normalize codes with `MX` code at the beginning
 - `es-verifactu-v1`: correct `N2` operation code scenario
-
-### Changed
-
-- `cbc`: new `NormalizeString` method to help clean texts used throughout GOBL to trim whitespace and remove invalid or nil UTF-8 characters.
-- `tax`: `Combo`: removing migration of `exempt` `rate` field to `key`, so as not to make assumptions about manually assigned extensions.
-- `pl`: moved to new addon `pl-favat-v2` - only basic implementation at this time to remove restrictions on regime, expect more changes in future.
 
 ## [v0.300.0-rc1] - 2025-09-02
 
@@ -1061,8 +1390,6 @@ This significant release adds support for the new `bill.Receipt` schema, to be u
 - `bill`: support for extensions in `Discount`, `Charge`, `LineDiscount`, and `LineCharge`.
 - `bill`: specifically defined keys for Discounts and Charges.
 
-### Changed
-
 - `tax`: rate keys can now be extended, so `exempt+reverse-charge` will be accepted and may be used by addons to included additional codes.
 - `tax`: Addons can now depend on other addons, whose keys will be automatically added during normalization.
 - `cbc`: Code now allows `:` separator.
@@ -1079,7 +1406,7 @@ This significant release adds support for the new `bill.Receipt` schema, to be u
 
 - `mx`: Tax ID validation now correctly supports `&` and `Ñ` symbols in codes.
 
-## [v0.203.0] - 2024-20-21
+## [v0.203.0] - 2024-10-21
 
 ### Added
 
@@ -1416,7 +1743,7 @@ Multiple version upgrade after merging the [gobl.cli](https://github.com/invopop
 - ISO 3166-1 alpha-3 codes (and a function to access them) added to the country definitions (`l10n.CountryDef`)
 - MX: `mx.TaxIdentityCodeGeneric` constant added with the generic RFC for final consumers
 
-## Changed
+### Changed
 
 - MX: customer extensions no longer required for foreign customers
 

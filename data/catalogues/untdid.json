@@ -8,10 +8,15 @@
     {
       "key": "untdid-document-type",
       "name": {
-        "en": "UNTDID 1001 Document Type"
+        "en": "UNTDID 1001: Document Type"
       },
       "desc": {
         "en": "UNTDID 1001 code used to describe the type of document. Ths list is based on the [EN16931 code list](https://ec.europa.eu/digital-building-blocks/sites/display/DIGITAL/Registry+of+supporting+artefacts+to+implement+EN16931#RegistryofsupportingartefactstoimplementEN16931-Codelists)\nvalues table which focusses on invoices and payments.\n\nOther tax regimes and addons may use their own subset of codes."
+      },
+      "usage": {
+        "schemas": [
+          "bill/tax"
+        ]
       },
       "values": [
         {
@@ -385,10 +390,15 @@
     {
       "key": "untdid-reference",
       "name": {
-        "en": "UNTDID 1153 Reference Code Qualifier"
+        "en": "UNTDID 1153: Reference Code Qualifier"
       },
       "desc": {
         "en": "UNTDID 1153 code used to describe the reference code qualifier. This list is based on the\n[EN16931 code list](https://ec.europa.eu/digital-building-blocks/sites/display/DIGITAL/Registry+of+supporting+artefacts+to+implement+EN16931#RegistryofsupportingartefactstoimplementEN16931-Codelists)\nvalues table which focusses on invoices and payments."
+      },
+      "usage": {
+        "schemas": [
+          "org/identity"
+        ]
       },
       "values": [
         {
@@ -5298,10 +5308,15 @@
     {
       "key": "untdid-text-subject",
       "name": {
-        "en": "UNTDID 4451 Text Subject Qualifier"
+        "en": "UNTDID 4451: Text Subject Qualifier"
       },
       "desc": {
         "en": "Code specifying subject of a free text."
+      },
+      "usage": {
+        "schemas": [
+          "org/note"
+        ]
       },
       "values": [
         {
@@ -7715,10 +7730,16 @@
     {
       "key": "untdid-payment-means",
       "name": {
-        "en": "UNTDID 4461 Payment Means"
+        "en": "UNTDID 4461: Payment Means"
       },
       "desc": {
         "en": "UNTDID 4461 code used to describe the means of payment. This list is based on the\n[EN16931 code list](https://ec.europa.eu/digital-building-blocks/sites/display/DIGITAL/Registry+of+supporting+artefacts+to+implement+EN16931#RegistryofsupportingartefactstoimplementEN16931-Codelists)\nvalues table which focusses on invoices and payments."
+      },
+      "usage": {
+        "schemas": [
+          "pay/instructions",
+          "pay/record"
+        ]
       },
       "values": [
         {
@@ -8230,10 +8251,16 @@
     {
       "key": "untdid-allowance",
       "name": {
-        "en": "UNTDID 5189 Allowance"
+        "en": "UNTDID 5189: Allowance"
       },
       "desc": {
         "en": "UNTDID 5189 code used to describe the allowance type. This list is based on the\n[EN16931 code list](https://ec.europa.eu/digital-building-blocks/sites/display/DIGITAL/Registry+of+supporting+artefacts+to+implement+EN16931#RegistryofsupportingartefactstoimplementEN16931-Codelists)\nvalues table which focusses on invoices and payments."
+      },
+      "usage": {
+        "schemas": [
+          "bill/discount",
+          "bill/line-discount"
+        ]
       },
       "values": [
         {
@@ -8355,10 +8382,16 @@
     {
       "key": "untdid-tax-category",
       "name": {
-        "en": "UNTDID 3505 Tax Category"
+        "en": "UNTDID 3505: Tax Category"
       },
       "desc": {
         "en": "UNTDID 5305 code used to describe the applicable duty/tax/fee category. There are\nmultiple versions and subsets of this table so regimes and addons may need to filter\noptions for a specific subset of values.\n\nData from https://unece.org/fileadmin/DAM/trade/untdid/d16b/tred/tred5305.htm."
+      },
+      "usage": {
+        "schemas": [
+          "tax/combo",
+          "tax/note"
+        ]
       },
       "values": [
         {
@@ -8490,12 +8523,33 @@
       ]
     },
     {
+      "key": "untdid-unit",
+      "name": {
+        "en": "UNTDID: Unit of Measure"
+      },
+      "desc": {
+        "en": "Unit of measure code from UN/ECE Recommendations 20 and 21. This extension preserves the exact standard code when a GOBL unit key is unavailable or when a document format requires the UNTDID representation."
+      },
+      "usage": {
+        "schemas": [
+          "org/item",
+          "org/attribute"
+        ]
+      },
+      "pattern": "^[A-Z0-9]{2,3}$"
+    },
+    {
       "key": "untdid-item-type",
       "name": {
-        "en": "UNTDID 7143 Item Type Identification Code"
+        "en": "UNTDID 7143: Item Type Identification Code"
       },
       "desc": {
         "en": ""
+      },
+      "usage": {
+        "schemas": [
+          "org/identity"
+        ]
       },
       "values": [
         {
@@ -9607,10 +9661,16 @@
     {
       "key": "untdid-charge",
       "name": {
-        "en": "UNTDID 7161 Charge"
+        "en": "UNTDID 7161: Charge"
       },
       "desc": {
         "en": "UNTDID 7161 code used to describe the charge. List is based on the\nEN16931 code lists with extensions for taxes and duties."
+      },
+      "usage": {
+        "schemas": [
+          "bill/charge",
+          "bill/line-charge"
+        ]
       },
       "values": [
         {

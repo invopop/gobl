@@ -18,12 +18,20 @@
           "title": "Austria"
         },
         {
+          "const": "AU",
+          "title": "Australia"
+        },
+        {
           "const": "BE",
           "title": "Belgium"
         },
         {
           "const": "BR",
           "title": "Brazil"
+        },
+        {
+          "const": "BS",
+          "title": "Commonwealth of The Bahamas"
         },
         {
           "const": "CA",
@@ -36,6 +44,10 @@
         {
           "const": "CO",
           "title": "Colombia"
+        },
+        {
+          "const": "CR",
+          "title": "Costa Rica"
         },
         {
           "const": "DE",
@@ -90,6 +102,14 @@
           "title": "Norway"
         },
         {
+          "const": "NZ",
+          "title": "New Zealand"
+        },
+        {
+          "const": "PE",
+          "title": "Peru"
+        },
+        {
           "const": "PL",
           "title": "Poland"
         },
@@ -112,6 +132,10 @@
         {
           "const": "SG",
           "title": "Singapore"
+        },
+        {
+          "const": "SK",
+          "title": "Slovakia"
         },
         {
           "const": "US",

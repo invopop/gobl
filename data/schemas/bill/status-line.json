@@ -60,22 +60,22 @@
             }
           ],
           "title": "Key",
-          "description": "Status Key indicates the situation of the document"
+          "description": "Indicates the situation of the referenced document."
         },
         "date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
           "title": "Date",
-          "description": "When this row should be considered effective"
+          "description": "When this row should be considered effective."
         },
         "doc": {
           "$ref": "https://gobl.org/draft-0/org/document-ref",
           "title": "Document",
-          "description": "Document reference or details about the document that needs to be looked\nat."
+          "description": "Reference to or details of the document this status applies to."
         },
         "description": {
           "type": "string",
           "title": "Description",
-          "description": "Description includes a human readable description that explains the\nreason for the current status, if necessary."
+          "description": "Human readable explanation of the reason for the current status, if necessary."
         },
         "reasons": {
           "items": {
@@ -83,7 +83,7 @@
           },
           "type": "array",
           "title": "Reasons",
-          "description": "Reasons define an array of reason objects that help the recipient\ndetermine why the status was provided."
+          "description": "Reasons that help the recipient determine why the status was provided."
         },
         "actions": {
           "items": {
@@ -91,12 +91,12 @@
           },
           "type": "array",
           "title": "Actions",
-          "description": "Actions contains an array of actions that should be carried out by the\nrecipient of the message. These are suggestions."
+          "description": "Suggested actions to be carried out by the recipient of the message."
         },
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",
           "title": "Extensions",
-          "description": "Extensions for local or format focussed data"
+          "description": "Extensions for local or format specific data."
         },
         "complements": {
           "items": {
@@ -104,7 +104,7 @@
           },
           "type": "array",
           "title": "Complements",
-          "description": "Complements contain regime/addon specific payload data."
+          "description": "Regime or addon specific payload data."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",

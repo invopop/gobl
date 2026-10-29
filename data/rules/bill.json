@@ -310,6 +310,26 @@
                       "tests": "present"
                     }
                   ]
+                },
+                {
+                  "field": "taxes",
+                  "assert": [
+                    {
+                      "id": "GOBL-BILL-PAYMENT-10",
+                      "desc": "payment method taxes are not supported",
+                      "tests": "empty"
+                    }
+                  ]
+                },
+                {
+                  "field": "waiver",
+                  "assert": [
+                    {
+                      "id": "GOBL-BILL-PAYMENT-11",
+                      "desc": "payment method waiver is not supported",
+                      "tests": "empty"
+                    }
+                  ]
                 }
               ]
             }
@@ -360,6 +380,13 @@
     {
       "id": "GOBL-BILL-LINE",
       "object": "bill.Line",
+      "assert": [
+        {
+          "id": "GOBL-BILL-LINE-06",
+          "desc": "item list price, discount, and per cannot be combined with a breakdown",
+          "tests": "no item price details with breakdown"
+        }
+      ],
       "subsets": [
         {
           "field": "i",
@@ -573,6 +600,21 @@
               ]
             }
           ]
+        },
+        {
+          "field": "unit",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-LINECHARGE-06",
+                  "desc": "unit must be valid",
+                  "tests": "one of [mg, cg, g, kg, t, mm, cm, dm, m, lm, km, in, ft, lft, mm2, cm2, dm2, m2, ac, ha, mm3, cm3, dm3, m3, ml, cl, dl, l, kl, w, kw, kwh, kj, kcal, rate, yr, mon, wk, day, s, h, min, piece, item, pair, dozen, assortment, service, job, activity, trip, group, outfit, kit, basebox, pk, one, bag, box, bin, can, tub, case, tray, portion, set, roll, carton, cylinder, barrel, jerrican, carboy, demijohn, bottle, canister, pkg, pkt, bunch, bdl, blk, pallet, reel, sack, sheet, envelope, lot, unit]"
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -611,6 +653,21 @@
                   "id": "GOBL-BILL-CHARGE-01",
                   "desc": "percent is required when base is set",
                   "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "Informative",
+          "subsets": [
+            {
+              "field": "taxes",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-CHARGE-02",
+                  "desc": "cannot be set on an informative charge",
+                  "tests": "empty"
                 }
               ]
             }

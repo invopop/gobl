@@ -58,12 +58,12 @@ GOBL makes it easy to create business documents, like invoices, but check out so
 Conversion to local and international formats:
 
 - [GOBL to HTML](https://github.com/invopop/gobl.html) - generate printable versions of GOBL documents ready to be converted to PDF.
-- [GOBL to FacturaE (Spain)](https://github.com/invopop/gobl.facturae) - convert into the [Spanish FacturaE](https://www.facturae.gob.es/Paginas/Index.aspx) format.
+- [GOBL to FacturaE (Spain)](https://github.com/invopop/gobl.es.facturae) - convert to and from the [Spanish FacturaE](https://www.facturae.gob.es/Paginas/Index.aspx) format.
 - [GOBL to CFDI (Mexico)](https://github.com/invopop/gobl.mx.cfdi) - convert into the Mexican CFDI format.
 - [GOBL to FatturaPA (Italy)](https://github.com/invopop/gobl.fatturapa) - convert into the [Italian FatturaPA](https://www.fatturapa.gov.it/it/index.html) format.
 - [GOBL to FA_VAT / KSeF (Poland)](https://github.com/invopop/gobl.ksef) - convert to the Polish FA_VAT format and send to [KSeF](https://www.podatki.gov.pl/ksef/)
 - [GOBL to TicketBAI (Spain/Euskadi)](https://github.com/invopop/gobl.ticketbai) - convert into [TicketBAI](https://www.batuz.eus/fitxategiak/batuz/ticketbai/ticketBaiV1-2.xsd) documents, required in the Euskadi (northern region of Spain)
-- [GOBL to VERI\*FACTU (Spain)](https://github.com/invopop/gobl.verifactu) - convert and send to the Spanish tax authorities.
+- [GOBL to VERI\*FACTU (Spain)](https://github.com/invopop/gobl.es.verifactu) - convert and send to the Spanish tax authorities.
 - [GOBL UBL](https://github.com/invopop/gobl.ubl) - convert to and from the OASIS Universal Business Language, including support for local and global profiles such as for Peppol and XRechnung (Germany)
 - [GOBL CII](https://github.com/invopop/gobl.cii) - convert to and from the Cross Industry Invoice (CII) XML format, including regional variants including Factur-X (France), ZUGFeRD and XRechnung (Germany).
 - [GOBL to Stripe](https://github.com/invopop/gobl.stripe) - support for creating GOBL invoices from stripe API data.
@@ -72,9 +72,13 @@ Conversion to local and international formats:
 
 Addons adapt GOBL documents to a specific format or regulatory regime, adding the extensions, normalization, and validation rules identified by a versioned key under `$addons` (e.g. `es-facturae-v3`). Most addons are bundled with this library in the [addons directory](https://github.com/invopop/gobl/tree/main/addons), but some live in their own Go modules and must be imported separately:
 
+- [gobl.ar.arca](https://github.com/invopop/gobl.ar.arca) - Argentina ARCA (`ar-arca-v4`)
 - [gobl.br.nfe](https://github.com/invopop/gobl.br.nfe) - Brazil NF-e (`br-nfe-v4`)
 - [gobl.br.nfse](https://github.com/invopop/gobl.br.nfse) - Brazil NFS-e (`br-nfse-v1`)
-- [gobl.fr.ctc](https://github.com/invopop/gobl.fr.ctc) - France CTC flows (`fr-ctc-flow2-v1`, `fr-ctc-flow6-v1`, `fr-ctc-flow10-v1`)
+- [gobl.de.xinvoice](https://github.com/invopop/gobl.de.xinvoice) - Germany XRechnung and ZUGFeRD (`de-xrechnung-v3`, `de-zugferd-v2`)
+- [gobl.es.facturae](https://github.com/invopop/gobl.es.facturae) - Spain FacturaE (`es-facturae-v3`)
+- [gobl.es.verifactu](https://github.com/invopop/gobl.es.verifactu) - Spain VERI\*FACTU (`es-verifactu-v1`)
+- [gobl.fr.ctc](https://github.com/invopop/gobl.fr.ctc) - France CTC flows and Factur-X (`fr-ctc-flow2-v1`, `fr-ctc-flow6-v1`, `fr-ctc-flow10-v1`, `fr-facturx-v1`)
 - [gobl.mx.cfdi](https://github.com/invopop/gobl.mx.cfdi) - Mexican SAT CFDI (`mx-cfdi-v4`)
 - [gobl.pt.saft](https://github.com/invopop/gobl.pt.saft) - Portugal SAF-T (`pt-saft-v1`)
 - [gobl.sa.zatca](https://github.com/invopop/gobl.sa.zatca) - Saudi Arabia ZATCA (`sa-zatca-v1`)

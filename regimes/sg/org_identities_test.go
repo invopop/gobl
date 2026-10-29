@@ -35,14 +35,22 @@ func TestValidateUENIdentity(t *testing.T) {
 		code string
 		err  bool
 	}{
-		{name: "UEN (ROC)", code: "199912345A", err: false},
-		{name: "UEN (ROB)", code: "12345678A", err: false},
-		{name: "UEN (Others)", code: "T12AB1234A", err: false},
+		{name: "UEN (ROC)", code: "199912345R", err: false},
+		{name: "UEN (ROC) real", code: "199307558M", err: false}, // Defence Collective Singapore Ltd.
+		{name: "UEN (ROC) real 2", code: "201189853M", err: false},
+		{name: "UEN (ROB)", code: "12345678M", err: false},
+		{name: "UEN (ROB) real", code: "00192200M", err: false},
+		{name: "UEN (Others)", code: "T12LL1234C", err: false},
+		{name: "UEN (Others) real", code: "T08GB0020K", err: false}, // IRAS
+		{name: "UEN (Others) real 2", code: "S16FC0121D", err: false},
 		{name: "NIRC/FIN", code: "S1234567A", err: true},
 		{name: "Invalid short", code: "1234567A", err: true},
 		{name: "Invalid UEN (ROC)", code: "2199123456", err: true},
 		{name: "Invalid UEN (ROB)", code: "1234567A", err: true},
 		{name: "Invalid UEN (Others)", code: "T12A1234A", err: true},
+		{name: "Bad check char (ROC)", code: "199912345A", err: true},
+		{name: "Bad check char (ROB)", code: "12345678A", err: true},
+		{name: "Bad check char (Others)", code: "T12LL1234A", err: true},
 		{name: "Empty code", code: "", err: true},
 	}
 

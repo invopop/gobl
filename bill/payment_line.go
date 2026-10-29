@@ -17,14 +17,14 @@ import (
 type PaymentLine struct {
 	uuid.Identify
 
-	// Line number within the parent document (automatically calculated)
+	// Line number within the parent document (calculated).
 	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
 
 	// Indicates whether this payment is a refund of a previous payment, effectively reversing
 	// the flow of funds between the supplier and customer or their representatives.
 	Refund bool `json:"refund,omitempty" jsonschema:"title=Refund"`
 
-	// Reference to the document being paid
+	// Reference to the document being paid.
 	Document *org.DocumentRef `json:"document,omitempty" jsonschema:"title=Document"`
 
 	// When making multiple payments for a single document, this specifies the
@@ -36,9 +36,8 @@ type PaymentLine struct {
 	// formal comments.
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
 
-	// Payable reflects the amount of the document that is payable. This will be
-	// calculated from the embedded document's amount automatically and converted
-	// to the currency of the document.
+	// Amount of the referenced document that is payable. Calculated automatically from
+	// the embedded document's amount and converted to the currency of this document.
 	Payable *num.Amount `json:"payable,omitempty" jsonschema:"title=Payable"`
 
 	// Amount already paid in previous installments, which may be required
@@ -48,14 +47,14 @@ type PaymentLine struct {
 	// Amount of the total payment allocated to the referenced document.
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
 
-	// Due reflects how much still needs to be paid
+	// Amount that still needs to be paid.
 	Due *num.Amount `json:"due,omitempty" jsonschema:"title=Due,calculated=true"`
 
-	// Tax contains a breakdown of the taxes that will be applied to this payment line
-	// after taking into account currency conversion and the relative amounts.
+	// Breakdown of the taxes applied to this payment line after taking into account
+	// currency conversion and the relative amounts.
 	Tax *tax.Total `json:"tax,omitempty" jsonschema:"title=Tax"`
 
-	// Additional notes specific to this line item for clarification purposes
+	// Additional notes specific to this line item for clarification purposes.
 	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
 }
 

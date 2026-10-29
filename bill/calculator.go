@@ -23,12 +23,12 @@ type billable interface {
 	GetTags() []cbc.Key
 
 	// Public methods
+	Calculate() error
 	GetCurrency() currency.Code
 	GetExchangeRates() []*currency.ExchangeRate
 
 	// private methods
 	getIssueDate() cal.Date
-	getIssueTime() *cal.Time
 	getValueDate() *cal.Date
 	getTax() *Tax
 	getPreceding() []*org.DocumentRef
@@ -42,9 +42,44 @@ type billable interface {
 
 	// private setters
 	setIssueDate(cal.Date)
-	setIssueTime(*cal.Time)
 	setCurrency(currency.Code)
+	setTax(*Tax)
 	setTotals(*Totals)
+}
+
+// ensureCalculated performs a full calculation on documents that have not been
+// prepared yet.
+func ensureCalculated(doc billable) error {
+	if isCalculated(doc) {
+		return nil
+	}
+	return doc.Calculate()
+}
+
+// isCalculated reports whether the document holds calculator output. The
+// rounding amount is the only total a caller provides, and every line that can
+// be priced is given a total, so a document missing either was assembled by
+// hand and its amounts cannot be read. Totals invented in full are
+// indistinguishable from calculated ones and are taken at face value.
+func isCalculated(doc billable) bool {
+	t := doc.getTotals()
+	if t == nil {
+		return false
+	}
+	rest := *t
+	rest.Rounding = nil
+	if rest == (Totals{}) {
+		return false
+	}
+	for _, l := range doc.getLines() {
+		if l == nil || l.Total != nil {
+			continue
+		}
+		if len(l.Breakdown) > 0 || (l.Item != nil && (l.Item.Price != nil || l.Item.List != nil)) {
+			return false
+		}
+	}
+	return true
 }
 
 func calculate(doc billable) error {
@@ -75,18 +110,10 @@ func calculate(doc billable) error {
 
 	// Figure out rounding rules and if prices include tax early
 	var pit cbc.Code
-	var rr cbc.Key
 	if tx := doc.getTax(); tx != nil {
-		if tx.PricesInclude != "" {
-			pit = tx.PricesInclude
-		}
-		if tx.Rounding != "" {
-			rr = tx.Rounding
-		}
+		pit = tx.PricesInclude
 	}
-	if rr == "" {
-		rr = r.GetRoundingRule()
-	}
+	rr := roundingRule(doc)
 
 	// Do we need to deal with the customer-rates tag?
 	if doc.HasTags(tax.TagCustomerRates) {
@@ -187,7 +214,7 @@ func roundTotalsAndPreparePayments(doc billable, cur currency.Code, t *Totals) {
 		t.Payable = t.Payable.Add(*t.Rounding)
 	}
 	if pd := doc.getPaymentDetails(); pd != nil {
-		pd.calculateAdvances(zero, t.Payable)
+		pd.calculateAdvances(zero, t.Payable, t.Taxes)
 		// Deal with advances, if any. Note that in the current
 		// implementation multiple percentage advances are likely to
 		// suffer rounding errors. It usually better for users to use
@@ -196,8 +223,12 @@ func roundTotalsAndPreparePayments(doc billable, cur currency.Code, t *Totals) {
 			v := t.Payable.Subtract(*t.Advances)
 			t.Due = &v
 		}
-		// Calculate any due date amounts
-		pd.Terms.CalculateDues(zero, t.Payable)
+		// Calculate any due date amounts from what remains to be paid
+		due := t.Payable
+		if t.Due != nil {
+			due = *t.Due
+		}
+		pd.Terms.CalculateDues(zero, due)
 	}
 	doc.setTotals(t)
 }
@@ -216,7 +247,7 @@ func prepareTaxableLines(doc billable) []tax.TaxableLine {
 		}
 	}
 	for _, l := range doc.getCharges() {
-		if l != nil {
+		if l != nil && !l.Informative {
 			tls = append(tls, l)
 		}
 	}
@@ -224,14 +255,8 @@ func prepareTaxableLines(doc billable) []tax.TaxableLine {
 }
 
 func calculateIssueDateAndTime(r *tax.RegimeDef, doc billable) *cal.Date {
-	tz := r.TimeLocation()
-	if doc.getIssueTime() != nil && doc.getIssueTime().IsZero() {
-		dn := cal.ThisSecondIn(tz)
-		tn := dn.Time()
-		doc.setIssueDate(dn.Date())
-		doc.setIssueTime(&tn)
-	} else if doc.getIssueDate().IsZero() {
-		doc.setIssueDate(cal.TodayIn(tz))
+	if doc.getIssueDate().IsZero() {
+		doc.setIssueDate(cal.TodayIn(r.TimeLocation()))
 	}
 
 	// Get the date used for tax calculations
@@ -257,6 +282,10 @@ func calculateOrgDocumentRefs(drs []*org.DocumentRef, cur currency.Code, rr cbc.
 }
 
 func canRemoveIncludedTaxes(doc billable) bool {
+	if doc.HasTags(tax.TagBypass) {
+		// Calculations are skipped entirely.
+		return false
+	}
 	return doc.getTax() != nil && !doc.getTax().PricesInclude.IsEmpty()
 }
 
@@ -266,7 +295,14 @@ func removeIncludedTaxes(doc billable) error {
 	}
 	tpi := doc.getTax().PricesInclude
 
-	totalWithTax := doc.getTotals().TotalWithTax
+	// The original totals are needed to maintain the amount payable.
+	if err := ensureCalculated(doc); err != nil {
+		return err
+	}
+	if doc.getTotals() == nil {
+		return nil
+	}
+	payable := doc.getTotals().Payable
 
 	doc.setTotals(new(Totals))
 	lines := doc.getLines()
@@ -291,31 +327,15 @@ func removeIncludedTaxes(doc billable) error {
 	tx.PricesInclude = ""
 
 	// Tax-exclusive prices need more decimal places than the currency to
-	// represent the original amounts, so the currency rounding rule can no
-	// longer be applied without losing the tax totals.
-	rr := tx.Rounding
-	if rr == "" {
-		rr = doc.RegimeDef().GetRoundingRule()
-	}
-	if rr == tax.RoundingRuleCurrency {
+	// represent the original amounts, so a currency rounding rule inherited
+	// from the regime is replaced with precise. A rule set on the document
+	// itself is respected.
+	if tx.Rounding == "" && doc.RegimeDef().GetRoundingRule() == tax.RoundingRuleCurrency {
 		tx.Rounding = tax.RoundingRulePrecise
 	}
 
-	if err := calculate(doc); err != nil {
-		return err
-	}
-
 	// Account for any rounding errors that we just can't handle
-	t := doc.getTotals()
-	if !totalWithTax.Equals(t.TotalWithTax) {
-		rnd := totalWithTax.Subtract(t.TotalWithTax)
-		t.Rounding = &rnd
-		if err := calculate(doc); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return recalculateKeepingPayable(doc, payable)
 }
 
 func applyCustomerRates(doc billable) {

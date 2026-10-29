@@ -38,7 +38,7 @@ func init() {
 		orgItemRules(),
 		orgAttachmentRules(),
 		orgPartyRules(),
-		orgInboxRules(),
+		orgEndpointRules(),
 		orgAddressRules(),
 		taxComboRules(),
 	)
@@ -54,6 +54,7 @@ func init() {
 		norm.For(normalizeTaxNote),
 		norm.For(normalizeOrgNote),
 		norm.For(normalizeOrgItem),
+		norm.For(normalizeOrgAttribute),
 		norm.For(normalizeOrgIdentity),
 		norm.For(normalizeOrgInbox),
 		norm.For(normalizeOrgParty),

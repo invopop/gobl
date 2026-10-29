@@ -15,6 +15,9 @@ import (
 func TestOrderingNormalize(t *testing.T) {
 	o := &bill.Ordering{
 		Code: " Foo ",
+		Addressee: &org.Party{
+			Name: " Recipient ",
+		},
 		Projects: []*org.DocumentRef{
 			{
 				Code: " Bar ",
@@ -26,6 +29,7 @@ func TestOrderingNormalize(t *testing.T) {
 	}
 	norm.Normalize(o)
 	assert.Equal(t, "Foo", o.Code.String())
+	assert.Equal(t, "Recipient", o.Addressee.Name)
 	assert.Equal(t, "Bar", o.Projects[0].Code.String())
 	assert.True(t, o.Projects[0].Ext.IsZero())
 }

@@ -33,8 +33,7 @@
       },
       "type": "object",
       "required": [
-        "date",
-        "amount"
+        "date"
       ],
       "description": "DueDate contains an amount that should be paid by the given date."
     },

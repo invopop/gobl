@@ -35,6 +35,10 @@ const (
 	// ExtKeyItemType is used to identify the UNTDID 7143 item type code.
 	ExtKeyItemType cbc.Key = "untdid-item-type"
 
+	// ExtKeyUnit is used to identify a unit of measure from UN/ECE
+	// Recommendations 20 and 21.
+	ExtKeyUnit cbc.Key = "untdid-unit"
+
 	// ExtKeyCharge is used to identify the UNTDID 7161 charge codes.
 	ExtKeyCharge cbc.Key = "untdid-charge"
 )

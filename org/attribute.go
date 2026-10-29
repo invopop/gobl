@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 )
 
@@ -151,21 +152,20 @@ var AttributeKeyDefinitions = []*cbc.Definition{
 
 // Attribute describes a named feature or property of the parent object,
 // such as the color or size of an item. Attributes are identified by
-// either a key or a type, and hold at least one of the text, code, amount,
-// or date value fields.
+// a key or a type, or presented with just a label, and hold at least
+// one of the text, code, amount, or date value fields.
 type Attribute struct {
 	// Label for the attribute, used for presentation in converted outputs
-	// such as PDFs.
+	// such as PDFs, and may identify the attribute when no key or type is set.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
 
-	// Identifier fields; either key or type must be provided, but not both.
+	// Identifier fields; at most one of key or type may be provided.
 
 	// Key that identifies the attribute, either from the list pre-defined by
 	// GOBL or an alternative agreed upon between the supplier and customer.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
-	// Type defines a code used to identify the attribute when the "key"
-	// field is empty, from a code list agreed upon between the supplier
-	// and customer.
+	// Code used to identify the attribute when the "key" field is empty, from a code
+	// list agreed upon between the supplier and customer.
 	Type cbc.Code `json:"type,omitempty" jsonschema:"title=Type"`
 
 	// Value fields; at least one must be provided.
@@ -178,28 +178,61 @@ type Attribute struct {
 	// Amount used when the attribute represents a numeric or measurable value.
 	Amount *num.Amount `json:"amount,omitempty" jsonschema:"title=Amount"`
 	// Unit of measure that accompanies the amount.
-	Unit Unit `json:"unit,omitempty" jsonschema:"title=Unit"`
+	Unit cbc.Key `json:"unit,omitempty" jsonschema:"title=Unit"`
 	// Date value of the attribute.
 	Date *cal.Date `json:"date,omitempty" jsonschema:"title=Date"`
+
+	// Extension code map for any additional regime specific codes that may be
+	// required, such as the standard unit code behind the attribute's unit.
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
 func attributeRules() *rules.Set {
 	return rules.For(new(Attribute),
-		rules.Assert("01", "attribute must have either a key or a type, but not both",
-			is.Expr(`(string(Key) == "") != (string(Type) == "")`),
+		rules.Assert("01", "attribute must not have both a key and a type",
+			is.Func("not both key and type", attributeNotBothKeyAndType),
+		),
+		rules.When(is.Func("no label", attributeHasNoLabel),
+			rules.Assert("04", "attribute must have a key, a type, or a label",
+				is.Func("key or type present", attributeHasKeyOrType),
+			),
 		),
 		rules.Assert("02", "attribute must have at least one of the text, code, amount, or date values",
-			is.Expr(`(Text == "" ? 0 : 1) + (string(Code) == "" ? 0 : 1) + (Amount == nil ? 0 : 1) + (Date == nil ? 0 : 1) >= 1`),
+			is.Func("text, code, amount, or date present", attributeHasValue),
 		),
 		rules.When(is.Expr(`string(Unit) != ""`),
 			rules.Assert("03", "attribute unit may only be used alongside an amount",
 				is.Expr(`Amount != nil`),
 			),
 		),
+		rules.Field("unit",
+			rules.AssertIfPresent("05", "attribute unit must be valid", HasValidUnitKey),
+		),
 	)
 }
 
+func attributeNotBothKeyAndType(val any) bool {
+	a, ok := val.(*Attribute)
+	return ok && (a.Key == "" || a.Type == "")
+}
+
+func attributeHasNoLabel(val any) bool {
+	a, ok := val.(*Attribute)
+	return ok && a.Label == ""
+}
+
+func attributeHasKeyOrType(val any) bool {
+	a, ok := val.(*Attribute)
+	return ok && (a.Key != "" || a.Type != "")
+}
+
+func attributeHasValue(val any) bool {
+	a, ok := val.(*Attribute)
+	return ok && (a.Text != "" || a.Code != "" || a.Amount != nil || a.Date != nil)
+}
+
 func normalizeAttribute(a *Attribute) {
+	a.Unit, a.Ext = normalizeUnit(a.Unit, a.Ext)
 	a.Label = cbc.NormalizeString(a.Label)
 	a.Text = cbc.NormalizeString(a.Text)
 }
@@ -212,8 +245,9 @@ func (a *Attribute) IsEmpty() bool {
 		a.Text == "" &&
 		a.Code == "" &&
 		a.Amount == nil &&
-		a.Unit == UnitEmpty &&
-		a.Date == nil)
+		a.Unit == cbc.KeyEmpty &&
+		a.Date == nil &&
+		a.Ext.IsZero())
 }
 
 // AttributesHaveUniqueKeys provides a test that ensures no two attributes
@@ -252,6 +286,7 @@ func CleanAttributes(attrs []*Attribute) []*Attribute {
 
 // JSONSchemaExtend adds extra details to the schema.
 func (Attribute) JSONSchemaExtend(js *jsonschema.Schema) {
+	ExtendUnitKeySchema(js, "unit")
 	prop, ok := js.Properties.Get("key")
 	if !ok {
 		return
