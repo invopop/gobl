@@ -112,6 +112,10 @@
             "title": "Portugal SAF-T"
           },
           {
+            "const": "ro-efactura-v1",
+            "title": "Romania e-Factura (RO_CIUS)"
+          },
+          {
             "const": "sa-zatca-v1",
             "title": "Saudi Arabia ZATCA"
           }
