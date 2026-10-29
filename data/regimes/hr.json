@@ -1,0 +1,236 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Croatia",
+    "hr": "Hrvatska"
+  },
+  "description": {
+    "en": "Croatia's tax system is administered by the Tax Administration (Porezna\nuprava). Croatia is a member of the European Union and uses the euro, which\nreplaced the Croatian kuna (HRK).\n\nVAT (porez na dodanu vrijednost, PDV) is regulated by the VAT Act (Zakon o\nporezu na dodanu vrijednost). It applies at a general rate, with reduced\nrates for the goods and services listed in Article 38 of the Act.\n\nEvery legal and natural person in Croatia is assigned a personal\nidentification number (osobni identifikacijski broj, OIB): 10 digits\nfollowed by a check digit calculated with ISO 7064 MOD 11,10. The OIB is\nthe tax identification number, and the Croatian VAT number is the OIB with\nthe HR prefix (e.g. HR12345678903)."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Porezna uprava - Porez na dodanu vrijednost (VAT)"
+      },
+      "url": "https://porezna-uprava.gov.hr/en/vat/7362",
+      "at": "2026-10-19T00:00:00"
+    },
+    {
+      "title": {
+        "en": "Narodne novine 60/2008 - Zakon o osobnom identifikacijskom broju"
+      },
+      "url": "https://narodne-novine.nn.hr/clanci/sluzbeni/2008_05_60_2033.html",
+      "at": "2026-10-19T00:00:00"
+    },
+    {
+      "title": {
+        "en": "Narodne novine 1/2009 - Pravilnik o osobnom identifikacijskom broju"
+      },
+      "url": "https://narodne-novine.nn.hr/clanci/sluzbeni/2009_01_1_6.html",
+      "at": "2026-10-19T00:00:00"
+    }
+  ],
+  "time_zone": "Europe/Zagreb",
+  "country": "HR",
+  "currency": "EUR",
+  "tax_scheme": "VAT",
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "cash-basis",
+          "name": {
+            "en": "Cash accounting scheme",
+            "hr": "Postupak oporezivanja prema naplaćenim naknadama"
+          },
+          "desc": {
+            "en": "The supplier accounts for VAT when payment is received rather than\nwhen the invoice is issued, under Article 125.i of the VAT Act. The\nAct requires such invoices to state \"obračun prema naplaćenim\nnaknadama\", which this tag adds as a VAT note."
+          }
+        }
+      ]
+    }
+  ],
+  "identities": [
+    {
+      "code": "OIB",
+      "name": {
+        "en": "Personal Identification Number",
+        "hr": "Osobni identifikacijski broj"
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        },
+        {
+          "tags": [
+            "cash-basis"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "cash-basis",
+            "text": "Obračun prema naplaćenim naknadama"
+          }
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "hr": "PDV"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "hr": "Porez na dodanu vrijednost"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "hr": "Opća stopa"
+          },
+          "values": [
+            {
+              "since": "2013-07-01",
+              "percent": "25.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "hr": "Snižena stopa"
+          },
+          "values": [
+            {
+              "since": "2014-01-01",
+              "percent": "13.0%"
+            },
+            {
+              "since": "2013-07-01",
+              "percent": "10.0%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Super Reduced Rate",
+            "hr": "Super snižena stopa"
+          },
+          "values": [
+            {
+              "since": "2013-07-01",
+              "percent": "5.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Narodne novine 73/2013 - Zakon o porezu na dodanu vrijednost, članak 38"
+          },
+          "url": "https://narodne-novine.nn.hr/clanci/sluzbeni/2013_06_73_1451.html",
+          "at": "2026-10-19T00:00:00"
+        },
+        {
+          "title": {
+            "en": "Narodne novine 148/2013 - Zakon o izmjenama i dopunama Zakona o porezu na dodanu vrijednost"
+          },
+          "url": "https://narodne-novine.nn.hr/clanci/sluzbeni/2013_12_148_3138.html",
+          "at": "2026-10-19T00:00:00"
+        },
+        {
+          "title": {
+            "en": "Croatian Tax Administration - VAT",
+            "hr": "Porezna uprava - Porez na dodanu vrijednost"
+          },
+          "url": "https://porezna-uprava.gov.hr/en/vat/7362",
+          "at": "2026-10-19T00:00:00"
+        }
+      ]
+    }
+  ]
+}
