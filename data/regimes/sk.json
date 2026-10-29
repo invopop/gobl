@@ -5,9 +5,17 @@
     "sk": "Slovensko"
   },
   "description": {
-    "en": "Slovakia's tax system is administered by the Financial Administration of the\nSlovak Republic (Finančná správa Slovenskej republiky). As an EU member state,\nSlovakia follows the EU VAT Directive.\n\nVAT (daň z pridanej hodnoty, DPH) applies at a standard rate, with reduced rates\nfor certain goods and services such as foodstuffs, medicines, medical devices,\nbooks, and accommodation. Exports and intra-EU supplies to VAT-registered buyers\nare zero-rated.\n\nBusinesses registered for VAT are identified by their IČ DPH, formed by the\nprefix SK followed by ten digits (e.g. SK2020273893)."
+    "en": "Slovakia's tax system is administered by the Financial Administration of the\nSlovak Republic (Finančná správa Slovenskej republiky). As an EU member state,\nSlovakia follows the EU VAT Directive.\n\nVAT (daň z pridanej hodnoty, DPH) applies at a standard rate, with reduced rates\nfor certain goods and services such as foodstuffs, medicines, medical devices,\nbooks, and accommodation. Exports are exempt with the right to deduct, and intra-EU\nsupplies to VAT-registered buyers are exempt in Slovakia and taxed in the country\nof the buyer.\n\nEvery entrepreneur has a DIČ, the ten digit number that the tax code field holds.\nBusinesses registered for VAT also have an IČ DPH, formed by the prefix SK followed\nby the same ten digits (e.g. SK2020273893). The IČO (identity type \"ICO\") is the\neight digit number of the business register.\n\nInvoice content follows § 74 of the VAT Act 222/2004. The supplier needs a tax ID."
   },
   "sources": [
+    {
+      "title": {
+        "en": "Act No. 222/2004 Coll. on Value Added Tax (§ 74 invoice content, § 68d cash basis)",
+        "sk": "Zákon č. 222/2004 Z. z. o dani z pridanej hodnoty (§ 74 obsah faktúry, § 68d)"
+      },
+      "url": "https://www.slov-lex.sk/pravne-predpisy/SK/ZZ/2004/222/",
+      "at": "2026-10-26T00:00:00"
+    },
     {
       "title": {
         "en": "Finančná správa - Daň z pridanej hodnoty (VAT)"
@@ -34,24 +42,13 @@
   "country": "SK",
   "currency": "EUR",
   "tax_scheme": "VAT",
-  "scenarios": [
+  "identities": [
     {
-      "schema": "bill/invoice",
-      "list": [
-        {
-          "tags": [
-            "reverse-charge"
-          ],
-          "cat": [
-            "VAT"
-          ],
-          "note": {
-            "cat": "VAT",
-            "key": "reverse-charge",
-            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
-          }
-        }
-      ]
+      "code": "ICO",
+      "name": {
+        "en": "Organisation Identification Number (IČO)",
+        "sk": "Identifikačné číslo organizácie (IČO)"
+      }
     }
   ],
   "categories": [

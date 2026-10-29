@@ -2,7 +2,6 @@
 package sk
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
@@ -10,6 +9,7 @@ import (
 	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -19,10 +19,15 @@ const CountryCode = "SK"
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("sk", rules.GOBL.Add(CountryCode),
+		billInvoiceRules(),
+		orgIdentityRules(),
 		taxIdentityRules(),
 	)
 	norm.Register(
 		norm.When(tax.IdentityIn(CountryCode), norm.For(func(tID *tax.Identity) { tax.NormalizeIdentity(tID) })),
+	)
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn(CountryCode)),
+		norm.For(normalizeICO),
 	)
 }
 
@@ -44,14 +49,27 @@ func New() *tax.RegimeDef {
 
 				VAT (daň z pridanej hodnoty, DPH) applies at a standard rate, with reduced rates
 				for certain goods and services such as foodstuffs, medicines, medical devices,
-				books, and accommodation. Exports and intra-EU supplies to VAT-registered buyers
-				are zero-rated.
+				books, and accommodation. Exports are exempt with the right to deduct, and intra-EU
+				supplies to VAT-registered buyers are exempt in Slovakia and taxed in the country
+				of the buyer.
 
-				Businesses registered for VAT are identified by their IČ DPH, formed by the
-				prefix SK followed by ten digits (e.g. SK2020273893).
+				Every entrepreneur has a DIČ, the ten digit number that the tax code field holds.
+				Businesses registered for VAT also have an IČ DPH, formed by the prefix SK followed
+				by the same ten digits (e.g. SK2020273893). The IČO (identity type "ICO") is the
+				eight digit number of the business register.
+
+				Invoice content follows § 74 of the VAT Act 222/2004. The supplier needs a tax ID.
 			`),
 		},
 		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Act No. 222/2004 Coll. on Value Added Tax (§ 74 invoice content, § 68d cash basis)",
+					i18n.SK: "Zákon č. 222/2004 Z. z. o dani z pridanej hodnoty (§ 74 obsah faktúry, § 68d)",
+				},
+				URL: "https://www.slov-lex.sk/pravne-predpisy/SK/ZZ/2004/222/",
+				At:  cal.NewDateTime(2026, 10, 26, 0, 0, 0),
+			},
 			{
 				Title: i18n.NewString("Finančná správa - Daň z pridanej hodnoty (VAT)"),
 				URL:   "https://www.financnasprava.sk/sk/podnikatelia/dane/dan-z-pridanej-hodnoty",
@@ -70,6 +88,6 @@ func New() *tax.RegimeDef {
 		},
 		TimeZone:   "Europe/Bratislava",
 		Categories: taxCategories,
-		Scenarios:  []*tax.ScenarioSet{bill.InvoiceScenarios()},
+		Identities: identityTypeDefinitions,
 	}
 }

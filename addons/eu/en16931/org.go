@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/dk"
 	"github.com/invopop/gobl/regimes/fr"
+	"github.com/invopop/gobl/regimes/sk"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
@@ -59,6 +60,7 @@ var orgIdentityTypeSchemeMap = map[cbc.Code]cbc.Code{
 	fr.IdentityTypeSIREN: "0002", // French SIREN (legal identifier)
 	fr.IdentityTypeSIRET: "0009", // French SIRET (private identifier)
 	dk.IdentityTypeCVR:   "0184", // Danish CVR-nummer
+	sk.IdentityTypeICO:   "0158", // Slovak IČO (legal identifier)
 }
 
 var (
