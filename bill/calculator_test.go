@@ -382,6 +382,65 @@ func TestCalculate(t *testing.T) {
 			assert.True(t, iss.Informative)
 		}
 	})
+
+	t.Run("with total taxes", func(t *testing.T) {
+		inv := baseInvoice(t,
+			&bill.Line{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "test item",
+					Price: num.NewAmount(100000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: br.TaxCategoryISS,
+						Percent:  num.NewPercentage(20, 3),
+					},
+					{
+						Category: br.TaxCategoryTotalTaxFederal,
+						Percent:  num.NewPercentage(1345, 4),
+					},
+					{
+						Category: br.TaxCategoryTotalTaxState,
+						Percent:  num.NewPercentage(0, 2),
+					},
+					{
+						Category: br.TaxCategoryTotalTaxMunicipal,
+						Percent:  num.NewPercentage(20, 3),
+					},
+				},
+			},
+			&bill.Line{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "test item 2",
+					Price: num.NewAmount(10000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: br.TaxCategoryTotalTaxSimples,
+						Percent:  num.NewPercentage(65, 3),
+					},
+				},
+			},
+		)
+		inv.Supplier.TaxID.Country = "BR"
+		inv.Tax.PricesInclude = ""
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "0.00", inv.Totals.Tax.String())
+		assert.Equal(t, "1100.00", inv.Totals.Payable.String())
+		for cat, amount := range map[cbc.Code]string{
+			br.TaxCategoryTotalTaxFederal:   "134.50",
+			br.TaxCategoryTotalTaxState:     "0.00",
+			br.TaxCategoryTotalTaxMunicipal: "20.00",
+			br.TaxCategoryTotalTaxSimples:   "6.50",
+		} {
+			if ct := inv.Totals.Taxes.Category(cat); assert.NotNil(t, ct, cat) {
+				assert.Equal(t, amount, ct.Amount.String(), cat)
+				assert.True(t, ct.Informative, cat)
+			}
+		}
+	})
 }
 
 func TestRemoveIncludedTaxes(t *testing.T) {

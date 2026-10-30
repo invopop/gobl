@@ -8,18 +8,22 @@ import (
 
 // Tax categories specific for Brazil.
 const (
-	TaxCategoryISS       cbc.Code = "ISS"
-	TaxCategoryICMS      cbc.Code = "ICMS"
-	TaxCategoryIPI       cbc.Code = "IPI"
-	TaxCategoryPIS       cbc.Code = "PIS"
-	TaxCategoryPISRet    cbc.Code = "PISRet"
-	TaxCategoryCOFINS    cbc.Code = "COFINS"
-	TaxCategoryCOFINSRet cbc.Code = "COFINSRet"
-	TaxCategoryCSLL      cbc.Code = "CSLL"
-	TaxCategoryINSS      cbc.Code = "INSS"
-	TaxCategoryIRRF      cbc.Code = "IRRF"
-	TaxCategoryIBS       cbc.Code = "IBS"
-	TaxCategoryCBS       cbc.Code = "CBS"
+	TaxCategoryISS               cbc.Code = "ISS"
+	TaxCategoryICMS              cbc.Code = "ICMS"
+	TaxCategoryIPI               cbc.Code = "IPI"
+	TaxCategoryPIS               cbc.Code = "PIS"
+	TaxCategoryPISRet            cbc.Code = "PISRet"
+	TaxCategoryCOFINS            cbc.Code = "COFINS"
+	TaxCategoryCOFINSRet         cbc.Code = "COFINSRet"
+	TaxCategoryCSLL              cbc.Code = "CSLL"
+	TaxCategoryINSS              cbc.Code = "INSS"
+	TaxCategoryIRRF              cbc.Code = "IRRF"
+	TaxCategoryIBS               cbc.Code = "IBS"
+	TaxCategoryCBS               cbc.Code = "CBS"
+	TaxCategoryTotalTaxFederal   cbc.Code = "TotalTaxFederal"
+	TaxCategoryTotalTaxState     cbc.Code = "TotalTaxState"
+	TaxCategoryTotalTaxMunicipal cbc.Code = "TotalTaxMunicipal"
+	TaxCategoryTotalTaxSimples   cbc.Code = "TotalTaxSimples"
 )
 
 var taxCategories = []*tax.CategoryDef{
@@ -205,5 +209,82 @@ var taxCategories = []*tax.CategoryDef{
 		// mandatory but collection is not, we make it informative to avoid
 		// increasing the tax totals.
 		Informative: true,
+	},
+	//
+	// Approximate total of the taxes included in the price (Law 12.741/2012)
+	//
+	{
+		Code: TaxCategoryTotalTaxFederal,
+		Name: i18n.String{
+			i18n.EN: "Federal Taxes",
+			i18n.PT: "Tributos Federais",
+		},
+		Title: i18n.String{
+			i18n.EN: "Total federal taxes",
+			i18n.PT: "Total dos tributos federais",
+		},
+		Description: &i18n.String{
+			i18n.EN: "Approximate percentage of the federal taxes included in the price.",
+		},
+		Sources:     totalTaxSources,
+		Informative: true,
+	},
+	{
+		Code: TaxCategoryTotalTaxState,
+		Name: i18n.String{
+			i18n.EN: "State Taxes",
+			i18n.PT: "Tributos Estaduais",
+		},
+		Title: i18n.String{
+			i18n.EN: "Total state taxes",
+			i18n.PT: "Total dos tributos estaduais",
+		},
+		Description: &i18n.String{
+			i18n.EN: "Approximate percentage of the state taxes included in the price.",
+		},
+		Sources:     totalTaxSources,
+		Informative: true,
+	},
+	{
+		Code: TaxCategoryTotalTaxMunicipal,
+		Name: i18n.String{
+			i18n.EN: "Municipal Taxes",
+			i18n.PT: "Tributos Municipais",
+		},
+		Title: i18n.String{
+			i18n.EN: "Total municipal taxes",
+			i18n.PT: "Total dos tributos municipais",
+		},
+		Description: &i18n.String{
+			i18n.EN: "Approximate percentage of the municipal taxes included in the price.",
+		},
+		Sources:     totalTaxSources,
+		Informative: true,
+	},
+	{
+		Code: TaxCategoryTotalTaxSimples,
+		Name: i18n.String{
+			i18n.EN: "Simples Nacional Taxes",
+			i18n.PT: "Tributos do Simples Nacional",
+		},
+		Title: i18n.String{
+			i18n.EN: "Total Simples Nacional taxes",
+			i18n.PT: "Total dos tributos do Simples Nacional",
+		},
+		Description: &i18n.String{
+			i18n.EN: "Approximate percentage of the total taxes of the Simples Nacional rate, which ME/EPP suppliers may send as an alternative to the federal, state and municipal ones.",
+		},
+		Sources:     totalTaxSources,
+		Informative: true,
+	},
+}
+
+var totalTaxSources = []*cbc.Source{
+	{
+		Title: i18n.String{
+			i18n.EN: "Law No. 12.741/2012 - Tax transparency",
+			i18n.PT: "Lei Nº 12.741/2012 - Transparência fiscal",
+		},
+		URL: "https://legis.senado.leg.br/norma/588117",
 	},
 }

@@ -205,6 +205,102 @@
         "pt": "Contribuição sobre Bens e Serviços"
       },
       "informative": true
+    },
+    {
+      "code": "TotalTaxFederal",
+      "name": {
+        "en": "Federal Taxes",
+        "pt": "Tributos Federais"
+      },
+      "title": {
+        "en": "Total federal taxes",
+        "pt": "Total dos tributos federais"
+      },
+      "desc": {
+        "en": "Approximate percentage of the federal taxes included in the price."
+      },
+      "informative": true,
+      "sources": [
+        {
+          "title": {
+            "en": "Law No. 12.741/2012 - Tax transparency",
+            "pt": "Lei Nº 12.741/2012 - Transparência fiscal"
+          },
+          "url": "https://legis.senado.leg.br/norma/588117"
+        }
+      ]
+    },
+    {
+      "code": "TotalTaxState",
+      "name": {
+        "en": "State Taxes",
+        "pt": "Tributos Estaduais"
+      },
+      "title": {
+        "en": "Total state taxes",
+        "pt": "Total dos tributos estaduais"
+      },
+      "desc": {
+        "en": "Approximate percentage of the state taxes included in the price."
+      },
+      "informative": true,
+      "sources": [
+        {
+          "title": {
+            "en": "Law No. 12.741/2012 - Tax transparency",
+            "pt": "Lei Nº 12.741/2012 - Transparência fiscal"
+          },
+          "url": "https://legis.senado.leg.br/norma/588117"
+        }
+      ]
+    },
+    {
+      "code": "TotalTaxMunicipal",
+      "name": {
+        "en": "Municipal Taxes",
+        "pt": "Tributos Municipais"
+      },
+      "title": {
+        "en": "Total municipal taxes",
+        "pt": "Total dos tributos municipais"
+      },
+      "desc": {
+        "en": "Approximate percentage of the municipal taxes included in the price."
+      },
+      "informative": true,
+      "sources": [
+        {
+          "title": {
+            "en": "Law No. 12.741/2012 - Tax transparency",
+            "pt": "Lei Nº 12.741/2012 - Transparência fiscal"
+          },
+          "url": "https://legis.senado.leg.br/norma/588117"
+        }
+      ]
+    },
+    {
+      "code": "TotalTaxSimples",
+      "name": {
+        "en": "Simples Nacional Taxes",
+        "pt": "Tributos do Simples Nacional"
+      },
+      "title": {
+        "en": "Total Simples Nacional taxes",
+        "pt": "Total dos tributos do Simples Nacional"
+      },
+      "desc": {
+        "en": "Approximate percentage of the total taxes of the Simples Nacional rate, which ME/EPP suppliers may send as an alternative to the federal, state and municipal ones."
+      },
+      "informative": true,
+      "sources": [
+        {
+          "title": {
+            "en": "Law No. 12.741/2012 - Tax transparency",
+            "pt": "Lei Nº 12.741/2012 - Transparência fiscal"
+          },
+          "url": "https://legis.senado.leg.br/norma/588117"
+        }
+      ]
     }
   ]
 }
