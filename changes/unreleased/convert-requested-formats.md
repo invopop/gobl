@@ -4,4 +4,4 @@
 
 ## Changed
 
-- `convert`: `Converter.Import` takes the `*ImportOptions`, as `Export` takes the `*ExportOptions`, so converters receive the requested formats.
+- `convert`: **breaking**: `Converter.Import` takes the `*ImportOptions`, as `Export` takes the `*ExportOptions`, so converters receive the requested formats.
