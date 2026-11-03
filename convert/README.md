@@ -100,7 +100,7 @@ separately. `Import` takes options:
 
 - `WithFormats(keys...)`: limit detection to these formats.
 - `WithRouting(from, to)`: the transport addresses the document was received
-  with, such as Peppol participant URIs, recorded on the envelope's
+  with, such as network endpoint URIs, recorded on the envelope's
   `Head.From` and `Head.To`. Converters receive them to set before
   calculating the envelope; the register sets them on the result otherwise.
 

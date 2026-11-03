@@ -159,7 +159,7 @@ type ImportOptions struct {
 	// Formats limit detection to the formats with these keys.
 	Formats []cbc.Key
 	// From and To are the transport addresses the document was received
-	// with, such as Peppol participant URIs, recorded on the envelope's
+	// with, such as network endpoint URIs, recorded on the envelope's
 	// head.
 	From cbc.URI
 	To   cbc.URI
