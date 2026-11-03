@@ -39,7 +39,8 @@ func header(in *convert.Input) string {
 }
 
 // alphaConverter handles "alpha:" data, provides an attachment for data
-// ending in ":attach", and no result for ":empty", and "alpha-fr:" for the FR variant
+// ending in ":attach", an envelope without a head for ":headless", and no
+// result for ":empty", and "alpha-fr:" for the FR variant
 // that requires the "test-fr" addon on export. The plain format refuses
 // documents with the "test-refuse" addon, and embeds attachments by adding
 // their names to the output.
@@ -99,6 +100,9 @@ func (alphaConverter) Import(_ cbc.Key, data []byte, opts *convert.ImportOptions
 	res := &convert.ImportResult{Envelope: env}
 	if strings.HasSuffix(string(data), ":attach") {
 		res.Attachments = []*convert.Attachment{{Name: "invoice.pdf", Data: []byte("%PDF")}}
+	}
+	if strings.HasSuffix(string(data), ":headless") {
+		env.Head = nil
 	}
 	return res, nil
 }
@@ -309,6 +313,12 @@ func TestImport(t *testing.T) {
 		require.NoError(t, err)
 		assert.Empty(t, res.Envelope.Head.From)
 		assert.Equal(t, cbc.URI("iso6523-actorid-upis::0088:receiver"), res.Envelope.Head.To)
+	})
+	t.Run("routing on an envelope without a head", func(t *testing.T) {
+		res, err := convert.Import([]byte("alpha-fr:headless"), convert.WithRouting("iso6523-actorid-upis::0088:sender", ""))
+		require.NoError(t, err)
+		require.NotNil(t, res.Envelope.Head)
+		assert.Equal(t, cbc.URI("iso6523-actorid-upis::0088:sender"), res.Envelope.Head.From)
 	})
 	t.Run("formats not matching data", func(t *testing.T) {
 		_, err := convert.Import([]byte("alpha:data"), convert.WithFormats("test+beta"))
