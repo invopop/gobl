@@ -90,7 +90,7 @@ type Converter interface {
 	// formats it cannot tell apart from the data. Converters that support
 	// routing should set the options' From and To on the envelope's head
 	// before calculating it. The register sets the result's Format, and the
-	// options' From and To where the converter left them empty.
+	// options' From and To.
 	Import(key cbc.Key, data []byte, opts *ImportOptions) (*ImportResult, error)
 	// Accepts checks the envelope can be exported into the format, and
 	// otherwise returns the reason, preferably as rules faults from the
@@ -292,8 +292,8 @@ func Import(data []byte, opts ...ImportOption) (*ImportResult, error) {
 	return res, nil
 }
 
-// setRouting records the requested routing on the envelope, where the
-// converter left it empty. From and To are not covered by the envelope's
+// setRouting records the requested routing on the envelope, over any the
+// converter set from the document. From and To are not covered by the envelope's
 // signatures, so they may be set once the envelope is calculated. An
 // envelope without a head is given one, with the document's digest unless
 // the document cannot be marshalled.
@@ -307,10 +307,10 @@ func setRouting(env *gobl.Envelope, o *ImportOptions) {
 	if env.Head.Digest == nil {
 		env.Head.Digest, _ = env.Digest()
 	}
-	if env.Head.From == "" {
+	if o.From != "" {
 		env.Head.From = o.From
 	}
-	if env.Head.To == "" {
+	if o.To != "" {
 		env.Head.To = o.To
 	}
 }
