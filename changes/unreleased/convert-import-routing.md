@@ -1,3 +1,3 @@
 ## Added
 
-- `convert`: `WithRouting(from, to)` import option, passed to converters in the import options so they can set the envelope's `Head.From` and `Head.To` before calculating it.
+- `convert`: `WithTo(to)` and `WithFrom(from)` import options, passed to converters in the import options so they can set the envelope's `Head.To` and `Head.From` before calculating it.

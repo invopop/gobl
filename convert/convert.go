@@ -173,14 +173,21 @@ func WithFormats(keys ...cbc.Key) ImportOption {
 	}
 }
 
-// WithRouting sets the transport addresses the document was received with,
-// for converters to record on the envelope's Head.From and Head.To instead of
-// those GOBL would derive from the document, which are those of an outgoing
-// one.
-func WithRouting(from, to cbc.URI) ImportOption {
+// WithTo sets the transport address the document was received at, for
+// converters to record on the envelope's Head.To instead of the one GOBL
+// would derive from the document, which is that of an outgoing one.
+func WithTo(to cbc.URI) ImportOption {
+	return func(o *ImportOptions) {
+		o.To = to
+	}
+}
+
+// WithFrom sets the transport address the document was received from, for
+// converters to record on the envelope's Head.From instead of the one GOBL
+// would derive from the document, which is that of an outgoing one.
+func WithFrom(from cbc.URI) ImportOption {
 	return func(o *ImportOptions) {
 		o.From = from
-		o.To = to
 	}
 }
 

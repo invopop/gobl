@@ -302,7 +302,7 @@ func TestImport(t *testing.T) {
 		assert.Equal(t, "alpha-fr:data:test+alpha-fr:test+beta", msg.Content)
 	})
 	t.Run("routing passed to the converter", func(t *testing.T) {
-		res, err := convert.Import([]byte("alpha-fr:data"), convert.WithRouting("iso6523-actorid-upis::0088:sender", "iso6523-actorid-upis::0088:receiver"))
+		res, err := convert.Import([]byte("alpha-fr:data"), convert.WithTo("iso6523-actorid-upis::0088:receiver"), convert.WithFrom("iso6523-actorid-upis::0088:sender"))
 		require.NoError(t, err)
 		assert.Equal(t, cbc.URI("iso6523-actorid-upis::0088:sender"), res.Envelope.Head.From)
 		assert.Equal(t, cbc.URI("iso6523-actorid-upis::0088:receiver"), res.Envelope.Head.To)

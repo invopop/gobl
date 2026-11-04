@@ -99,9 +99,9 @@ of the invoice. The envelope does not include them, so they can be stored
 separately. `Import` takes options:
 
 - `WithFormats(keys...)`: limit detection to these formats.
-- `WithRouting(from, to)`: the transport addresses the document was received
-  with, such as network endpoint URIs. Converters receive them to set on the
-  envelope's `Head.From` and `Head.To` before calculating it.
+- `WithTo(to)` and `WithFrom(from)`: the transport addresses the document was
+  received at and from, such as network endpoint URIs. Converters receive them
+  to set on the envelope's `Head.To` and `Head.From` before calculating it.
 
 ```go
 res, err := convert.Import(data, convert.WithFormats("ubl+peppol+bis-v3"))
