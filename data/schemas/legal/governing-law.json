@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/legal/governing-law",
+  "$ref": "#/$defs/legal.GoverningLaw",
+  "$defs": {
+    "legal.GoverningLaw": {
+      "properties": {
+        "country": {
+          "$ref": "https://gobl.org/draft-0/l10n/iso-country-code",
+          "title": "Country"
+        },
+        "jurisdiction": {
+          "type": "string",
+          "title": "Jurisdiction"
+        },
+        "instrument": {
+          "type": "string",
+          "title": "Legal Instrument"
+        }
+      },
+      "type": "object",
+      "description": "GoverningLaw records an express choice of law."
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "2976c6fa9499510c9b1574f1525d80d5a6fb91b6a48a5620679eadcd813645fe"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/legal/assent",
+		"uuid": "0198b001-1000-7f25-a880-5b8800523d83",
+		"contract": {
+			"relation": "agreement",
+			"uuid": "0198b001-1000-7a21-9b8a-48ea44647387",
+			"code": "SSA-2026-0042",
+			"title": "SaaS Subscription Agreement",
+			"digest": {
+				"alg": "sha256",
+				"val": "34fe86a8052549be2512a43d88672826a574282144fb854dfac583208535721e"
+			}
+		},
+		"party": "customer",
+		"signatory": "customer-signatory",
+		"intent": "execute",
+		"capacity": "Finance Director",
+		"statement": "Signed for and on behalf of Acme Robotics Europe Ltd."
+	}
+}

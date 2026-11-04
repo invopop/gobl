@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/legal/recital",
+  "$ref": "#/$defs/legal.Recital",
+  "$defs": {
+    "legal.Recital": {
+      "properties": {
+        "$anchor": {
+          "type": "string",
+          "title": "Anchor"
+        },
+        "content": {
+          "type": "string",
+          "title": "Content"
+        }
+      },
+      "type": "object",
+      "required": [
+        "content"
+      ],
+      "description": "Recital records non-operative background or purpose text."
+    }
+  }
+}

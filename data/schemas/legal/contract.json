@@ -1,0 +1,886 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/legal/contract",
+  "$ref": "#/$defs/legal.Contract",
+  "$defs": {
+    "i18n.Lang": {
+      "oneOf": [
+        {
+          "const": "ab",
+          "description": "Abkhazian"
+        },
+        {
+          "const": "aa",
+          "description": "Afar"
+        },
+        {
+          "const": "af",
+          "description": "Afrikaans"
+        },
+        {
+          "const": "ak",
+          "description": "Akan"
+        },
+        {
+          "const": "sq",
+          "description": "Albanian"
+        },
+        {
+          "const": "am",
+          "description": "Amharic"
+        },
+        {
+          "const": "ar",
+          "description": "Arabic"
+        },
+        {
+          "const": "an",
+          "description": "Aragonese"
+        },
+        {
+          "const": "hy",
+          "description": "Armenian"
+        },
+        {
+          "const": "as",
+          "description": "Assamese"
+        },
+        {
+          "const": "av",
+          "description": "Avaric"
+        },
+        {
+          "const": "ae",
+          "description": "Avestan"
+        },
+        {
+          "const": "ay",
+          "description": "Aymara"
+        },
+        {
+          "const": "az",
+          "description": "Azerbaijani"
+        },
+        {
+          "const": "bm",
+          "description": "Bambara"
+        },
+        {
+          "const": "ba",
+          "description": "Bashkir"
+        },
+        {
+          "const": "eu",
+          "description": "Basque"
+        },
+        {
+          "const": "be",
+          "description": "Belarusian"
+        },
+        {
+          "const": "bn",
+          "description": "Bengali"
+        },
+        {
+          "const": "bh",
+          "description": "Bihari Languages"
+        },
+        {
+          "const": "bi",
+          "description": "Bislama"
+        },
+        {
+          "const": "bs",
+          "description": "Bosnian"
+        },
+        {
+          "const": "br",
+          "description": "Breton"
+        },
+        {
+          "const": "bg",
+          "description": "Bulgarian"
+        },
+        {
+          "const": "my",
+          "description": "Burmese"
+        },
+        {
+          "const": "ca",
+          "description": "Catalan, Valencian"
+        },
+        {
+          "const": "ch",
+          "description": "Chamorro"
+        },
+        {
+          "const": "ce",
+          "description": "Chechen"
+        },
+        {
+          "const": "ny",
+          "description": "Chichewa, Chewa, Nyanja"
+        },
+        {
+          "const": "zh",
+          "description": "Chinese"
+        },
+        {
+          "const": "cv",
+          "description": "Chuvash"
+        },
+        {
+          "const": "kw",
+          "description": "Cornish"
+        },
+        {
+          "const": "co",
+          "description": "Corsican"
+        },
+        {
+          "const": "cr",
+          "description": "Cree"
+        },
+        {
+          "const": "hr",
+          "description": "Croation"
+        },
+        {
+          "const": "cs",
+          "description": "Czech"
+        },
+        {
+          "const": "da",
+          "description": "Danish"
+        },
+        {
+          "const": "dv",
+          "description": "Divehi, Dhivei, Maldivian"
+        },
+        {
+          "const": "nl",
+          "description": "Dutch, Flemish"
+        },
+        {
+          "const": "dz",
+          "description": "Dzongkha"
+        },
+        {
+          "const": "en",
+          "description": "English"
+        },
+        {
+          "const": "eo",
+          "description": "Esperanto"
+        },
+        {
+          "const": "et",
+          "description": "Estonian"
+        },
+        {
+          "const": "ee",
+          "description": "Ewe"
+        },
+        {
+          "const": "fo",
+          "description": "Faroese"
+        },
+        {
+          "const": "fj",
+          "description": "Fijian"
+        },
+        {
+          "const": "fi",
+          "description": "Finnish"
+        },
+        {
+          "const": "fr",
+          "description": "Frence"
+        },
+        {
+          "const": "ff",
+          "description": "Fulah"
+        },
+        {
+          "const": "gl",
+          "description": "Galician"
+        },
+        {
+          "const": "ka",
+          "description": "Georgian"
+        },
+        {
+          "const": "de",
+          "description": "German"
+        },
+        {
+          "const": "el",
+          "description": "Greek"
+        },
+        {
+          "const": "gn",
+          "description": "Guarani"
+        },
+        {
+          "const": "gu",
+          "description": "Gujarati"
+        },
+        {
+          "const": "ht",
+          "description": "Haitian"
+        },
+        {
+          "const": "ha",
+          "description": "Hausa"
+        },
+        {
+          "const": "he",
+          "description": "Hebrew"
+        },
+        {
+          "const": "hz",
+          "description": "Herero"
+        },
+        {
+          "const": "hi",
+          "description": "Hindi"
+        },
+        {
+          "const": "ho",
+          "description": "Hiri Motu"
+        },
+        {
+          "const": "hu",
+          "description": "Hungarian"
+        },
+        {
+          "const": "ia",
+          "description": "Interlingua"
+        },
+        {
+          "const": "id",
+          "description": "Indonesian"
+        },
+        {
+          "const": "ie",
+          "description": "Interligue"
+        },
+        {
+          "const": "ga",
+          "description": "Irish"
+        },
+        {
+          "const": "ig",
+          "description": "Igbo"
+        },
+        {
+          "const": "ik",
+          "description": "Inupiaq"
+        },
+        {
+          "const": "io",
+          "description": "Ido"
+        },
+        {
+          "const": "is",
+          "description": "Icelandic"
+        },
+        {
+          "const": "it",
+          "description": "Italian"
+        },
+        {
+          "const": "iu",
+          "description": "Inuktitut"
+        },
+        {
+          "const": "ja",
+          "description": "Japanese"
+        },
+        {
+          "const": "jv",
+          "description": "Javanese"
+        },
+        {
+          "const": "kl",
+          "description": "Kalaallisut, Greenlandic"
+        },
+        {
+          "const": "kn",
+          "description": "Kannada"
+        },
+        {
+          "const": "kr",
+          "description": "Kanuri"
+        },
+        {
+          "const": "ks",
+          "description": "Kashmiri"
+        },
+        {
+          "const": "kk",
+          "description": "Kazakh"
+        },
+        {
+          "const": "km",
+          "description": "Central Khmer"
+        },
+        {
+          "const": "ki",
+          "description": "Kikuyu, Gikuyu"
+        },
+        {
+          "const": "rw",
+          "description": "Kinyarwanda"
+        },
+        {
+          "const": "ky",
+          "description": "Kirighiz, Kyrgyz"
+        },
+        {
+          "const": "kv",
+          "description": "Komi"
+        },
+        {
+          "const": "kg",
+          "description": "Kongo"
+        },
+        {
+          "const": "ko",
+          "description": "Korean"
+        },
+        {
+          "const": "ku",
+          "description": "Kurdish"
+        },
+        {
+          "const": "kj",
+          "description": "Kuanyama, Kwanyama"
+        },
+        {
+          "const": "la",
+          "description": "Latin"
+        },
+        {
+          "const": "lb",
+          "description": "Luxemburgish, Letzeburgesch"
+        },
+        {
+          "const": "lg",
+          "description": "Ganda"
+        },
+        {
+          "const": "li",
+          "description": "Limburgan"
+        },
+        {
+          "const": "ln",
+          "description": "Lingala"
+        },
+        {
+          "const": "lo",
+          "description": "Lao"
+        },
+        {
+          "const": "lt",
+          "description": "Lithuanian"
+        },
+        {
+          "const": "lu",
+          "description": "Luba-Katanga"
+        },
+        {
+          "const": "lv",
+          "description": "Latvian"
+        },
+        {
+          "const": "gv",
+          "description": "Manx"
+        },
+        {
+          "const": "mk",
+          "description": "Macedonian"
+        },
+        {
+          "const": "mg",
+          "description": "Malagasy"
+        },
+        {
+          "const": "ms",
+          "description": "Malay"
+        },
+        {
+          "const": "ml",
+          "description": "Malayalam"
+        },
+        {
+          "const": "mt",
+          "description": "Maltese"
+        },
+        {
+          "const": "mi",
+          "description": "Mãori"
+        },
+        {
+          "const": "mr",
+          "description": "Marathi"
+        },
+        {
+          "const": "mh",
+          "description": "Marshallese"
+        },
+        {
+          "const": "mn",
+          "description": "Mongolian"
+        },
+        {
+          "const": "na",
+          "description": "Nauru"
+        },
+        {
+          "const": "nv",
+          "description": "Navajo"
+        },
+        {
+          "const": "nd",
+          "description": "North Ndebele"
+        },
+        {
+          "const": "ne",
+          "description": "Nepali"
+        },
+        {
+          "const": "ng",
+          "description": "Ndonga"
+        },
+        {
+          "const": "nb",
+          "description": "Norwegian Bokmål"
+        },
+        {
+          "const": "nn",
+          "description": "Norwegian Nynorsk"
+        },
+        {
+          "const": "no",
+          "description": "Norwegian"
+        },
+        {
+          "const": "ii",
+          "description": "Sichuan Yi, Nuosu"
+        },
+        {
+          "const": "nr",
+          "description": "South Ndebele"
+        },
+        {
+          "const": "oc",
+          "description": "Occitan"
+        },
+        {
+          "const": "oj",
+          "description": "Ojibwa"
+        },
+        {
+          "const": "cu",
+          "description": "Church Slavic"
+        },
+        {
+          "const": "om",
+          "description": "Oromo"
+        },
+        {
+          "const": "or",
+          "description": "Oriya"
+        },
+        {
+          "const": "os",
+          "description": "Ossetian, Ossetic"
+        },
+        {
+          "const": "pa",
+          "description": "Punjabi, Panjabi"
+        },
+        {
+          "const": "pi",
+          "description": "Pali"
+        },
+        {
+          "const": "fa",
+          "description": "Persian"
+        },
+        {
+          "const": "pl",
+          "description": "Polish"
+        },
+        {
+          "const": "ps",
+          "description": "Pashto, Pushto"
+        },
+        {
+          "const": "pt",
+          "description": "Portuguese"
+        },
+        {
+          "const": "qu",
+          "description": "Quechua"
+        },
+        {
+          "const": "rm",
+          "description": "Romansh"
+        },
+        {
+          "const": "rn",
+          "description": "Rundi"
+        },
+        {
+          "const": "ro",
+          "description": "Romanian, Moldavian, Moldovan"
+        },
+        {
+          "const": "ru",
+          "description": "Russian"
+        },
+        {
+          "const": "sa",
+          "description": "Sanskrit"
+        },
+        {
+          "const": "sc",
+          "description": "Sardinian"
+        },
+        {
+          "const": "sd",
+          "description": "Sindhi"
+        },
+        {
+          "const": "se",
+          "description": "Northern Sami"
+        },
+        {
+          "const": "sm",
+          "description": "Samoan"
+        },
+        {
+          "const": "sg",
+          "description": "Sango"
+        },
+        {
+          "const": "sr",
+          "description": "Serbian"
+        },
+        {
+          "const": "gd",
+          "description": "Gaelic, Scottish Gaelic"
+        },
+        {
+          "const": "sn",
+          "description": "Shona"
+        },
+        {
+          "const": "si",
+          "description": "Sinhala, Singalese"
+        },
+        {
+          "const": "sk",
+          "description": "Slovak"
+        },
+        {
+          "const": "sl",
+          "description": "Slovenian"
+        },
+        {
+          "const": "so",
+          "description": "Somali"
+        },
+        {
+          "const": "st",
+          "description": "Southern Sotho"
+        },
+        {
+          "const": "es",
+          "description": "Spanish, Castilian"
+        },
+        {
+          "const": "su",
+          "description": "Sundanese"
+        },
+        {
+          "const": "sw",
+          "description": "Swahili"
+        },
+        {
+          "const": "ss",
+          "description": "Swati"
+        },
+        {
+          "const": "sv",
+          "description": "Swedish"
+        },
+        {
+          "const": "ta",
+          "description": "Tamil"
+        },
+        {
+          "const": "te",
+          "description": "Teluga"
+        },
+        {
+          "const": "tg",
+          "description": "Tajik"
+        },
+        {
+          "const": "th",
+          "description": "Thai"
+        },
+        {
+          "const": "ti",
+          "description": "Tigrinya"
+        },
+        {
+          "const": "bo",
+          "description": "Tibetan"
+        },
+        {
+          "const": "tk",
+          "description": "Turkmen"
+        },
+        {
+          "const": "tl",
+          "description": "Tagalog"
+        },
+        {
+          "const": "tn",
+          "description": "Tswana"
+        },
+        {
+          "const": "to",
+          "description": "Tonga"
+        },
+        {
+          "const": "tr",
+          "description": "Turkish"
+        },
+        {
+          "const": "ts",
+          "description": "Tsonga"
+        },
+        {
+          "const": "tt",
+          "description": "Tatar"
+        },
+        {
+          "const": "tw",
+          "description": "Twi"
+        },
+        {
+          "const": "ty",
+          "description": "Tahitian"
+        },
+        {
+          "const": "ug",
+          "description": "Uighur Uyghur"
+        },
+        {
+          "const": "uk",
+          "description": "Ukrainian"
+        },
+        {
+          "const": "ur",
+          "description": "Urdu"
+        },
+        {
+          "const": "uz",
+          "description": "Uzbek"
+        },
+        {
+          "const": "ve",
+          "description": "Venda"
+        },
+        {
+          "const": "vi",
+          "description": "Viatnamese"
+        },
+        {
+          "const": "vo",
+          "description": "Volapük"
+        },
+        {
+          "const": "wa",
+          "description": "Walloon"
+        },
+        {
+          "const": "cy",
+          "description": "Welsh"
+        },
+        {
+          "const": "wo",
+          "description": "Wolof"
+        },
+        {
+          "const": "fy",
+          "description": "Western Frisian"
+        },
+        {
+          "const": "xh",
+          "description": "Xhosa"
+        },
+        {
+          "const": "yi",
+          "description": "Yiddish"
+        },
+        {
+          "const": "yo",
+          "description": "Yoruba"
+        },
+        {
+          "const": "za",
+          "description": "Zhuang, Chuang"
+        },
+        {
+          "const": "zu",
+          "description": "Zulu"
+        }
+      ],
+      "type": "string",
+      "title": "Language Code",
+      "description": "Identifies the ISO639-1 language code"
+    },
+    "legal.Contract": {
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "agreement": {
+          "type": "string",
+          "format": "uuid",
+          "title": "Agreement UUID",
+          "description": "Agreement identifies the enduring legal relationship. Each amendment or\nrestatement has its own UUID while retaining this agreement UUID."
+        },
+        "kind": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Contract Kind",
+          "description": "Kind describes the intended legal form of this document."
+        },
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Human or system assigned identifier for this contract."
+        },
+        "version": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Version",
+          "description": "Version label supplied by the author or contract management system."
+        },
+        "language": {
+          "$ref": "#/$defs/i18n.Lang",
+          "title": "Language",
+          "description": "Primary language of the authoritative text."
+        },
+        "title": {
+          "type": "string",
+          "title": "Title",
+          "description": "Title of the document"
+        },
+        "sub_title": {
+          "type": "string",
+          "title": "Sub Title",
+          "description": "Sub-title"
+        },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "description": "Brief summary reflecting on the contents."
+        },
+        "issue_date": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Issue Date",
+          "description": "Date on which this version was issued."
+        },
+        "effect": {
+          "$ref": "https://gobl.org/draft-0/legal/effect",
+          "title": "Effect",
+          "description": "Conditions and dates governing when this contract has effect."
+        },
+        "parties": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/legal/party"
+          },
+          "type": "array",
+          "title": "Parties",
+          "description": "Parties and the roles in which they enter this contract."
+        },
+        "recitals": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/legal/recital"
+          },
+          "type": "array",
+          "title": "Recitals",
+          "description": "Background facts and purposes used to interpret the operative terms."
+        },
+        "definitions": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/legal/definition"
+          },
+          "type": "array",
+          "title": "Definitions",
+          "description": "Defined terms used by the document."
+        },
+        "chapters": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/legal/chapter"
+          },
+          "type": "array",
+          "title": "Chapters",
+          "description": "Set of chapters that make up the contract."
+        },
+        "law": {
+          "$ref": "https://gobl.org/draft-0/legal/governing-law",
+          "title": "Governing Law",
+          "description": "Law that the parties intend to govern the agreement."
+        },
+        "disputes": {
+          "$ref": "https://gobl.org/draft-0/legal/dispute-resolution",
+          "title": "Dispute Resolution",
+          "description": "Agreed process and forum for disputes."
+        },
+        "execution": {
+          "$ref": "https://gobl.org/draft-0/legal/execution",
+          "title": "Execution",
+          "description": "Requirements for legally executing this version."
+        },
+        "preceding": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/legal/reference"
+          },
+          "type": "array",
+          "title": "Preceding Documents",
+          "description": "Earlier versions, amendments, or other related legal documents."
+        },
+        "resources": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/legal/resource"
+          },
+          "type": "array",
+          "title": "Resources",
+          "description": "Digest-bound material incorporated into or supporting the agreement."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Metadata",
+          "description": "Additional non-essential metadata."
+        }
+      },
+      "type": "object",
+      "required": [
+        "agreement",
+        "language",
+        "title"
+      ],
+      "description": "Contract represents the structured body of a legal document."
+    }
+  }
+}
