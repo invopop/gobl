@@ -100,9 +100,8 @@ separately. `Import` takes options:
 
 - `WithFormats(keys...)`: limit detection to these formats.
 - `WithRouting(from, to)`: the transport addresses the document was received
-  with, such as network endpoint URIs, recorded on the envelope's
-  `Head.From` and `Head.To`. Converters receive them to set before
-  calculating the envelope; the register also sets them on the result.
+  with, such as network endpoint URIs. Converters receive them to set on the
+  envelope's `Head.From` and `Head.To` before calculating it.
 
 ```go
 res, err := convert.Import(data, convert.WithFormats("ubl+peppol+bis-v3"))
@@ -262,8 +261,7 @@ profile only identified by its PDF container, or ignore them.
 
 Converters that know where a document came from set the options' `From` and
 `To` on the envelope's head before calculating it, as GOBL otherwise derives
-them from the document as if it were being sent. The register sets them on
-the result for converters that do not.
+them from the document as if it were being sent.
 
 ### Export
 

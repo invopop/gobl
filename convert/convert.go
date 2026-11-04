@@ -20,7 +20,6 @@ import (
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/rules"
@@ -89,8 +88,7 @@ type Converter interface {
 	// the formats requested, so the converter may use them to pick between
 	// formats it cannot tell apart from the data. Converters that support
 	// routing should set the options' From and To on the envelope's head
-	// before calculating it. The register sets the result's Format, and the
-	// options' From and To.
+	// before calculating it. The register sets the result's Format.
 	Import(key cbc.Key, data []byte, opts *ImportOptions) (*ImportResult, error)
 	// Accepts checks the envelope can be exported into the format, and
 	// otherwise returns the reason, preferably as rules faults from the
@@ -159,8 +157,8 @@ type ImportOptions struct {
 	// Formats limit detection to the formats with these keys.
 	Formats []cbc.Key
 	// From and To are the transport addresses the document was received
-	// with, such as network endpoint URIs, recorded on the envelope's
-	// head.
+	// with, such as network endpoint URIs, for the converter to record on
+	// the envelope's head.
 	From cbc.URI
 	To   cbc.URI
 }
@@ -176,8 +174,9 @@ func WithFormats(keys ...cbc.Key) ImportOption {
 }
 
 // WithRouting sets the transport addresses the document was received with,
-// recorded verbatim on the envelope's Head.From and Head.To instead of those
-// GOBL would derive from the document, which are those of an outgoing one.
+// for converters to record on the envelope's Head.From and Head.To instead of
+// those GOBL would derive from the document, which are those of an outgoing
+// one.
 func WithRouting(from, to cbc.URI) ImportOption {
 	return func(o *ImportOptions) {
 		o.From = from
@@ -288,31 +287,7 @@ func Import(data []byte, opts ...ImportOption) (*ImportResult, error) {
 		return nil, ErrConversion.WithReason("format %s provided no envelope", e.format.Key)
 	}
 	res.Format = e.format
-	setRouting(res.Envelope, o)
 	return res, nil
-}
-
-// setRouting records the requested routing on the envelope, over any the
-// converter set from the document. From and To are not covered by the
-// envelope's signatures, so they may be set once the envelope is calculated.
-// An envelope without a head is given one, with the document's digest unless
-// the document cannot be marshalled.
-func setRouting(env *gobl.Envelope, o *ImportOptions) {
-	if o.From == "" && o.To == "" {
-		return
-	}
-	if env.Head == nil {
-		env.Head = head.NewHeader()
-	}
-	if env.Head.Digest == nil {
-		env.Head.Digest, _ = env.Digest()
-	}
-	if o.From != "" {
-		env.Head.From = o.From
-	}
-	if o.To != "" {
-		env.Head.To = o.To
-	}
 }
 
 // Export converts the envelope into the format with the key or, when it does

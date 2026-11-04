@@ -38,12 +38,12 @@ func header(in *convert.Input) string {
 	return h
 }
 
-// alphaConverter handles "alpha:" data, provides an attachment for data
-// ending in ":attach", an envelope without a head for ":headless", one
-// routed to "test:converter" for ":routed", and no result for ":empty", and
-// "alpha-fr:" for the FR variant that requires the "test-fr" addon on export.
-// The plain format refuses documents with the "test-refuse" addon, and embeds
-// attachments by adding their names to the output.
+// alphaConverter handles "alpha:" data, sets the routing requested on the
+// head, provides an attachment for data ending in ":attach", and no result
+// for ":empty", and "alpha-fr:" for the FR variant that requires the
+// "test-fr" addon on export. The plain format refuses documents with the
+// "test-refuse" addon, and embeds attachments by adding their names to the
+// output.
 type alphaConverter struct{}
 
 var alphaFRRules = convert.Rules("test+alpha-fr",
@@ -93,19 +93,15 @@ func (alphaConverter) Import(_ cbc.Key, data []byte, opts *convert.ImportOptions
 	for _, k := range opts.Formats {
 		content += ":" + k.String()
 	}
-	env, err := gobl.Envelop(&note.Message{Content: content})
-	if err != nil {
+	env := gobl.NewEnvelope()
+	env.Head.From = opts.From
+	env.Head.To = opts.To
+	if err := env.Insert(&note.Message{Content: content}); err != nil {
 		return nil, err
 	}
 	res := &convert.ImportResult{Envelope: env}
 	if strings.HasSuffix(string(data), ":attach") {
 		res.Attachments = []*convert.Attachment{{Name: "invoice.pdf", Data: []byte("%PDF")}}
-	}
-	if strings.HasSuffix(string(data), ":headless") {
-		env.Head = nil
-	}
-	if strings.HasSuffix(string(data), ":routed") {
-		env.Head.To = "test:converter"
 	}
 	return res, nil
 }
@@ -305,28 +301,10 @@ func TestImport(t *testing.T) {
 		msg := res.Envelope.Extract().(*note.Message)
 		assert.Equal(t, "alpha-fr:data:test+alpha-fr:test+beta", msg.Content)
 	})
-	t.Run("routing", func(t *testing.T) {
+	t.Run("routing passed to the converter", func(t *testing.T) {
 		res, err := convert.Import([]byte("alpha-fr:data"), convert.WithRouting("iso6523-actorid-upis::0088:sender", "iso6523-actorid-upis::0088:receiver"))
 		require.NoError(t, err)
 		assert.Equal(t, cbc.URI("iso6523-actorid-upis::0088:sender"), res.Envelope.Head.From)
-		assert.Equal(t, cbc.URI("iso6523-actorid-upis::0088:receiver"), res.Envelope.Head.To)
-	})
-	t.Run("routing keeps unset address", func(t *testing.T) {
-		res, err := convert.Import([]byte("alpha-fr:data"), convert.WithRouting("", "iso6523-actorid-upis::0088:receiver"))
-		require.NoError(t, err)
-		assert.Empty(t, res.Envelope.Head.From)
-		assert.Equal(t, cbc.URI("iso6523-actorid-upis::0088:receiver"), res.Envelope.Head.To)
-	})
-	t.Run("routing on an envelope without a head", func(t *testing.T) {
-		res, err := convert.Import([]byte("alpha-fr:headless"), convert.WithRouting("iso6523-actorid-upis::0088:sender", ""))
-		require.NoError(t, err)
-		require.NotNil(t, res.Envelope.Head)
-		assert.Equal(t, cbc.URI("iso6523-actorid-upis::0088:sender"), res.Envelope.Head.From)
-		assert.NoError(t, res.Envelope.Validate())
-	})
-	t.Run("routing replaces the converter's addresses", func(t *testing.T) {
-		res, err := convert.Import([]byte("alpha-fr:routed"), convert.WithRouting("", "iso6523-actorid-upis::0088:receiver"))
-		require.NoError(t, err)
 		assert.Equal(t, cbc.URI("iso6523-actorid-upis::0088:receiver"), res.Envelope.Head.To)
 	})
 	t.Run("formats not matching data", func(t *testing.T) {
