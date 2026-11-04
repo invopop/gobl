@@ -293,9 +293,9 @@ func Import(data []byte, opts ...ImportOption) (*ImportResult, error) {
 }
 
 // setRouting records the requested routing on the envelope, over any the
-// converter set from the document. From and To are not covered by the envelope's
-// signatures, so they may be set once the envelope is calculated. An
-// envelope without a head is given one, with the document's digest unless
+// converter set from the document. From and To are not covered by the
+// envelope's signatures, so they may be set once the envelope is calculated.
+// An envelope without a head is given one, with the document's digest unless
 // the document cannot be marshalled.
 func setRouting(env *gobl.Envelope, o *ImportOptions) {
 	if o.From == "" && o.To == "" {
