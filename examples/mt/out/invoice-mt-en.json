@@ -1,0 +1,151 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "9da75d47ced781991157e711c3d1d46bdd6fd2f47cfd932b5785c046ab8f0ef2"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "MT",
+		"uuid": "01994b64-9a1f-7a3e-8f0d-2c5e1b7d4a60",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "001",
+		"issue_date": "2026-03-01",
+		"currency": "EUR",
+		"supplier": {
+			"name": "Baystreet Advisory Ltd",
+			"tax_id": {
+				"country": "MT",
+				"code": "11679112"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Triq ir-Repubblika",
+					"locality": "Valletta",
+					"code": "VLT 1117",
+					"country": "MT"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.mt"
+				}
+			]
+		},
+		"customer": {
+			"name": "Marsaxlokk Holdings Ltd",
+			"tax_id": {
+				"country": "MT",
+				"code": "12345634"
+			},
+			"addresses": [
+				{
+					"num": "8",
+					"street": "Triq il-Kbira",
+					"locality": "Birkirkara",
+					"code": "BKR 1420",
+					"country": "MT"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Corporate advisory services",
+					"price": "150.00",
+					"unit": "h"
+				},
+				"sum": "3000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "18.0%"
+					}
+				],
+				"total": "3000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Custody and management of securities",
+					"price": "2500.00"
+				},
+				"sum": "2500.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "intermediate",
+						"percent": "12.0%"
+					}
+				],
+				"total": "2500.00"
+			},
+			{
+				"i": 3,
+				"quantity": "3",
+				"item": {
+					"name": "Licensed guest accommodation, nightly rate",
+					"price": "180.00",
+					"unit": "day"
+				},
+				"sum": "540.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "7.0%"
+					}
+				],
+				"total": "540.00"
+			}
+		],
+		"totals": {
+			"sum": "6040.00",
+			"total": "6040.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "3000.00",
+								"percent": "18.0%",
+								"amount": "540.00"
+							},
+							{
+								"key": "standard",
+								"base": "2500.00",
+								"percent": "12.0%",
+								"amount": "300.00"
+							},
+							{
+								"key": "standard",
+								"base": "540.00",
+								"percent": "7.0%",
+								"amount": "37.80"
+							}
+						],
+						"amount": "877.80"
+					}
+				],
+				"sum": "877.80"
+			},
+			"tax": "877.80",
+			"total_with_tax": "6917.80",
+			"payable": "6917.80"
+		}
+	}
+}
