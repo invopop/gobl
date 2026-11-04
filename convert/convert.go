@@ -20,6 +20,7 @@ import (
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/rules"
@@ -88,8 +89,8 @@ type Converter interface {
 	// the formats requested, so the converter may use them to pick between
 	// formats it cannot tell apart from the data. Converters that support
 	// routing should set the options' From and To on the envelope's head
-	// before calculating it. The register sets the result's Format, and any
-	// routing the converter did not.
+	// before calculating it. The register sets the result's Format, and the
+	// options' From and To where the converter left them empty.
 	Import(key cbc.Key, data []byte, opts *ImportOptions) (*ImportResult, error)
 	// Accepts checks the envelope can be exported into the format, and
 	// otherwise returns the reason, preferably as rules faults from the
@@ -287,32 +288,31 @@ func Import(data []byte, opts ...ImportOption) (*ImportResult, error) {
 		return nil, ErrConversion.WithReason("format %s provided no envelope", e.format.Key)
 	}
 	res.Format = e.format
-	if err := setRouting(res.Envelope, o); err != nil {
-		return nil, ErrConversion.WithCause(err)
-	}
+	setRouting(res.Envelope, o)
 	return res, nil
 }
 
-// setRouting records the requested routing on the envelope, for converters
-// that do not. From and To are not covered by the envelope's signatures, so
-// they may be set once the envelope is calculated. An envelope without a head
-// is calculated first, so it has one with a digest.
-func setRouting(env *gobl.Envelope, o *ImportOptions) error {
+// setRouting records the requested routing on the envelope, where the
+// converter left it empty. From and To are not covered by the envelope's
+// signatures, so they may be set once the envelope is calculated. An
+// envelope without a head is given one, with the document's digest unless
+// the document cannot be marshalled.
+func setRouting(env *gobl.Envelope, o *ImportOptions) {
 	if o.From == "" && o.To == "" {
-		return nil
+		return
 	}
 	if env.Head == nil {
-		if err := env.Calculate(); err != nil {
-			return err
-		}
+		env.Head = head.NewHeader()
 	}
-	if o.From != "" {
+	if env.Head.Digest == nil {
+		env.Head.Digest, _ = env.Digest()
+	}
+	if env.Head.From == "" {
 		env.Head.From = o.From
 	}
-	if o.To != "" {
+	if env.Head.To == "" {
 		env.Head.To = o.To
 	}
-	return nil
 }
 
 // Export converts the envelope into the format with the key or, when it does

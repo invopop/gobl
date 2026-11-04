@@ -102,7 +102,8 @@ separately. `Import` takes options:
 - `WithRouting(from, to)`: the transport addresses the document was received
   with, such as network endpoint URIs, recorded on the envelope's
   `Head.From` and `Head.To`. Converters receive them to set before
-  calculating the envelope; the register sets them on the result otherwise.
+  calculating the envelope; the register sets them on the result where the
+  converter left them empty.
 
 ```go
 res, err := convert.Import(data, convert.WithFormats("ubl+peppol+bis-v3"))
