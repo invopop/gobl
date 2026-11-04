@@ -20,7 +20,6 @@ import (
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/rules"
@@ -288,19 +287,24 @@ func Import(data []byte, opts ...ImportOption) (*ImportResult, error) {
 		return nil, ErrConversion.WithReason("format %s provided no envelope", e.format.Key)
 	}
 	res.Format = e.format
-	setRouting(res.Envelope, o)
+	if err := setRouting(res.Envelope, o); err != nil {
+		return nil, ErrConversion.WithCause(err)
+	}
 	return res, nil
 }
 
 // setRouting records the requested routing on the envelope, for converters
 // that do not. From and To are not covered by the envelope's signatures, so
-// they may be set once the envelope is calculated.
-func setRouting(env *gobl.Envelope, o *ImportOptions) {
+// they may be set once the envelope is calculated. An envelope without a head
+// is calculated first, so it has one with a digest.
+func setRouting(env *gobl.Envelope, o *ImportOptions) error {
 	if o.From == "" && o.To == "" {
-		return
+		return nil
 	}
 	if env.Head == nil {
-		env.Head = head.NewHeader()
+		if err := env.Calculate(); err != nil {
+			return err
+		}
 	}
 	if o.From != "" {
 		env.Head.From = o.From
@@ -308,6 +312,7 @@ func setRouting(env *gobl.Envelope, o *ImportOptions) {
 	if o.To != "" {
 		env.Head.To = o.To
 	}
+	return nil
 }
 
 // Export converts the envelope into the format with the key or, when it does
