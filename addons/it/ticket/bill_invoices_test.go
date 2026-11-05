@@ -378,3 +378,92 @@ func TestInvoiceTax(t *testing.T) {
 	})
 
 }
+
+func TestSupplierAddressValidation(t *testing.T) {
+	storeAddress := func() *org.Address {
+		return &org.Address{
+			Street:   "Via Roma",
+			Number:   "10",
+			Locality: "Roma",
+			Region:   "RM",
+			Code:     "00100",
+		}
+	}
+
+	t.Run("no addresses", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("complete store address", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		inv.Supplier.Addresses = []*org.Address{storeAddress()}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("missing street", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		addr := storeAddress()
+		addr.Street = ""
+		inv.Supplier.Addresses = []*org.Address{addr}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "[GOBL-IT-TICKET-BILL-INVOICE-09] ($.supplier.addresses[0].street) supplier address street is required")
+	})
+
+	t.Run("missing locality", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		addr := storeAddress()
+		addr.Locality = ""
+		inv.Supplier.Addresses = []*org.Address{addr}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "[GOBL-IT-TICKET-BILL-INVOICE-10] ($.supplier.addresses[0].locality) supplier address locality is required")
+	})
+
+	t.Run("missing code", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		addr := storeAddress()
+		addr.Code = ""
+		inv.Supplier.Addresses = []*org.Address{addr}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "[GOBL-IT-TICKET-BILL-INVOICE-11] ($.supplier.addresses[0].code) supplier address code is required")
+	})
+
+	t.Run("code not five digits", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		addr := storeAddress()
+		addr.Code = "0010"
+		inv.Supplier.Addresses = []*org.Address{addr}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "[GOBL-IT-TICKET-BILL-INVOICE-12] ($.supplier.addresses[0].code) supplier address code must be 5 digits")
+	})
+
+	t.Run("missing region", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		addr := storeAddress()
+		addr.Region = ""
+		inv.Supplier.Addresses = []*org.Address{addr}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "[GOBL-IT-TICKET-BILL-INVOICE-13] ($.supplier.addresses[0].region) supplier address region is required")
+	})
+
+	t.Run("region not a province code", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		addr := storeAddress()
+		addr.Region = "Lazio"
+		inv.Supplier.Addresses = []*org.Address{addr}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "[GOBL-IT-TICKET-BILL-INVOICE-14] ($.supplier.addresses[0].region) supplier address region must be a 2-letter province code")
+	})
+
+	t.Run("second address also validated", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		second := storeAddress()
+		second.Code = ""
+		inv.Supplier.Addresses = []*org.Address{storeAddress(), second}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "[GOBL-IT-TICKET-BILL-INVOICE-11] ($.supplier.addresses[1].code)")
+	})
+}
