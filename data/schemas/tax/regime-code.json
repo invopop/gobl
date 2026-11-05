@@ -140,6 +140,10 @@
         {
           "const": "US",
           "title": "United States of America"
+        },
+        {
+          "const": "UY",
+          "title": "Uruguay"
         }
       ],
       "type": "string",
