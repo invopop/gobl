@@ -1,0 +1,32 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "CL"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a1"
+code: "00000123"
+currency: CLP
+issue_date: "2026-06-15"
+
+supplier:
+  name: Proveedor Ejemplo SpA
+  tax_id:
+    country: CL
+    code: "123456785"
+  addresses:
+    - street: Av. Providencia 1234
+      locality: Providencia
+      region: Región Metropolitana
+      country: CL
+
+customer:
+  name: Cliente Comercial S.A.
+  tax_id:
+    country: CL
+    code: "111111111"
+
+lines:
+  - quantity: "10"
+    item:
+      name: Laptops Dell Latitude
+      price: "150000.00"
+    taxes:
+      - cat: VAT
+        rate: general
