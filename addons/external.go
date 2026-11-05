@@ -185,8 +185,8 @@ func init() {
 	tax.RegisterApprovedAddon(&tax.ExternalAddon{
 		Key: "ro-efactura-v1",
 		Name: i18n.String{
-			i18n.EN: "Romania e-Factura (RO_CIUS)",
-			i18n.RO: "România e-Factura (RO_CIUS)",
+			i18n.EN: "Romania RO e-Factura v1.x",
+			i18n.RO: "România RO e-Factura v1.x",
 		},
 		Module: "github.com/invopop/gobl.ro.anaf",
 	})

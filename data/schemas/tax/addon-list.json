@@ -113,7 +113,7 @@
           },
           {
             "const": "ro-efactura-v1",
-            "title": "Romania e-Factura (RO_CIUS)"
+            "title": "Romania RO e-Factura v1.x"
           },
           {
             "const": "sa-zatca-v1",
