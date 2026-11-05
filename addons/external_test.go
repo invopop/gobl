@@ -100,6 +100,12 @@ func TestApprovedAddons(t *testing.T) {
 				"peppol-pint-v1": "github.com/invopop/gobl.peppol",
 			},
 		},
+		{
+			name: "RO e-Factura",
+			modules: map[cbc.Key]string{
+				"ro-efactura-v1": "github.com/invopop/gobl.ro.anaf",
+			},
+		},
 	}
 
 	for _, group := range groups {
