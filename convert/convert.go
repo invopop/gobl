@@ -86,9 +86,8 @@ type Converter interface {
 	// Import converts data in the given format into a GOBL envelope, and
 	// provides the files embedded in it as attachments. The options carry
 	// the formats requested, so the converter may use them to pick between
-	// formats it cannot tell apart from the data. Converters that support
-	// routing should set the options' From and To on the envelope's head
-	// before calculating it. The register sets the result's Format.
+	// formats it cannot tell apart from the data. The register sets the
+	// result's Format.
 	Import(key cbc.Key, data []byte, opts *ImportOptions) (*ImportResult, error)
 	// Accepts checks the envelope can be exported into the format, and
 	// otherwise returns the reason, preferably as rules faults from the
@@ -156,11 +155,6 @@ type ExportResult struct {
 type ImportOptions struct {
 	// Formats limit detection to the formats with these keys.
 	Formats []cbc.Key
-	// From and To are the transport addresses the document was received
-	// with, such as network endpoint URIs, for the converter to record on
-	// the envelope's head.
-	From cbc.URI
-	To   cbc.URI
 }
 
 // ImportOption sets an import option.
@@ -170,24 +164,6 @@ type ImportOption func(*ImportOptions)
 func WithFormats(keys ...cbc.Key) ImportOption {
 	return func(o *ImportOptions) {
 		o.Formats = append(o.Formats, keys...)
-	}
-}
-
-// WithTo sets the transport address the document was received at, for
-// converters to record on the envelope's Head.To instead of the one GOBL
-// would derive from the document, which is that of an outgoing one.
-func WithTo(to cbc.URI) ImportOption {
-	return func(o *ImportOptions) {
-		o.To = to
-	}
-}
-
-// WithFrom sets the transport address the document was received from, for
-// converters to record on the envelope's Head.From instead of the one GOBL
-// would derive from the document, which is that of an outgoing one.
-func WithFrom(from cbc.URI) ImportOption {
-	return func(o *ImportOptions) {
-		o.From = from
 	}
 }
 

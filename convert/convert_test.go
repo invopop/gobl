@@ -38,8 +38,8 @@ func header(in *convert.Input) string {
 	return h
 }
 
-// alphaConverter handles "alpha:" data, sets the routing requested on the
-// head, provides an attachment for data ending in ":attach", and no result
+// alphaConverter handles "alpha:" data, adding the requested formats to the
+// content, provides an attachment for data ending in ":attach", and no result
 // for ":empty", and "alpha-fr:" for the FR variant that requires the
 // "test-fr" addon on export. The plain format refuses documents with the
 // "test-refuse" addon, and embeds attachments by adding their names to the
@@ -93,10 +93,8 @@ func (alphaConverter) Import(_ cbc.Key, data []byte, opts *convert.ImportOptions
 	for _, k := range opts.Formats {
 		content += ":" + k.String()
 	}
-	env := gobl.NewEnvelope()
-	env.Head.From = opts.From
-	env.Head.To = opts.To
-	if err := env.Insert(&note.Message{Content: content}); err != nil {
+	env, err := gobl.Envelop(&note.Message{Content: content})
+	if err != nil {
 		return nil, err
 	}
 	res := &convert.ImportResult{Envelope: env}
@@ -300,12 +298,6 @@ func TestImport(t *testing.T) {
 		require.NoError(t, err)
 		msg := res.Envelope.Extract().(*note.Message)
 		assert.Equal(t, "alpha-fr:data:test+alpha-fr:test+beta", msg.Content)
-	})
-	t.Run("routing passed to the converter", func(t *testing.T) {
-		res, err := convert.Import([]byte("alpha-fr:data"), convert.WithTo("iso6523-actorid-upis::0088:receiver"), convert.WithFrom("iso6523-actorid-upis::0088:sender"))
-		require.NoError(t, err)
-		assert.Equal(t, cbc.URI("iso6523-actorid-upis::0088:sender"), res.Envelope.Head.From)
-		assert.Equal(t, cbc.URI("iso6523-actorid-upis::0088:receiver"), res.Envelope.Head.To)
 	})
 	t.Run("formats not matching data", func(t *testing.T) {
 		_, err := convert.Import([]byte("alpha:data"), convert.WithFormats("test+beta"))
