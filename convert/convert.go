@@ -84,9 +84,11 @@ type Converter interface {
 	// empty key if it is not recognized. It should not fully parse the data.
 	Detect(in *Input) cbc.Key
 	// Import converts data in the given format into a GOBL envelope, and
-	// provides the files embedded in it as attachments. The register sets
-	// the result's Format.
-	Import(key cbc.Key, data []byte) (*ImportResult, error)
+	// provides the files embedded in it as attachments. The options carry
+	// the formats requested, so the converter may use them to pick between
+	// formats it cannot tell apart from the data. The register sets the
+	// result's Format.
+	Import(key cbc.Key, data []byte, opts *ImportOptions) (*ImportResult, error)
 	// Accepts checks the envelope can be exported into the format, and
 	// otherwise returns the reason, preferably as rules faults from the
 	// format's Rules. It is only called once the document's schema is in the
@@ -260,7 +262,7 @@ func Import(data []byte, opts ...ImportOption) (*ImportResult, error) {
 	if err != nil {
 		return nil, err
 	}
-	res, err := e.converter.Import(e.format.Key, data)
+	res, err := e.converter.Import(e.format.Key, data, o)
 	if err != nil {
 		return nil, ErrConversion.WithCause(err)
 	}

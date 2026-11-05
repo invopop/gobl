@@ -38,11 +38,12 @@ func header(in *convert.Input) string {
 	return h
 }
 
-// alphaConverter handles "alpha:" data, provides an attachment for data
-// ending in ":attach", and no result for ":empty", and "alpha-fr:" for the FR variant
-// that requires the "test-fr" addon on export. The plain format refuses
-// documents with the "test-refuse" addon, and embeds attachments by adding
-// their names to the output.
+// alphaConverter handles "alpha:" data, adding the requested formats to the
+// content, provides an attachment for data ending in ":attach", and no result
+// for ":empty", and "alpha-fr:" for the FR variant that requires the
+// "test-fr" addon on export. The plain format refuses documents with the
+// "test-refuse" addon, and embeds attachments by adding their names to the
+// output.
 type alphaConverter struct{}
 
 var alphaFRRules = convert.Rules("test+alpha-fr",
@@ -79,7 +80,7 @@ func (alphaConverter) Detect(in *convert.Input) cbc.Key {
 	return cbc.KeyEmpty
 }
 
-func (alphaConverter) Import(_ cbc.Key, data []byte) (*convert.ImportResult, error) {
+func (alphaConverter) Import(_ cbc.Key, data []byte, opts *convert.ImportOptions) (*convert.ImportResult, error) {
 	switch {
 	case strings.HasSuffix(string(data), ":fail"):
 		return nil, errors.New("boom")
@@ -88,7 +89,11 @@ func (alphaConverter) Import(_ cbc.Key, data []byte) (*convert.ImportResult, err
 	case strings.HasSuffix(string(data), ":empty"):
 		return nil, nil
 	}
-	env, err := gobl.Envelop(&note.Message{Content: string(data)})
+	content := string(data)
+	for _, k := range opts.Formats {
+		content += ":" + k.String()
+	}
+	env, err := gobl.Envelop(&note.Message{Content: content})
 	if err != nil {
 		return nil, err
 	}
@@ -155,7 +160,7 @@ func (betaConverter) Detect(in *convert.Input) cbc.Key {
 	return cbc.KeyEmpty
 }
 
-func (betaConverter) Import(_ cbc.Key, data []byte) (*convert.ImportResult, error) {
+func (betaConverter) Import(_ cbc.Key, data []byte, _ *convert.ImportOptions) (*convert.ImportResult, error) {
 	env, err := gobl.Envelop(&note.Message{Content: string(data)})
 	if err != nil {
 		return nil, err
@@ -287,6 +292,12 @@ func TestImport(t *testing.T) {
 		res, err := convert.Import([]byte("alpha:data"), convert.WithFormats("test+alpha"))
 		require.NoError(t, err)
 		assert.Equal(t, cbc.Key("test+alpha"), res.Format.Key)
+	})
+	t.Run("formats passed to the converter", func(t *testing.T) {
+		res, err := convert.Import([]byte("alpha-fr:data"), convert.WithFormats("test+alpha-fr", "test+beta"))
+		require.NoError(t, err)
+		msg := res.Envelope.Extract().(*note.Message)
+		assert.Equal(t, "alpha-fr:data:test+alpha-fr:test+beta", msg.Content)
 	})
 	t.Run("formats not matching data", func(t *testing.T) {
 		_, err := convert.Import([]byte("alpha:data"), convert.WithFormats("test+beta"))
