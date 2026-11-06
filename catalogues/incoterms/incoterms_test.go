@@ -1,0 +1,22 @@
+package incoterms_test
+
+import (
+	"testing"
+
+	_ "github.com/invopop/gobl"
+	"github.com/invopop/gobl/catalogues/incoterms"
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/tax"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func TestInit(t *testing.T) {
+	ext := tax.ExtensionForKey(incoterms.ExtKeyIncoterm)
+	require.NotNil(t, ext)
+	assert.Equal(t,
+		[]cbc.Code{"CFR", "CIF", "CIP", "CPT", "DAP", "DDP", "DPU", "EXW", "FAS", "FCA", "FOB"},
+		cbc.DefinitionCodes(ext.Values),
+	)
+	assert.Equal(t, []string{"bill/delivery-details"}, ext.Usage.Schemas)
+}
