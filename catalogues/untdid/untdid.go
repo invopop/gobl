@@ -18,6 +18,9 @@ const (
 	// qualifiers.
 	ExtKeyReference cbc.Key = "untdid-reference"
 
+	// ExtKeyDeliveryTerms is used to identify the UNTDID 4053 delivery terms code.
+	ExtKeyDeliveryTerms cbc.Key = "untdid-delivery-terms"
+
 	// ExtKeyTextSubject for the UNTDID 4451 "Text Subject Qualifier" mostly used
 	// in notes.
 	ExtKeyTextSubject cbc.Key = "untdid-text-subject"

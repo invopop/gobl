@@ -5306,6 +5306,38 @@
       ]
     },
     {
+      "key": "untdid-delivery-terms",
+      "name": {
+        "en": "UNTDID 4053: Delivery Terms",
+        "fr": "UNTDID 4053: Conditions de livraison"
+      },
+      "desc": {
+        "en": "Code from the UNTDID 4053 list describing who arranges the delivery of\nthe goods. Incoterms should be provided through a dedicated extension\ninstead.",
+        "fr": "Code de la liste UNTDID 4053 indiquant qui organise la livraison des\nmarchandises. Les Incoterms doivent être fournis via une extension dédiée."
+      },
+      "usage": {
+        "schemas": [
+          "bill/delivery-details"
+        ]
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Delivery arranged by the supplier",
+            "fr": "Livraison organisée par le fournisseur"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Delivery arranged by logistic service provider",
+            "fr": "Livraison organisée par le prestataire logistique"
+          }
+        }
+      ]
+    },
+    {
       "key": "untdid-text-subject",
       "name": {
         "en": "UNTDID 4451: Text Subject Qualifier"

@@ -1,0 +1,105 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/catalogue-def",
+  "key": "incoterms",
+  "name": {
+    "en": "ICC Incoterms",
+    "fr": "Incoterms ICC"
+  },
+  "extensions": [
+    {
+      "key": "icc-incoterm",
+      "name": {
+        "en": "ICC Incoterms 2020: Delivery Terms",
+        "fr": "ICC Incoterms 2020: Conditions de livraison"
+      },
+      "desc": {
+        "en": "International Commercial Terms published by the International Chamber of Commerce (ICC),\ndefining the responsibilities of the seller and buyer for the delivery of goods.",
+        "fr": "Conditions commerciales internationales publiées par la Chambre de commerce internationale (ICC),\ndéfinissant les responsabilités du vendeur et de l'acheteur pour la livraison des marchandises."
+      },
+      "usage": {
+        "schemas": [
+          "bill/delivery-details"
+        ]
+      },
+      "values": [
+        {
+          "code": "CFR",
+          "name": {
+            "en": "Cost and Freight",
+            "fr": "Coût et fret"
+          }
+        },
+        {
+          "code": "CIF",
+          "name": {
+            "en": "Cost, Insurance and Freight",
+            "fr": "Coût, assurance et fret"
+          }
+        },
+        {
+          "code": "CIP",
+          "name": {
+            "en": "Carriage and Insurance Paid to",
+            "fr": "Port payé, assurance comprise, jusqu'à"
+          }
+        },
+        {
+          "code": "CPT",
+          "name": {
+            "en": "Carriage Paid To",
+            "fr": "Port payé jusqu'à"
+          }
+        },
+        {
+          "code": "DAP",
+          "name": {
+            "en": "Delivered At Terminal",
+            "fr": "Rendu au lieu de destination"
+          }
+        },
+        {
+          "code": "DDP",
+          "name": {
+            "en": "Delivered Duty Paid",
+            "fr": "Rendu droits acquittés"
+          }
+        },
+        {
+          "code": "DPU",
+          "name": {
+            "en": "Delivered at Place Unloaded",
+            "fr": "Rendu au lieu de destination déchargé"
+          }
+        },
+        {
+          "code": "EXW",
+          "name": {
+            "en": "Ex Works",
+            "fr": "À l'usine"
+          }
+        },
+        {
+          "code": "FAS",
+          "name": {
+            "en": "Free Alongside Ship",
+            "fr": "Franco le long du navire"
+          }
+        },
+        {
+          "code": "FCA",
+          "name": {
+            "en": "Free Carrier",
+            "fr": "Franco transporteur"
+          }
+        },
+        {
+          "code": "FOB",
+          "name": {
+            "en": "Free On Board",
+            "fr": "Franco à bord"
+          }
+        }
+      ]
+    }
+  ]
+}
