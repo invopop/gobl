@@ -50,6 +50,10 @@
           "title": "Costa Rica"
         },
         {
+          "const": "CZ",
+          "title": "Czech Republic"
+        },
+        {
           "const": "DE",
           "title": "Germany"
         },

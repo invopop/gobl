@@ -1,0 +1,42 @@
+{
+  "id": "GOBL-CZ",
+  "package": "cz",
+  "subsets": [
+    {
+      "id": "GOBL-CZ-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [CZ]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-CZ-TAX-IDENTITY-01",
+                      "desc": "tax identity code for CZ must be 8, 9 or 10 digits",
+                      "tests": "matches ^\\d{8,10}$"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-CZ-TAX-IDENTITY-02",
+                      "desc": "tax identity code for CZ failed the check digit",
+                      "tests": "check digit"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
