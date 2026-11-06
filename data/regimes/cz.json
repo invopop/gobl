@@ -1,0 +1,217 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "cs": "Česká republika",
+    "en": "Czech Republic"
+  },
+  "description": {
+    "en": "The Czech tax system is administered by the Financial Administration\n(Finanční správa České republiky). As an EU member state, the Czech\nRepublic follows the EU VAT Directive.\n\nVAT (daň z přidané hodnoty, DPH) applies at a standard rate and a reduced\nrate. Exports and intra-EU supplies to VAT-registered buyers are exempt\nwith the right to deduct.\n\nTaxpayers are identified by their DIČ (daňové identifikační číslo): the\nprefix CZ followed by the 8-digit IČO of a legal person (e.g. CZ12345679),\nor by the 9 or 10-digit birth number or tax office identifier of a natural\nperson."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Finanční správa - Daň z přidané hodnoty"
+      },
+      "url": "https://financnisprava.gov.cz/cs/dane/dane/dan-z-pridane-hodnoty",
+      "at": "2026-11-06T00:00:00"
+    },
+    {
+      "title": {
+        "en": "e-Sbírka - Zákon č. 235/2004 Sb., o dani z přidané hodnoty"
+      },
+      "url": "https://e-sbirka.gov.cz/sb/2004/235",
+      "at": "2026-11-06T00:00:00"
+    },
+    {
+      "title": {
+        "en": "Zákony pro lidi - Zákon č. 235/2004 Sb., o dani z přidané hodnoty"
+      },
+      "url": "https://www.zakonyprolidi.cz/cs/2004-235",
+      "at": "2026-11-06T00:00:00"
+    },
+    {
+      "title": {
+        "en": "Zákon č. 280/2009 Sb., daňový řád, § 130 (Daňové identifikační číslo)"
+      },
+      "url": "https://www.zakonyprolidi.cz/cs/2009-280#p130",
+      "at": "2026-11-06T00:00:00"
+    }
+  ],
+  "time_zone": "Europe/Prague",
+  "country": "CZ",
+  "currency": "CZK",
+  "tax_scheme": "VAT",
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "cs": "DPH",
+        "en": "VAT"
+      },
+      "title": {
+        "cs": "Daň z přidané hodnoty",
+        "en": "Value Added Tax"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "cs": "Základní sazba",
+            "en": "Standard Rate"
+          },
+          "values": [
+            {
+              "since": "2013-01-01",
+              "percent": "21.0%"
+            },
+            {
+              "since": "2010-01-01",
+              "percent": "20.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "cs": "Snížená sazba",
+            "en": "Reduced Rate"
+          },
+          "desc": {
+            "cs": "Potraviny, léky, ubytování, voda a teplo.",
+            "en": "Foodstuffs, medicines, accommodation, water and heat."
+          },
+          "values": [
+            {
+              "since": "2024-01-01",
+              "percent": "12.0%"
+            },
+            {
+              "since": "2013-01-01",
+              "percent": "15.0%"
+            },
+            {
+              "since": "2012-01-01",
+              "percent": "14.0%"
+            },
+            {
+              "since": "2010-01-01",
+              "percent": "10.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Zákon č. 235/2004 Sb., o dani z přidané hodnoty, § 47 (Sazby daně)"
+          },
+          "url": "https://www.zakonyprolidi.cz/cs/2004-235#p47",
+          "at": "2026-11-06T00:00:00"
+        },
+        {
+          "title": {
+            "en": "Zákon č. 349/2023 Sb., čl. LX (snížená sazba 12 % od 1. 1. 2024)"
+          },
+          "url": "https://www.zakonyprolidi.cz/cs/2023-349",
+          "at": "2026-11-06T00:00:00"
+        },
+        {
+          "title": {
+            "en": "Zákon č. 500/2012 Sb., čl. III (sazby 21 % a 15 % od 1. 1. 2013)"
+          },
+          "url": "https://www.zakonyprolidi.cz/cs/2012-500",
+          "at": "2026-11-06T00:00:00"
+        },
+        {
+          "title": {
+            "en": "Zákon č. 370/2011 Sb., čl. I (snížená sazba 14 % od 1. 1. 2012)"
+          },
+          "url": "https://www.zakonyprolidi.cz/cs/2011-370",
+          "at": "2026-11-06T00:00:00"
+        },
+        {
+          "title": {
+            "en": "Zákon č. 362/2009 Sb., čl. VII (sazby 20 % a 10 % od 1. 1. 2010)"
+          },
+          "url": "https://www.zakonyprolidi.cz/cs/2009-362",
+          "at": "2026-11-06T00:00:00"
+        }
+      ]
+    }
+  ]
+}
