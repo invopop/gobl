@@ -31,7 +31,6 @@ func TestInit(t *testing.T) {
 			sources: []string{
 				"https://iccwbo.org/business-solutions/incoterms-rules/",
 				"https://2go.iccwbo.org/incoterms-2020-practical-free-wallchart.html",
-				"https://www.dhl.com/es-en/home/freight/help-center-for-european-road-and-rail/incoterms-2020-rules.html",
 				"https://www.dhl.com/content/dam/dhl/global/dhl-global-forwarding/documents/pdf/glo-dgf-incoterms-2020-brochure.pdf",
 			},
 		},
