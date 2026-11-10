@@ -167,8 +167,8 @@ func billDiscountRules() *rules.Set {
 
 func billLineDiscountRules() *rules.Set {
 	return rules.For(new(bill.LineDiscount),
-		// BR-41: either reason or allowance type extension required
-		rules.Assert("01", "either a reason or an allowance type extension is required (BR-41)",
+		// BR-42: either reason or allowance type extension required
+		rules.Assert("01", "either a reason or an allowance type extension is required (BR-42)",
 			is.Func("reason or allowance", billLineDiscountHasReasonOrAllowance),
 		),
 	)
@@ -176,13 +176,13 @@ func billLineDiscountRules() *rules.Set {
 
 func billChargeRules() *rules.Set {
 	return rules.For(new(bill.Charge),
-		// BR-36: either reason or charge type extension required
-		rules.Assert("01", "either a reason or a charge type extension is required (BR-36)",
-			is.Func("reason or charge", billChargeHasReasonOrExt),
-		),
 		// BR-37: taxes are required on document-level charges
 		rules.Field("taxes",
 			rules.Assert("02", "taxes are required (BR-37)", is.Present),
+		),
+		// BR-38: either reason or charge type extension required
+		rules.Assert("01", "either a reason or a charge type extension is required (BR-38)",
+			is.Func("reason or charge", billChargeHasReasonOrExt),
 		),
 	)
 }
