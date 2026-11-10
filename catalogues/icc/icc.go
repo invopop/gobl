@@ -1,5 +1,4 @@
-// Package icc defines the International Chamber of Commerce (ICC) code lists, such
-// as the Incoterms® delivery codes, that may be used in documents.
+// Package icc defines the International Chamber of Commerce (ICC) code lists.
 package icc
 
 import (
@@ -12,6 +11,9 @@ func init() {
 }
 
 const (
-	// ExtKeyDeliveryCode is used to identify the ICC Incoterms® 2020 delivery code.
-	ExtKeyDeliveryCode cbc.Key = "icc-delivery-code"
+	// ExtKeyIncoterms2010Rule is used to identify the ICC Incoterms® 2010 rule code.
+	ExtKeyIncoterms2010Rule cbc.Key = "icc-incoterms-2010-rule"
+
+	// ExtKeyIncoterms2020Rule is used to identify the ICC Incoterms® 2020 rule code.
+	ExtKeyIncoterms2020Rule cbc.Key = "icc-incoterms-2020-rule"
 )
