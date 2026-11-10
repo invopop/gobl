@@ -29,11 +29,19 @@
     {
       "key": "pt-region",
       "name": {
-        "en": "Region Code",
-        "pt": "Código da Região"
+        "en": "AT: Region Code",
+        "pt": "AT: Código da Região"
       },
       "desc": {
         "en": "SAF-T's `TaxCountryRegion` (País ou região do imposto) specifies the region of taxation\n(Portugal mainland, Açores, Madeira or any ISO country) in a Portuguese invoice. Each\nregion has their own tax rates which can be determined automatically.\n\nTo set the specific a region different to Portugal mainland, the `pt-region` extension of\neach line's VAT tax should be set to one of the following values:\n\n| Code  | Description                                         |\n| ----- | --------------------------------------------------- |\n| PT    | Mainland Portugal (default)                         |\n| PT-AC | Açores                                              |\n| PT-MA | Madeira                                             |\n| ...   | Any ISO country code (e.g. ES, FR, DE, etc.)        |\n\nFor example:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\t\"lines\": [\n\t\t{\n\t\t\t// ...\n\t\t\t\"item\": {\n\t\t\t\t\"name\": \"Some service\",\n\t\t\t\t\"price\": \"25.00\"\n\t\t\t},\n\t\t\t\"tax\": [\n\t\t\t\t{\n\t\t\t\t\t\t\"cat\": \"VAT\",\n\t\t\t\t\t\t\"rate\": \"exempt\",\n\t\t\t\t\t\t\"ext\": {\n\t\t\t\t\t\t\t\"pt-region\": \"PT-AC\",\n\t\t\t\t\t\t\t// ...\n\t\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t]\n\t\t}\n\t]\n}\n```"
+      },
+      "usage": {
+        "codes": [
+          "PT"
+        ],
+        "schemas": [
+          "tax/combo"
+        ]
       },
       "values": [
         {
@@ -1546,6 +1554,120 @@
           }
         }
       ]
+    }
+  ],
+  "stamps": [
+    {
+      "key": "at-atcud",
+      "name": {
+        "en": "AT: ATCUD",
+        "pt": "AT: ATCUD"
+      },
+      "desc": {
+        "en": "Unique document code formed by the series validation code assigned by the AT and the document's sequential number.",
+        "pt": "Código único do documento formado pelo código de validação da série atribuído pela AT e o número sequencial do documento."
+      },
+      "usage": {
+        "codes": [
+          "PT"
+        ]
+      }
+    },
+    {
+      "key": "at-qr",
+      "name": {
+        "en": "AT: QR Code",
+        "pt": "AT: Código QR"
+      },
+      "desc": {
+        "en": "Contents of the QR code that must be printed on the document.",
+        "pt": "Conteúdo do código QR que deve ser impresso no documento."
+      },
+      "usage": {
+        "codes": [
+          "PT"
+        ]
+      }
+    },
+    {
+      "key": "at-hash",
+      "name": {
+        "en": "AT: Hash Characters",
+        "pt": "AT: Caracteres do Hash"
+      },
+      "desc": {
+        "en": "Characters extracted from the document's signature that must be printed on the document.",
+        "pt": "Caracteres extraídos da assinatura do documento que devem ser impressos no documento."
+      },
+      "usage": {
+        "codes": [
+          "PT"
+        ]
+      }
+    },
+    {
+      "key": "at-hash-full",
+      "name": {
+        "en": "AT: Hash",
+        "pt": "AT: Hash"
+      },
+      "desc": {
+        "en": "Complete signature of the document, chained to the signature of the previous document in the series.",
+        "pt": "Assinatura completa do documento, encadeada com a assinatura do documento anterior da série."
+      },
+      "usage": {
+        "codes": [
+          "PT"
+        ]
+      }
+    },
+    {
+      "key": "at-app-id",
+      "name": {
+        "en": "AT: Software Certificate Number",
+        "pt": "AT: Número de Certificado do Programa"
+      },
+      "desc": {
+        "en": "Number of the certificate assigned by the AT to the invoicing software that issued the document.",
+        "pt": "Número do certificado atribuído pela AT ao programa de faturação que emitiu o documento."
+      },
+      "usage": {
+        "codes": [
+          "PT"
+        ]
+      }
+    },
+    {
+      "key": "at-ts",
+      "name": {
+        "en": "AT: System Entry Date",
+        "pt": "AT: Data de Gravação"
+      },
+      "desc": {
+        "en": "Date and time the document was signed and recorded by the invoicing software.",
+        "pt": "Data e hora em que o documento foi assinado e gravado pelo programa de faturação."
+      },
+      "usage": {
+        "codes": [
+          "PT"
+        ]
+      }
+    },
+    {
+      "key": "at-doc-code",
+      "name": {
+        "en": "AT: Document Code",
+        "pt": "AT: Código de Identificação"
+      },
+      "desc": {
+        "en": "Identification code returned by the AT when a transport document is communicated.",
+        "pt": "Código de identificação devolvido pela AT na comunicação de um documento de transporte."
+      },
+      "usage": {
+        "codes": [
+          "PT"
+        ]
+      }
     }
   ],
   "corrections": [

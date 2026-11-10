@@ -11,6 +11,54 @@ blank imports in [`addons.go`](./addons.go) run each package's `init()`, which
 calls `tax.RegisterAddonDef`. Importing `github.com/invopop/gobl` (which imports
 this package) therefore makes every in-core addon available.
 
+## Extensions and stamps
+
+Addons describe the extensions and stamps they offer with `cbc.Definition`s so
+that tools, such as document editors, can list and label the fields available
+for a document. Each definition must have:
+
+- **A name prefixed with the issuer** in every language, such as
+  `"SII: Invoice Type"` or `"TicketBAI: QR Code"`, so the field can be told apart
+  from similar fields offered by other addons. Don't repeat the issuer in the
+  rest of the name.
+- **A `Usage`** describing where the definition applies:
+  - `Keys` with the addon's key, such as `[]cbc.Key{V1}`. Tax regimes use
+    `Codes` with their country code instead.
+  - `Schemas` (extensions only) with the short schema IDs of the objects whose
+    `ext` holds the extension, using the `ShortSchema` constants in each
+    package, such as `tax.ShortSchemaCombo`, `bill.ShortSchemaTax`, or
+    `org.ShortSchemaParty`. Each must be a registered schema that has
+    extensions.
+  - `Paths` (optional) with JSON paths, only when the extension applies to some
+    of a schema's locations. A path also covers everything under it, so
+    `$.supplier` limits an `org/party` extension to the supplier, and
+    `$.lines[*].taxes[*]` limits a `tax/combo` extension to line taxes.
+
+```go
+{
+	Key: ExtKeyBIActivity,
+	Name: i18n.String{
+		i18n.EN: "TicketBAI: Activity Code (Bizkaia)",
+		i18n.ES: "TicketBAI: Código de Actividad (Bizkaia)",
+	},
+	Usage: &cbc.Usage{
+		Keys:    []cbc.Key{V1},
+		Schemas: []string{org.ShortSchemaParty},
+		Paths:   []string{"$.supplier"},
+	},
+	// ...
+}
+```
+
+Extensions and stamps are listed in the `AddonDef`'s `Extensions` and `Stamps`,
+and `tax.RegisterAddonDef` registers them in the `tax` and `head` packages.
+Registering a different definition with a key already in use panics, so keys
+must be unique across all regimes, addons, and catalogues.
+
+`Usage` is descriptive: it helps tools filter and present definitions, but it is
+not used to validate documents. Rules and normalizers still decide where an
+extension is required.
+
 ## External addons & the approval process
 
 An addon may instead live in its **own Go module** — for example
@@ -58,6 +106,8 @@ approved, the module must satisfy all of the following.
   in-core addon key;
 - extensions, normalizers, scenarios, and validation rules defined in idiomatic
   GOBL style, with stable fault codes;
+- extension and stamp definitions with prefixed names and a `Usage`, as
+  described in [Extensions and stamps](#extensions-and-stamps);
 - self-registration via `init()` + `tax.RegisterAddonDef` so a blank import is
   all a consumer needs;
 - a `README` documenting the addon's purpose, the flows/documents it covers, and

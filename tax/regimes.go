@@ -3,6 +3,8 @@ package tax
 import (
 	"sort"
 
+	"github.com/invopop/gobl/head"
+
 	"github.com/invopop/gobl/l10n"
 )
 
@@ -60,9 +62,8 @@ func (c *RegimeDefCollection) All() []*RegimeDef {
 
 // RegisterRegimeDef adds a new regime to the shared global list of tax regimes.
 func RegisterRegimeDef(regime *RegimeDef) {
-	for _, ext := range regime.Extensions {
-		RegisterExtension(ext)
-	}
+	RegisterExtension(regime.Extensions...)
+	head.RegisterStamp(regime.Stamps...)
 	regimes.add(regime)
 }
 

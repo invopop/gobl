@@ -10,22 +10,9 @@ import (
 	"github.com/invopop/gobl/org"
 )
 
-// Who fetches the public identity for the given address with a GET on
-// its well-known who endpoint and verifies it. The response envelope's
-// first signature must be the subject's self-signature: its signed
-// `iss` is resolved to a published key and must name the fetched
-// address. The document must be an org.Party. Authority
-// countersignatures, if any, are preserved on the returned envelope
-// for VerifyAuthority.
-//
-// The request carries a bearer request token minted from the client's
-// identity (WithIdentity); conforming servers reject requests without
-// one.
-//
-// A 204 response returns ErrNoContent: the address exists but does not
-// publish identity details (a receive-only account). A 202 response
-// returns ErrPending: the request was recorded and the owner may
-// deliver its party envelope to the requester's inbox later.
+// Who fetches and verifies addr's party envelope. The subject must equal addr
+// and have an audience-free self-signature. WithIdentity authenticates the
+// request. HTTP 204 and 202 responses return ErrNoContent and ErrPending.
 func (c *Client) Who(ctx context.Context, addr Address) (*gobl.Envelope, error) {
 	// Canonicalize so well-known URLs and the issuer comparison use
 	// the ASCII form regardless of how the address was written.
@@ -45,37 +32,32 @@ func (c *Client) Who(ctx context.Context, addr Address) (*gobl.Envelope, error) 
 	if err := json.Unmarshal(data, env); err != nil {
 		return nil, fmt.Errorf("%w: invalid who envelope: %v", ErrFetchFailed, err)
 	}
-	issuer, err := c.VerifyEnvelope(ctx, env, "")
+	subject, err := c.VerifyParty(ctx, env)
 	if err != nil {
 		return nil, err
 	}
-	if issuer != addr {
-		return nil, fmt.Errorf("%w: who issuer %q does not match address %q", ErrVerifyFailed, issuer, addr)
+	if subject != addr {
+		return nil, fmt.Errorf("%w: who response is the identity of %q, not %q", ErrVerifyFailed, subject, addr)
 	}
-	// A who response is a public document: a caller-bound (aud-carrying)
-	// envelope is not a conforming identity and must not be treated as
-	// one.
-	p, err := head.SignedPayload(env.Signatures[0])
+	// A who response is a public document: it must carry at least
+	// one audience-free self-signature. Audience-bound self-
+	// signatures are ignored; an envelope with only caller-bound
+	// signatures is not a public identity.
+	ok, err := c.subjectSignatureFor(ctx, env, addr, func(p *head.SigningPayload) bool {
+		return p.Aud == ""
+	})
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrVerifyFailed, err)
+		return nil, err
 	}
-	if p.Aud != "" {
-		return nil, fmt.Errorf("%w: who response must not be audience-bound (aud %q)", ErrVerifyFailed, p.Aud)
-	}
-	if _, ok := env.Extract().(*org.Party); !ok {
-		return nil, ErrPartyMissing
+	if !ok {
+		return nil, fmt.Errorf("%w: who response carries no audience-free self-signature", ErrVerifyFailed)
 	}
 	return env, nil
 }
 
-// VerifySender confirms that the given address is approved to send
-// documents: its who identity must verify (see Who) and carry a
-// countersignature from one of the client's trusted authorities.
-// When requireVerified is true the endorsement must additionally
-// carry a confirmed verifier (see VerifyAuthority), else
-// ErrNotVerified. Returns the sender's endorsed party on success.
-// Receiving inboxes call this with the verified issuer of an
-// incoming envelope before accepting it.
+// VerifySender returns addr's party after verifying its identity and a trusted
+// authority endorsement. If requireVerified is true, the endorsement must also
+// include confirmed verifier evidence.
 func (c *Client) VerifySender(ctx context.Context, addr Address, requireVerified bool) (*org.Party, error) {
 	env, err := c.Who(ctx, addr)
 	if err != nil {

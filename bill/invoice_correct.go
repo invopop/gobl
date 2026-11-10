@@ -36,8 +36,7 @@ type CorrectionOptions struct {
 	// Extensions for region specific requirements that may be added in the preceding
 	// or at the document level, according to the local rules.
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
-	// CopyTax when true will copy the tax totals from the previous document to the
-	// preceding document data.
+	// When true, copies the tax totals from the previous document into the preceding document data.
 	CopyTax bool `json:"copy_tax,omitempty" jsonschema:"title=Copy Tax Totals"`
 
 	// In case we want to use a raw json object as a source of the options.

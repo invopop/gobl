@@ -33,8 +33,7 @@ var (
 	ErrTokenExpired = errors.New("net: request token expired")
 	// ErrVerifyFailed is returned when verification fails.
 	ErrVerifyFailed = errors.New("net: verification failed")
-	// ErrUnknownAuthority is returned when a /who envelope is signed by an
-	// address not in the Authorities list.
+	// ErrUnknownAuthority is returned when no trusted authority endorsement is found.
 	ErrUnknownAuthority = errors.New("net: endorser is not a recognised authority")
 	// ErrNotVerified is returned when a sender's endorsement is valid but
 	// carries no confirmed verifier and the caller required identity
@@ -43,8 +42,7 @@ var (
 	// ErrSignatureExpired is returned when an authority countersignature
 	// verifies but its exp claim is in the past.
 	ErrSignatureExpired = errors.New("net: signature expired")
-	// ErrPartyMissing is returned when a /who response does not contain an
-	// org.Party document.
+	// ErrPartyMissing is returned when an identity envelope has no org.Party.
 	ErrPartyMissing = errors.New("net: /who response did not contain a party document")
 	// ErrInboxRejected is returned when an inbox endpoint rejects an envelope.
 	ErrInboxRejected = errors.New("net: inbox rejected envelope")

@@ -107,8 +107,13 @@
           "title": "Key",
           "description": "The payment means used."
         },
+        "waiver": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Waiver",
+          "description": "Reason the amount was waived and not collected from the customer,\nas an alternative to the payment means key."
+        },
         "ref": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Reference",
           "description": "ID or reference for the payment."
         },
@@ -121,6 +126,14 @@
           "$ref": "https://gobl.org/draft-0/num/percentage",
           "title": "Percent",
           "description": "Percentage of the total amount payable that was paid. Note that\nmultiple records with percentages may lead to rounding errors,\nespecially when the total sums to 100%. We recommend only including one\nrecord with a percent value per document."
+        },
+        "taxes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/tax/filter"
+          },
+          "type": "array",
+          "title": "Taxes",
+          "description": "Tax rate totals whose sum is used as the amount, as an alternative to\nthe percent."
         },
         "amount": {
           "$ref": "https://gobl.org/draft-0/num/amount",

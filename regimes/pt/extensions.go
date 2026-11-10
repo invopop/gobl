@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/tax"
 )
 
 // Special codes to be used inside rates.
@@ -68,8 +69,12 @@ var extensionKeys = []*cbc.Definition{
 			`),
 		},
 		Name: i18n.String{
-			i18n.EN: "Region Code",
-			i18n.PT: "Código da Região",
+			i18n.EN: "AT: Region Code",
+			i18n.PT: "AT: Código da Região",
+		},
+		Usage: &cbc.Usage{
+			Codes:   []cbc.Code{CountryCode},
+			Schemas: []string{tax.ShortSchemaCombo},
 		},
 		Values: regionDefs(),
 	},

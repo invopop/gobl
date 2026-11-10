@@ -1,0 +1,41 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "CR"
+uuid: "0193e2c1-6c9f-7e5a-9d7c-8b0f4a3e6d9c"
+type: credit-note
+currency: CRC
+series: "2026"
+code: "0003"
+issue_date: "2026-06-02"
+
+preceding:
+  - code: "2026/0001"
+    issue_date: "2026-05-12"
+
+supplier:
+  name: Distribuidora del Valle S.A.
+  tax_id:
+    country: "CR"
+    code: "3-101-123456"
+  addresses:
+    - street: Avenida Central, Calle 5
+      locality: San José
+      country: "CR"
+
+customer:
+  name: María Rodríguez Jiménez
+  tax_id:
+    country: "CR"
+    code: "1-0998-0456"
+  addresses:
+    - street: Barrio Escalante
+      locality: San José
+      country: "CR"
+
+lines:
+  - quantity: "1"
+    item:
+      name: Licencia de software
+      price: "250000.00"
+    taxes:
+      - cat: VAT
+        rate: general

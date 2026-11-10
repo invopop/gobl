@@ -14,7 +14,7 @@ import (
 type Stamp struct {
 	// Identity of the agency used to create the stamp usually defined by each region.
 	Provider cbc.Key `json:"prv" jsonschema:"title=Provider"`
-	// The serialized stamp value generated for or by the external agency
+	// Serialized stamp value generated for or by the external agency.
 	Value string `json:"val" jsonschema:"title=Value"`
 }
 

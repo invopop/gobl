@@ -156,7 +156,7 @@
             }
           ],
           "title": "Key",
-          "description": "Key specifying subject of the text"
+          "description": "Subject of the note's text."
         },
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
@@ -171,17 +171,17 @@
         "text": {
           "type": "string",
           "title": "Text",
-          "description": "The contents of the note"
+          "description": "Contents of the note."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
           "title": "Meta",
-          "description": "Additional information about the note"
+          "description": "Additional information about the note."
         },
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",
           "title": "Extensions",
-          "description": "Extension data"
+          "description": "Extension codes that apply to the note."
         }
       },
       "type": "object",

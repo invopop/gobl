@@ -7,7 +7,7 @@
       "type": "string",
       "pattern": "^[A-Z0-9]+$",
       "title": "Code",
-      "description": "Code is used for short identifies like country or state codes."
+      "description": "Code is used for short identifiers like country or state codes."
     }
   }
 }

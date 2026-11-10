@@ -15,7 +15,7 @@ type Image struct {
 	uuid.Identify
 	// Label to help identify the image.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
-	// URL of the image
+	// URL of the image.
 	URL string `json:"url,omitempty" jsonschema:"title=URL"`
 	// As an alternative to the URL and only when the source data is small,
 	// like an SVG, the raw data may be provided using Base64 encoding.
@@ -30,10 +30,9 @@ type Image struct {
 	Height int32 `json:"height,omitempty" jsonschema:"title=Height"`
 	// Width of the image in pixels.
 	Width int32 `json:"width,omitempty" jsonschema:"title=Width"`
-	// Digest can be used to ensure the image contained at the URL
-	// is the same one as originally intended.
+	// Used to verify the image at the URL is the same one as originally intended.
 	Digest *dsig.Digest `json:"digest,omitempty" jsonschema:"title=Digest"`
-	// Meta contains additional information about the image.
+	// Additional information about the image.
 	Meta *cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 

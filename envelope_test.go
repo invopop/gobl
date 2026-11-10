@@ -11,13 +11,12 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/addons/co/dian"
-	"github.com/invopop/gobl/addons/es/facturae"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
+	"github.com/invopop/gobl/internal/testaddons"
 	"github.com/invopop/gobl/note"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -425,7 +424,7 @@ func TestEnvelopeCorrect(t *testing.T) {
 
 		_, err = env.Correct(
 			bill.Corrective,
-			bill.WithExtension(facturae.ExtKeyCorrection, "01"),
+			bill.WithExtension(testaddons.ExtKeyCorrection, "01"),
 		)
 		require.NoError(t, err)
 
@@ -434,7 +433,7 @@ func TestEnvelopeCorrect(t *testing.T) {
 
 		e2, err := env.Correct(
 			bill.Corrective,
-			bill.WithExtension(facturae.ExtKeyCorrection, "02"),
+			bill.WithExtension(testaddons.ExtKeyCorrection, "02"),
 		)
 		require.NoError(t, err)
 		doc = e2.Extract().(*bill.Invoice)
@@ -442,14 +441,11 @@ func TestEnvelopeCorrect(t *testing.T) {
 	})
 
 	t.Run("correct with stamps", func(t *testing.T) {
-		data, err := os.ReadFile("./examples/co/out/simple.json")
+		inv := testaddons.Invoice(testaddons.CorrectionStamps)
+		env, err := gobl.Envelop(inv)
 		require.NoError(t, err)
-		out, err := gobl.Parse(data)
-		require.NoError(t, err)
-		env, ok := out.(*gobl.Envelope)
-		require.True(t, ok)
 		env.Head.AddStamp(&head.Stamp{
-			Provider: dian.StampCUDE,
+			Provider: testaddons.StampRef,
 			Value:    "1234567890",
 		})
 

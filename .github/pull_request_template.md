@@ -11,7 +11,7 @@
 - [ ] Run `go generate .` to ensure that the Schemas and Regime data are up to date.
 - [ ] Reviewed and fixed all linter warnings.
 - [ ] Been obsessive with pointer nil checks to avoid panics.
-- [ ] Updated the CHANGELOG.md with an overview of my changes.
+- [ ] Added a file to `changes/unreleased` with an overview of my changes, as described in `changes/README.md`.
 - [ ] Marked this PR as ready for review.
 
 And if you are part of the org:

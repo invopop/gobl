@@ -8,17 +8,17 @@
         "label": {
           "type": "string",
           "title": "Label",
-          "description": "Label allows for additional information to be added to the\ncurrency Amount that may be useful."
+          "description": "Additional information about the amount that may be useful."
         },
         "currency": {
           "$ref": "https://gobl.org/draft-0/currency/code",
           "title": "Currency",
-          "description": "Code defines the currency for this amount."
+          "description": "Currency of the amount."
         },
         "value": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Value",
-          "description": "Value is the amount in the currency."
+          "description": "Amount in the currency."
         }
       },
       "type": "object",

@@ -8,7 +8,7 @@
         "schema": {
           "type": "string",
           "title": "Schema",
-          "description": "Partial or complete schema URL for the document type"
+          "description": "Partial or complete schema URL for the document type."
         },
         "list": {
           "items": {
@@ -16,7 +16,7 @@
           },
           "type": "array",
           "title": "List",
-          "description": "List of scenarios for the schema"
+          "description": "List of scenarios for the schema."
         }
       },
       "type": "object",

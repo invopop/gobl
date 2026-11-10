@@ -13,7 +13,7 @@
         "val": {
           "type": "string",
           "title": "Value",
-          "description": "The serialized stamp value generated for or by the external agency"
+          "description": "Serialized stamp value generated for or by the external agency."
         }
       },
       "type": "object",

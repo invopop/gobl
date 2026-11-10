@@ -9,7 +9,7 @@
         {
           "id": "GOBL-CBC-CODE-01",
           "desc": "codes must be no longer than 128 characters",
-          "tests": "length between 0 and 128"
+          "tests": "length at most 128"
         },
         {
           "id": "GOBL-CBC-CODE-02",
@@ -111,7 +111,7 @@
         {
           "id": "GOBL-CBC-URI-01",
           "desc": "uri must be no longer than 2048 characters",
-          "tests": "length between 0 and 2048"
+          "tests": "length at most 2048"
         }
       ],
       "subsets": [
@@ -122,6 +122,42 @@
               "id": "GOBL-CBC-URI-02",
               "desc": "uri must be a valid absolute URI with a scheme",
               "tests": "valid uri"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-CBC-USAGE",
+      "object": "cbc.Usage",
+      "subsets": [
+        {
+          "field": "schemas",
+          "subsets": [
+            {
+              "each": true,
+              "assert": [
+                {
+                  "id": "GOBL-CBC-USAGE-01",
+                  "desc": "schema must be a short schema ID",
+                  "tests": "matches ^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*$"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "paths",
+          "subsets": [
+            {
+              "each": true,
+              "assert": [
+                {
+                  "id": "GOBL-CBC-USAGE-02",
+                  "desc": "path must be a JSON path",
+                  "tests": "matches ^\\$(\\.[$a-zA-Z0-9_-]+(\\[\\*\\])*)*$"
+                }
+              ]
             }
           ]
         }

@@ -80,12 +80,12 @@
             }
           ],
           "title": "Key",
-          "description": "Key helps identify the reason."
+          "description": "Identifies the type of reason."
         },
         "description": {
           "type": "string",
           "title": "Description",
-          "description": "Description contains a simple text that describes the reason why the\noriginal document was not processed."
+          "description": "Text describing why the original document was not processed."
         },
         "faults": {
           "items": {
@@ -93,12 +93,12 @@
           },
           "type": "array",
           "title": "Faults",
-          "description": "Faults provides more specific details about what cause the document\nto be rejected."
+          "description": "More specific details about what caused the document to be rejected."
         },
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",
           "title": "Extensions",
-          "description": "Extensions for local or format focussed data"
+          "description": "Extensions for local or format specific data."
         }
       },
       "type": "object",

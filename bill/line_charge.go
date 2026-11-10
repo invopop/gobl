@@ -17,24 +17,24 @@ type LineCharge struct {
 	// keys is provided, but these are for reference only and may be extended by
 	// the issuer.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
-	// Reference or ID for this charge defined by the issuer
+	// Reference or ID for this charge defined by the issuer.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
-	// Text description as to why the charge was applied
+	// Reason why the charge was applied.
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
-	// Base for percent calculations instead of the line's sum
+	// Base for percent calculations instead of the line's sum.
 	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base"`
-	// Percentage of base or parent line's sum
+	// Percentage of the base or the parent line's sum.
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
 	// Quantity of units to apply the charge to when using the rate instead of
 	// the line's quantity.
 	Quantity *num.Amount `json:"quantity,omitempty" jsonschema:"title=Quantity"`
 	// Unit to associate with the quantity when using the rate.
-	Unit org.Unit `json:"unit,omitempty" jsonschema:"title=Unit"`
-	// Rate defines a price per unit to use instead of the percentage.
+	Unit cbc.Key `json:"unit,omitempty" jsonschema:"title=Unit"`
+	// Price per unit to use instead of the percentage.
 	Rate *num.Amount `json:"rate,omitempty" jsonschema:"title=Rate"`
 	// Fixed or resulting charge amount to apply (calculated if percent present).
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
-	// Extension codes that apply to the charge
+	// Extension codes that apply to the charge.
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
@@ -62,6 +62,9 @@ func lineChargeRules() *rules.Set {
 			rules.Field("rate",
 				rules.Assert("05", "rate is required when quantity is set", is.Present),
 			),
+		),
+		rules.Field("unit",
+			rules.AssertIfPresent("06", "unit must be valid", org.HasValidUnitKey),
 		),
 	)
 }
@@ -91,4 +94,5 @@ func CleanLineCharges(lines []*LineCharge) []*LineCharge {
 // JSONSchemaExtend adds the charge key definitions to the schema.
 func (LineCharge) JSONSchemaExtend(schema *jsonschema.Schema) {
 	extendJSONSchemaWithChargeKey(schema)
+	org.ExtendUnitKeySchema(schema, "unit")
 }

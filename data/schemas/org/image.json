@@ -19,7 +19,7 @@
         "url": {
           "type": "string",
           "title": "URL",
-          "description": "URL of the image"
+          "description": "URL of the image."
         },
         "data": {
           "type": "string",
@@ -55,12 +55,12 @@
         "digest": {
           "$ref": "https://gobl.org/draft-0/dsig/digest",
           "title": "Digest",
-          "description": "Digest can be used to ensure the image contained at the URL\nis the same one as originally intended."
+          "description": "Used to verify the image at the URL is the same one as originally intended."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
           "title": "Meta",
-          "description": "Meta contains additional information about the image."
+          "description": "Additional information about the image."
         }
       },
       "type": "object",

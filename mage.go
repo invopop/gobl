@@ -6,7 +6,10 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"time"
 
+	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/pkg/changes"
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
 )
@@ -68,5 +71,44 @@ func runQuiet(msg, cmd string, args ...string) error {
 		return err
 	}
 	fmt.Println(msg)
+	return nil
+}
+
+// Changes groups the release note targets.
+type Changes mg.Namespace
+
+// Preview shows the release notes the pending change files would produce.
+func (Changes) Preview() error {
+	out, err := changes.Preview(".", string(gobl.VERSION), time.Now())
+	if err != nil {
+		return err
+	}
+	fmt.Print(out)
+	return nil
+}
+
+// Format rewrites the release notes into their canonical form.
+func (Changes) Format() error {
+	names, err := changes.Normalize(".")
+	if err != nil {
+		return err
+	}
+	for _, name := range names {
+		fmt.Printf("✓ Formatted %s\n", name)
+	}
+	if len(names) == 0 {
+		fmt.Println("✓ Release notes already formatted")
+	}
+	return nil
+}
+
+// Release moves the pending change files into a dated release note for the
+// version declared in version.go, and regenerates the changelog.
+func (Changes) Release() error {
+	name, err := changes.Release(".", string(gobl.VERSION), time.Now())
+	if err != nil {
+		return err
+	}
+	fmt.Printf("✓ Wrote %s and regenerated %s\n", name, changes.ChangelogFile)
 	return nil
 }

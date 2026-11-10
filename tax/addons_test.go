@@ -2,9 +2,12 @@ package tax_test
 
 import (
 	"encoding/json"
+	"maps"
+	"slices"
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/rules"
@@ -18,6 +21,23 @@ func init() {
 	tax.RegisterAddonDef(&tax.AddonDef{
 		Key:  "test-addon-v1",
 		Name: i18n.String{i18n.EN: "Test Addon"},
+		Extensions: []*cbc.Definition{
+			{
+				Key:  "test-addon-doc-type",
+				Name: i18n.String{i18n.EN: "Document Type"},
+				Usage: &cbc.Usage{
+					Keys:    []cbc.Key{"test-addon-v1"},
+					Schemas: []string{"bill/tax"},
+				},
+			},
+		},
+		Stamps: []*cbc.Definition{
+			{
+				Key:   "test-addon-code",
+				Name:  i18n.String{i18n.EN: "Test: Code"},
+				Usage: &cbc.Usage{Keys: []cbc.Key{"test-addon-v1"}},
+			},
+		},
 	})
 	tax.RegisterAddonDef(&tax.AddonDef{
 		Key:  "test-addon-alt-v1",
@@ -32,6 +52,18 @@ func init() {
 		Name:     i18n.String{i18n.EN: "Test Addon Dep"},
 		Requires: []cbc.Key{"test-addon-base-v1"},
 	})
+}
+
+func TestAddonDefRegistersDefinitions(t *testing.T) {
+	ext := tax.ExtensionForKey("test-addon-doc-type")
+	require.NotNil(t, ext)
+	assert.Contains(t, tax.AllExtensionDefs(), ext)
+	assert.Contains(t, tax.FilterExtensionDefs([]cbc.Key{"test-addon-v1"}, nil), ext)
+	assert.NotContains(t, tax.FilterExtensionDefs([]cbc.Key{"test-addon-alt-v1"}, nil), ext)
+
+	stamp := head.StampDefFor("test-addon-code")
+	require.NotNil(t, stamp)
+	assert.Equal(t, "Test: Code", stamp.Name.String())
 }
 
 func TestEmbeddingAddons(t *testing.T) {
@@ -151,6 +183,18 @@ func TestAddonsJSONSchemaEmbed(t *testing.T) {
 	al.JSONSchemaExtend(js)
 
 	assert.Greater(t, len(js.Items.OneOf), 1)
-	ao := tax.AllAddonDefs()[0]
-	assert.Equal(t, ao.Key.String(), js.Items.OneOf[0].Const)
+	keys := make([]string, len(js.Items.OneOf))
+	for i, o := range js.Items.OneOf {
+		keys[i], _ = o.Const.(string)
+	}
+
+	// The list is the sorted union of registered and approved external addons.
+	want := make(map[string]bool)
+	for _, ao := range tax.AllAddonDefs() {
+		want[ao.Key.String()] = true
+	}
+	for _, ea := range tax.ApprovedAddons() {
+		want[ea.Key.String()] = true
+	}
+	assert.Equal(t, slices.Sorted(maps.Keys(want)), keys)
 }

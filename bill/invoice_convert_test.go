@@ -98,6 +98,199 @@ func TestInvoiceConvertInto(t *testing.T) {
 		assert.Equal(t, "120.50", i2.Lines[0].Item.AltPrices[0].Value.String())
 	})
 
+	t.Run("conversion with item list price", func(t *testing.T) {
+		lines := []*bill.Line{
+			{
+				Quantity: num.MakeAmount(250, 0),
+				Item: &org.Item{
+					Name:     "Test Item",
+					List:     num.NewAmount(12000, 2),
+					Discount: num.NewAmount(1200, 2),
+					Per:      num.NewAmount(100, 0),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Rate:     tax.RateGeneral,
+					},
+				},
+			},
+		}
+		inv := baseInvoice(t, lines...)
+		inv.ExchangeRates = append(inv.ExchangeRates, &currency.ExchangeRate{
+			From:   currency.EUR,
+			To:     currency.USD,
+			Amount: num.MakeAmount(112, 2),
+		})
+
+		i2, err := inv.ConvertInto(currency.USD)
+		require.NoError(t, err)
+		ip := i2.Lines[0].Item
+		assert.Equal(t, "100", ip.Per.String())
+		assert.Equal(t, "134.4000", ip.List.String())
+		assert.Equal(t, "13.4400", ip.Discount.String())
+		assert.Equal(t, "120.9600", i2.Lines[0].Item.Price.String())
+		assert.Equal(t, "302.4000", i2.Lines[0].Sum.String())
+	})
+
+	t.Run("conversion with item list price and alt prices", func(t *testing.T) {
+		lines := []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name: "Test Item",
+					AltPrices: []*currency.Amount{
+						{Currency: currency.USD, Value: num.MakeAmount(12000, 2)},
+					},
+					List:     num.NewAmount(12000, 2),
+					Discount: num.NewAmount(1200, 2),
+					Per:      num.NewAmount(10, 0),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Rate:     tax.RateGeneral,
+					},
+				},
+			},
+		}
+		inv := baseInvoice(t, lines...)
+		inv.ExchangeRates = append(inv.ExchangeRates, &currency.ExchangeRate{
+			From:   currency.EUR,
+			To:     currency.USD,
+			Amount: num.MakeAmount(112, 2),
+		})
+
+		i2, err := inv.ConvertInto(currency.USD)
+		require.NoError(t, err)
+		ip := i2.Lines[0].Item
+		assert.Equal(t, "10", ip.Per.String())
+		assert.Nil(t, ip.List)
+		assert.Nil(t, ip.Discount)
+		assert.Equal(t, "120.00", i2.Lines[0].Item.Price.String())
+		assert.Equal(t, "12.00", i2.Lines[0].Sum.String())
+	})
+
+	t.Run("conversion with breakdown and substituted", func(t *testing.T) {
+		lines := []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Group"},
+				Breakdown: []*bill.SubLine{
+					{
+						Quantity: num.MakeAmount(2, 0),
+						Item: &org.Item{
+							Name:     "Part",
+							List:     num.NewAmount(1000, 2),
+							Discount: num.NewAmount(100, 2),
+						},
+						Discounts: []*bill.LineDiscount{
+							{Reason: "Promo", Amount: num.MakeAmount(100, 2)},
+						},
+						Charges: []*bill.LineCharge{
+							{Reason: "Handling", Amount: num.MakeAmount(50, 2)},
+						},
+					},
+					{
+						Quantity: num.MakeAmount(1, 0),
+						Item: &org.Item{
+							Name:  "Other",
+							Price: num.NewAmount(500, 2),
+							AltPrices: []*currency.Amount{
+								{Currency: currency.MXN, Value: num.MakeAmount(10000, 2)},
+								{Currency: currency.USD, Value: num.MakeAmount(600, 2)},
+							},
+						},
+					},
+				},
+				Substituted: []*bill.SubLine{
+					{
+						Quantity: num.MakeAmount(1, 0),
+						Item: &org.Item{
+							Name:     "Old",
+							Currency: currency.EUR,
+							Price:    num.NewAmount(300, 2),
+						},
+					},
+					{
+						Quantity: num.MakeAmount(1, 0),
+						Item:     &org.Item{Name: "Unpriced"},
+					},
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Rate:     tax.RateGeneral,
+					},
+				},
+			},
+		}
+		inv := baseInvoice(t, lines...)
+		inv.ExchangeRates = append(inv.ExchangeRates, &currency.ExchangeRate{
+			From:   currency.EUR,
+			To:     currency.USD,
+			Amount: num.MakeAmount(2, 0),
+		})
+
+		i2, err := inv.ConvertInto(currency.USD)
+		require.NoError(t, err)
+		l := i2.Lines[0]
+		part := l.Breakdown[0]
+		assert.Equal(t, "20.0000", part.Item.List.String())
+		assert.Equal(t, "2.0000", part.Item.Discount.String())
+		assert.Equal(t, "18.0000", part.Item.Price.String())
+		assert.Equal(t, "2.0000", part.Discounts[0].Amount.String())
+		assert.Equal(t, "1.0000", part.Charges[0].Amount.String())
+		assert.Equal(t, "35.0000", part.Total.String())
+		other := l.Breakdown[1]
+		assert.Equal(t, "6.00", other.Item.Price.String())
+		require.Len(t, other.Item.AltPrices, 2)
+		assert.Equal(t, "MXN", other.Item.AltPrices[0].Currency.String())
+		assert.Equal(t, "EUR", other.Item.AltPrices[1].Currency.String())
+		assert.Equal(t, "5.00", other.Item.AltPrices[1].Value.String())
+		assert.Equal(t, "41.0000", l.Item.Price.String())
+		assert.Equal(t, "6.0000", l.Substituted[0].Item.Price.String())
+		assert.Equal(t, "USD", l.Substituted[0].Item.Currency.String())
+		assert.Nil(t, l.Substituted[1].Item.Price)
+
+		// The original invoice is left untouched
+		assert.Len(t, inv.Lines[0].Breakdown[1].Item.AltPrices, 2)
+		assert.Equal(t, "USD", inv.Lines[0].Breakdown[1].Item.AltPrices[1].Currency.String())
+		assert.Equal(t, "10.00", inv.Lines[0].Breakdown[0].Item.List.String())
+	})
+
+	t.Run("conversion with substituted under unpriced line", func(t *testing.T) {
+		lines := []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Group"},
+				Substituted: []*bill.SubLine{
+					{
+						Quantity: num.MakeAmount(1, 0),
+						Item:     &org.Item{Name: "Old", Price: num.NewAmount(1000, 2)},
+					},
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Rate:     tax.RateGeneral,
+					},
+				},
+			},
+		}
+		inv := baseInvoice(t, lines...)
+		inv.ExchangeRates = append(inv.ExchangeRates, &currency.ExchangeRate{
+			From:   currency.EUR,
+			To:     currency.USD,
+			Amount: num.MakeAmount(2, 0),
+		})
+
+		i2, err := inv.ConvertInto(currency.USD)
+		require.NoError(t, err)
+		assert.Nil(t, i2.Lines[0].Item.Price)
+		assert.Equal(t, "20.0000", i2.Lines[0].Substituted[0].Item.Price.String())
+	})
+
 	t.Run("complex example", func(t *testing.T) {
 		i := &bill.Invoice{
 			Code: "123TEST",

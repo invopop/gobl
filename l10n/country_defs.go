@@ -6,8 +6,8 @@ type CountryDefs []*CountryDef
 // CountryDef provides the structure use to define a Country Code
 // definition.
 type CountryDef struct {
-	// ISO 3166-2 Country code
-	Code Code `json:"code" jsonschema:"title=ISO 3166-2 Country Code"`
+	// ISO 3166-1 alpha-2 country code.
+	Code Code `json:"code" jsonschema:"title=ISO 3166-1 alpha-2 Country Code"`
 	// ISO 3166-1 alpha-3 Country code
 	Alpha3 string `json:"alpha3" jsonschema:"title=ISO 3166-1 Alpha-3 Country Code"`
 	// English name of the country

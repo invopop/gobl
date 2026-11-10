@@ -13,7 +13,7 @@
         "$addons": {
           "$ref": "https://gobl.org/draft-0/tax/addon-list",
           "title": "Addons",
-          "description": "Addons defines a list of keys used to identify tax addons that apply special\nnormalization, scenarios, and validation rules to a document."
+          "description": "Keys identifying the tax addons that apply special normalization, scenarios, and\nvalidation rules to the document."
         },
         "$tags": {
           "items": {
@@ -21,7 +21,7 @@
           },
           "type": "array",
           "title": "Tags",
-          "description": "Tags are used to help identify specific tax scenarios or requirements that may\napply changes to the contents of the document or imply a specific meaning.\nConverters may use tags to help identify specific situations that do not have\na specific extension, for example; self-billed or partial invoices may be\nidentified by their respective tags."
+          "description": "Keys that identify specific tax scenarios or requirements that may change the\ncontents of the document or imply a specific meaning. Converters may use tags to\nidentify situations that do not have a specific extension; for example, self-billed\nor partial invoices are identified by their respective tags."
         },
         "uuid": {
           "type": "string",
@@ -55,12 +55,12 @@
         "series": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Series",
-          "description": "Series is used to identify groups of payments by date, business area, project,\ntype, customer, a combination of any, or other company specific data.\nIf the output format does not support the series as a separate field, it will be\nprepended to the code for presentation with a dash (`-`) for separation."
+          "description": "Identifies groups of payments by date, business area, project, type, customer,\na combination of any, or other company specific data. If the output format does not\nsupport the series as a separate field, it will be prepended to the code with a dash\n(`-`) for separation."
         },
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Code",
-          "description": "Code is a sequential identifier that uniquely identifies the payment. The code can\nbe left empty initially, but is **required** to **sign** the document."
+          "description": "Sequential identifier that uniquely identifies the payment. May be left empty\ninitially, but is **required** to **sign** the document."
         },
         "issue_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
@@ -71,13 +71,13 @@
         "issue_time": {
           "$ref": "https://gobl.org/draft-0/cal/time",
           "title": "Issue Time",
-          "description": "IssueTime is an optional field that may be useful to indicate the time of day when\nthe payment was issued.",
+          "description": "Optional time of day when the payment was issued.",
           "calculated": true
         },
         "value_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
           "title": "Value Date",
-          "description": "When the taxes of this payment become accountable, if none set, the issue date is assumed."
+          "description": "When the taxes of the payment become accountable. Defaults to the issue date."
         },
         "currency": {
           "$ref": "https://gobl.org/draft-0/currency/code",
@@ -124,7 +124,7 @@
         "ordering": {
           "$ref": "https://gobl.org/draft-0/bill/ordering",
           "title": "Ordering",
-          "description": "Ordering allows for additional information about the ordering process including references\nto other documents and alternative parties involved in the order-to-delivery process."
+          "description": "Additional information about the ordering process, including references to other\ndocuments and alternative parties involved in the order-to-delivery process."
         },
         "lines": {
           "items": {
@@ -140,7 +140,7 @@
           },
           "type": "array",
           "title": "Methods",
-          "description": "Methods describes how the payment was settled. At least one method is\nrequired; multiple may be present when the payment was split across\nmeans (for example, partly card + partly cash)."
+          "description": "How the payment was settled. At least one method is required; multiple may be\npresent when the payment was split across means, for example partly card and\npartly cash."
         },
         "total": {
           "$ref": "https://gobl.org/draft-0/num/amount",
@@ -198,7 +198,7 @@
         "i": {
           "type": "integer",
           "title": "Index",
-          "description": "Line number within the parent document (automatically calculated)",
+          "description": "Line number within the parent document (calculated).",
           "calculated": true
         },
         "refund": {
@@ -209,7 +209,7 @@
         "document": {
           "$ref": "https://gobl.org/draft-0/org/document-ref",
           "title": "Document",
-          "description": "Reference to the document being paid"
+          "description": "Reference to the document being paid."
         },
         "installment": {
           "type": "integer",
@@ -224,7 +224,7 @@
         "payable": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Payable",
-          "description": "Payable reflects the amount of the document that is payable. This will be\ncalculated from the embedded document's amount automatically and converted\nto the currency of the document."
+          "description": "Amount of the referenced document that is payable. Calculated automatically from\nthe embedded document's amount and converted to the currency of this document."
         },
         "advances": {
           "$ref": "https://gobl.org/draft-0/num/amount",
@@ -239,12 +239,12 @@
         "due": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Due",
-          "description": "Due reflects how much still needs to be paid"
+          "description": "Amount that still needs to be paid."
         },
         "tax": {
           "$ref": "https://gobl.org/draft-0/tax/total",
           "title": "Tax",
-          "description": "Tax contains a breakdown of the taxes that will be applied to this payment line\nafter taking into account currency conversion and the relative amounts."
+          "description": "Breakdown of the taxes applied to this payment line after taking into account\ncurrency conversion and the relative amounts."
         },
         "notes": {
           "items": {
@@ -252,7 +252,7 @@
           },
           "type": "array",
           "title": "Notes",
-          "description": "Additional notes specific to this line item for clarification purposes"
+          "description": "Additional notes specific to this line item for clarification purposes."
         }
       },
       "type": "object",

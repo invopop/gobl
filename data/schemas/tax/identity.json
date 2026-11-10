@@ -8,7 +8,7 @@
         "country": {
           "$ref": "https://gobl.org/draft-0/l10n/tax-country-code",
           "title": "Country Code",
-          "description": "Tax country code for Where the tax identity was issued."
+          "description": "Tax country code where the tax identity was issued."
         },
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
@@ -19,12 +19,12 @@
         "scheme": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Scheme",
-          "description": "Scheme is an optional field that may be used to override the tax regime's\ndefault tax scheme. Many electronic formats such as UBL or CII define an\nequivalent field. Examples: `VAT`, `GST`, `ST`, etc."
+          "description": "Optional override of the tax regime's default tax scheme. Many electronic\nformats such as UBL or CII define an equivalent field. Examples: `VAT`, `GST`,\n`ST`, etc."
         },
         "type": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Type",
-          "description": "Type is set according to the requirements of each regime, some have a single\ntax document type code, others require a choice to be made.\n\nDeprecated: Tax Identities should only be used for VAT or similar codes\nfor companies. Use the identities array for other types of identification."
+          "description": "Set according to the requirements of each regime; some have a single tax\ndocument type code, others require a choice to be made.\n\nDeprecated: Tax Identities should only be used for VAT or similar codes\nfor companies. Use the identities array for other types of identification."
         }
       },
       "type": "object",

@@ -14,7 +14,7 @@
         "label": {
           "type": "string",
           "title": "Label",
-          "description": "Label can be used to identify the person in a given context in a single\nlanguage, for example \"Attn\", \"Contact\", \"Responsible\", etc.",
+          "description": "Identifies the person in a given context in a single language, for example\n\"Attn\", \"Contact\", \"Responsible\", etc.",
           "examples": [
             "Attn"
           ]
@@ -48,7 +48,7 @@
           },
           "type": "array",
           "title": "Postal Addresses",
-          "description": "Regular post addresses for where information should be sent if needed."
+          "description": "Postal addresses where information should be sent if needed."
         },
         "emails": {
           "items": {
@@ -64,7 +64,7 @@
           },
           "type": "array",
           "title": "Telephone Numbers",
-          "description": "Regular phone or mobile numbers"
+          "description": "Regular phone or mobile numbers."
         },
         "avatars": {
           "items": {
@@ -72,12 +72,12 @@
           },
           "type": "array",
           "title": "Avatars",
-          "description": "Avatars provider links to images or photos or the person."
+          "description": "Links to images or photos of the person."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
           "title": "Meta",
-          "description": "Data about the data."
+          "description": "Additional semi-structured information."
         }
       },
       "type": "object",

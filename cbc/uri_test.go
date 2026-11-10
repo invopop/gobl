@@ -116,3 +116,42 @@ func TestURIJSONSchema(t *testing.T) {
 	assert.Equal(t, "uri", js.Format)
 	assert.Equal(t, "URI", js.Title)
 }
+
+func TestURISchemeIn(t *testing.T) {
+	test := cbc.URISchemeIn("iso6523-actorid-upis", "gobl")
+
+	assert.True(t, test.Check(cbc.URI("iso6523-actorid-upis::0225:356000000")))
+	assert.True(t, test.Check(cbc.URI("gobl:acme.example.com")))
+	assert.False(t, test.Check(cbc.URI("mailto:billing@example.com")))
+
+	// Schemes are case-insensitive.
+	assert.True(t, cbc.URISchemeIn("GOBL").Check(cbc.URI("gobl:acme.example.com")))
+
+	// No scheme, and values that are not URIs at all.
+	assert.False(t, test.Check(cbc.URI("")))
+	assert.False(t, test.Check(cbc.URI("no scheme")))
+	assert.False(t, test.Check(42))
+
+	assert.Equal(t, "uri scheme in [iso6523-actorid-upis, gobl]", test.String())
+}
+
+func TestURIOpaqueMatches(t *testing.T) {
+	// The ISO 6523 shape: the canonical form carries an empty authority, so
+	// parsing exposes the address as ":<scheme>:<code>".
+	test := cbc.URIOpaqueMatches(`^:[^:]+:.+$`)
+
+	assert.True(t, test.Check(cbc.URI("iso6523-actorid-upis::0225:356000000")))
+	assert.True(t, test.Check(cbc.URI("iso6523-actorid-upis::0225:356:000")))
+	assert.False(t, test.Check(cbc.URI("iso6523-actorid-upis::0225:")))
+	assert.False(t, test.Check(cbc.URI("iso6523-actorid-upis:::356000000")))
+	assert.False(t, test.Check(cbc.URI("iso6523-actorid-upis::0225")))
+	assert.False(t, test.Check(cbc.URI("iso6523-actorid-upis:0225:356000000")))
+
+	// An empty part is not skipped, unlike is.Matches.
+	assert.False(t, test.Check(cbc.URI("iso6523-actorid-upis:")))
+
+	assert.False(t, test.Check(42))
+	assert.Equal(t, "uri opaque matches ^:[^:]+:.+$", test.String())
+
+	assert.Panics(t, func() { cbc.URIOpaqueMatches(`^([a-z`) })
+}

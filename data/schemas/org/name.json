@@ -14,7 +14,7 @@
         "alias": {
           "type": "string",
           "title": "Alias",
-          "description": "What the person would like to be called"
+          "description": "What the person would like to be called."
         },
         "prefix": {
           "type": "string",
@@ -24,12 +24,12 @@
         "given": {
           "type": "string",
           "title": "Given",
-          "description": "Person's given or first name"
+          "description": "Person's given or first name."
         },
         "middle": {
           "type": "string",
           "title": "Middle",
-          "description": "Middle names or initials"
+          "description": "Middle names or initials."
         },
         "surname": {
           "type": "string",
@@ -39,7 +39,7 @@
         "surname2": {
           "type": "string",
           "title": "Second Surname",
-          "description": "Additional second of family name."
+          "description": "Additional second or family name, used in some countries."
         },
         "suffix": {
           "type": "string",

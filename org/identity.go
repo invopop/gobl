@@ -52,21 +52,20 @@ type Identity struct {
 	uuid.Identify
 	// Optional label useful for non-standard identities to give a bit more context.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
-	// Scope defines the context in which this identity is meant to be used.
+	// Context in which the identity is meant to be used.
 	Scope cbc.Key `json:"scope,omitempty" jsonschema:"title=Scope"`
 	// Country from which the identity was issued.
 	Country l10n.ISOCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
-	// Uniquely classify this identity using a key instead of a Type.
+	// Uniquely classifies the identity, used instead of a type.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
-	// The type of Code being represented and usually specific for
-	// a particular context, country, or tax regime, and cannot be used
-	// alongside the key.
+	// Type of code being represented, usually specific to a particular context,
+	// country, or tax regime. Cannot be used alongside the key.
 	Type cbc.Code `json:"type,omitempty" jsonschema:"title=Type"`
-	// The actual value of the identity code.
+	// Value of the identity.
 	Code cbc.Code `json:"code" jsonschema:"title=Code"`
-	// Description adds details about what the code could mean or imply
+	// Details about what the code means or implies.
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
-	// Ext provides a way to add additional information to the identity.
+	// Additional structured information about the identity.
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 

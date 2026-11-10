@@ -20,15 +20,6 @@ const (
 	V1 cbc.Key = Key + "-v1"
 )
 
-// Official stamps or codes validated by government agencies
-const (
-	// StampCode contains the code required to be presented alongside
-	// the QR code.
-	StampCode cbc.Key = "tbai-code"
-	// StampQR contains the URL included in the QR code.
-	StampQR cbc.Key = "tbai-qr"
-)
-
 func init() {
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(
@@ -53,6 +44,7 @@ func newAddon() *tax.AddonDef {
 			i18n.EN: "Spain TicketBAI",
 		},
 		Extensions:  extensions,
+		Stamps:      stamps,
 		Corrections: invoiceCorrectionDefinitions,
 	}
 }

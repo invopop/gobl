@@ -37,6 +37,60 @@ func TestValidateTaxCombo(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
+	t.Run("income cat, no type", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyStandard,
+			Rate:     tax.RateGeneral,
+			Percent:  num.NewPercentage(24, 2),
+		}
+		norm.Normalize(tc, tax.AddonContext(mydata.V1))
+		tc.Ext = tc.Ext.Set(mydata.ExtKeyIncomeCat, "category1_1")
+		err := rules.Validate(tc, withAddonContext())
+		assert.ErrorContains(t, err, "income extensions 'gr-mydata-income-cat' and 'gr-mydata-income-type' must both be present")
+	})
+
+	t.Run("income cat with type", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyStandard,
+			Rate:     tax.RateGeneral,
+			Percent:  num.NewPercentage(24, 2),
+		}
+		norm.Normalize(tc, tax.AddonContext(mydata.V1))
+		tc.Ext = tc.Ext.
+			Set(mydata.ExtKeyIncomeCat, "category1_1").
+			Set(mydata.ExtKeyIncomeType, "E3_561_001")
+		assert.NoError(t, rules.Validate(tc, withAddonContext()))
+	})
+
+	t.Run("other info income cat, no type", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyStandard,
+			Rate:     tax.RateGeneral,
+			Percent:  num.NewPercentage(24, 2),
+		}
+		norm.Normalize(tc, tax.AddonContext(mydata.V1))
+		tc.Ext = tc.Ext.Set(mydata.ExtKeyIncomeCat, mydata.IncomeCatOtherInfo)
+		assert.NoError(t, rules.Validate(tc, withAddonContext()))
+	})
+
+	t.Run("other info income cat with type", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyStandard,
+			Rate:     tax.RateGeneral,
+			Percent:  num.NewPercentage(24, 2),
+		}
+		norm.Normalize(tc, tax.AddonContext(mydata.V1))
+		tc.Ext = tc.Ext.
+			Set(mydata.ExtKeyIncomeCat, mydata.IncomeCatOtherInfo).
+			Set(mydata.ExtKeyIncomeType, "E3_561_001")
+		err := rules.Validate(tc, withAddonContext())
+		assert.ErrorContains(t, err, "income extension 'gr-mydata-income-type' must not be present with category 'category1_95'")
+	})
+
 	t.Run("nil", func(t *testing.T) {
 		var tc *tax.Combo
 		assert.NoError(t, rules.Validate(tc, withAddonContext()))

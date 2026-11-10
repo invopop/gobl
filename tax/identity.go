@@ -24,19 +24,19 @@ import (
 // Other fiscal identities should be defined in a party identities array
 // with their own validation rules and country specific handling.
 type Identity struct {
-	// Tax country code for Where the tax identity was issued.
+	// Tax country code where the tax identity was issued.
 	Country l10n.TaxCountryCode `json:"country" jsonschema:"title=Country Code"`
 
 	// Normalized code shown on the original identity document.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 
-	// Scheme is an optional field that may be used to override the tax regime's
-	// default tax scheme. Many electronic formats such as UBL or CII define an
-	// equivalent field. Examples: `VAT`, `GST`, `ST`, etc.
+	// Optional override of the tax regime's default tax scheme. Many electronic
+	// formats such as UBL or CII define an equivalent field. Examples: `VAT`, `GST`,
+	// `ST`, etc.
 	Scheme cbc.Code `json:"scheme,omitempty" jsonschema:"title=Scheme"`
 
-	// Type is set according to the requirements of each regime, some have a single
-	// tax document type code, others require a choice to be made.
+	// Set according to the requirements of each regime; some have a single tax
+	// document type code, others require a choice to be made.
 	//
 	// Deprecated: Tax Identities should only be used for VAT or similar codes
 	// for companies. Use the identities array for other types of identification.

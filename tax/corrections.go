@@ -18,19 +18,21 @@ type CorrectionNormalizer interface {
 // a selection of schemas.
 type CorrectionSet []*CorrectionDefinition
 
-// CorrectionDefinition contains details about what can be defined in .
+// CorrectionDefinition contains details about what can be defined in the preceding
+// document references when correcting a document.
 type CorrectionDefinition struct {
 	// Partial or complete schema URL for the document type supported by correction.
 	Schema string `json:"schema" jsonschema:"title=Schema"`
-	// The types of sub-documents supported by the regime
+	// The types of sub-documents supported by the regime.
 	Types []cbc.Key `json:"types,omitempty" jsonschema:"title=Types"`
-	// Extension keys that can be included
+	// Extension keys that can be included.
 	Extensions []cbc.Key `json:"extensions,omitempty" jsonschema:"title=Extensions"`
-	// ReasonRequired when true implies that a reason must be provided
+	// When true, a reason must be provided.
 	ReasonRequired bool `json:"reason_required,omitempty" jsonschema:"title=Reason Required"`
 	// Stamps that must be copied from the preceding document.
 	Stamps []cbc.Key `json:"stamps,omitempty" jsonschema:"title=Stamps"`
-	// Copy tax from the preceding document to the document ref.
+	// When true, tax totals are copied from the preceding document to the document
+	// reference.
 	CopyTax bool `json:"copy_tax,omitempty" jsonschema:"title=Copy Tax Totals"`
 	// Normalizer is an optional implementation of the CorrectionNormalizer to allow
 	// addon/regime-specific logic to route extensions between the document

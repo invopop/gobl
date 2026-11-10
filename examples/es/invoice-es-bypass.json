@@ -1,7 +1,6 @@
 {
   "$schema": "https://gobl.org/draft-0/bill/invoice",
   "$regime": "ES",
-  "$addons": ["es-facturae-v3"],
   "$tags": ["bypass"],
   "uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
   "type": "standard",

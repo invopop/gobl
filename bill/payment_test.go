@@ -153,16 +153,13 @@ func TestPaymentCalculate(t *testing.T) {
 		assert.Nil(t, p.IssueTime)
 	})
 
-	t.Run("with empty issue time", func(t *testing.T) {
+	t.Run("with midnight issue time", func(t *testing.T) {
 		p := testPaymentWithTax(t)
-		p.IssueDate = cal.Date{}
-		p.IssueTime = new(cal.Time)
+		p.IssueDate = cal.MakeDate(2024, 1, 15)
+		p.IssueTime = cal.NewTime(0, 0, 0)
 		require.NoError(t, p.Calculate())
-		tn := cal.ThisSecondIn(p.RegimeDef().TimeLocation())
-		assert.Equal(t, p.IssueDate.String(), tn.Date().String())
-		assert.Equal(t, p.IssueTime.Hour, tn.Time().Hour)
-		assert.Equal(t, p.IssueTime.Minute, tn.Time().Minute)
-		assert.Equal(t, p.IssueTime.Second, tn.Time().Second)
+		assert.Equal(t, "2024-01-15", p.IssueDate.String())
+		assert.Equal(t, "00:00:00", p.IssueTime.String())
 	})
 
 	t.Run("with different exchange rates", func(t *testing.T) {
@@ -272,6 +269,21 @@ func TestPaymentValidate(t *testing.T) {
 		err := rules.Validate(pmt)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "payment method key is required")
+	})
+
+	t.Run("method with taxes", func(t *testing.T) {
+		pmt := testPaymentMinimal(t)
+		pmt.Methods[0].Taxes = []*tax.Filter{{Category: tax.CategoryVAT}}
+		require.NoError(t, pmt.Calculate())
+		assert.ErrorContains(t, rules.Validate(pmt), "payment method taxes are not supported")
+	})
+
+	t.Run("method with waiver", func(t *testing.T) {
+		pmt := testPaymentMinimal(t)
+		pmt.Methods[0].Key = ""
+		pmt.Methods[0].Waiver = "vat-refund"
+		require.NoError(t, pmt.Calculate())
+		assert.ErrorContains(t, rules.Validate(pmt), "payment method waiver is not supported")
 	})
 }
 

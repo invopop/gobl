@@ -19,7 +19,6 @@ func init() {
 
 func normalizeRecord(r *Record) {
 	uuid.Normalize(&r.UUID)
-	r.Ref = cbc.NormalizeString(r.Ref)
 	r.Description = cbc.NormalizeString(r.Description)
 }
 

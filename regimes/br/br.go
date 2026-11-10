@@ -13,7 +13,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// CountryCode is the ISO 3166-2 code for Brazil.
+// CountryCode is the ISO 3166-1 alpha-2 code for Brazil.
 const CountryCode = "BR"
 
 func init() {

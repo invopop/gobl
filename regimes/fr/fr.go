@@ -12,7 +12,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// CountryCode is the ISO 3166-2 code for France.
+// CountryCode is the ISO 3166-1 alpha-2 code for France.
 const CountryCode = "FR"
 
 // Identification keys used for additional codes not

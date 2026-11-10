@@ -2,6 +2,7 @@
 package l10n
 
 import (
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
 )
 
@@ -10,5 +11,11 @@ func init() {
 		Code(""),
 		ISOCountryCode(""),
 		TaxCountryCode(""),
+	)
+	rules.Register(
+		"l10n",
+		rules.GOBL.Add("L10N"),
+		isoCountryCodeRules(),
+		taxCountryCodeRules(),
 	)
 }

@@ -1,0 +1,110 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$regime": "AR",
+  "uuid": "0190f3a8-6c1e-7b40-9a52-1a0b2c3d4e03",
+  "code": "0003-00000103",
+  "issue_date": "2026-08-15",
+  "currency": "ARS",
+  "tax": {
+    "prices_include": "VAT"
+  },
+  "supplier": {
+    "name": "Hotel Patagonia S.A.",
+    "tax_id": {
+      "country": "AR",
+      "code": "30712345671"
+    },
+    "addresses": [
+      {
+        "street": "Av. Bustillo 1500",
+        "locality": "San Carlos de Bariloche",
+        "region": "Río Negro",
+        "code": "8400",
+        "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "reservas@hotelpatagonia.com.ar"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Lucía Fernández",
+    "addresses": [
+      {
+        "street": "Calle Mayor 10",
+        "locality": "Madrid",
+        "code": "28013",
+        "country": "ES"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "lucia.fernandez@example.com"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "quantity": "5",
+      "item": {
+        "name": "Habitación deluxe king - noche",
+        "price": "77530.86"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "general"
+        }
+      ]
+    },
+    {
+      "quantity": "5",
+      "item": {
+        "name": "Desayuno buffet",
+        "price": "12100.00"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "general"
+        }
+      ]
+    }
+  ],
+  "ordering": {
+    "period": {
+      "start": "2026-08-10",
+      "end": "2026-08-15"
+    }
+  },
+  "payment": {
+    "advances": [
+      {
+        "date": "2026-08-10",
+        "key": "card",
+        "description": "Seña",
+        "amount": "150000.00"
+      },
+      {
+        "waiver": "vat-refund",
+        "description": "Reintegro de IVA - turista extranjero (Decreto 1043/2016)",
+        "taxes": [
+          {
+            "cat": "VAT"
+          }
+        ]
+      }
+    ],
+    "terms": {
+      "key": "due-date",
+      "due_dates": [
+        {
+          "date": "2026-08-15",
+          "percent": "100%"
+        }
+      ]
+    }
+  }
+}

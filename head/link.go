@@ -89,12 +89,11 @@ var LinkCategoryDefs = []*cbc.Definition{
 // the envelope has not yet been signed.
 type Link struct {
 	uuid.Identify
-	// Category helps classify the link according to a fixed list. This is optional
-	// but highly recommended as it helps receivers better understand the purpose
-	// of the link and potentially how it should be presented.
+	// Classifies the link according to a fixed list. Optional but highly recommended,
+	// as it helps receivers understand the purpose of the link and potentially how it
+	// should be presented.
 	Category cbc.Key `json:"category,omitempty" jsonschema:"title=Category"`
-	// Key is a unique identifier for the link within the header and category
-	// if provided.
+	// Unique identifier for the link within the header and category, if provided.
 	Key cbc.Key `json:"key"`
 	// Code used to identify the contents of the link.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
@@ -105,12 +104,12 @@ type Link struct {
 	// Expected MIME type of the link's content when the content is a file. Can only
 	// be one of the allowed types defined by EN 16931-1:2017 plus XML itself.
 	MIME string `json:"mime,omitempty" jsonschema:"title=MIME Type,format=mime"`
-	// Digest is used to verify the integrity of the destination document
-	// when downloaded from the URL.
+	// Used to verify the integrity of the destination document when downloaded from
+	// the URL.
 	Digest *dsig.Digest `json:"digest,omitempty" jsonschema:"title=Digest"`
 	// URL of the resource.
 	URL string `json:"url" jsonschema:"title=URL,format=uri"`
-	// Meta contains additional metadata about the link.
+	// Additional metadata about the link.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Metadata"`
 }
 

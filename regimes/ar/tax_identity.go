@@ -29,6 +29,7 @@ import (
 // Common prefixes:
 //   - 20: Male individual (CUIL)
 //   - 23: Individual with check digit conflict resolution
+//   - 24: Individual (contingency prefix, used when 20/27 is unavailable, e.g. a shared DNI)
 //   - 27: Female individual (CUIL)
 //   - 30: Company/Legal entity (CUIT)
 //   - 33: Company with check digit conflict resolution
@@ -37,7 +38,7 @@ import (
 // - Algorithm explanation: https://whiz.tools/en/legal-business/argentinian-cuit-cuil-generator-validator
 // - Wikipedia: https://es.wikipedia.org/wiki/Clave_%C3%9Anica_de_Identificaci%C3%B3n_Tributaria
 
-var validTypeCodes = []string{"20", "23", "27", "30", "33"}
+var validTypeCodes = []string{"20", "23", "24", "27", "30", "33"}
 
 func normalizeTaxIdentity(tID *tax.Identity) {
 	// Use standard normalization to remove spaces and convert to uppercase

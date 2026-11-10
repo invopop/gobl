@@ -28,17 +28,6 @@ func init() {
 	)
 }
 
-// Official SAT codes to include in stamps.
-const (
-	StampSATSignature   cbc.Key = "sat-sig"          // Signature - Sello Digital del SAT (optional)
-	StampSATSerial      cbc.Key = "sat-serial"       // Cert Serial - Número de Certificado SAT
-	StampSATTimestamp   cbc.Key = "sat-timestamp"    // Timestamp - Fecha y hora de certificación del SAT
-	StampSATUUID        cbc.Key = "sat-uuid"         // Folio Fiscal
-	StampSATURL         cbc.Key = "sat-url"          // URL QR Code
-	StampSATProviderRFC cbc.Key = "sat-provider-rfc" // Provider RFC - RFC del Proveedor de Certificación
-	StampSATChain       cbc.Key = "sat-chain"        // Cadena original del complemento de certificación digital del SAT
-)
-
 // Custom keys used typically in meta or codes information.
 const (
 	KeyFormaPago    cbc.Key = "sat-forma-pago"    // for mapping to c_FormaPago's codes
@@ -96,6 +85,7 @@ func New() *tax.RegimeDef {
 			},
 		},
 		TimeZone:    "America/Mexico_City",
+		Stamps:      stamps,
 		Categories:  taxCategories,
 		Corrections: correctionDefinitions,
 	}

@@ -17,4 +17,8 @@ func TestInit(t *testing.T) {
 	assert.NotNil(t, ed)
 	assert.Equal(t, "AAS", ed.Code.String())
 	assert.Equal(t, "Acceptance", ed.Name.String())
+
+	ext = tax.ExtensionForKey("untdid-unit")
+	assert.NotNil(t, ext)
+	assert.Equal(t, "^[A-Z0-9]{2,3}$", ext.Pattern)
 }

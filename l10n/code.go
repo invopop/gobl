@@ -66,7 +66,7 @@ func (Code) JSONSchema() *jsonschema.Schema {
 		Title:       "Code",
 		Type:        "string",
 		Pattern:     codePattern,
-		Description: "Code is used for short identifies like country or state codes.",
+		Description: "Code is used for short identifiers like country or state codes.",
 	}
 	return s
 }

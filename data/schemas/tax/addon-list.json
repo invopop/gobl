@@ -96,12 +96,24 @@
             "title": "Mexican SAT CFDI v4.X"
           },
           {
+            "const": "peppol-bis-v3",
+            "title": "Peppol BIS Billing 3.0"
+          },
+          {
+            "const": "peppol-pint-v1",
+            "title": "Peppol PINT"
+          },
+          {
             "const": "pl-favat-v3",
             "title": "Polish KSeF FA_VAT FA(3)"
           },
           {
             "const": "pt-saft-v1",
             "title": "Portugal SAF-T"
+          },
+          {
+            "const": "ro-efactura-v1",
+            "title": "Romania RO e-Factura v1.x"
           },
           {
             "const": "sa-zatca-v1",

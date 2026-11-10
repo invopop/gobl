@@ -125,9 +125,6 @@
 			}
 		],
 		"payment": {
-			"terms": {
-				"notes": "Pay before delivery"
-			},
 			"advances": [
 				{
 					"description": "Paid in full",
@@ -135,6 +132,9 @@
 					"amount": "1944.00"
 				}
 			],
+			"terms": {
+				"notes": "Pay before delivery"
+			},
 			"instructions": {
 				"key": "card",
 				"ext": {

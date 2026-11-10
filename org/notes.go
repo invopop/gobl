@@ -222,17 +222,17 @@ var NoteKeyDefinitions = []cbc.Definition{
 // added to a document.
 type Note struct {
 	uuid.Identify
-	// Key specifying subject of the text
+	// Subject of the note's text.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// Code used for additional data that may be required to identify the note.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 	// Source of this note, especially useful when auto-generated.
 	Src cbc.Key `json:"src,omitempty" jsonschema:"title=Source"`
-	// The contents of the note
+	// Contents of the note.
 	Text string `json:"text" jsonschema:"title=Text"`
-	// Additional information about the note
+	// Additional information about the note.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
-	// Extension data
+	// Extension codes that apply to the note.
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 

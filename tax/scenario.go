@@ -10,10 +10,10 @@ import (
 // ScenarioSet is a collection of tax scenarios for a given schema that can be used to
 // determine special codes or notes that need to be included in the final document.
 type ScenarioSet struct {
-	// Partial or complete schema URL for the document type
+	// Partial or complete schema URL for the document type.
 	Schema string `json:"schema" jsonschema:"title=Schema"`
 
-	// List of scenarios for the schema
+	// List of scenarios for the schema.
 	List []*Scenario `json:"list" jsonschema:"title=List"`
 }
 
@@ -51,17 +51,17 @@ type Scenario struct {
 	// Array of tags that have been applied to the document.
 	Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tags"`
 
-	// Categories is an optional list of tax category codes that acts as a filter.
-	// When set, at least one of the specified categories must be present in the
-	// document's line taxes for the scenario to match.
+	// Optional list of tax category codes that acts as a filter. When set, at least
+	// one of the specified categories must be present in the document's line taxes
+	// for the scenario to match.
 	Categories []cbc.Code `json:"cat,omitempty" jsonschema:"title=Tax Categories"`
 
 	// Extension key that must be present in the document.
 	ExtKey cbc.Key `json:"ext_key,omitempty" jsonschema:"title=Extension Key"`
 
-	// Extension code that along side the key must be present for a match
-	// to happen. This cannot be used without an `cbc.Code`. The value will
-	// be copied to the note code if needed.
+	// Extension code that, alongside the key, must be present for a match. Cannot be
+	// used without the extension key. The value will be copied to the note code if
+	// needed.
 	ExtCode cbc.Code `json:"ext_code,omitempty" jsonschema:"title=Extension Code"`
 
 	// Filter defines a custom filter method for when the regular basic filters
@@ -73,12 +73,11 @@ type Scenario struct {
 	// A note to be added to the document if the scenario is applied.
 	Note *Note `json:"note,omitempty" jsonschema:"title=Note"`
 
-	// Codes is used to define additional codes for regime specific
-	// situations.
+	// Additional codes for regime specific situations.
 	Codes cbc.CodeMap `json:"codes,omitempty" jsonschema:"title=Codes"`
 
-	// Ext represents a set of tax extensions that should be applied to
-	// the document in the appropriate "tax" context.
+	// Tax extensions that should be applied to the document in the appropriate "tax"
+	// context.
 	Ext Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 

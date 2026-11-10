@@ -33,8 +33,8 @@ type Header struct {
 	// non-draft envelopes.
 	Stamps []*Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 
-	// Links provide URLs to other resources that are related to this envelope
-	// and unlike stamps can be added even in the draft state.
+	// URLs to other resources related to this envelope. Unlike stamps, links can be
+	// added even in the draft state.
 	Links []*Link `json:"links,omitempty" jsonschema:"title=Links"`
 
 	// Set of labels that describe but have no influence on the data.
@@ -43,23 +43,21 @@ type Header struct {
 	// Additional semi-structured information about this envelope.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 
-	// Any information that may be relevant to other humans about this envelope
+	// Any information that may be relevant to other humans about this envelope.
 	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
 
-	// From is the URI-form transport address of the envelope's issuer,
-	// e.g. "gobl:invoices.example.com" or
-	// "iso6523-actorid-upis::9920:b123123123".
+	// URI-form transport address of the envelope's issuer, e.g.
+	// "gobl:invoices.example.com" or "iso6523-actorid-upis::9920:b123123123".
 	From cbc.URI `json:"from,omitempty" jsonschema:"title=From"`
 
-	// To is the URI-form transport address of the envelope's intended
-	// receiver.
+	// URI-form transport address of the envelope's intended receiver.
 	To cbc.URI `json:"to,omitempty" jsonschema:"title=To"`
 
-	// Ignore lists fully-qualified validation fault codes to suppress when
-	// validating this envelope, e.g. "GOBL-EU-EN16931-ORG-ITEM-01". Intended
-	// for format-conversion cases where a specific, known fault is acceptable.
-	// Covered by the envelope signature when sealed. NOTE: any code may be
-	// listed, including structural envelope/header codes — use deliberately.
+	// Fully-qualified validation fault codes to suppress when validating this
+	// envelope, e.g. "GOBL-EU-EN16931-ORG-ITEM-01". Intended for format-conversion
+	// cases where a specific, known fault is acceptable. Covered by the envelope
+	// signature when sealed. Any code may be listed, including structural envelope
+	// and header codes, so use deliberately.
 	Ignore []rules.Code `json:"ignore,omitempty" jsonschema:"title=Ignore"`
 }
 
@@ -275,6 +273,9 @@ func (h *Header) Sign(key *dsig.PrivateKey, opts ...SignOption) (*dsig.Signature
 // fall within it. The signed iss/aud are part of the statement and are
 // not validated here — read them with SignedPayload.
 func (h *Header) Verify(sig *dsig.Signature, keys ...*dsig.PublicKey) error {
+	if sig == nil {
+		return ErrSignaturePayload
+	}
 	if len(keys) == 0 {
 		p := new(SigningPayload)
 		if err := sig.UnsafePayload(p); err != nil {
@@ -304,7 +305,11 @@ func (h *Header) Verify(sig *dsig.Signature, keys ...*dsig.PublicKey) error {
 
 // SignedPayload extracts the (unverified) signed payload from a
 // signature, used to read iss before fetching the signer's keys.
+// A nil signature (a JSON `null` sigs entry) is a payload error.
 func SignedPayload(sig *dsig.Signature) (*SigningPayload, error) {
+	if sig == nil {
+		return nil, ErrSignaturePayload
+	}
 	p := new(SigningPayload)
 	if err := sig.UnsafePayload(p); err != nil {
 		return nil, ErrSignaturePayload

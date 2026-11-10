@@ -10,8 +10,8 @@ import (
 // Person represents a human, and how to contact them electronically.
 type Person struct {
 	uuid.Identify
-	// Label can be used to identify the person in a given context in a single
-	// language, for example "Attn", "Contact", "Responsible", etc.
+	// Identifies the person in a given context in a single language, for example
+	// "Attn", "Contact", "Responsible", etc.
 	Label string `json:"label,omitempty" jsonschema:"title=Label,example=Attn"`
 	// Key used to identify the role of the person inside the context of the object.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
@@ -22,15 +22,15 @@ type Person struct {
 	// Set of codes used to identify the person, such as ID numbers, social security,
 	// driving licenses, etc. that can be attributed to the individual.
 	Identities []*Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
-	// Regular post addresses for where information should be sent if needed.
+	// Postal addresses where information should be sent if needed.
 	Addresses []*Address `json:"addresses,omitempty" jsonschema:"title=Postal Addresses"`
 	// Electronic mail addresses that belong to the person.
 	Emails []*Email `json:"emails,omitempty" jsonschema:"title=Email Addresses"`
-	// Regular phone or mobile numbers
+	// Regular phone or mobile numbers.
 	Telephones []*Telephone `json:"telephones,omitempty" jsonschema:"title=Telephone Numbers"`
-	// Avatars provider links to images or photos or the person.
+	// Links to images or photos of the person.
 	Avatars []*Image `json:"avatars,omitempty" jsonschema:"title=Avatars"`
-	// Data about the data.
+	// Additional semi-structured information.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 

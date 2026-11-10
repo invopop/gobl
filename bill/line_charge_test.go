@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
@@ -68,6 +69,14 @@ func TestLineChargeValidation(t *testing.T) {
 		}
 		assert.NoError(t, rules.Validate(l))
 	})
+	t.Run("invalid unit", func(t *testing.T) {
+		l := &bill.LineCharge{
+			Quantity: num.NewAmount(100, 0),
+			Unit:     "unknown",
+			Rate:     num.NewAmount(2, 0),
+		}
+		assert.ErrorContains(t, rules.Validate(l), "unit must be valid")
+	})
 	t.Run("missing rate with quantity", func(t *testing.T) {
 		l := &bill.LineCharge{
 			Code:     "IEPS",
@@ -113,6 +122,9 @@ func TestLineChargeJSONSchema(t *testing.T) {
 		"properties": {
 			"key": {
 				"$ref": "https://gobl.org/draft-0/cbc/key"
+			},
+			"unit": {
+				"$ref": "https://gobl.org/draft-0/cbc/key"
 			}
 		}
 	}`
@@ -125,6 +137,9 @@ func TestLineChargeJSONSchema(t *testing.T) {
 	assert.True(t, ok)
 	assert.NotNil(t, props)
 	assert.Equal(t, 12, len(props.AnyOf))
+	unit, ok := js.Properties.Get("unit")
+	assert.True(t, ok)
+	assert.Len(t, unit.OneOf, len(org.UnitDefinitions))
 }
 
 func TestCleanLineCharges(t *testing.T) {

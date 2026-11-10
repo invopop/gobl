@@ -1,0 +1,35 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+uuid: "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e"
+issue_date: "2026-10-11"
+code: "INV-001"
+
+supplier:
+  name: GOBL Technologies
+  addresses:
+    - num: "84"
+      street: "Christie Ave"
+      locality: "Nassau"
+      country: "BS"
+  tax_id:
+    country: "BS"
+    code: "123456789"
+
+customer:
+  name: GOBL Consumer Ltd.
+  addresses:
+    - num: "34"
+      street: "Roosevelt Ave"
+      locality: "Nassau"
+      country: "BS"
+  tax_id:
+    country: "BS"
+    code: "987654321"
+
+lines:
+  - quantity: "5"
+    item:
+      name: Computer
+      price: "1000.00"
+    taxes:
+      - cat: VAT
+        rate: standard

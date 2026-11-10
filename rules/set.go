@@ -9,6 +9,32 @@ import (
 	"strings"
 )
 
+type pointerVisit struct {
+	typ reflect.Type
+	ptr uintptr
+}
+
+func enterPointer(rc *Context, v reflect.Value) (pointerVisit, bool) {
+	visit := pointerVisit{typ: v.Type(), ptr: v.Pointer()}
+	if rc == nil {
+		return visit, true
+	}
+	if rc.activePointers == nil {
+		rc.activePointers = make(map[pointerVisit]struct{})
+	}
+	if _, ok := rc.activePointers[visit]; ok {
+		return visit, false
+	}
+	rc.activePointers[visit] = struct{}{}
+	return visit, true
+}
+
+func leavePointer(rc *Context, visit pointerVisit) {
+	if rc != nil {
+		delete(rc.activePointers, visit)
+	}
+}
+
 // Set represents a collection of rules grouped by a namespace
 // and associated with a specific struct.
 type Set struct {
@@ -159,6 +185,17 @@ func (s *Set) validate(rc *Context, obj any) Faults {
 		}
 	}
 
+	if s.isNamespace() {
+		ptr := reflect.ValueOf(obj)
+		if ptr.Kind() == reflect.Pointer && !ptr.IsNil() {
+			visit, ok := enterPointer(rc, ptr)
+			if !ok {
+				return nil
+			}
+			defer leavePointer(rc, visit)
+		}
+	}
+
 	// Normalize obj to a pointer for consistent test calling. When the caller
 	// passes a plain struct value (e.g. via fv.Interface() on a non-pointer
 	// field), By-style tests that assert value.(*T) would otherwise fail.
@@ -273,7 +310,7 @@ func (s *Set) validateSubsets(rc *Context, rv reflect.Value, obj, callObj any) [
 		// the payload is a private field accessible only via Embedded().
 		if emb, ok := callObj.(Embeddable); ok {
 			if inner := emb.Embedded(); inner != nil {
-				if fs := s.validateNestedValue(rc, inner); len(fs) > 0 {
+				if fs := s.validateNestedFieldValue(rc, reflect.ValueOf(inner)); len(fs) > 0 {
 					faults = append(faults, fs...)
 				}
 			}
@@ -350,7 +387,7 @@ func (s *Set) validateNestedValue(rc *Context, obj any) []*Fault {
 	// If the object exposes an embedded payload, validate it at the same path level.
 	if emb, ok := callObj.(Embeddable); ok {
 		if inner := emb.Embedded(); inner != nil {
-			faults = append(faults, s.validateNestedValue(rc, inner)...)
+			faults = append(faults, s.validateNestedFieldValue(rc, reflect.ValueOf(inner))...)
 		}
 	}
 
@@ -364,6 +401,11 @@ func (s *Set) validateNestedFieldValue(rc *Context, fv reflect.Value) []*Fault {
 		if fv.IsNil() {
 			return nil
 		}
+		visit, ok := enterPointer(rc, fv)
+		if !ok {
+			return nil
+		}
+		defer leavePointer(rc, visit)
 		fv = fv.Elem()
 	}
 	switch fv.Kind() {

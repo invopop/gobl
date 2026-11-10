@@ -3,31 +3,34 @@ package l10n
 import (
 	"fmt"
 	"slices"
+	"strings"
 
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/jsonschema"
 )
 
-// ISOCountryCode defines an ISO 3166-2 country code.
+// ISOCountryCode defines an ISO 3166-1 alpha-2 country code.
 type ISOCountryCode Code
 
 // TaxCountryCode defines a code that may coincide with a country code,
 // but may not always coincide.
 type TaxCountryCode Code
 
-func validISOCountryCodes() []ISOCountryCode {
+func validISOCountryValues() []any {
 	defs := countries.ISO()
-	list := make([]ISOCountryCode, len(defs))
+	list := make([]any, len(defs))
 	for i, d := range defs {
-		list[i] = ISOCountryCode(d.Code)
+		list[i] = string(d.Code)
 	}
 	return list
 }
 
-func validTaxCountryCodes() []TaxCountryCode {
+func validTaxCountryValues() []any {
 	defs := countries.Tax()
-	list := make([]TaxCountryCode, len(defs))
+	list := make([]any, len(defs))
 	for i, d := range defs {
-		list[i] = TaxCountryCode(d.Code)
+		list[i] = string(d.Code)
 	}
 	return list
 }
@@ -38,7 +41,7 @@ func (c ISOCountryCode) Validate() error {
 	if c.Empty() {
 		return nil
 	}
-	if slices.Contains(validISOCountryCodes(), c) {
+	if slices.Contains(validISOCountryValues(), any(string(c))) {
 		return nil
 	}
 	return fmt.Errorf("must be a valid ISO country code")
@@ -50,10 +53,34 @@ func (c TaxCountryCode) Validate() error {
 	if c.Empty() {
 		return nil
 	}
-	if slices.Contains(validTaxCountryCodes(), c) {
+	if slices.Contains(validTaxCountryValues(), any(string(c))) {
 		return nil
 	}
 	return fmt.Errorf("must be a valid tax country code")
+}
+
+func normalizeISOCountryCode(c *ISOCountryCode) {
+	*c = ISOCountryCode(strings.ToUpper(strings.TrimSpace(string(*c))))
+}
+
+func normalizeTaxCountryCode(c *TaxCountryCode) {
+	*c = TaxCountryCode(strings.ToUpper(strings.TrimSpace(string(*c))))
+}
+
+func isoCountryCodeRules() *rules.Set {
+	return rules.For(ISOCountryCode(""),
+		rules.AssertIfPresent("01", "must be a valid ISO country code",
+			is.In(validISOCountryValues()...),
+		),
+	)
+}
+
+func taxCountryCodeRules() *rules.Set {
+	return rules.For(TaxCountryCode(""),
+		rules.AssertIfPresent("01", "must be a valid tax country code",
+			is.In(validTaxCountryValues()...),
+		),
+	)
 }
 
 // Empty returns true if the ISO country code is empty.
@@ -73,7 +100,7 @@ func (ISOCountryCode) JSONSchema() *jsonschema.Schema {
 		Title:       "ISO Country Code",
 		Type:        "string",
 		OneOf:       make([]*jsonschema.Schema, len(defs)),
-		Description: `Defines an ISO 3166-2 country code`,
+		Description: `Defines an ISO 3166-1 alpha-2 country code.`,
 	}
 	for i, d := range defs {
 		s.OneOf[i] = &jsonschema.Schema{
@@ -155,7 +182,7 @@ func (TaxCountryCode) JSONSchema() *jsonschema.Schema {
 		Title:       "Tax Country Code",
 		Type:        "string",
 		OneOf:       make([]*jsonschema.Schema, len(defs)),
-		Description: `Defines an ISO base country code used for tax purposes`,
+		Description: `Defines an ISO base country code used for tax purposes.`,
 	}
 	for i, d := range defs {
 		s.OneOf[i] = &jsonschema.Schema{

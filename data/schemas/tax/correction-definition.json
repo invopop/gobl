@@ -16,7 +16,7 @@
           },
           "type": "array",
           "title": "Types",
-          "description": "The types of sub-documents supported by the regime"
+          "description": "The types of sub-documents supported by the regime."
         },
         "extensions": {
           "items": {
@@ -24,12 +24,12 @@
           },
           "type": "array",
           "title": "Extensions",
-          "description": "Extension keys that can be included"
+          "description": "Extension keys that can be included."
         },
         "reason_required": {
           "type": "boolean",
           "title": "Reason Required",
-          "description": "ReasonRequired when true implies that a reason must be provided"
+          "description": "When true, a reason must be provided."
         },
         "stamps": {
           "items": {
@@ -42,14 +42,14 @@
         "copy_tax": {
           "type": "boolean",
           "title": "Copy Tax Totals",
-          "description": "Copy tax from the preceding document to the document ref."
+          "description": "When true, tax totals are copied from the preceding document to the document\nreference."
         }
       },
       "type": "object",
       "required": [
         "schema"
       ],
-      "description": "CorrectionDefinition contains details about what can be defined in ."
+      "description": "CorrectionDefinition contains details about what can be defined in the preceding document references when correcting a document."
     }
   }
 }
