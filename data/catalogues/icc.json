@@ -1,26 +1,35 @@
 {
   "$schema": "https://gobl.org/draft-0/tax/catalogue-def",
-  "key": "incoterms",
+  "key": "icc",
   "name": {
-    "en": "ICC Incoterms",
-    "fr": "Incoterms ICC"
+    "en": "International Chamber of Commerce",
+    "fr": "Chambre de commerce internationale"
   },
   "extensions": [
     {
-      "key": "icc-incoterm",
+      "key": "icc-delivery-code",
       "name": {
-        "en": "ICC Incoterms 2020: Delivery Terms",
-        "fr": "ICC Incoterms 2020: Conditions de livraison"
+        "en": "ICC Incoterms® 2020: Delivery Code",
+        "fr": "ICC Incoterms® 2020: Code de livraison"
       },
       "desc": {
-        "en": "International Commercial Terms published by the International Chamber of Commerce (ICC),\ndefining the responsibilities of the seller and buyer for the delivery of goods.",
-        "fr": "Conditions commerciales internationales publiées par la Chambre de commerce internationale (ICC),\ndéfinissant les responsabilités du vendeur et de l'acheteur pour la livraison des marchandises."
+        "en": "Incoterms® 2020 rules published by the International Chamber of Commerce (ICC).\nThe eleven three-letter trade terms are used in contracts for the sale of goods to\ndefine where and when the seller delivers the goods to the buyer, the point at which\nthe risk of loss or damage transfers from the seller to the buyer, and which party\nbears which costs, such as transport, insurance, and export or import clearance.\n\nIncoterms® rules do not cover the transfer of ownership of the goods, payment\nterms, or the price, which must be agreed separately in the sale contract.",
+        "fr": "Règles Incoterms® 2020 publiées par la Chambre de commerce internationale (ICC).\nLes onze termes commerciaux de trois lettres sont utilisés dans les contrats de vente\nde marchandises pour définir où et quand le vendeur livre les marchandises à l'acheteur,\nle moment où le risque de perte ou de dommage est transféré du vendeur à l'acheteur,\net quelle partie supporte quels coûts, tels que le transport, l'assurance et le\ndédouanement à l'export ou à l'import.\n\nLes règles Incoterms® ne couvrent pas le transfert de propriété des marchandises, les\nconditions de paiement ni le prix, qui doivent être convenus séparément dans le\ncontrat de vente."
       },
       "usage": {
         "schemas": [
           "bill/delivery-details"
         ]
       },
+      "sources": [
+        {
+          "title": {
+            "en": "ICC Incoterms® rules",
+            "fr": "Règles Incoterms® de l'ICC"
+          },
+          "url": "https://iccwbo.org/business-solutions/incoterms-rules/"
+        }
+      ],
       "values": [
         {
           "code": "CFR",
