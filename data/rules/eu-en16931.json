@@ -148,6 +148,18 @@
           "desc": "either a reason or a charge type extension is required (BR-36)",
           "tests": "reason or charge"
         }
+      ],
+      "subsets": [
+        {
+          "field": "taxes",
+          "assert": [
+            {
+              "id": "GOBL-EU-EN16931-BILL-CHARGE-02",
+              "desc": "taxes are required (BR-37)",
+              "tests": "present"
+            }
+          ]
+        }
       ]
     },
     {
