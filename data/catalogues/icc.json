@@ -24,10 +24,18 @@
       "sources": [
         {
           "title": {
-            "en": "ICC Incoterms® rules",
-            "fr": "Règles Incoterms® de l'ICC"
+            "en": "ICC Incoterms® 2010 rules",
+            "fr": "Règles Incoterms® 2010 de l'ICC"
           },
-          "url": "https://iccwbo.org/business-solutions/incoterms-rules/"
+          "url": "https://iccwbo.org/news-publications/icc-rules-guidelines/incoterms-rules-2010/#top"
+        },
+        {
+          "title": {
+            "en": "DHL Global Forwarding Incoterms® 2010 brochure",
+            "fr": "Brochure Incoterms® 2010 de DHL Global Forwarding"
+          },
+          "url": "https://www.dhl.com/content/dam/dhl/global/dhl-global-forwarding/documents/pdf/dhl-glo-dgf-incoterms-2010-brochure.pdf",
+          "content_type": "application/pdf"
         }
       ],
       "values": [
@@ -132,6 +140,21 @@
             "fr": "Règles Incoterms® de l'ICC"
           },
           "url": "https://iccwbo.org/business-solutions/incoterms-rules/"
+        },
+        {
+          "title": {
+            "en": "ICC Incoterms® 2020 practical free wallchart",
+            "fr": "Tableau mural pratique gratuit Incoterms® 2020 de l'ICC"
+          },
+          "url": "https://2go.iccwbo.org/incoterms-2020-practical-free-wallchart.html"
+        },
+        {
+          "title": {
+            "en": "DHL Global Forwarding Incoterms® 2020 brochure",
+            "fr": "Brochure Incoterms® 2020 de DHL Global Forwarding"
+          },
+          "url": "https://www.dhl.com/content/dam/dhl/global/dhl-global-forwarding/documents/pdf/glo-dgf-incoterms-2020-brochure.pdf",
+          "content_type": "application/pdf"
         }
       ],
       "values": [

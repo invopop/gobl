@@ -13,16 +13,27 @@ import (
 
 func TestInit(t *testing.T) {
 	tests := []struct {
-		key   cbc.Key
-		codes []cbc.Code
+		key     cbc.Key
+		codes   []cbc.Code
+		sources []string
 	}{
 		{
 			key:   icc.ExtKeyIncoterms2010Rule,
 			codes: []cbc.Code{"EXW", "FCA", "CPT", "CIP", "DAT", "DAP", "DDP", "FAS", "FOB", "CFR", "CIF"},
+			sources: []string{
+				"https://iccwbo.org/news-publications/icc-rules-guidelines/incoterms-rules-2010/#top",
+				"https://www.dhl.com/content/dam/dhl/global/dhl-global-forwarding/documents/pdf/dhl-glo-dgf-incoterms-2010-brochure.pdf",
+			},
 		},
 		{
 			key:   icc.ExtKeyIncoterms2020Rule,
 			codes: []cbc.Code{"EXW", "FCA", "CPT", "CIP", "DAP", "DPU", "DDP", "FAS", "FOB", "CFR", "CIF"},
+			sources: []string{
+				"https://iccwbo.org/business-solutions/incoterms-rules/",
+				"https://2go.iccwbo.org/incoterms-2020-practical-free-wallchart.html",
+				"https://www.dhl.com/es-en/home/freight/help-center-for-european-road-and-rail/incoterms-2020-rules.html",
+				"https://www.dhl.com/content/dam/dhl/global/dhl-global-forwarding/documents/pdf/glo-dgf-incoterms-2020-brochure.pdf",
+			},
 		},
 	}
 	for _, tt := range tests {
@@ -31,8 +42,11 @@ func TestInit(t *testing.T) {
 			require.NotNil(t, ext)
 			assert.Equal(t, tt.codes, cbc.DefinitionCodes(ext.Values))
 			assert.Equal(t, []string{"bill/delivery-details"}, ext.Usage.Schemas)
-			require.Len(t, ext.Sources, 1)
-			assert.Equal(t, "https://iccwbo.org/business-solutions/incoterms-rules/", ext.Sources[0].URL)
+			urls := make([]string, len(ext.Sources))
+			for i, src := range ext.Sources {
+				urls[i] = src.URL
+			}
+			assert.Equal(t, tt.sources, urls)
 		})
 	}
 }
