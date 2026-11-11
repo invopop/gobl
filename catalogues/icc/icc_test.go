@@ -18,7 +18,7 @@ func TestInit(t *testing.T) {
 		sources []string
 	}{
 		{
-			key:   icc.ExtKeyIncoterms2010Rule,
+			key:   icc.ExtKeyIncoterms2010,
 			codes: []cbc.Code{"EXW", "FCA", "CPT", "CIP", "DAT", "DAP", "DDP", "FAS", "FOB", "CFR", "CIF"},
 			sources: []string{
 				"https://iccwbo.org/news-publications/icc-rules-guidelines/incoterms-rules-2010/#top",
@@ -26,7 +26,7 @@ func TestInit(t *testing.T) {
 			},
 		},
 		{
-			key:   icc.ExtKeyIncoterms2020Rule,
+			key:   icc.ExtKeyIncoterms2020,
 			codes: []cbc.Code{"EXW", "FCA", "CPT", "CIP", "DAP", "DPU", "DDP", "FAS", "FOB", "CFR", "CIF"},
 			sources: []string{
 				"https://iccwbo.org/business-solutions/incoterms-rules/",

@@ -11,9 +11,9 @@ func init() {
 }
 
 const (
-	// ExtKeyIncoterms2010Rule is used to identify the ICC Incoterms® 2010 rule code.
-	ExtKeyIncoterms2010Rule cbc.Key = "icc-incoterms-2010-rule"
+	// ExtKeyIncoterms2010 is used to identify the ICC Incoterms® 2010 rule code.
+	ExtKeyIncoterms2010 cbc.Key = "icc-incoterms-2010"
 
-	// ExtKeyIncoterms2020Rule is used to identify the ICC Incoterms® 2020 rule code.
-	ExtKeyIncoterms2020Rule cbc.Key = "icc-incoterms-2020-rule"
+	// ExtKeyIncoterms2020 is used to identify the ICC Incoterms® 2020 rule code.
+	ExtKeyIncoterms2020 cbc.Key = "icc-incoterms-2020"
 )
