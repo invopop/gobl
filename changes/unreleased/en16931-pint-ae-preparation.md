@@ -1,6 +1,7 @@
 ## Added
 
 - `eu-en16931-v2017`: **breaking**: document-level charges must have taxes (BR-37), as discounts already must (BR-32). Charges without taxes now fail with `GOBL-EU-EN16931-BILL-CHARGE-02`.
+- `ae`: identity keys for the Tax Identification Number (`ae-tin`), trade licence (`ae-trade-license`), Emirates ID (`ae-emirates-id`) and Cabinet Decision (`ae-cabinet-decision`). TINs must be 10 digits (`GOBL-AE-ORG-IDENTITY-01`) and Emirates ID numbers 15 digits (`GOBL-AE-ORG-IDENTITY-02`); separators are removed from both.
 
 ## Fixed
 
