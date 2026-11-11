@@ -27,6 +27,47 @@
           ]
         }
       ]
+    },
+    {
+      "id": "GOBL-AE-ORG-IDENTITY",
+      "object": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [AE]",
+          "subsets": [
+            {
+              "guard": "is TIN",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-AE-ORG-IDENTITY-01",
+                      "desc": "UAE TIN must be 10 digits",
+                      "tests": "matches ^\\d{10}$"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "guard": "is Emirates ID",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-AE-ORG-IDENTITY-02",
+                      "desc": "Emirates ID number must be 15 digits",
+                      "tests": "matches ^\\d{15}$"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

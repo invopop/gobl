@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -17,12 +18,18 @@ const CountryCode = "AE"
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("ae", rules.GOBL.Add(CountryCode), taxIdentityRules())
+	rules.Register("ae", rules.GOBL.Add(CountryCode),
+		taxIdentityRules(),
+		orgIdentityRules(),
+	)
 	norm.Register(
 		norm.When(tax.IdentityIn(CountryCode),
 			norm.For(func(id *tax.Identity) {
 				tax.NormalizeIdentity(id)
 			})),
+	)
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn(CountryCode)),
+		norm.For(normalizeIdentity),
 	)
 }
 
@@ -63,6 +70,7 @@ func New() *tax.RegimeDef {
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},
+		Identities: identityDefinitions,
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
