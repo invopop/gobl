@@ -1,0 +1,49 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3f2e9c1a-7b4d-4e8f-9a6c-2d1b0e5f8a7c"
+series: "SAMPLE"
+code: "001"
+issue_date: "2026-03-01"
+
+supplier:
+  name: "Vzorová s.r.o."
+  tax_id:
+    country: "CZ"
+    code: "12345679"
+  addresses:
+    - num: "12"
+      street: "Hlavní"
+      locality: "Praha"
+      code: "11000"
+      country: "CZ"
+  emails:
+    - addr: "fakturace@example.cz"
+
+customer:
+  name: "Zákazník s.r.o."
+  tax_id:
+    country: "CZ"
+    code: "76543218"
+  addresses:
+    - num: "5"
+      street: "Masarykova"
+      locality: "Brno"
+      code: "60200"
+      country: "CZ"
+
+lines:
+  - quantity: "10"
+    item:
+      name: "Softwarové služby"
+      price: "1200.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: "standard"
+  - quantity: "2"
+    item:
+      name: "Ubytování"
+      price: "1500.00"
+      unit: "day"
+    taxes:
+      - cat: VAT
+        rate: "reduced"
