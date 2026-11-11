@@ -1,0 +1,241 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/catalogue-def",
+  "key": "icc",
+  "name": {
+    "en": "International Chamber of Commerce",
+    "fr": "Chambre de commerce internationale"
+  },
+  "extensions": [
+    {
+      "key": "icc-incoterms-2010",
+      "name": {
+        "en": "ICC Incoterms® 2010: Rule",
+        "fr": "ICC Incoterms® 2010: Règle"
+      },
+      "desc": {
+        "en": "Incoterms® 2010 rules published by the International Chamber of Commerce (ICC).\nThe eleven three-letter trade terms are used in contracts for the sale of goods to\ndefine where and when the seller delivers the goods to the buyer, the point at which\nthe risk of loss or damage transfers from the seller to the buyer, and which party\nbears which costs, such as transport, insurance, and export or import clearance.\n\nIncoterms® rules do not cover the transfer of ownership of the goods, payment\nterms, or the price, which must be agreed separately in the sale contract.\n\nThe 2010 edition includes DAT (Delivered at Terminal), which was replaced by\nDPU (Delivered at Place Unloaded) in the 2020 edition.",
+        "fr": "Règles Incoterms® 2010 publiées par la Chambre de commerce internationale (ICC).\nLes onze termes commerciaux de trois lettres sont utilisés dans les contrats de vente\nde marchandises pour définir où et quand le vendeur livre les marchandises à l'acheteur,\nle moment où le risque de perte ou de dommage est transféré du vendeur à l'acheteur,\net quelle partie supporte quels coûts, tels que le transport, l'assurance et le\ndédouanement à l'export ou à l'import.\n\nLes règles Incoterms® ne couvrent pas le transfert de propriété des marchandises, les\nconditions de paiement ni le prix, qui doivent être convenus séparément dans le\ncontrat de vente.\n\nL'édition 2010 inclut DAT (Rendu au terminal), remplacé par DPU (Rendu au lieu\nde destination déchargé) dans l'édition 2020."
+      },
+      "usage": {
+        "schemas": [
+          "bill/delivery-details"
+        ]
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "ICC Incoterms® 2010 rules",
+            "fr": "Règles Incoterms® 2010 de l'ICC"
+          },
+          "url": "https://iccwbo.org/news-publications/icc-rules-guidelines/incoterms-rules-2010/#top"
+        },
+        {
+          "title": {
+            "en": "DHL Global Forwarding Incoterms® 2010 brochure",
+            "fr": "Brochure Incoterms® 2010 de DHL Global Forwarding"
+          },
+          "url": "https://www.dhl.com/content/dam/dhl/global/dhl-global-forwarding/documents/pdf/dhl-glo-dgf-incoterms-2010-brochure.pdf",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "EXW",
+          "name": {
+            "en": "Ex Works",
+            "fr": "À l'usine"
+          }
+        },
+        {
+          "code": "FCA",
+          "name": {
+            "en": "Free Carrier",
+            "fr": "Franco transporteur"
+          }
+        },
+        {
+          "code": "CPT",
+          "name": {
+            "en": "Carriage Paid To",
+            "fr": "Port payé jusqu'à"
+          }
+        },
+        {
+          "code": "CIP",
+          "name": {
+            "en": "Carriage and Insurance Paid To",
+            "fr": "Port payé, assurance comprise, jusqu'à"
+          }
+        },
+        {
+          "code": "DAT",
+          "name": {
+            "en": "Delivered at Terminal",
+            "fr": "Rendu au terminal"
+          }
+        },
+        {
+          "code": "DAP",
+          "name": {
+            "en": "Delivered at Place",
+            "fr": "Rendu au lieu de destination"
+          }
+        },
+        {
+          "code": "DDP",
+          "name": {
+            "en": "Delivered Duty Paid",
+            "fr": "Rendu droits acquittés"
+          }
+        },
+        {
+          "code": "FAS",
+          "name": {
+            "en": "Free Alongside Ship",
+            "fr": "Franco le long du navire"
+          }
+        },
+        {
+          "code": "FOB",
+          "name": {
+            "en": "Free On Board",
+            "fr": "Franco à bord"
+          }
+        },
+        {
+          "code": "CFR",
+          "name": {
+            "en": "Cost and Freight",
+            "fr": "Coût et fret"
+          }
+        },
+        {
+          "code": "CIF",
+          "name": {
+            "en": "Cost Insurance and Freight",
+            "fr": "Coût, assurance et fret"
+          }
+        }
+      ]
+    },
+    {
+      "key": "icc-incoterms-2020",
+      "name": {
+        "en": "ICC Incoterms® 2020: Rule",
+        "fr": "ICC Incoterms® 2020: Règle"
+      },
+      "desc": {
+        "en": "Incoterms® 2020 rules published by the International Chamber of Commerce (ICC).\nThe eleven three-letter trade terms are used in contracts for the sale of goods to\ndefine where and when the seller delivers the goods to the buyer, the point at which\nthe risk of loss or damage transfers from the seller to the buyer, and which party\nbears which costs, such as transport, insurance, and export or import clearance.\n\nIncoterms® rules do not cover the transfer of ownership of the goods, payment\nterms, or the price, which must be agreed separately in the sale contract.\n\nThe 2020 edition replaces DAT (Delivered at Terminal) from the 2010 edition with\nDPU (Delivered at Place Unloaded).",
+        "fr": "Règles Incoterms® 2020 publiées par la Chambre de commerce internationale (ICC).\nLes onze termes commerciaux de trois lettres sont utilisés dans les contrats de vente\nde marchandises pour définir où et quand le vendeur livre les marchandises à l'acheteur,\nle moment où le risque de perte ou de dommage est transféré du vendeur à l'acheteur,\net quelle partie supporte quels coûts, tels que le transport, l'assurance et le\ndédouanement à l'export ou à l'import.\n\nLes règles Incoterms® ne couvrent pas le transfert de propriété des marchandises, les\nconditions de paiement ni le prix, qui doivent être convenus séparément dans le\ncontrat de vente.\n\nL'édition 2020 remplace DAT (Rendu au terminal) de l'édition 2010 par DPU (Rendu\nau lieu de destination déchargé)."
+      },
+      "usage": {
+        "schemas": [
+          "bill/delivery-details"
+        ]
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "ICC Incoterms® rules",
+            "fr": "Règles Incoterms® de l'ICC"
+          },
+          "url": "https://iccwbo.org/business-solutions/incoterms-rules/"
+        },
+        {
+          "title": {
+            "en": "ICC Incoterms® 2020 practical free wallchart",
+            "fr": "Tableau mural pratique gratuit Incoterms® 2020 de l'ICC"
+          },
+          "url": "https://2go.iccwbo.org/incoterms-2020-practical-free-wallchart.html"
+        },
+        {
+          "title": {
+            "en": "DHL Global Forwarding Incoterms® 2020 brochure",
+            "fr": "Brochure Incoterms® 2020 de DHL Global Forwarding"
+          },
+          "url": "https://www.dhl.com/content/dam/dhl/global/dhl-global-forwarding/documents/pdf/glo-dgf-incoterms-2020-brochure.pdf",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "EXW",
+          "name": {
+            "en": "Ex Works",
+            "fr": "À l'usine"
+          }
+        },
+        {
+          "code": "FCA",
+          "name": {
+            "en": "Free Carrier",
+            "fr": "Franco transporteur"
+          }
+        },
+        {
+          "code": "CPT",
+          "name": {
+            "en": "Carriage Paid To",
+            "fr": "Port payé jusqu'à"
+          }
+        },
+        {
+          "code": "CIP",
+          "name": {
+            "en": "Carriage and Insurance Paid To",
+            "fr": "Port payé, assurance comprise, jusqu'à"
+          }
+        },
+        {
+          "code": "DAP",
+          "name": {
+            "en": "Delivered at Place",
+            "fr": "Rendu au lieu de destination"
+          }
+        },
+        {
+          "code": "DPU",
+          "name": {
+            "en": "Delivered at Place Unloaded",
+            "fr": "Rendu au lieu de destination déchargé"
+          }
+        },
+        {
+          "code": "DDP",
+          "name": {
+            "en": "Delivered Duty Paid",
+            "fr": "Rendu droits acquittés"
+          }
+        },
+        {
+          "code": "FAS",
+          "name": {
+            "en": "Free Alongside Ship",
+            "fr": "Franco le long du navire"
+          }
+        },
+        {
+          "code": "FOB",
+          "name": {
+            "en": "Free On Board",
+            "fr": "Franco à bord"
+          }
+        },
+        {
+          "code": "CFR",
+          "name": {
+            "en": "Cost and Freight",
+            "fr": "Coût et fret"
+          }
+        },
+        {
+          "code": "CIF",
+          "name": {
+            "en": "Cost Insurance and Freight",
+            "fr": "Coût, assurance et fret"
+          }
+        }
+      ]
+    }
+  ]
+}
