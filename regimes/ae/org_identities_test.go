@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
-	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/ae"
 	"github.com/invopop/gobl/rules"
@@ -97,29 +96,6 @@ func TestEmiratesIDValidation(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestIdentityNormalization(t *testing.T) {
-	ctx := tax.RegimeContext(ae.CountryCode)
-
-	t.Run("Emirates ID separators are removed", func(t *testing.T) {
-		id := &org.Identity{Key: ae.IdentityKeyEmiratesID, Code: "784-1990-1234567-1"}
-		norm.Normalize(id, ctx)
-		assert.Equal(t, cbc.Code("784199012345671"), id.Code)
-		assert.NoError(t, rules.Validate(id, ctx))
-	})
-
-	t.Run("TIN separators are removed", func(t *testing.T) {
-		id := &org.Identity{Key: ae.IdentityKeyTIN, Code: "1234 567 890"}
-		norm.Normalize(id, ctx)
-		assert.Equal(t, cbc.Code("1234567890"), id.Code)
-	})
-
-	t.Run("other identities are left as they are", func(t *testing.T) {
-		id := &org.Identity{Key: ae.IdentityKeyTradeLicense, Code: "CN-1234567"}
-		norm.Normalize(id, ctx)
-		assert.Equal(t, cbc.Code("CN-1234567"), id.Code)
-	})
 }
 
 func TestIdentitiesWithoutFormatRules(t *testing.T) {

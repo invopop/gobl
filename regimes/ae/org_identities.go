@@ -126,16 +126,3 @@ func identityHasKey(key cbc.Key) func(any) bool {
 		return ok && id != nil && id.Key == key
 	}
 }
-
-// normalizeIdentity removes the separators from UAE identity numbers that are
-// often written with them, such as an Emirates ID printed as
-// 784-1990-1234567-1, so they can be checked as plain digits.
-func normalizeIdentity(id *org.Identity) {
-	if id == nil {
-		return
-	}
-	switch id.Key {
-	case IdentityKeyTIN, IdentityKeyEmiratesID:
-		id.Code = cbc.NormalizeNumericalCode(id.Code)
-	}
-}
