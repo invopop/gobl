@@ -136,13 +136,16 @@ claims:
 | `exp` | Optional expiry. |
 | `verifier` | Optional verifier named by a registration authority. |
 
-Envelope header `from` and `to` fields are not signed, so they can be changed
-without invalidating any signature. Neither is evidence on its own: `from`
-names a claimed issuer and `to` a claimed recipient, and each is only
-accepted when the signatures confirm it (§5.1, §5.2). When present, both MUST
-hold `gobl:` addresses. A `from` or `to` using another transport's scheme
-means the envelope is not meant for GOBL Net, and a participant MUST reject
-it rather than verify it.
+Every GOBL Net envelope MUST carry header `from` and `to` fields holding
+`gobl:` addresses: `from` names the issuer and `to` the recipient. An
+envelope missing either, or using another transport's scheme in either, is
+not meant for GOBL Net, and a participant MUST reject it rather than verify
+it.
+
+Neither field is signed, so either can be changed without invalidating any
+signature. That lets one signed envelope be addressed to each recipient on
+demand, but it also means neither is evidence on its own: each is only
+accepted when the signatures or the exchange confirm it (§5.1, §5.2).
 
 Signature order has no meaning. Implementations MUST search all signatures and
 MUST NOT assign roles by array position.
@@ -162,15 +165,19 @@ discovery only, and MUST NOT be used to determine or check the subject.
 Equally, any holder can reorder or add signatures, so the subject MUST NOT be
 inferred from whichever one appears first.
 
-To accept a party envelope, a participant MUST find a `gobl:` address in
-`from`, and a valid signature whose `iss` equals it. An envelope with neither
-MUST be rejected. This establishes only that the subject adopted the party
+To accept a party envelope, a participant MUST find a valid signature whose
+`iss` equals the `from` address, or reject it. This establishes only that the subject adopted the party
 document as its own; it says nothing about registration, which is §7.
 
 A public `/who` response has the following additional requirements:
 
-- the subject MUST equal the address queried; and
+- the subject MUST equal the address queried;
+- `to` MUST equal the requester, the `iss` of the request token (§6); and
 - the envelope MUST contain a valid audience-free self-signature.
+
+The server addresses the envelope to the requester on each response, which
+needs no new signature because `to` is not signed. The requester MUST reject
+a response addressed to anybody else.
 
 Other self-signatures and countersignatures may be present.
 
@@ -183,8 +190,8 @@ or that two different issuers bind, MUST be rejected: the first has nobody
 accountable for it, and the second leaves the receiver to choose, which is not
 a choice a receiver may make.
 
-When present, the envelope's `from` MUST equal the sender and its `to` MUST
-equal the receiver's own address, or the delivery MUST be rejected.
+The envelope's `from` MUST equal the sender and its `to` MUST equal the
+receiver's own address, or the delivery MUST be rejected.
 
 Registration, verification, and deferred identity workflows may carry party
 envelopes without an audience binding. Their receiver-specific rules must be
@@ -459,8 +466,8 @@ envelope or one of these empty responses:
 | `404` | Address does not participate. |
 | `503` | A required key endpoint is unavailable. |
 
-A `200` response MUST be verified as described in §5.1 before anything in it
-is used. Authenticated responses SHOULD use `Cache-Control: private`, and a
+A `200` response MUST be addressed to the requester with `to`, and MUST be
+verified as described in §5.1 before anything in it is used. Authenticated responses SHOULD use `Cache-Control: private`, and a
 caller may cache a verified identity for a bounded period — bounded because a
 cached identity outliving the countersignature that endorsed it is §12's
 problem.
@@ -576,9 +583,11 @@ to a transient failure. Retrying is the correct behaviour.
 - **Privacy:** request tokens identify callers but do not make party data
   public. Operators should limit audit-log retention because requester metadata
   can reveal business relationships.
-- **Routing fields:** `from` and `to` are not signed. They name which
-  signatures to look for, and are rejected unless the signatures confirm
-  them; security decisions must still rest on the signed claims.
+- **Routing fields:** `from` and `to` are not signed. They are rejected
+  unless the signatures or the exchange confirm them, and security decisions
+  must still rest on the signed claims. Because anyone holding an envelope
+  can readdress it, a `to` on a `/who` response says who it was served to,
+  not who may read it.
 - **Verification is not graded.** A subject is verified or it is not, and any
   verifier the authority names satisfies it. A receiver that wants to
   distinguish between verifiers must read the `verifier` claim itself and

@@ -266,8 +266,7 @@ func TestWhoAuthorization(t *testing.T) {
 	ctx := context.Background()
 	subject := Address("supplier.example.com")
 	subjKey := dsig.NewES256Key()
-	self := Address("customer.example.com")
-	selfKey := dsig.NewES256Key()
+	self, selfKey := testRequester, testRequesterKey
 
 	subjKeyData, err := json.Marshal(subjKey.Public())
 	require.NoError(t, err)
@@ -295,22 +294,16 @@ func TestWhoAuthorization(t *testing.T) {
 		assert.Empty(t, rec.byURL[subject.KeyURL(subjKey.ID())].Get("Authorization"))
 	})
 
-	t.Run("sends no token without an identity", func(t *testing.T) {
-		rec := &headerRecorder{
-			inner: &mapFetcher{data: map[string][]byte{
-				subject.WhoURL():             buildPartyEnvelope(t, subjKey, subject, nil, "", ""),
-				subject.KeyURL(subjKey.ID()): subjKeyData,
-			}},
-			byURL: map[string]http.Header{},
-		}
+	t.Run("makes no request without an identity", func(t *testing.T) {
+		rec := &headerRecorder{inner: &mapFetcher{}, byURL: map[string]http.Header{}}
 		c := NewClient(WithFetcher(rec))
 		_, err := c.Who(ctx, subject)
-		require.NoError(t, err)
-		assert.Empty(t, rec.byURL[subject.WhoURL()].Get("Authorization"))
+		require.ErrorIs(t, err, ErrFetchFailed)
+		assert.Empty(t, rec.byURL)
 	})
 
 	t.Run("202 reports ErrPending", func(t *testing.T) {
-		c := NewClient(WithFetcher(&mockFetcher{err: ErrPending}))
+		c := NewClient(WithIdentity(self, selfKey), WithFetcher(&mockFetcher{err: ErrPending}))
 		_, err := c.Who(ctx, subject)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrPending))

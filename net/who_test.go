@@ -16,6 +16,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// testRequester is the identity test clients present to /who; party
+// envelopes served to it carry it as their to address.
+var (
+	testRequester    = Address("requester.example.com")
+	testRequesterKey = dsig.NewES256Key()
+)
+
 // buildPartyEnvelope returns the JSON of a party envelope self-signed
 // by subject, optionally countersigned by an authority naming a
 // verifier.
@@ -29,6 +36,7 @@ func buildPartyEnvelope(t *testing.T, subjKey *dsig.PrivateKey, subject Address,
 	env, err := gobl.Envelop(party)
 	require.NoError(t, err)
 	env.Head.From = subject.URI()
+	env.Head.To = testRequester.URI()
 	require.NoError(t, env.Sign(subjKey, head.WithIssuer(subject.String())))
 	if authKey != nil {
 		opts := []head.SignOption{
@@ -58,7 +66,7 @@ func TestWho(t *testing.T) {
 	}
 
 	t.Run("fetches and verifies a self-signed identity", func(t *testing.T) {
-		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+		c := NewClient(WithIdentity(testRequester, testRequesterKey), WithFetcher(&mapFetcher{data: map[string][]byte{
 			subject.WhoURL():             buildPartyEnvelope(t, subjKey, subject, nil, "", ""),
 			subject.KeyURL(subjKey.ID()): jwkOf(subjKey),
 		}}))
@@ -72,7 +80,7 @@ func TestWho(t *testing.T) {
 	t.Run("canonicalizes a non-canonical address", func(t *testing.T) {
 		// Mixed case and a trailing dot must resolve to the same
 		// canonical who URL and match the signed issuer.
-		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+		c := NewClient(WithIdentity(testRequester, testRequesterKey), WithFetcher(&mapFetcher{data: map[string][]byte{
 			subject.WhoURL():             buildPartyEnvelope(t, subjKey, subject, nil, "", ""),
 			subject.KeyURL(subjKey.ID()): jwkOf(subjKey),
 		}}))
@@ -83,7 +91,7 @@ func TestWho(t *testing.T) {
 
 	t.Run("rejects an issuer that does not match the address", func(t *testing.T) {
 		other := Address("other.example.com")
-		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+		c := NewClient(WithIdentity(testRequester, testRequesterKey), WithFetcher(&mapFetcher{data: map[string][]byte{
 			// Served from subject's who URL, but signed as other.
 			subject.WhoURL():           buildPartyEnvelope(t, subjKey, other, nil, "", ""),
 			other.KeyURL(subjKey.ID()): jwkOf(subjKey),
@@ -105,13 +113,14 @@ func TestWho(t *testing.T) {
 		env, err := gobl.Envelop(party)
 		require.NoError(t, err)
 		env.Head.From = subject.URI()
+		env.Head.To = testRequester.URI()
 		require.NoError(t, env.Sign(subjKey,
 			head.WithIssuer(subject.String()),
 			head.WithAudience("caller.example.com")))
 		data, err := json.Marshal(env)
 		require.NoError(t, err)
 
-		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+		c := NewClient(WithIdentity(testRequester, testRequesterKey), WithFetcher(&mapFetcher{data: map[string][]byte{
 			subject.WhoURL():             data,
 			subject.KeyURL(subjKey.ID()): jwkOf(subjKey),
 		}}))
@@ -135,6 +144,7 @@ func TestWho(t *testing.T) {
 		env, err := gobl.Envelop(party)
 		require.NoError(t, err)
 		env.Head.From = subject.URI()
+		env.Head.To = testRequester.URI()
 		require.NoError(t, env.Sign(subjKey,
 			head.WithIssuer(subject.String()),
 			head.WithAudience("lookup.example.com")))
@@ -146,7 +156,7 @@ func TestWho(t *testing.T) {
 		data, err := json.Marshal(env)
 		require.NoError(t, err)
 
-		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+		c := NewClient(WithIdentity(testRequester, testRequesterKey), WithFetcher(&mapFetcher{data: map[string][]byte{
 			subject.WhoURL():             data,
 			subject.KeyURL(subjKey.ID()): jwkOf(subjKey),
 		}}))
@@ -164,13 +174,50 @@ func TestWho(t *testing.T) {
 		data, err := json.Marshal(env)
 		require.NoError(t, err)
 
-		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+		c := NewClient(WithIdentity(testRequester, testRequesterKey), WithFetcher(&mapFetcher{data: map[string][]byte{
 			subject.WhoURL():             data,
 			subject.KeyURL(subjKey.ID()): jwkOf(subjKey),
 		}}))
 		_, err = c.Who(ctx, subject)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrPartyMissing))
+	})
+
+	t.Run("rejects a response for another requester", func(t *testing.T) {
+		env := new(gobl.Envelope)
+		require.NoError(t, json.Unmarshal(buildPartyEnvelope(t, subjKey, subject, nil, "", ""), env))
+		env.Head.To = "gobl:someone-else.example.com"
+		data, err := json.Marshal(env)
+		require.NoError(t, err)
+
+		c := NewClient(WithIdentity(testRequester, testRequesterKey), WithFetcher(&mapFetcher{data: map[string][]byte{
+			subject.WhoURL():             data,
+			subject.KeyURL(subjKey.ID()): jwkOf(subjKey),
+		}}))
+		_, err = c.Who(ctx, subject)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.Contains(t, err.Error(), "is for")
+	})
+
+	t.Run("rejects a response without a to address", func(t *testing.T) {
+		env := new(gobl.Envelope)
+		require.NoError(t, json.Unmarshal(buildPartyEnvelope(t, subjKey, subject, nil, "", ""), env))
+		env.Head.To = ""
+		data, err := json.Marshal(env)
+		require.NoError(t, err)
+
+		c := NewClient(WithIdentity(testRequester, testRequesterKey), WithFetcher(&mapFetcher{data: map[string][]byte{
+			subject.WhoURL():             data,
+			subject.KeyURL(subjKey.ID()): jwkOf(subjKey),
+		}}))
+		_, err = c.Who(ctx, subject)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+	})
+
+	t.Run("requires a client identity", func(t *testing.T) {
+		c := NewClient(WithFetcher(&mapFetcher{}))
+		_, err := c.Who(ctx, subject)
+		require.ErrorIs(t, err, ErrFetchFailed)
 	})
 
 	t.Run("rejects an invalid address", func(t *testing.T) {
@@ -181,7 +228,7 @@ func TestWho(t *testing.T) {
 	})
 
 	t.Run("propagates a no-content response", func(t *testing.T) {
-		c := NewClient(WithFetcher(&mockFetcher{err: ErrNoContent}))
+		c := NewClient(WithIdentity(testRequester, testRequesterKey), WithFetcher(&mockFetcher{err: ErrNoContent}))
 		_, err := c.Who(ctx, subject)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrNoContent))
@@ -195,7 +242,7 @@ func TestWho(t *testing.T) {
 		data, err := json.Marshal(env)
 		require.NoError(t, err)
 
-		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+		c := NewClient(WithIdentity(testRequester, testRequesterKey), WithFetcher(&mapFetcher{data: map[string][]byte{
 			subject.WhoURL(): data,
 		}}))
 		_, err = c.Who(ctx, subject)
@@ -204,7 +251,7 @@ func TestWho(t *testing.T) {
 	})
 
 	t.Run("rejects a body that is not an envelope", func(t *testing.T) {
-		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+		c := NewClient(WithIdentity(testRequester, testRequesterKey), WithFetcher(&mapFetcher{data: map[string][]byte{
 			subject.WhoURL(): []byte("not json"),
 		}}))
 		_, err := c.Who(ctx, subject)
@@ -249,6 +296,7 @@ func TestVerifySender(t *testing.T) {
 
 	t.Run("accepts an authority-endorsed sender", func(t *testing.T) {
 		c := NewClient(
+			WithIdentity(testRequester, testRequesterKey),
 			WithAuthorities(authority),
 			WithFetcher(&mapFetcher{data: endorsed}),
 		)
@@ -259,6 +307,7 @@ func TestVerifySender(t *testing.T) {
 
 	t.Run("rejects a self-signed sender", func(t *testing.T) {
 		c := NewClient(
+			WithIdentity(testRequester, testRequesterKey),
 			WithAuthorities(authority),
 			WithFetcher(&mapFetcher{data: map[string][]byte{
 				subject.WhoURL():             buildPartyEnvelope(t, subjKey, subject, nil, "", ""),
@@ -277,6 +326,7 @@ func TestVerifySender(t *testing.T) {
 			authority.KeyURL(authKey.ID()): jwkOf(authKey),
 		}
 		c := NewClient(
+			WithIdentity(testRequester, testRequesterKey),
 			WithAuthorities(authority),
 			WithFetcher(&mapFetcher{data: registered}),
 		)
@@ -293,6 +343,7 @@ func TestVerifySender(t *testing.T) {
 
 	t.Run("rejects a receive-only account", func(t *testing.T) {
 		c := NewClient(
+			WithIdentity(testRequester, testRequesterKey),
 			WithAuthorities(authority),
 			WithFetcher(&mockFetcher{err: ErrNoContent}),
 		)

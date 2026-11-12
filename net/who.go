@@ -11,12 +11,20 @@ import (
 )
 
 // Who fetches and verifies addr's party envelope. Its subject must equal
-// addr and have an audience-free self-signature. WithIdentity authenticates the
-// request. HTTP 204 and 202 responses return ErrNoContent and ErrPending.
+// addr and have an audience-free self-signature, and its to field must be
+// the client's identity, which WithIdentity sets and the request token
+// presents. HTTP 204 and 202 responses return ErrNoContent and ErrPending.
 func (c *Client) Who(ctx context.Context, addr Address) (*gobl.Envelope, error) {
 	// Canonicalize so well-known URLs and the issuer comparison use
 	// the ASCII form regardless of how the address was written.
 	addr, err := ParseAddress(string(addr))
+	if err != nil {
+		return nil, err
+	}
+	if c.identity == nil {
+		return nil, fmt.Errorf("%w: who requires a client identity", ErrFetchFailed)
+	}
+	self, err := ParseAddress(string(c.identity.addr))
 	if err != nil {
 		return nil, err
 	}
@@ -38,6 +46,9 @@ func (c *Client) Who(ctx context.Context, addr Address) (*gobl.Envelope, error) 
 	}
 	if subject != addr {
 		return nil, fmt.Errorf("%w: who response is the identity of %q, not %q", ErrVerifyFailed, subject, addr)
+	}
+	if to, _ := ParseAddress(env.Head.To.Opaque()); to != self {
+		return nil, fmt.Errorf("%w: who response is for %q, not %q", ErrVerifyFailed, env.Head.To, self)
 	}
 	// A who response is a public document: it must carry at least
 	// one audience-free self-signature. Audience-bound self-

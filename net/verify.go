@@ -13,8 +13,9 @@ import (
 
 // VerifyParty returns the subject of a party envelope, the address in its
 // header's from field, after verifying a self-signature by that address.
-// The party's endpoints are not consulted. It does not verify authority
-// endorsements.
+// The header's to field must also hold an address; checking it against the
+// recipient is the caller's job. The party's endpoints are not consulted.
+// It does not verify authority endorsements.
 func (c *Client) VerifyParty(ctx context.Context, env *gobl.Envelope) (Address, error) {
 	if env == nil || env.Head == nil || !env.Signed() {
 		return "", fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
@@ -25,9 +26,6 @@ func (c *Client) VerifyParty(ctx context.Context, env *gobl.Envelope) (Address, 
 	subject, _, err := routing(env)
 	if err != nil {
 		return "", err
-	}
-	if subject == "" {
-		return "", fmt.Errorf("%w: envelope has no %s: from address", ErrVerifyFailed, Scheme)
 	}
 	ok, err := c.subjectSignatureFor(ctx, env, subject, func(*head.SigningPayload) bool {
 		return true
@@ -42,9 +40,9 @@ func (c *Client) VerifyParty(ctx context.Context, env *gobl.Envelope) (Address, 
 }
 
 // routing returns the canonical addresses in the envelope header's from and
-// to fields, each "" when empty. A value that is not a gobl: address means
-// the envelope is not meant for GOBL Net, and is an error. The fields are
-// unsigned: callers must confirm them against the signatures.
+// to fields. Both are required, and a value that is not a gobl: address
+// means the envelope is not meant for GOBL Net. The fields are unsigned:
+// callers must confirm them against the signatures.
 func routing(env *gobl.Envelope) (from, to Address, err error) {
 	if from, err = routingAddress("from", env.Head.From); err != nil {
 		return "", "", err
@@ -57,7 +55,7 @@ func routing(env *gobl.Envelope) (from, to Address, err error) {
 
 func routingAddress(field string, uri cbc.URI) (Address, error) {
 	if uri == "" {
-		return "", nil
+		return "", fmt.Errorf("%w: envelope has no %s address", ErrVerifyFailed, field)
 	}
 	if uri.Scheme() != Scheme {
 		return "", fmt.Errorf("%w: %s %q is not a %s: address", ErrVerifyFailed, field, uri, Scheme)
@@ -71,7 +69,7 @@ func routingAddress(field string, uri cbc.URI) (Address, error) {
 
 // VerifyDelivery returns the sole issuer of valid signatures addressed to
 // self. It fails if no issuer or multiple issuers bind the delivery, or if
-// the header's from or to field is set to anything but the sender and self.
+// the header's from and to fields are not the sender and self.
 func (c *Client) VerifyDelivery(ctx context.Context, env *gobl.Envelope, self Address) (Address, error) {
 	if env == nil || env.Head == nil || !env.Signed() {
 		return "", fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
@@ -84,7 +82,7 @@ func (c *Client) VerifyDelivery(ctx context.Context, env *gobl.Envelope, self Ad
 	if err != nil {
 		return "", err
 	}
-	if to != "" && to != want {
+	if to != want {
 		return "", fmt.Errorf("%w: to %q is not this inbox %q", ErrVerifyFailed, to, want)
 	}
 	if len(env.Signatures) > maxEnvelopeSignatures {
@@ -128,7 +126,7 @@ func (c *Client) VerifyDelivery(ctx context.Context, env *gobl.Envelope, self Ad
 		}
 		return "", fmt.Errorf("%w: no valid signature bound to %q", ErrVerifyFailed, want)
 	}
-	if from != "" && from != sender {
+	if from != sender {
 		return "", fmt.Errorf("%w: from %q is not the sender %q", ErrVerifyFailed, from, sender)
 	}
 	return sender, nil

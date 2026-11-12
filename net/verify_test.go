@@ -31,6 +31,7 @@ func partyEnvelopeFor(t *testing.T, key *dsig.PrivateKey, addr Address, opts ...
 	env, err := gobl.Envelop(party)
 	require.NoError(t, err)
 	env.Head.From = addr.URI()
+	env.Head.To = testRequester.URI()
 	require.NoError(t, env.Sign(key, opts...))
 
 	// Round-trip through JSON to simulate realistic usage.
@@ -171,7 +172,17 @@ func TestVerifyParty(t *testing.T) {
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
 		_, err := c.VerifyParty(ctx, env)
 		require.ErrorIs(t, err, ErrVerifyFailed)
-		assert.Contains(t, err.Error(), "no gobl: from address")
+		assert.Contains(t, err.Error(), "no from address")
+	})
+
+	t.Run("missing to", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := partyEnvelopeFor(t, key, addr, head.WithIssuer(addr.String()))
+		env.Head.To = ""
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		_, err := c.VerifyParty(ctx, env)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.Contains(t, err.Error(), "no to address")
 	})
 
 	t.Run("to is not a gobl address", func(t *testing.T) {
@@ -222,6 +233,7 @@ func TestVerifyParty(t *testing.T) {
 		env, err := gobl.Envelop(party)
 		require.NoError(t, err)
 		env.Head.From = addr.URI()
+		env.Head.To = testRequester.URI()
 		require.NoError(t, env.Sign(key, head.WithIssuer(addr.String())))
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
@@ -348,6 +360,7 @@ func TestVerifyDelivery(t *testing.T) {
 	t.Run("bound delivery", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		env := buildTestEnvelope(t, key, sender.String(), inbox.String())
+		env.Head.From, env.Head.To = sender.URI(), inbox.URI()
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
 		got, err := c.VerifyDelivery(ctx, env, inbox)
@@ -355,20 +368,32 @@ func TestVerifyDelivery(t *testing.T) {
 		assert.Equal(t, sender, got)
 	})
 
-	t.Run("from matching the sender", func(t *testing.T) {
+	t.Run("rejects a missing from", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := buildTestEnvelope(t, key, sender.String(), inbox.String())
+		env.Head.To = inbox.URI()
+
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		_, err := c.VerifyDelivery(ctx, env, inbox)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.Contains(t, err.Error(), "no from address")
+	})
+
+	t.Run("rejects a missing to", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		env := buildTestEnvelope(t, key, sender.String(), inbox.String())
 		env.Head.From = sender.URI()
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
-		got, err := c.VerifyDelivery(ctx, env, inbox)
-		require.NoError(t, err)
-		assert.Equal(t, sender, got)
+		_, err := c.VerifyDelivery(ctx, env, inbox)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.Contains(t, err.Error(), "no to address")
 	})
 
 	t.Run("rejects a from naming another address", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		env := buildTestEnvelope(t, key, sender.String(), inbox.String())
+		env.Head.From, env.Head.To = sender.URI(), inbox.URI()
 		env.Head.From = "gobl:someone-else.example.com"
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
@@ -380,6 +405,7 @@ func TestVerifyDelivery(t *testing.T) {
 	t.Run("rejects a from on another transport", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		env := buildTestEnvelope(t, key, sender.String(), inbox.String())
+		env.Head.From, env.Head.To = sender.URI(), inbox.URI()
 		env.Head.From = "iso6523-actorid-upis::9920:b123123123"
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
@@ -388,21 +414,10 @@ func TestVerifyDelivery(t *testing.T) {
 		assert.Contains(t, err.Error(), "not a gobl: address")
 	})
 
-	t.Run("to matching the inbox", func(t *testing.T) {
-		key := dsig.NewES256Key()
-		env := buildTestEnvelope(t, key, sender.String(), inbox.String())
-		env.Head.From = sender.URI()
-		env.Head.To = inbox.URI()
-
-		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
-		got, err := c.VerifyDelivery(ctx, env, inbox)
-		require.NoError(t, err)
-		assert.Equal(t, sender, got)
-	})
-
 	t.Run("rejects a to naming another inbox", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		env := buildTestEnvelope(t, key, sender.String(), inbox.String())
+		env.Head.From, env.Head.To = sender.URI(), inbox.URI()
 		env.Head.To = "gobl:other.example.com"
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
@@ -414,6 +429,7 @@ func TestVerifyDelivery(t *testing.T) {
 	t.Run("rejects a to on another transport", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		env := buildTestEnvelope(t, key, sender.String(), inbox.String())
+		env.Head.From, env.Head.To = sender.URI(), inbox.URI()
 		env.Head.To = "iso6523-actorid-upis::9920:b123123123"
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
@@ -424,6 +440,7 @@ func TestVerifyDelivery(t *testing.T) {
 	t.Run("rejects a malformed gobl from", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		env := buildTestEnvelope(t, key, sender.String(), inbox.String())
+		env.Head.From, env.Head.To = sender.URI(), inbox.URI()
 		env.Head.From = "gobl:localhost"
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
@@ -436,6 +453,7 @@ func TestVerifyDelivery(t *testing.T) {
 		// the second signature.
 		key := dsig.NewES256Key()
 		env := buildTestEnvelope(t, key, sender.String(), "other.example.com")
+		env.Head.From, env.Head.To = sender.URI(), inbox.URI()
 		require.NoError(t, env.Sign(key,
 			head.WithIssuer(sender.String()),
 			head.WithAudience(inbox.String())))
@@ -449,6 +467,7 @@ func TestVerifyDelivery(t *testing.T) {
 	t.Run("no binding", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		env := buildTestEnvelope(t, key, sender.String(), "other.example.com")
+		env.Head.From, env.Head.To = sender.URI(), inbox.URI()
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
 		_, err := c.VerifyDelivery(ctx, env, inbox)
@@ -459,6 +478,7 @@ func TestVerifyDelivery(t *testing.T) {
 	t.Run("unsigned audience does not bind", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		env := buildTestEnvelope(t, key, sender.String(), "")
+		env.Head.From, env.Head.To = sender.URI(), inbox.URI()
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
 		_, err := c.VerifyDelivery(ctx, env, inbox)
@@ -470,6 +490,7 @@ func TestVerifyDelivery(t *testing.T) {
 		keyA, keyB := dsig.NewES256Key(), dsig.NewES256Key()
 		other := Address("relay.example.com")
 		env := buildTestEnvelope(t, keyA, sender.String(), inbox.String())
+		env.Head.From, env.Head.To = sender.URI(), inbox.URI()
 		require.NoError(t, env.Sign(keyB,
 			head.WithIssuer(other.String()),
 			head.WithAudience(inbox.String())))
@@ -487,6 +508,7 @@ func TestVerifyDelivery(t *testing.T) {
 	t.Run("same issuer binding twice is fine", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		env := buildTestEnvelope(t, key, sender.String(), inbox.String())
+		env.Head.From, env.Head.To = sender.URI(), inbox.URI()
 		require.NoError(t, env.Sign(key,
 			head.WithIssuer(sender.String()),
 			head.WithAudience(inbox.String())))
@@ -500,6 +522,7 @@ func TestVerifyDelivery(t *testing.T) {
 	t.Run("binding signer key unavailable", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		env := buildTestEnvelope(t, key, sender.String(), inbox.String())
+		env.Head.From, env.Head.To = sender.URI(), inbox.URI()
 		c := NewClient(WithFetcher(&mapFetcher{errs: map[string]error{
 			sender.KeyURL(key.ID()): fmt.Errorf("%w: HTTP 503", ErrUnavailable),
 		}}))
@@ -513,6 +536,7 @@ func TestVerifyDelivery(t *testing.T) {
 		// under the same kid: the crypto check fails.
 		key := dsig.NewES256Key()
 		env := buildTestEnvelope(t, key, sender.String(), inbox.String())
+		env.Head.From, env.Head.To = sender.URI(), inbox.URI()
 		other := dsig.NewES256Key()
 		var jwk map[string]any
 		require.NoError(t, json.Unmarshal(jwkFromKey(t, other), &jwk))
@@ -533,6 +557,7 @@ func TestVerifyDelivery(t *testing.T) {
 		// address can never resolve a key and does not bind.
 		key := dsig.NewES256Key()
 		env := buildTestEnvelope(t, key, "localhost", inbox.String())
+		env.Head.From, env.Head.To = sender.URI(), inbox.URI()
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
 		_, err := c.VerifyDelivery(ctx, env, inbox)
@@ -543,6 +568,7 @@ func TestVerifyDelivery(t *testing.T) {
 	t.Run("invalid self address", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		env := buildTestEnvelope(t, key, sender.String(), inbox.String())
+		env.Head.From, env.Head.To = sender.URI(), inbox.URI()
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
 		_, err := c.VerifyDelivery(ctx, env, "not valid!")
 		require.Error(t, err)
@@ -559,6 +585,7 @@ func TestVerifyDelivery(t *testing.T) {
 	t.Run("rejects an envelope with too many signatures", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		env := buildTestEnvelope(t, key, sender.String(), inbox.String())
+		env.Head.From, env.Head.To = sender.URI(), inbox.URI()
 		for len(env.Signatures) <= maxEnvelopeSignatures {
 			env.Signatures = append(env.Signatures, env.Signatures[0])
 		}
@@ -572,6 +599,7 @@ func TestVerifyDelivery(t *testing.T) {
 	t.Run("nil signature entries are skipped", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		env := buildTestEnvelope(t, key, sender.String(), inbox.String())
+		env.Head.From, env.Head.To = sender.URI(), inbox.URI()
 		env.Signatures = append([]*dsig.Signature{nil}, env.Signatures...)
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
@@ -596,7 +624,7 @@ func TestWhoPublicationSignatureUnavailable(t *testing.T) {
 	data, err := json.Marshal(env)
 	require.NoError(t, err)
 
-	c := NewClient(WithFetcher(&mapFetcher{
+	c := NewClient(WithIdentity(testRequester, testRequesterKey), WithFetcher(&mapFetcher{
 		data: map[string][]byte{
 			subject.WhoURL():          data,
 			subject.KeyURL(keyA.ID()): jwkFromKey(t, keyA),

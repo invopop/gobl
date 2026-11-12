@@ -95,9 +95,6 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 	if err != nil {
 		return nil, err
 	}
-	if subject == "" {
-		return nil, fmt.Errorf("%w: envelope has no %s: from address", ErrVerifyFailed, Scheme)
-	}
 	// Both sides of the lookup are canonicalized so U-Label or
 	// trailing-dot forms — configured or signed — compare equal.
 	auths := make(map[Address]bool, len(c.authorities))
