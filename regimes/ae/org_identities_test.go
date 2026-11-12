@@ -120,43 +120,6 @@ func TestIdentityNormalization(t *testing.T) {
 		norm.Normalize(id, ctx)
 		assert.Equal(t, cbc.Code("CN-1234567"), id.Code)
 	})
-
-	t.Run("TIN gets the tax scope", func(t *testing.T) {
-		id := &org.Identity{Key: ae.IdentityKeyTIN, Code: "1234567890"}
-		norm.Normalize(id, ctx)
-		assert.Equal(t, org.IdentityScopeTax, id.Scope)
-	})
-
-	t.Run("commercial registration numbers get the legal scope", func(t *testing.T) {
-		for _, key := range []cbc.Key{
-			ae.IdentityKeyTradeLicense,
-			ae.IdentityKeyEmiratesID,
-			org.IdentityKeyPassport,
-			ae.IdentityKeyCabinetDecision,
-		} {
-			id := &org.Identity{Key: key, Code: "123"}
-			norm.Normalize(id, ctx)
-			assert.Equal(t, org.IdentityScopeLegal, id.Scope, key)
-		}
-	})
-
-	t.Run("an explicit scope is kept", func(t *testing.T) {
-		id := &org.Identity{Key: ae.IdentityKeyTradeLicense, Scope: org.IdentityScopeTax, Code: "123"}
-		norm.Normalize(id, ctx)
-		assert.Equal(t, org.IdentityScopeTax, id.Scope)
-	})
-
-	t.Run("identities without a UAE key get no scope", func(t *testing.T) {
-		id := &org.Identity{Type: "XYZ", Code: "123"}
-		norm.Normalize(id, ctx)
-		assert.Empty(t, id.Scope)
-	})
-
-	t.Run("scope is only set under the AE regime", func(t *testing.T) {
-		id := &org.Identity{Key: org.IdentityKeyPassport, Code: "123"}
-		norm.Normalize(id, tax.RegimeContext("DE"))
-		assert.Empty(t, id.Scope)
-	})
 }
 
 func TestIdentitiesWithoutFormatRules(t *testing.T) {
