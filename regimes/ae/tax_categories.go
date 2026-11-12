@@ -6,8 +6,15 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
+
+// TaxKeyMarginScheme is the VAT key for a supply under the profit margin
+// scheme, where VAT is due on the supplier's margin and the invoice shows no
+// VAT amount. See the FTA's Profit Margin Scheme guide (VATGPM1):
+// https://tax.gov.ae/Datafolder/Files/Pdf/2026/Guide/Profit%20Margin-Scheme-EN-02-01-2026-re.pdf
+const TaxKeyMarginScheme cbc.Key = "margin-scheme"
 
 var taxCategories = []*tax.CategoryDef{
 	{
@@ -30,7 +37,7 @@ var taxCategories = []*tax.CategoryDef{
 			},
 		},
 		Retained: false,
-		Keys:     tax.GlobalVATKeys(),
+		Keys:     vatKeys(),
 		Rates: []*tax.RateDef{
 			{
 				Keys: []cbc.Key{tax.KeyStandard},
@@ -52,4 +59,24 @@ var taxCategories = []*tax.CategoryDef{
 			},
 		},
 	},
+}
+
+// vatKeys returns the global VAT keys plus the profit margin scheme key.
+func vatKeys() []*tax.KeyDef {
+	keys := append([]*tax.KeyDef{}, tax.GlobalVATKeys()...)
+	return append(keys, &tax.KeyDef{
+		Key: TaxKeyMarginScheme,
+		Name: i18n.String{
+			i18n.EN: "Profit Margin Scheme",
+			i18n.AR: "آلية هامش الربح",
+		},
+		Description: i18n.String{
+			i18n.EN: here.Doc(`
+				Supply of goods under the profit margin scheme, such as second-hand
+				goods, antiques or collectors' items. VAT is due on the margin, not
+				on the price, and the invoice shows no VAT amount.
+			`),
+		},
+		NoPercent: true,
+	})
 }

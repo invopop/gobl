@@ -192,6 +192,17 @@
             "en": "Outside scope"
           },
           "no_percent": true
+        },
+        {
+          "key": "margin-scheme",
+          "name": {
+            "ar": "آلية هامش الربح",
+            "en": "Profit Margin Scheme"
+          },
+          "desc": {
+            "en": "Supply of goods under the profit margin scheme, such as second-hand\ngoods, antiques or collectors' items. VAT is due on the margin, not\non the price, and the invoice shows no VAT amount."
+          },
+          "no_percent": true
         }
       ],
       "rates": [
