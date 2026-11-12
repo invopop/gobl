@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/tax"
 )
 
 // Regime extension keys
@@ -33,8 +34,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyPassThrough,
 		Name: i18n.String{
-			i18n.EN: "Pass-through Item",
-			i18n.HR: "Prolazna stavka",
+			i18n.EN: "Porezna uprava: Pass-through Item",
+			i18n.HR: "Porezna uprava: Prolazna stavka",
+		},
+		Usage: &cbc.Usage{
+			Codes:   []cbc.Code{CountryCode},
+			Schemas: []string{tax.ShortSchemaCombo},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
