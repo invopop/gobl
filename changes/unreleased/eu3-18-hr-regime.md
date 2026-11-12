@@ -12,3 +12,10 @@
   local tax on drinks served in catering establishments under the Local Taxes Act. Each
   municipality sets its rate, up to 3%, so the category has no fixed rates and each tax
   line gives its percent. The code is the one the Croatian eRačun specification uses.
+- `hr`: added the `hr-pass-through` extension for pass-through items, amounts charged
+  together with taxable items that are left out of the VAT base: the packaging return
+  fee (`POVNAK`), the special tax on motor vehicles (`PPMV`) and any other non-taxable
+  fee (`N`), with the HR tax category codes of the Croatian eRačun specification
+  (HR-TB-2) without the `HR:` prefix. The amount is a line or charge of its own, and
+  the extension goes on its VAT combo, which must use the exempt key. The consumption
+  tax, also a pass-through item, keeps its own `PP` tax category.

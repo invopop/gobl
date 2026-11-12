@@ -27,6 +27,8 @@ func TestNew(t *testing.T) {
 	assert.Equal(t, "PP", regime.Categories[1].Code.String())
 	assert.Len(t, regime.Identities, 1)
 	assert.Equal(t, "OIB", regime.Identities[0].Code.String())
+	assert.Len(t, regime.Extensions, 1)
+	assert.Equal(t, hr.ExtKeyPassThrough, regime.Extensions[0].Key)
 }
 
 func TestRateValues(t *testing.T) {

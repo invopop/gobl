@@ -78,6 +78,37 @@
           ]
         }
       ]
+    },
+    {
+      "id": "GOBL-HR-TAX-COMBO",
+      "object": "tax.Combo",
+      "subsets": [
+        {
+          "guard": "context: regime in [HR]",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-HR-TAX-COMBO-01",
+                  "desc": "Croatian pass-through item code is not valid",
+                  "tests": "ext 'hr-pass-through' in [POVNAK, PPMV, N]"
+                }
+              ]
+            },
+            {
+              "guard": "has pass-through item",
+              "assert": [
+                {
+                  "id": "GOBL-HR-TAX-COMBO-02",
+                  "desc": "Croatian pass-through item requires a VAT combo with the exempt key",
+                  "tests": "VAT exempt"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

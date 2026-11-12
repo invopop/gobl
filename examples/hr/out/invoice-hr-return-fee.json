@@ -1,0 +1,125 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "68bee8fda4a1ce000ed79688d1f61554b11d7b3438461054c5482138143d6795"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "HR",
+		"uuid": "01a1cfd2-a2ca-7434-8f52-2858e73791f3",
+		"type": "standard",
+		"series": "R2026",
+		"code": "042",
+		"issue_date": "2026-11-06",
+		"currency": "EUR",
+		"supplier": {
+			"name": "Veleprodaja pića d.o.o.",
+			"tax_id": {
+				"country": "HR",
+				"code": "12345678903"
+			},
+			"addresses": [
+				{
+					"num": "10",
+					"street": "Ilica",
+					"locality": "Zagreb",
+					"region": "Grad Zagreb",
+					"code": "10000",
+					"country": "HR"
+				}
+			]
+		},
+		"customer": {
+			"name": "Kavana Riva d.o.o.",
+			"tax_id": {
+				"country": "HR",
+				"code": "11111111119"
+			},
+			"addresses": [
+				{
+					"num": "5",
+					"street": "Obala hrvatskog narodnog preporoda",
+					"locality": "Split",
+					"region": "Splitsko-dalmatinska",
+					"code": "21000",
+					"country": "HR"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "24",
+				"item": {
+					"name": "Pivo 0,5 l, boca",
+					"price": "1.20"
+				},
+				"sum": "28.80",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "25.0%"
+					}
+				],
+				"total": "28.80"
+			},
+			{
+				"i": 2,
+				"quantity": "24",
+				"item": {
+					"name": "Povratna naknada",
+					"price": "0.10"
+				},
+				"sum": "2.40",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "exempt",
+						"ext": {
+							"hr-pass-through": "POVNAK"
+						}
+					}
+				],
+				"total": "2.40"
+			}
+		],
+		"totals": {
+			"sum": "31.20",
+			"total": "31.20",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "28.80",
+								"percent": "25.0%",
+								"amount": "7.20"
+							},
+							{
+								"key": "exempt",
+								"ext": {
+									"hr-pass-through": "POVNAK"
+								},
+								"base": "2.40",
+								"amount": "0.00"
+							}
+						],
+						"amount": "7.20"
+					}
+				],
+				"sum": "7.20"
+			},
+			"tax": "7.20",
+			"total_with_tax": "38.40",
+			"payable": "38.40"
+		}
+	}
+}

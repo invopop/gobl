@@ -21,6 +21,7 @@ func init() {
 	rules.Register("hr", rules.GOBL.Add(CountryCode),
 		orgIdentityRules(),
 		taxIdentityRules(),
+		taxComboRules(),
 	)
 	norm.Register(
 		norm.When(tax.IdentityIn(CountryCode), norm.For(func(tID *tax.Identity) { tax.NormalizeIdentity(tID) })),
@@ -78,6 +79,7 @@ func New() *tax.RegimeDef {
 		Tags:       []*tax.TagSet{invoiceTags},
 		Identities: identityTypeDefinitions,
 		Categories: taxCategories,
+		Extensions: extensions,
 		Scenarios:  []*tax.ScenarioSet{invoiceScenarios},
 	}
 }
