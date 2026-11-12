@@ -27,14 +27,10 @@ const (
 	IdentityKeyCabinetDecision cbc.Key = "ae-cabinet-decision"
 )
 
-const (
-	// tinPattern is the format of the TIN: the first 10 digits of the 15-digit
-	// TRN, as defined by the Ministry of Finance's e-invoicing mandatory fields.
-	tinPattern = `^\d{10}$`
-	// emiratesIDPattern is the format of the Emirates ID number: 15 digits, as
-	// stated on the UAE government portal.
-	emiratesIDPattern = `^\d{15}$`
-)
+// emiratesIDPattern is the format of the Emirates ID number: 15 digits, the
+// first three 784, the international code of the UAE. The last one is a
+// verification digit whose algorithm is not published, so it is not checked.
+const emiratesIDPattern = `^784\d{12}$`
 
 // identityDefinitions lists the identity keys the AE regime defines.
 var identityDefinitions = []*cbc.Definition{
@@ -45,9 +41,15 @@ var identityDefinitions = []*cbc.Definition{
 			i18n.AR: "رقم التعريف الضريبي",
 		},
 		Desc: i18n.String{
-			i18n.EN: "10-digit number issued by the Federal Tax Authority. Not the 15-digit VAT number (TRN), which goes in the party's tax ID.",
+			i18n.EN: "10-digit number issued by the Federal Tax Authority: a 1, an 8-digit business identifier and a Luhn check digit. Not the 15-digit VAT number (TRN), which starts with it and goes in the party's tax ID.",
 		},
-		Sources: []*cbc.Source{mofMandatoryFieldsSource},
+		Sources: []*cbc.Source{
+			mofMandatoryFieldsSource,
+			{
+				Title: i18n.NewString("Peppol Participant Identifier Schemes - AE:TIN (ISO 6523 ICD 0235)"),
+				URL:   "https://docs.peppol.eu/edelivery/codelists/",
+			},
+		},
 	},
 	{
 		Key: IdentityKeyTradeLicense,
@@ -64,13 +66,17 @@ var identityDefinitions = []*cbc.Definition{
 			i18n.AR: "رقم الهوية الإماراتية",
 		},
 		Desc: i18n.String{
-			i18n.EN: "15-digit number of the Emirates ID card, unique to its holder and kept for life.",
+			i18n.EN: "15-digit number of the Emirates ID card, starting with 784, unique to its holder and kept for life.",
 		},
 		Sources: []*cbc.Source{
 			mofMandatoryFieldsSource,
 			{
 				Title: i18n.NewString("UAE Government Portal - Emirates ID"),
 				URL:   "https://u.ae/en/information-and-services/visa-and-emirates-id/emirates-id",
+			},
+			{
+				Title: i18n.NewString("Gulf News - ID number may not be amended, EIDA says"),
+				URL:   "https://gulfnews.com/uae/government/id-number-may-not-be-amended-eida-says-1.1654705",
 			},
 		},
 	},
@@ -101,21 +107,27 @@ func orgIdentityRules() *rules.Set {
 			rules.When(
 				is.Func("is TIN", identityHasKey(IdentityKeyTIN)),
 				rules.Field("code",
-					rules.Assert("01", "UAE TIN must be 10 digits",
-						is.Matches(tinPattern),
+					rules.Assert("01", "UAE TIN must be 10 digits starting with 1, with a valid check digit",
+						is.Func("valid TIN", isValidTIN),
 					),
 				),
 			),
 			rules.When(
 				is.Func("is Emirates ID", identityHasKey(IdentityKeyEmiratesID)),
 				rules.Field("code",
-					rules.Assert("02", "Emirates ID number must be 15 digits",
+					rules.Assert("02", "Emirates ID number must be 15 digits starting with 784",
 						is.Matches(emiratesIDPattern),
 					),
 				),
 			),
 		),
 	)
+}
+
+// isValidTIN reports whether an identity code is a valid TIN.
+func isValidTIN(val any) bool {
+	code, ok := val.(cbc.Code)
+	return ok && validTIN(code)
 }
 
 // identityHasKey returns a predicate that reports whether an identity has the

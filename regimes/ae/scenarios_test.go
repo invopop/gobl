@@ -23,14 +23,14 @@ func testInvoiceReverseCharge(t *testing.T) *bill.Invoice {
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{
 				Country: "AE",
-				Code:    "123456789012345",
+				Code:    "123456789700003",
 			},
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
 			TaxID: &tax.Identity{
 				Country: "AE",
-				Code:    "123456789012346",
+				Code:    "187654321400003",
 			},
 		},
 		IssueDate: cal.MakeDate(2023, 1, 15),
@@ -62,7 +62,7 @@ func testInvoiceSimplified(t *testing.T) *bill.Invoice {
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{
 				Country: "AE",
-				Code:    "123456789012345",
+				Code:    "123456789700003",
 			},
 		},
 		IssueDate: cal.MakeDate(2023, 1, 15),

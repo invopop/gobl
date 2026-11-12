@@ -17,8 +17,8 @@
                   "assert": [
                     {
                       "id": "GOBL-AE-TAX-IDENTITY-01",
-                      "desc": "invalid UAE tax identity code",
-                      "tests": "matches ^\\d{15}$"
+                      "desc": "invalid UAE tax identity code format or check digit",
+                      "tests": "valid TRN"
                     }
                   ]
                 }
@@ -43,8 +43,8 @@
                   "assert": [
                     {
                       "id": "GOBL-AE-ORG-IDENTITY-01",
-                      "desc": "UAE TIN must be 10 digits",
-                      "tests": "matches ^\\d{10}$"
+                      "desc": "UAE TIN must be 10 digits starting with 1, with a valid check digit",
+                      "tests": "valid TIN"
                     }
                   ]
                 }
@@ -58,8 +58,8 @@
                   "assert": [
                     {
                       "id": "GOBL-AE-ORG-IDENTITY-02",
-                      "desc": "Emirates ID number must be 15 digits",
-                      "tests": "matches ^\\d{15}$"
+                      "desc": "Emirates ID number must be 15 digits starting with 784",
+                      "tests": "matches ^784\\d{12}$"
                     }
                   ]
                 }

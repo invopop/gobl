@@ -27,7 +27,7 @@
         "en": "Tax Identification Number"
       },
       "desc": {
-        "en": "10-digit number issued by the Federal Tax Authority. Not the 15-digit VAT number (TRN), which goes in the party's tax ID."
+        "en": "10-digit number issued by the Federal Tax Authority: a 1, an 8-digit business identifier and a Luhn check digit. Not the 15-digit VAT number (TRN), which starts with it and goes in the party's tax ID."
       },
       "sources": [
         {
@@ -35,6 +35,12 @@
             "en": "Ministry of Finance - UAE Electronic Invoice Mandatory Field Requirements"
           },
           "url": "https://mof.gov.ae/wp-content/uploads/2026/10/UAE-Electronic-Invoice-Mandatory-Field-Requirements.pdf"
+        },
+        {
+          "title": {
+            "en": "Peppol Participant Identifier Schemes - AE:TIN (ISO 6523 ICD 0235)"
+          },
+          "url": "https://docs.peppol.eu/edelivery/codelists/"
         }
       ]
     },
@@ -60,7 +66,7 @@
         "en": "Emirates ID Number"
       },
       "desc": {
-        "en": "15-digit number of the Emirates ID card, unique to its holder and kept for life."
+        "en": "15-digit number of the Emirates ID card, starting with 784, unique to its holder and kept for life."
       },
       "sources": [
         {
@@ -74,6 +80,12 @@
             "en": "UAE Government Portal - Emirates ID"
           },
           "url": "https://u.ae/en/information-and-services/visa-and-emirates-id/emirates-id"
+        },
+        {
+          "title": {
+            "en": "Gulf News - ID number may not be amended, EIDA says"
+          },
+          "url": "https://gulfnews.com/uae/government/id-number-may-not-be-amended-eida-says-1.1654705"
         }
       ]
     },

@@ -17,15 +17,22 @@ func TestTaxIdentityRules(t *testing.T) {
 		code cbc.Code
 		err  string
 	}{
-		{name: "good 1", code: "123456789012345"},
-		{name: "good 2", code: "187654321098765"},
-		{name: "good 3", code: "100111222333444"},
+		{name: "good 1", code: "123456789700003"},
+		{name: "good 2", code: "187654321400003"},
+		{name: "good 3", code: "100000001600003"},
+		{name: "other tax suffix", code: "123456789700001"},
 
 		// Invalid formats
 		{name: "too short", code: "12345678901234", err: "IDENTITY-01"},
 		{name: "too long", code: "1234567890123456", err: "IDENTITY-01"},
 		{name: "non-numeric", code: "12345678ABCD345", err: "IDENTITY-01"},
-		{name: "not normalized", code: "1234-5678-9012-345", err: "IDENTITY-01"},
+		{name: "not normalized", code: "1234-5678-9700-003", err: "IDENTITY-01"},
+
+		// Invalid TIN in the first 10 digits
+		{name: "wrong check digit", code: "123456789012345", err: "IDENTITY-01"},
+		{name: "check digit over all 15 digits", code: "123456789000003", err: "IDENTITY-01"},
+		{name: "not starting with 1", code: "223456789500003", err: "IDENTITY-01"},
+		{name: "no business identifier", code: "100000000800003", err: "IDENTITY-01"},
 	}
 
 	for _, tt := range tests {
