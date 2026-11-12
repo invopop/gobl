@@ -69,14 +69,15 @@ func (e *Endorsement) Verified() bool {
 }
 
 // VerifyAuthority verifies countersignatures from the client's trusted
-// authorities. It returns the strongest endorsement found, preferring one with
-// confirmed verifier evidence. The verifier must differ from the authority;
+// authorities whose aud binds the envelope to subject. It returns the
+// strongest endorsement found, preferring one with confirmed verifier
+// evidence. The verifier must differ from the authority;
 // self-referential, missing, or invalid verifier evidence leaves a
 // registration-only endorsement valid. It returns ErrUnknownAuthority when no
 // trusted candidate exists, ErrSignatureExpired for expired authority evidence,
 // ErrUnavailable for transient key lookup failures, or ErrVerifyFailed when
 // candidates fail cryptographic verification.
-func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endorsement, error) {
+func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope, subject Address) (*Endorsement, error) {
 	// A malformed envelope may carry signatures without a header;
 	// reject rather than let header verification panic.
 	if env == nil || env.Head == nil || len(env.Signatures) == 0 {
@@ -88,6 +89,10 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 	if len(env.Signatures) > maxEnvelopeSignatures {
 		return nil, fmt.Errorf("%w: envelope carries %d signatures (max %d)",
 			ErrVerifyFailed, len(env.Signatures), maxEnvelopeSignatures)
+	}
+	subject, err := ParseAddress(string(subject))
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", ErrVerifyFailed, err)
 	}
 	// Both sides of the lookup are canonicalized so U-Label or
 	// trailing-dot forms — configured or signed — compare equal.
@@ -115,6 +120,9 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 			continue
 		}
 		if !auths[issuer] {
+			continue
+		}
+		if aud, err := ParseAddress(p.Aud); err != nil || aud != subject {
 			continue
 		}
 		// Candidate from a known authority — verify it crypto-wise.
@@ -195,8 +203,10 @@ func (c *Client) confirmVerifier(ctx context.Context, env *gobl.Envelope, author
 	return verifier, nil
 }
 
-// verifySignatureBy reports whether the envelope carries a valid,
-// unexpired countersignature whose signed iss resolves to addr.
+// verifySignatureBy reports whether the envelope carries a valid
+// countersignature whose signed iss resolves to addr, with an iat no later
+// than now (allowing clock skew) and no exp that has passed. Its aud is
+// not consulted.
 func (c *Client) verifySignatureBy(ctx context.Context, env *gobl.Envelope, addr Address) error {
 	var lastErr error
 	for _, sig := range env.Signatures {
@@ -215,6 +225,14 @@ func (c *Client) verifySignatureBy(ctx context.Context, env *gobl.Envelope, addr
 		}
 		if err := env.Head.Verify(sig, pub); err != nil {
 			lastErr = err
+			continue
+		}
+		if p.IssuedAt == 0 {
+			lastErr = fmt.Errorf("%w: signature by %q has no iat", ErrVerifyFailed, addr)
+			continue
+		}
+		if time.Unix(p.IssuedAt, 0).After(time.Now().Add(tokenClockSkew)) {
+			lastErr = fmt.Errorf("%w: signature by %q is issued in the future", ErrVerifyFailed, addr)
 			continue
 		}
 		if expired(p.ExpiresAt) {

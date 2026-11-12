@@ -10,35 +10,30 @@ import (
 	"github.com/invopop/gobl/org"
 )
 
-// VerifyParty returns the address declared by a party envelope's gobl endpoint
-// after verifying a self-signature from that address. It does not verify
-// authority endorsements.
-func (c *Client) VerifyParty(ctx context.Context, env *gobl.Envelope) (Address, error) {
+// VerifyParty checks that env contains an org.Party carrying a valid
+// self-signature by subject. The subject comes from the caller, not from
+// the party's endpoints. It does not verify authority endorsements.
+func (c *Client) VerifyParty(ctx context.Context, env *gobl.Envelope, subject Address) error {
 	if env == nil || env.Head == nil || !env.Signed() {
-		return "", fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
+		return fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
 	}
-	party, ok := env.Extract().(*org.Party)
-	if !ok {
-		return "", ErrPartyMissing
+	if _, ok := env.Extract().(*org.Party); !ok {
+		return ErrPartyMissing
 	}
-	ep := party.Endpoint(Scheme)
-	if ep == nil {
-		return "", fmt.Errorf("%w: party declares no gobl: endpoint", ErrPartyMissing)
-	}
-	subject, err := ParseAddress(ep.URI.Opaque())
+	subject, err := ParseAddress(string(subject))
 	if err != nil {
-		return "", fmt.Errorf("%w: party endpoint %q is not a valid address: %v", ErrVerifyFailed, ep.URI, err)
+		return fmt.Errorf("%w: %v", ErrVerifyFailed, err)
 	}
-	ok, err = c.subjectSignatureFor(ctx, env, subject, func(*head.SigningPayload) bool {
+	ok, err := c.subjectSignatureFor(ctx, env, subject, func(*head.SigningPayload) bool {
 		return true
 	})
 	if err != nil {
-		return "", err
+		return err
 	}
 	if !ok {
-		return "", fmt.Errorf("%w: no valid self-signature by %q", ErrVerifyFailed, subject)
+		return fmt.Errorf("%w: no valid self-signature by %q", ErrVerifyFailed, subject)
 	}
-	return subject, nil
+	return nil
 }
 
 // VerifyDelivery returns the sole issuer of valid signatures addressed to

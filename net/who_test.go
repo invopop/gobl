@@ -90,7 +90,7 @@ func TestWho(t *testing.T) {
 		_, err := c.Who(ctx, subject)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
-		assert.Contains(t, err.Error(), "identity of")
+		assert.Contains(t, err.Error(), "no valid self-signature")
 	})
 
 	t.Run("rejects an audience-bound response", func(t *testing.T) {

@@ -97,15 +97,14 @@ func TestVerifyParty(t *testing.T) {
 
 		mock := &mockFetcher{data: jwkFromKey(t, key)}
 		c := NewClient(WithFetcher(mock))
-		subject, err := c.VerifyParty(ctx, env)
+		err := c.VerifyParty(ctx, env, addr)
 		require.NoError(t, err)
-		assert.Equal(t, addr, subject)
 		assert.Equal(t, addr.KeyURL(key.ID()), mock.url)
 	})
 
 	t.Run("signature order is not significant", func(t *testing.T) {
 		// A countersignature serialized before the self-signature
-		// changes nothing: the subject comes from the document.
+		// changes nothing: signatures are searched, not indexed.
 		key := dsig.NewES256Key()
 		env := partyEnvelopeFor(t, key, addr, head.WithIssuer(addr.String()))
 		other := dsig.NewES256Key()
@@ -115,9 +114,8 @@ func TestVerifyParty(t *testing.T) {
 		env.Signatures[0], env.Signatures[1] = env.Signatures[1], env.Signatures[0]
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
-		subject, err := c.VerifyParty(ctx, env)
+		err := c.VerifyParty(ctx, env, addr)
 		require.NoError(t, err)
-		assert.Equal(t, addr, subject)
 	})
 
 	t.Run("legacy audience-bound self-signature", func(t *testing.T) {
@@ -130,33 +128,31 @@ func TestVerifyParty(t *testing.T) {
 			head.WithAudience("lookup.example.com"))
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
-		subject, err := c.VerifyParty(ctx, env)
+		err := c.VerifyParty(ctx, env, addr)
 		require.NoError(t, err)
-		assert.Equal(t, addr, subject)
 	})
 
-	t.Run("non-canonical endpoint is canonicalized", func(t *testing.T) {
+	t.Run("non-canonical subject is canonicalized", func(t *testing.T) {
 		key := dsig.NewES256Key()
-		party := &org.Party{
-			Name:      "Canon",
-			Endpoints: []*org.Endpoint{{URI: "gobl:Billing.Invopop.COM."}},
-		}
-		party.SetUUID(uuid.V7())
-		env, err := gobl.Envelop(party)
-		require.NoError(t, err)
-		require.NoError(t, env.Sign(key, head.WithIssuer(addr.String())))
+		env := partyEnvelopeFor(t, key, addr, head.WithIssuer(addr.String()))
 
 		mock := &mockFetcher{data: jwkFromKey(t, key)}
 		c := NewClient(WithFetcher(mock))
-		subject, err := c.VerifyParty(ctx, env)
-		require.NoError(t, err)
-		assert.Equal(t, addr, subject)
+		require.NoError(t, c.VerifyParty(ctx, env, "Billing.Invopop.COM."))
 		assert.Equal(t, addr.KeyURL(key.ID()), mock.url, "key URL uses the canonical form")
+	})
+
+	t.Run("invalid subject", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := partyEnvelopeFor(t, key, addr, head.WithIssuer(addr.String()))
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		err := c.VerifyParty(ctx, env, "localhost")
+		require.ErrorIs(t, err, ErrVerifyFailed)
 	})
 
 	t.Run("not signed", func(t *testing.T) {
 		c := NewClient()
-		_, err := c.VerifyParty(ctx, new(gobl.Envelope))
+		err := c.VerifyParty(ctx, new(gobl.Envelope), addr)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
 	})
@@ -165,26 +161,8 @@ func TestVerifyParty(t *testing.T) {
 		key := dsig.NewES256Key()
 		env := buildTestEnvelope(t, key, addr.String(), "")
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
-		_, err := c.VerifyParty(ctx, env)
+		err := c.VerifyParty(ctx, env, addr)
 		require.ErrorIs(t, err, ErrPartyMissing)
-	})
-
-	t.Run("party endpoint is not a valid address", func(t *testing.T) {
-		key := dsig.NewES256Key()
-		party := &org.Party{
-			Name:      "Bad Endpoint",
-			Endpoints: []*org.Endpoint{{URI: "gobl:localhost"}},
-		}
-		party.SetUUID(uuid.V7())
-		env, err := gobl.Envelop(party)
-		require.NoError(t, err)
-		require.NoError(t, env.Sign(key, head.WithIssuer(addr.String())))
-
-		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
-		_, err = c.VerifyParty(ctx, env)
-		require.Error(t, err)
-		assert.True(t, errors.Is(err, ErrVerifyFailed))
-		assert.Contains(t, err.Error(), "not a valid address")
 	})
 
 	t.Run("party without a gobl endpoint", func(t *testing.T) {
@@ -196,23 +174,36 @@ func TestVerifyParty(t *testing.T) {
 		require.NoError(t, env.Sign(key, head.WithIssuer(addr.String())))
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
-		_, err = c.VerifyParty(ctx, env)
-		require.ErrorIs(t, err, ErrPartyMissing)
+		require.NoError(t, c.VerifyParty(ctx, env, addr))
 	})
 
-	t.Run("declared endpoint differs from the signer", func(t *testing.T) {
-		// Alice signs an envelope whose party document claims Bob's
-		// address: the subject is Bob, and there is no valid
-		// self-signature by Bob.
+	t.Run("declared endpoints do not determine the subject", func(t *testing.T) {
+		// The party lists Bob's address, but only Alice self-signed:
+		// it is Alice's identity and not Bob's.
 		key := dsig.NewES256Key()
 		env := partyEnvelopeFor(t, key, "bob.example.com",
 			head.WithIssuer("alice.example.com"))
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
-		_, err := c.VerifyParty(ctx, env)
-		require.Error(t, err)
-		assert.True(t, errors.Is(err, ErrVerifyFailed))
+		require.NoError(t, c.VerifyParty(ctx, env, "alice.example.com"))
+		err := c.VerifyParty(ctx, env, "bob.example.com")
+		require.ErrorIs(t, err, ErrVerifyFailed)
 		assert.Contains(t, err.Error(), "bob.example.com")
+	})
+
+	t.Run("one party, several addresses", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := partyEnvelopeFor(t, key, addr, head.WithIssuer(addr.String()))
+		other := Address("invoices.example.org")
+		otherKey := dsig.NewES256Key()
+		require.NoError(t, env.Sign(otherKey, head.WithIssuer(other.String())))
+
+		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+			addr.KeyURL(key.ID()):       jwkFromKey(t, key),
+			other.KeyURL(otherKey.ID()): jwkFromKey(t, otherKey),
+		}}))
+		require.NoError(t, c.VerifyParty(ctx, env, addr))
+		require.NoError(t, c.VerifyParty(ctx, env, other))
 	})
 
 	t.Run("unknown signer key", func(t *testing.T) {
@@ -222,7 +213,7 @@ func TestVerifyParty(t *testing.T) {
 		other := dsig.NewES256Key()
 		env := partyEnvelopeFor(t, key, addr, head.WithIssuer(addr.String()))
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, other)}))
-		_, err := c.VerifyParty(ctx, env)
+		err := c.VerifyParty(ctx, env, addr)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
 	})
@@ -233,7 +224,7 @@ func TestVerifyParty(t *testing.T) {
 		c := NewClient(WithFetcher(&mapFetcher{errs: map[string]error{
 			addr.KeyURL(key.ID()): fmt.Errorf("%w: HTTP 503", ErrUnavailable),
 		}}))
-		_, err := c.VerifyParty(ctx, env)
+		err := c.VerifyParty(ctx, env, addr)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrUnavailable))
 		assert.False(t, errors.Is(err, ErrVerifyFailed))
@@ -245,9 +236,8 @@ func TestVerifyParty(t *testing.T) {
 		env.Signatures = append([]*dsig.Signature{nil}, env.Signatures...)
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
-		subject, err := c.VerifyParty(ctx, env)
+		err := c.VerifyParty(ctx, env, addr)
 		require.NoError(t, err)
-		assert.Equal(t, addr, subject)
 	})
 
 	t.Run("signing time before valid_from", func(t *testing.T) {
@@ -255,7 +245,7 @@ func TestVerifyParty(t *testing.T) {
 		env := partyEnvelopeFor(t, key, addr, head.WithIssuer(addr.String()))
 		future := cal.TimestampOf(time.Now().Add(24 * time.Hour))
 		c := NewClient(WithFetcher(&mockFetcher{data: publishedJWK(t, key, &future, nil)}))
-		_, err := c.VerifyParty(ctx, env)
+		err := c.VerifyParty(ctx, env, addr)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
 	})
@@ -265,7 +255,7 @@ func TestVerifyParty(t *testing.T) {
 		env := partyEnvelopeFor(t, key, addr, head.WithIssuer(addr.String()))
 		past := cal.TimestampOf(time.Now().Add(-24 * time.Hour))
 		c := NewClient(WithFetcher(&mockFetcher{data: publishedJWK(t, key, nil, &past)}))
-		_, err := c.VerifyParty(ctx, env)
+		err := c.VerifyParty(ctx, env, addr)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
 	})
@@ -276,9 +266,8 @@ func TestVerifyParty(t *testing.T) {
 		from := cal.TimestampOf(time.Now().Add(-time.Hour))
 		until := cal.TimestampOf(time.Now().Add(time.Hour))
 		c := NewClient(WithFetcher(&mockFetcher{data: publishedJWK(t, key, &from, &until)}))
-		subject, err := c.VerifyParty(ctx, env)
+		err := c.VerifyParty(ctx, env, addr)
 		require.NoError(t, err)
-		assert.Equal(t, addr, subject)
 	})
 
 	t.Run("rejects an envelope with too many signatures", func(t *testing.T) {
@@ -288,7 +277,7 @@ func TestVerifyParty(t *testing.T) {
 			env.Signatures = append(env.Signatures, env.Signatures[0])
 		}
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
-		_, err := c.VerifyParty(ctx, env)
+		err := c.VerifyParty(ctx, env, addr)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
 		assert.Contains(t, err.Error(), "signatures")
