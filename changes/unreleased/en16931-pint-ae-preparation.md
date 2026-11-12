@@ -1,6 +1,6 @@
 ## Added
 
-- `ae`: identity keys for the Tax Identification Number (`ae-tin`), trade licence (`ae-trade-license`), Emirates ID (`ae-emirates-id`) and Cabinet Decision (`ae-cabinet-decision`). TINs must be 10 digits (`GOBL-AE-ORG-IDENTITY-01`) and Emirates ID numbers 15 digits (`GOBL-AE-ORG-IDENTITY-02`); separators are removed from both.
+- `ae`: identity keys for the Tax Identification Number (`ae-tin`), trade licence (`ae-trade-license`), Emirates ID (`ae-emirates-id`) and Cabinet Decision (`ae-cabinet-decision`). TINs must be 10 digits (`GOBL-AE-ORG-IDENTITY-01`) and Emirates ID numbers 15 digits (`GOBL-AE-ORG-IDENTITY-02`).
 - `ae`: VAT key `margin-scheme` for supplies under the profit margin scheme. Like `exempt`, it takes no percent, so the invoice shows no VAT amount. Shown in the new `invoice-ae-margin-scheme` example.
 
 ## Changed

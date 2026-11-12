@@ -9,7 +9,6 @@ import (
 	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
-	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -27,9 +26,6 @@ func init() {
 			norm.For(func(id *tax.Identity) {
 				tax.NormalizeIdentity(id)
 			})),
-	)
-	norm.RegisterWithGuard(is.InContext(tax.RegimeIn(CountryCode)),
-		norm.For(normalizeIdentity),
 	)
 }
 
