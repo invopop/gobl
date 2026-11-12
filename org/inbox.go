@@ -106,7 +106,7 @@ func normalizeInbox(i *Inbox) {
 	}
 	i.Label = cbc.NormalizeString(i.Label)
 	i.Scheme = cbc.NormalizeUpperCode(i.Scheme)
-	i.Code = cbc.NormalizeStrictCode(i.Code)
+	i.Code = cbc.NormalizeCode(i.Code)
 
 	// Custom normalizations
 	switch i.Key {

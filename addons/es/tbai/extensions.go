@@ -1,9 +1,12 @@
 package tbai
 
 import (
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/tax"
 )
 
 // Extension keys for TicketBAI
@@ -51,8 +54,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyRegion,
 		Name: i18n.String{
-			i18n.EN: "TicketBAI Region Code",
-			i18n.ES: "Código de Región TicketBAI",
+			i18n.EN: "TicketBAI: Region Code",
+			i18n.ES: "TicketBAI: Código de Región",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{bill.ShortSchemaTax},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -88,8 +95,13 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyProduct,
 		Name: i18n.String{
-			i18n.EN: "TicketBAI Product Key",
-			i18n.ES: "Clave de Producto TicketBAI",
+			i18n.EN: "TicketBAI: Product Key",
+			i18n.ES: "TicketBAI: Clave de Producto",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{tax.ShortSchemaCombo},
+			Paths:   []string{"$.lines[*].taxes[*]"},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -131,8 +143,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyExempt,
 		Name: i18n.String{
-			i18n.EN: "TicketBAI Exemption code",
-			i18n.ES: "Código de Exención de TicketBAI",
+			i18n.EN: "TicketBAI: Exemption Code",
+			i18n.ES: "TicketBAI: Código de Exención",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{tax.ShortSchemaCombo},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -246,8 +262,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyCorrection,
 		Name: i18n.String{
-			i18n.EN: "TicketBAI Rectification Type Code",
-			i18n.ES: "TicketBAI Código de Factura Rectificativa",
+			i18n.EN: "TicketBAI: Rectification Type Code",
+			i18n.ES: "TicketBAI: Código de Factura Rectificativa",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{org.ShortSchemaDocumentRef},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -303,8 +323,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyRegime,
 		Name: i18n.String{
-			i18n.EN: "TicketBAI VAT Regime Key",
-			i18n.ES: "Clave de Régimen de IVA TicketBAI",
+			i18n.EN: "TicketBAI: VAT Regime Key",
+			i18n.ES: "TicketBAI: Clave de Régimen de IVA",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{tax.ShortSchemaCombo},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -462,8 +486,13 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyBIActivity,
 		Name: i18n.String{
-			i18n.EN: "Activity Code (Bizkaia)",
-			i18n.ES: "Código de Actividad (Bizkaia)",
+			i18n.EN: "TicketBAI: Activity Code (Bizkaia)",
+			i18n.ES: "TicketBAI: Código de Actividad (Bizkaia)",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{org.ShortSchemaParty},
+			Paths:   []string{"$.supplier"},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -495,8 +524,13 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyIdentityType,
 		Name: i18n.String{
-			i18n.EN: "Identity Type Code",
-			i18n.ES: "Código de Tipo de Identidad",
+			i18n.EN: "TicketBAI: Identity Type Code",
+			i18n.ES: "TicketBAI: Código de Tipo de Identidad",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{org.ShortSchemaIdentity},
+			Paths:   []string{"$.customer.identities[*]"},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -594,8 +628,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeySimplified,
 		Name: i18n.String{
-			i18n.EN: "TicketBAI Simplified Invoice Flag",
-			i18n.ES: "Indicador de Factura Simplificada TicketBAI",
+			i18n.EN: "TicketBAI: Simplified Invoice Flag",
+			i18n.ES: "TicketBAI: Indicador de Factura Simplificada",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{bill.ShortSchemaTax},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`

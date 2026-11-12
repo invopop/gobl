@@ -138,6 +138,15 @@ func TestInboxNormalize(t *testing.T) {
 		assert.Equal(t, "0004", id.Scheme.String())
 		assert.Equal(t, org.InboxKeyPeppol, id.Key)
 	})
+	t.Run("with peppol key and repeated underscores", func(t *testing.T) {
+		id := &org.Inbox{
+			Key:  org.InboxKeyPeppol,
+			Code: "0225:533304358_53330435800013_DEF0__CODIAL",
+		}
+		norm.Normalize(id)
+		assert.Equal(t, "533304358_53330435800013_DEF0__CODIAL", id.Code.String())
+		assert.NoError(t, rules.Validate(id))
+	})
 	t.Run("with peppol participant code without key", func(t *testing.T) {
 		id := &org.Inbox{
 			Code: "0004:1234567890",

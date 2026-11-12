@@ -28,11 +28,19 @@
     {
       "key": "br-ibge-municipality",
       "name": {
-        "en": "IBGE Municipality Code",
-        "pt": "Código do Município do IBGE"
+        "en": "IBGE: Municipality Code",
+        "pt": "IBGE: Código do Município"
       },
       "desc": {
         "en": "The municipality code as defined by the IBGE (Brazilian Institute of Geography and\nStatistics)."
+      },
+      "usage": {
+        "codes": [
+          "BR"
+        ],
+        "schemas": [
+          "org/party"
+        ]
       },
       "sources": [
         {

@@ -64,6 +64,10 @@ type RegimeDef struct {
 	// local codes for suppliers, customers, products, or tax rates.
 	Extensions []*cbc.Definition `json:"extensions,omitempty" jsonschema:"title=Extensions"`
 
+	// Stamps that may be included in envelope headers by the regime's tax agency or
+	// intermediaries, registered in the head package.
+	Stamps []*cbc.Definition `json:"stamps,omitempty" jsonschema:"title=Stamps"`
+
 	// Identities used in addition to regular tax identities and specific for the
 	// regime that may be validated against.
 	Identities []*cbc.Definition `json:"identities,omitempty" jsonschema:"title=Identities"`

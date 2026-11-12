@@ -7,16 +7,19 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/schema"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type stubConverter struct {
 	formats []*Format
 }
 
-func (c *stubConverter) Formats() []*Format                                { return c.formats }
-func (c *stubConverter) Detect(_ *Input) cbc.Key                           { return cbc.KeyEmpty }
-func (c *stubConverter) Import(_ cbc.Key, _ []byte) (*ImportResult, error) { return nil, nil }
-func (c *stubConverter) Accepts(_ cbc.Key, _ *gobl.Envelope) error         { return ErrNotSupported }
+func (c *stubConverter) Formats() []*Format      { return c.formats }
+func (c *stubConverter) Detect(_ *Input) cbc.Key { return cbc.KeyEmpty }
+func (c *stubConverter) Import(_ cbc.Key, _ []byte, _ *ImportOptions) (*ImportResult, error) {
+	return nil, nil
+}
+func (c *stubConverter) Accepts(_ cbc.Key, _ *gobl.Envelope) error { return ErrNotSupported }
 func (c *stubConverter) Export(_ cbc.Key, _ *gobl.Envelope, _ *ExportOptions) ([]byte, error) {
 	return nil, nil
 }
@@ -77,10 +80,12 @@ type valueConverter struct {
 	detect  cbc.Key
 }
 
-func (c valueConverter) Formats() []*Format                                { return c.formats }
-func (c valueConverter) Detect(_ *Input) cbc.Key                           { return c.detect }
-func (c valueConverter) Import(_ cbc.Key, _ []byte) (*ImportResult, error) { return nil, nil }
-func (c valueConverter) Accepts(_ cbc.Key, _ *gobl.Envelope) error         { return ErrNotSupported }
+func (c valueConverter) Formats() []*Format      { return c.formats }
+func (c valueConverter) Detect(_ *Input) cbc.Key { return c.detect }
+func (c valueConverter) Import(_ cbc.Key, _ []byte, _ *ImportOptions) (*ImportResult, error) {
+	return nil, nil
+}
+func (c valueConverter) Accepts(_ cbc.Key, _ *gobl.Envelope) error { return ErrNotSupported }
 func (c valueConverter) Export(_ cbc.Key, _ *gobl.Envelope, _ *ExportOptions) ([]byte, error) {
 	return nil, nil
 }
@@ -118,4 +123,25 @@ func TestRegistryConversions(t *testing.T) {
 		{Format: "a", Schema: inv, Direction: DirectionExport},
 		{Format: "b", Schema: inv, Direction: DirectionExport},
 	}, r.conversions())
+}
+
+// requestConverter claims its on-request format only when it is asked for.
+type requestConverter struct{ valueConverter }
+
+func (c requestConverter) Detect(in *Input) cbc.Key {
+	if cbc.Key("on-request").In(in.Requested...) {
+		return "on-request"
+	}
+	return c.detect
+}
+
+func TestRegistryDetectRequested(t *testing.T) {
+	r := newRegistry()
+	r.add(requestConverter{valueConverter{formats: []*Format{{Key: "auto"}, {Key: "on-request"}}, detect: "auto"}})
+	e, err := r.detect(nil, nil)
+	require.NoError(t, err)
+	assert.Equal(t, cbc.Key("auto"), e.format.Key, "detected on its own")
+	e, err = r.detect(nil, []cbc.Key{"on-request"})
+	require.NoError(t, err)
+	assert.Equal(t, cbc.Key("on-request"), e.format.Key, "claimed when requested")
 }

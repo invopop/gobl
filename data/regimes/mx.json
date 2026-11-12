@@ -31,6 +31,120 @@
   "country": "MX",
   "currency": "MXN",
   "tax_scheme": "VAT",
+  "stamps": [
+    {
+      "key": "sat-uuid",
+      "name": {
+        "en": "SAT: Fiscal Folio",
+        "es": "SAT: Folio Fiscal"
+      },
+      "desc": {
+        "en": "UUID assigned to the CFDI when it is certified.",
+        "es": "UUID asignado al CFDI al ser timbrado."
+      },
+      "usage": {
+        "codes": [
+          "MX"
+        ]
+      }
+    },
+    {
+      "key": "sat-sig",
+      "name": {
+        "en": "SAT: Signature",
+        "es": "SAT: Sello Digital"
+      },
+      "desc": {
+        "en": "Digital signature of the SAT included in the certification of the CFDI.",
+        "es": "Sello digital del SAT incluido en el timbrado del CFDI."
+      },
+      "usage": {
+        "codes": [
+          "MX"
+        ]
+      }
+    },
+    {
+      "key": "sat-serial",
+      "name": {
+        "en": "SAT: Certificate Number",
+        "es": "SAT: Número de Certificado"
+      },
+      "desc": {
+        "en": "Serial number of the SAT certificate used to certify the CFDI.",
+        "es": "Número de serie del certificado del SAT usado para timbrar el CFDI."
+      },
+      "usage": {
+        "codes": [
+          "MX"
+        ]
+      }
+    },
+    {
+      "key": "sat-timestamp",
+      "name": {
+        "en": "SAT: Certification Date",
+        "es": "SAT: Fecha y Hora de Certificación"
+      },
+      "desc": {
+        "en": "Date and time the CFDI was certified.",
+        "es": "Fecha y hora en que se timbró el CFDI."
+      },
+      "usage": {
+        "codes": [
+          "MX"
+        ]
+      }
+    },
+    {
+      "key": "sat-provider-rfc",
+      "name": {
+        "en": "SAT: Certification Provider RFC",
+        "es": "SAT: RFC del Proveedor de Certificación"
+      },
+      "desc": {
+        "en": "RFC of the authorized certification provider (PAC) that certified the CFDI.",
+        "es": "RFC del proveedor autorizado de certificación (PAC) que timbró el CFDI."
+      },
+      "usage": {
+        "codes": [
+          "MX"
+        ]
+      }
+    },
+    {
+      "key": "sat-chain",
+      "name": {
+        "en": "SAT: Original Certification Chain",
+        "es": "SAT: Cadena Original del Complemento de Certificación"
+      },
+      "desc": {
+        "en": "Original chain of the SAT digital certification complement.",
+        "es": "Cadena original del complemento de certificación digital del SAT."
+      },
+      "usage": {
+        "codes": [
+          "MX"
+        ]
+      }
+    },
+    {
+      "key": "sat-url",
+      "name": {
+        "en": "SAT: QR Code URL",
+        "es": "SAT: URL del Código QR"
+      },
+      "desc": {
+        "en": "URL to verify the CFDI with the SAT, included in the QR code.",
+        "es": "URL para verificar el CFDI ante el SAT, incluida en el código QR."
+      },
+      "usage": {
+        "codes": [
+          "MX"
+        ]
+      }
+    }
+  ],
   "corrections": [
     {
       "schema": "bill/invoice",

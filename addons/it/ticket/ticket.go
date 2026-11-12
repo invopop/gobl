@@ -22,16 +22,6 @@ const (
 	V1 cbc.Key = Key + "-v1"
 )
 
-// Official stamps or codes validated by government agencies
-const (
-	// StampRef is the key to identify the reference provided by the AdE once the ticket is accepted
-	// This code needs to be printed on the ticket
-	StampRef cbc.Key = "ade-ref"
-	// StampVoidRef is the key to identify the reference provided by the AdE once the ticket is voided
-	// This code needs to be printed on the ticket representing the void action
-	StampVoidRef cbc.Key = "ade-void-ref"
-)
-
 func init() {
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(
@@ -71,6 +61,7 @@ func newAddon() *tax.AddonDef {
 			},
 		},
 		Extensions:  extensions,
+		Stamps:      stamps,
 		Corrections: invoiceCorrectionDefinitions,
 	}
 }

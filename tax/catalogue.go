@@ -43,9 +43,7 @@ func RegisterCatalogueDef(filename string) {
 		panic(err)
 	}
 
-	for _, ext := range catalogue.Extensions {
-		RegisterExtension(ext)
-	}
+	RegisterExtension(catalogue.Extensions...)
 	catalogues.add(catalogue)
 }
 

@@ -40,17 +40,6 @@ const (
 	KeyATInvoiceType      cbc.Key = "at-invoice-type"
 )
 
-// AT official codes to include in stamps.
-const (
-	StampProviderATATCUD     cbc.Key = "at-atcud"
-	StampProviderATQR        cbc.Key = "at-qr"
-	StampProviderATHash      cbc.Key = "at-hash"
-	StampProviderATHashFull  cbc.Key = "at-hash-full"
-	StampProviderATAppID     cbc.Key = "at-app-id"
-	StampProviderATTimestamp cbc.Key = "at-ts"
-	StampProviderATDocCode   cbc.Key = "at-doc-code"
-)
-
 // New instantiates a new Portugal regime for the given zone.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
@@ -84,6 +73,7 @@ func New() *tax.RegimeDef {
 		},
 		TimeZone:   "Europe/Lisbon",
 		Extensions: extensionKeys,
+		Stamps:     stamps,
 		Tags: []*tax.TagSet{
 			invoiceTags,
 		},

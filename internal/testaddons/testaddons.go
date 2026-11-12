@@ -49,7 +49,11 @@ func init() {
 		Extensions: []*cbc.Definition{
 			{
 				Key:  ExtKeyCorrection,
-				Name: i18n.String{i18n.EN: "Test Correction"},
+				Name: i18n.String{i18n.EN: "Test: Correction"},
+				Usage: &cbc.Usage{
+					Keys:    []cbc.Key{CorrectionExt},
+					Schemas: []string{org.ShortSchemaDocumentRef},
+				},
 				Values: []*cbc.Definition{
 					{Code: "01", Name: i18n.String{i18n.EN: "Invoice code"}},
 					{Code: "02", Name: i18n.String{i18n.EN: "Invoice series"}},

@@ -30,6 +30,11 @@
           "title": "Meta",
           "description": "Any additional details associated with the key."
         },
+        "usage": {
+          "$ref": "https://gobl.org/draft-0/cbc/usage",
+          "title": "Usage",
+          "description": "Context in which the definition may be used, such as the addons or regimes\nthat offer it, and where it can be placed inside a document."
+        },
         "sources": {
           "items": {
             "$ref": "https://gobl.org/draft-0/cbc/source"

@@ -247,10 +247,14 @@ Store errors along with values, so that a malformed document is only read once.
 
 ### Import
 
-`Import` receives the detected key and the raw data, and returns an
-`ImportResult` with the envelope and the files embedded in the data as
-`Attachments`. The register sets the result's `Format`. It is only called for
-a key the converter returned from `Detect`.
+`Import` receives the detected key, the raw data and the `ImportOptions`, and
+returns an `ImportResult` with the envelope and the files embedded in the data
+as `Attachments`. The register sets the result's `Format`. It is only called
+for a key the converter returned from `Detect`.
+
+The options' `Formats` are those requested, if any. Converters may use them
+to import in a format they cannot tell apart from the data alone, such as a
+profile only identified by its PDF container, or ignore them.
 
 ### Export
 

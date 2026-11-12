@@ -1,9 +1,13 @@
 package mydata
 
 import (
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/tax"
 )
 
 // Regime extension codes.
@@ -43,8 +47,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyVATRate,
 		Name: i18n.String{
-			i18n.EN: "VAT rate",
-			i18n.EL: "Κατηγορία ΦΠΑ",
+			i18n.EN: "myDATA: VAT rate",
+			i18n.EL: "myDATA: Κατηγορία ΦΠΑ",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{tax.ShortSchemaCombo},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -165,8 +173,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyInvoiceType,
 		Name: i18n.String{
-			i18n.EN: "Invoice type",
-			i18n.EL: "Είδος παραστατικού",
+			i18n.EN: "myDATA: Invoice type",
+			i18n.EL: "myDATA: Είδος παραστατικού",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{bill.ShortSchemaTax},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -553,8 +565,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyPaymentMeans,
 		Name: i18n.String{
-			i18n.EN: "Payment means",
-			i18n.EL: "Τρόπος Πληρωμής",
+			i18n.EN: "myDATA: Payment means",
+			i18n.EL: "myDATA: Τρόπος Πληρωμής",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{pay.ShortSchemaInstructions, pay.ShortSchemaRecord},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -648,8 +664,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyExemption,
 		Name: i18n.String{
-			i18n.EN: "VAT exemption cause",
-			i18n.EL: "Κατηγορία Αιτίας Εξαίρεσης ΦΠΑ",
+			i18n.EN: "myDATA: VAT exemption cause",
+			i18n.EL: "myDATA: Κατηγορία Αιτίας Εξαίρεσης ΦΠΑ",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{tax.ShortSchemaCombo},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -954,8 +974,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyIncomeCat,
 		Name: i18n.String{
-			i18n.EN: "Income Classification Category",
-			i18n.EL: "Κωδικός Κατηγορίας Χαρακτηρισμού Εσόδων",
+			i18n.EN: "myDATA: Income Classification Category",
+			i18n.EL: "myDATA: Κωδικός Κατηγορίας Χαρακτηρισμού Εσόδων",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{org.ShortSchemaItem, tax.ShortSchemaCombo},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -1080,8 +1104,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyIncomeType,
 		Name: i18n.String{
-			i18n.EN: "Income Classification Type",
-			i18n.EL: "Κωδικός Τύπου Χαρακτηρισμού Εσόδων",
+			i18n.EN: "myDATA: Income Classification Type",
+			i18n.EL: "myDATA: Κωδικός Τύπου Χαρακτηρισμού Εσόδων",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{org.ShortSchemaItem, tax.ShortSchemaCombo},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -1341,8 +1369,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyTaxType,
 		Name: i18n.String{
-			i18n.EN: "Tax type",
-			i18n.EL: "Είδος Φόρου",
+			i18n.EN: "myDATA: Tax type",
+			i18n.EL: "myDATA: Είδος Φόρου",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{bill.ShortSchemaCharge},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -1425,8 +1457,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyFee,
 		Name: i18n.String{
-			i18n.EN: "Fee category",
-			i18n.EL: "Κατηγορία Τελών",
+			i18n.EN: "myDATA: Fee category",
+			i18n.EL: "myDATA: Κατηγορία Τελών",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{bill.ShortSchemaCharge},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -1619,8 +1655,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyOtherTax,
 		Name: i18n.String{
-			i18n.EN: "Other taxes category",
-			i18n.EL: "Κατηγορία Λοιπών Φόρων",
+			i18n.EN: "myDATA: Other taxes category",
+			i18n.EL: "myDATA: Κατηγορία Λοιπών Φόρων",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{bill.ShortSchemaCharge},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -1869,8 +1909,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyStampDuty,
 		Name: i18n.String{
-			i18n.EN: "Stamp duty coefficient category",
-			i18n.EL: "Κατηγορία Συντελεστή Ψηφιακού Τέλους συναλλαγής",
+			i18n.EN: "myDATA: Stamp duty coefficient category",
+			i18n.EL: "myDATA: Κατηγορία Συντελεστή Ψηφιακού Τέλους συναλλαγής",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{bill.ShortSchemaCharge},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -1937,8 +1981,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyBranch,
 		Name: i18n.String{
-			i18n.EN: "Branch number",
-			i18n.EL: "Αριθμός υποκαταστήματος",
+			i18n.EN: "myDATA: Branch number",
+			i18n.EL: "myDATA: Αριθμός υποκαταστήματος",
+		},
+		Usage: &cbc.Usage{
+			Keys:    []cbc.Key{V1},
+			Schemas: []string{org.ShortSchemaParty},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
