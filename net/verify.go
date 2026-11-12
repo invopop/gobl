@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/org"
 )
@@ -21,7 +22,7 @@ func (c *Client) VerifyParty(ctx context.Context, env *gobl.Envelope) (Address, 
 	if _, ok := env.Extract().(*org.Party); !ok {
 		return "", ErrPartyMissing
 	}
-	subject, err := fromAddress(env)
+	subject, _, err := routing(env)
 	if err != nil {
 		return "", err
 	}
@@ -40,25 +41,37 @@ func (c *Client) VerifyParty(ctx context.Context, env *gobl.Envelope) (Address, 
 	return subject, nil
 }
 
-// fromAddress returns the canonical address in the envelope header's from
-// field, or "" when it is empty or uses another transport's scheme. A
-// malformed gobl: address is an error. The field is unsigned: callers must
-// confirm the address against the signatures.
-func fromAddress(env *gobl.Envelope) (Address, error) {
-	from := env.Head.From
-	if from.Scheme() != Scheme {
+// routing returns the canonical addresses in the envelope header's from and
+// to fields, each "" when empty. A value that is not a gobl: address means
+// the envelope is not meant for GOBL Net, and is an error. The fields are
+// unsigned: callers must confirm them against the signatures.
+func routing(env *gobl.Envelope) (from, to Address, err error) {
+	if from, err = routingAddress("from", env.Head.From); err != nil {
+		return "", "", err
+	}
+	if to, err = routingAddress("to", env.Head.To); err != nil {
+		return "", "", err
+	}
+	return from, to, nil
+}
+
+func routingAddress(field string, uri cbc.URI) (Address, error) {
+	if uri == "" {
 		return "", nil
 	}
-	addr, err := ParseAddress(from.Opaque())
+	if uri.Scheme() != Scheme {
+		return "", fmt.Errorf("%w: %s %q is not a %s: address", ErrVerifyFailed, field, uri, Scheme)
+	}
+	addr, err := ParseAddress(uri.Opaque())
 	if err != nil {
-		return "", fmt.Errorf("%w: from %q: %v", ErrVerifyFailed, from, err)
+		return "", fmt.Errorf("%w: %s %q: %v", ErrVerifyFailed, field, uri, err)
 	}
 	return addr, nil
 }
 
 // VerifyDelivery returns the sole issuer of valid signatures addressed to
 // self. It fails if no issuer or multiple issuers bind the delivery, or if
-// the header's from field names another gobl: address.
+// the header's from or to field is set to anything but the sender and self.
 func (c *Client) VerifyDelivery(ctx context.Context, env *gobl.Envelope, self Address) (Address, error) {
 	if env == nil || env.Head == nil || !env.Signed() {
 		return "", fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
@@ -66,6 +79,13 @@ func (c *Client) VerifyDelivery(ctx context.Context, env *gobl.Envelope, self Ad
 	want, err := ParseAddress(string(self))
 	if err != nil {
 		return "", fmt.Errorf("%w: %v", ErrVerifyFailed, err)
+	}
+	from, to, err := routing(env)
+	if err != nil {
+		return "", err
+	}
+	if to != "" && to != want {
+		return "", fmt.Errorf("%w: to %q is not this inbox %q", ErrVerifyFailed, to, want)
 	}
 	if len(env.Signatures) > maxEnvelopeSignatures {
 		return "", fmt.Errorf("%w: envelope carries %d signatures (max %d)",
@@ -107,10 +127,6 @@ func (c *Client) VerifyDelivery(ctx context.Context, env *gobl.Envelope, self Ad
 			return "", unavailable
 		}
 		return "", fmt.Errorf("%w: no valid signature bound to %q", ErrVerifyFailed, want)
-	}
-	from, err := fromAddress(env)
-	if err != nil {
-		return "", err
 	}
 	if from != "" && from != sender {
 		return "", fmt.Errorf("%w: from %q is not the sender %q", ErrVerifyFailed, from, sender)

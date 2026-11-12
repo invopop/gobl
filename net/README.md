@@ -137,11 +137,12 @@ claims:
 | `verifier` | Optional verifier named by a registration authority. |
 
 Envelope header `from` and `to` fields are not signed, so they can be changed
-without invalidating any signature. Neither is evidence on its own. A `from`
-holding a `gobl:` address names a claimed issuer, and is only accepted when a
-valid signature has that address as its `iss`; an envelope whose `gobl:`
-`from` no valid signature confirms MUST be rejected. A `from` or `to` using
-another transport's scheme is outside this protocol and is ignored.
+without invalidating any signature. Neither is evidence on its own: `from`
+names a claimed issuer and `to` a claimed recipient, and each is only
+accepted when the signatures confirm it (§5.1, §5.2). When present, both MUST
+hold `gobl:` addresses. A `from` or `to` using another transport's scheme
+means the envelope is not meant for GOBL Net, and a participant MUST reject
+it rather than verify it.
 
 Signature order has no meaning. Implementations MUST search all signatures and
 MUST NOT assign roles by array position.
@@ -182,8 +183,8 @@ or that two different issuers bind, MUST be rejected: the first has nobody
 accountable for it, and the second leaves the receiver to choose, which is not
 a choice a receiver may make.
 
-If the envelope's `from` holds a `gobl:` address, it MUST equal the sender, or
-the delivery MUST be rejected.
+When present, the envelope's `from` MUST equal the sender and its `to` MUST
+equal the receiver's own address, or the delivery MUST be rejected.
 
 Registration, verification, and deferred identity workflows may carry party
 envelopes without an audience binding. Their receiver-specific rules must be
@@ -575,9 +576,9 @@ to a transient failure. Retrying is the correct behaviour.
 - **Privacy:** request tokens identify callers but do not make party data
   public. Operators should limit audit-log retention because requester metadata
   can reveal business relationships.
-- **Routing fields:** `from` and `to` are not signed. A `gobl:` `from` names
-  which signature to look for, and is rejected unless one confirms it;
-  security decisions must still rest on the signed claims.
+- **Routing fields:** `from` and `to` are not signed. They name which
+  signatures to look for, and are rejected unless the signatures confirm
+  them; security decisions must still rest on the signed claims.
 - **Verification is not graded.** A subject is verified or it is not, and any
   verifier the authority names satisfies it. A receiver that wants to
   distinguish between verifiers must read the `verifier` claim itself and

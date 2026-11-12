@@ -174,6 +174,16 @@ func TestVerifyParty(t *testing.T) {
 		assert.Contains(t, err.Error(), "no gobl: from address")
 	})
 
+	t.Run("to is not a gobl address", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := partyEnvelopeFor(t, key, addr, head.WithIssuer(addr.String()))
+		env.Head.To = "mailto:billing@example.com"
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		_, err := c.VerifyParty(ctx, env)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.Contains(t, err.Error(), "not a gobl: address")
+	})
+
 	t.Run("from is not a gobl address", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		env := partyEnvelopeFor(t, key, addr, head.WithIssuer(addr.String()))
@@ -367,15 +377,48 @@ func TestVerifyDelivery(t *testing.T) {
 		assert.Contains(t, err.Error(), "not the sender")
 	})
 
-	t.Run("ignores a from on another transport", func(t *testing.T) {
+	t.Run("rejects a from on another transport", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		env := buildTestEnvelope(t, key, sender.String(), inbox.String())
 		env.Head.From = "iso6523-actorid-upis::9920:b123123123"
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		_, err := c.VerifyDelivery(ctx, env, inbox)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.Contains(t, err.Error(), "not a gobl: address")
+	})
+
+	t.Run("to matching the inbox", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := buildTestEnvelope(t, key, sender.String(), inbox.String())
+		env.Head.From = sender.URI()
+		env.Head.To = inbox.URI()
+
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
 		got, err := c.VerifyDelivery(ctx, env, inbox)
 		require.NoError(t, err)
 		assert.Equal(t, sender, got)
+	})
+
+	t.Run("rejects a to naming another inbox", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := buildTestEnvelope(t, key, sender.String(), inbox.String())
+		env.Head.To = "gobl:other.example.com"
+
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		_, err := c.VerifyDelivery(ctx, env, inbox)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.Contains(t, err.Error(), "not this inbox")
+	})
+
+	t.Run("rejects a to on another transport", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := buildTestEnvelope(t, key, sender.String(), inbox.String())
+		env.Head.To = "iso6523-actorid-upis::9920:b123123123"
+
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		_, err := c.VerifyDelivery(ctx, env, inbox)
+		require.ErrorIs(t, err, ErrVerifyFailed)
 	})
 
 	t.Run("rejects a malformed gobl from", func(t *testing.T) {

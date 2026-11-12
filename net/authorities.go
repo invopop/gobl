@@ -91,7 +91,7 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 		return nil, fmt.Errorf("%w: envelope carries %d signatures (max %d)",
 			ErrVerifyFailed, len(env.Signatures), maxEnvelopeSignatures)
 	}
-	subject, err := fromAddress(env)
+	subject, _, err := routing(env)
 	if err != nil {
 		return nil, err
 	}
