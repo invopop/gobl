@@ -69,7 +69,8 @@ func (e *Endorsement) Verified() bool {
 }
 
 // VerifyAuthority verifies countersignatures from the client's trusted
-// authorities whose aud binds the envelope to subject. It returns the
+// authorities whose aud binds the envelope to its subject, the address in
+// the header's from field. It returns the
 // strongest endorsement found, preferring one with confirmed verifier
 // evidence. The verifier must differ from the authority;
 // self-referential, missing, or invalid verifier evidence leaves a
@@ -77,7 +78,7 @@ func (e *Endorsement) Verified() bool {
 // trusted candidate exists, ErrSignatureExpired for expired authority evidence,
 // ErrUnavailable for transient key lookup failures, or ErrVerifyFailed when
 // candidates fail cryptographic verification.
-func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope, subject Address) (*Endorsement, error) {
+func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endorsement, error) {
 	// A malformed envelope may carry signatures without a header;
 	// reject rather than let header verification panic.
 	if env == nil || env.Head == nil || len(env.Signatures) == 0 {
@@ -90,9 +91,12 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope, subjec
 		return nil, fmt.Errorf("%w: envelope carries %d signatures (max %d)",
 			ErrVerifyFailed, len(env.Signatures), maxEnvelopeSignatures)
 	}
-	subject, err := ParseAddress(string(subject))
+	subject, err := fromAddress(env)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrVerifyFailed, err)
+		return nil, err
+	}
+	if subject == "" {
+		return nil, fmt.Errorf("%w: envelope has no %s: from address", ErrVerifyFailed, Scheme)
 	}
 	// Both sides of the lookup are canonicalized so U-Label or
 	// trailing-dot forms — configured or signed — compare equal.

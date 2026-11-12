@@ -10,34 +10,55 @@ import (
 	"github.com/invopop/gobl/org"
 )
 
-// VerifyParty checks that env contains an org.Party carrying a valid
-// self-signature by subject. The subject comes from the caller, not from
-// the party's endpoints. It does not verify authority endorsements.
-func (c *Client) VerifyParty(ctx context.Context, env *gobl.Envelope, subject Address) error {
+// VerifyParty returns the subject of a party envelope, the address in its
+// header's from field, after verifying a self-signature by that address.
+// The party's endpoints are not consulted. It does not verify authority
+// endorsements.
+func (c *Client) VerifyParty(ctx context.Context, env *gobl.Envelope) (Address, error) {
 	if env == nil || env.Head == nil || !env.Signed() {
-		return fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
+		return "", fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
 	}
 	if _, ok := env.Extract().(*org.Party); !ok {
-		return ErrPartyMissing
+		return "", ErrPartyMissing
 	}
-	subject, err := ParseAddress(string(subject))
+	subject, err := fromAddress(env)
 	if err != nil {
-		return fmt.Errorf("%w: %v", ErrVerifyFailed, err)
+		return "", err
+	}
+	if subject == "" {
+		return "", fmt.Errorf("%w: envelope has no %s: from address", ErrVerifyFailed, Scheme)
 	}
 	ok, err := c.subjectSignatureFor(ctx, env, subject, func(*head.SigningPayload) bool {
 		return true
 	})
 	if err != nil {
-		return err
+		return "", err
 	}
 	if !ok {
-		return fmt.Errorf("%w: no valid self-signature by %q", ErrVerifyFailed, subject)
+		return "", fmt.Errorf("%w: no valid self-signature by %q", ErrVerifyFailed, subject)
 	}
-	return nil
+	return subject, nil
+}
+
+// fromAddress returns the canonical address in the envelope header's from
+// field, or "" when it is empty or uses another transport's scheme. A
+// malformed gobl: address is an error. The field is unsigned: callers must
+// confirm the address against the signatures.
+func fromAddress(env *gobl.Envelope) (Address, error) {
+	from := env.Head.From
+	if from.Scheme() != Scheme {
+		return "", nil
+	}
+	addr, err := ParseAddress(from.Opaque())
+	if err != nil {
+		return "", fmt.Errorf("%w: from %q: %v", ErrVerifyFailed, from, err)
+	}
+	return addr, nil
 }
 
 // VerifyDelivery returns the sole issuer of valid signatures addressed to
-// self. It fails if no issuer or multiple issuers bind the delivery.
+// self. It fails if no issuer or multiple issuers bind the delivery, or if
+// the header's from field names another gobl: address.
 func (c *Client) VerifyDelivery(ctx context.Context, env *gobl.Envelope, self Address) (Address, error) {
 	if env == nil || env.Head == nil || !env.Signed() {
 		return "", fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
@@ -86,6 +107,13 @@ func (c *Client) VerifyDelivery(ctx context.Context, env *gobl.Envelope, self Ad
 			return "", unavailable
 		}
 		return "", fmt.Errorf("%w: no valid signature bound to %q", ErrVerifyFailed, want)
+	}
+	from, err := fromAddress(env)
+	if err != nil {
+		return "", err
+	}
+	if from != "" && from != sender {
+		return "", fmt.Errorf("%w: from %q is not the sender %q", ErrVerifyFailed, from, sender)
 	}
 	return sender, nil
 }

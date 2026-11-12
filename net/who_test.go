@@ -28,6 +28,7 @@ func buildPartyEnvelope(t *testing.T, subjKey *dsig.PrivateKey, subject Address,
 	party.SetUUID(uuid.V7())
 	env, err := gobl.Envelop(party)
 	require.NoError(t, err)
+	env.Head.From = subject.URI()
 	require.NoError(t, env.Sign(subjKey, head.WithIssuer(subject.String())))
 	if authKey != nil {
 		opts := []head.SignOption{
@@ -90,7 +91,7 @@ func TestWho(t *testing.T) {
 		_, err := c.Who(ctx, subject)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
-		assert.Contains(t, err.Error(), "no valid self-signature")
+		assert.Contains(t, err.Error(), "identity of")
 	})
 
 	t.Run("rejects an audience-bound response", func(t *testing.T) {
@@ -103,6 +104,7 @@ func TestWho(t *testing.T) {
 		party.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(party)
 		require.NoError(t, err)
+		env.Head.From = subject.URI()
 		require.NoError(t, env.Sign(subjKey,
 			head.WithIssuer(subject.String()),
 			head.WithAudience("caller.example.com")))
@@ -132,6 +134,7 @@ func TestWho(t *testing.T) {
 		party.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(party)
 		require.NoError(t, err)
+		env.Head.From = subject.URI()
 		require.NoError(t, env.Sign(subjKey,
 			head.WithIssuer(subject.String()),
 			head.WithAudience("lookup.example.com")))

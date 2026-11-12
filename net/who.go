@@ -10,8 +10,8 @@ import (
 	"github.com/invopop/gobl/org"
 )
 
-// Who fetches and verifies addr's party envelope, which must carry an
-// audience-free self-signature by addr. WithIdentity authenticates the
+// Who fetches and verifies addr's party envelope. Its subject must equal
+// addr and have an audience-free self-signature. WithIdentity authenticates the
 // request. HTTP 204 and 202 responses return ErrNoContent and ErrPending.
 func (c *Client) Who(ctx context.Context, addr Address) (*gobl.Envelope, error) {
 	// Canonicalize so well-known URLs and the issuer comparison use
@@ -32,8 +32,12 @@ func (c *Client) Who(ctx context.Context, addr Address) (*gobl.Envelope, error) 
 	if err := json.Unmarshal(data, env); err != nil {
 		return nil, fmt.Errorf("%w: invalid who envelope: %v", ErrFetchFailed, err)
 	}
-	if err := c.VerifyParty(ctx, env, addr); err != nil {
+	subject, err := c.VerifyParty(ctx, env)
+	if err != nil {
 		return nil, err
+	}
+	if subject != addr {
+		return nil, fmt.Errorf("%w: who response is the identity of %q, not %q", ErrVerifyFailed, subject, addr)
 	}
 	// A who response is a public document: it must carry at least
 	// one audience-free self-signature. Audience-bound self-
@@ -59,7 +63,7 @@ func (c *Client) VerifySender(ctx context.Context, addr Address, requireVerified
 	if err != nil {
 		return nil, err
 	}
-	end, err := c.VerifyAuthority(ctx, env, addr)
+	end, err := c.VerifyAuthority(ctx, env)
 	if err != nil {
 		return nil, err
 	}

@@ -43,7 +43,7 @@ described in BCP 14 (RFC 2119 and RFC 8174).
 | Term | Meaning |
 |---|---|
 | **Participant** | An entity identified by a GOBL Net address. A participant may hold different roles in different exchanges. |
-| **Subject** | The participant a party envelope is being evaluated for. Its address is supplied by the context — the address queried at `/who`, or the address being registered — and is bound to the envelope by signatures (§5.1), never read from the party document. One party envelope may serve several subjects. |
+| **Subject** | The participant a party envelope belongs to. Its address is named by the envelope header's `from` field and confirmed by signatures (§5.1), never read from the party document. One party envelope may serve several subjects, each publishing it under its own `from`. |
 | **Issuer** | The participant identified by a signature's `iss` claim. This is a signature-level role. |
 | **Audience** | The participant identified by a signature's `aud` claim. The signature is bound to this address. |
 | **Sender** | The issuer of a valid document signature whose audience is the receiving inbox. |
@@ -136,8 +136,12 @@ claims:
 | `exp` | Optional expiry. |
 | `verifier` | Optional verifier named by a registration authority. |
 
-Envelope header `from` and `to` fields are unsigned routing hints and MUST NOT
-be used for verification.
+Envelope header `from` and `to` fields are not signed, so they can be changed
+without invalidating any signature. Neither is evidence on its own. A `from`
+holding a `gobl:` address names a claimed issuer, and is only accepted when a
+valid signature has that address as its `iss`; an envelope whose `gobl:`
+`from` no valid signature confirms MUST be rejected. A `from` or `to` using
+another transport's scheme is outside this protocol and is ignored.
 
 Signature order has no meaning. Implementations MUST search all signatures and
 MUST NOT assign roles by array position.
@@ -145,22 +149,22 @@ MUST NOT assign roles by array position.
 ### 5.1 Party identities
 
 A party envelope contains an `org.Party`. The subject's address is not part
-of the party document: it is supplied by the context in which the envelope is
-evaluated — the address queried at `/who`, or the address presented for
-registration — and bound to the envelope by signatures. This lets a party be
-verified before it has any address, and lets one party envelope serve several
-addresses, without changing its digest and invalidating the countersignatures
-it already carries.
+of the party document: it is the `gobl:` address in the envelope header's
+`from` field, confirmed by signatures. Because `from` is not signed, this lets
+a party be verified before it has any address, and lets one party envelope
+serve several addresses — each publishing it with its own `from` — without
+changing its digest and invalidating the countersignatures it already
+carries.
 
 The party MAY list `gobl:` endpoints. They are hints for display and
 discovery only, and MUST NOT be used to determine or check the subject.
 Equally, any holder can reorder or add signatures, so the subject MUST NOT be
 inferred from whichever one appears first.
 
-To accept a party envelope for a subject, a participant MUST find a valid
-signature whose `iss` equals the subject. This establishes only that the
-subject adopted the party document as its own; it says nothing about
-registration, which is §7.
+To accept a party envelope, a participant MUST find a `gobl:` address in
+`from`, and a valid signature whose `iss` equals it. An envelope with neither
+MUST be rejected. This establishes only that the subject adopted the party
+document as its own; it says nothing about registration, which is §7.
 
 A public `/who` response has the following additional requirements:
 
@@ -177,6 +181,9 @@ one issuer, and that issuer is the sender. A delivery that no signature binds,
 or that two different issuers bind, MUST be rejected: the first has nobody
 accountable for it, and the second leaves the receiver to choose, which is not
 a choice a receiver may make.
+
+If the envelope's `from` holds a `gobl:` address, it MUST equal the sender, or
+the delivery MUST be rejected.
 
 Registration, verification, and deferred identity workflows may carry party
 envelopes without an audience binding. Their receiver-specific rules must be
@@ -302,8 +309,8 @@ envelope throughout and presents it to each participant in turn.
 4. The verifier returns the countersigned envelope to the subject. Where the
    subject has given the verifier a GOBL Net address, delivering it to that
    inbox (§8.3) is RECOMMENDED.
-5. The subject self-signs the envelope from its address (§5.1), if it has
-   not already, and registers it with the authority. The authority confirms
+5. The subject sets `from` to its address and self-signs the envelope from
+   it (§5.1), if it has not already, and registers it with the authority. The authority confirms
    the subject controls that address, recognises a countersignature from a
    verifier on its trusted list, countersigns with `aud` equal to the address
    and the verifier named in the `verifier` claim, and delivers the result to
@@ -312,7 +319,8 @@ envelope throughout and presents it to each participant in turn.
 Signatures are independent of one another and of their order, so step 5 can
 happen long after step 3, and can be repeated for further addresses: each adds
 a self-signature and a registration countersignature to the same envelope,
-and the verification countersignature serves them all.
+and the verification countersignature serves them all. Each address publishes
+the envelope with its own `from`.
 
 Verification comes before registration because the authority's countersignature
 is the last one added. With the verifier's already aboard, a single
@@ -567,8 +575,9 @@ to a transient failure. Retrying is the correct behaviour.
 - **Privacy:** request tokens identify callers but do not make party data
   public. Operators should limit audit-log retention because requester metadata
   can reveal business relationships.
-- **Routing fields:** unsigned `from` and `to` values are hints only. Security
-  decisions must use signed claims.
+- **Routing fields:** `from` and `to` are not signed. A `gobl:` `from` names
+  which signature to look for, and is rejected unless one confirms it;
+  security decisions must still rest on the signed claims.
 - **Verification is not graded.** A subject is verified or it is not, and any
   verifier the authority names satisfies it. A receiver that wants to
   distinguish between verifiers must read the `verifier` claim itself and
