@@ -231,6 +231,30 @@
           "at": "2026-10-19T00:00:00"
         }
       ]
+    },
+    {
+      "code": "PP",
+      "name": {
+        "en": "PP",
+        "hr": "PP"
+      },
+      "title": {
+        "en": "Consumption Tax",
+        "hr": "Porez na potrošnju"
+      },
+      "desc": {
+        "en": "Local tax on drinks served in catering establishments, under the\nLocal Taxes Act. Each municipality or city decides whether to\ncharge it, and at what rate, up to 3%. It has no fixed rates, so\neach tax line gives its percent."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Croatian Tax Administration - Consumption tax",
+            "hr": "Porezna uprava - Porez na potrošnju"
+          },
+          "url": "https://porezna-uprava.gov.hr/hr/porez-na-potrosnju-4768/4768",
+          "at": "2026-11-12T00:00:00"
+        }
+      ]
     }
   ]
 }

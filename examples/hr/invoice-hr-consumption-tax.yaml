@@ -1,0 +1,44 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$regime: "HR"
+uuid: "019a7b2e-5c3d-7f10-9a4b-2d6e8f1c3a57"
+type: standard
+series: "POS1"
+code: "1001"
+issue_date: "2026-11-06"
+currency: "EUR"
+
+supplier:
+  tax_id:
+    country: "HR"
+    code: "12345678903"
+  name: "Kavana Ilica d.o.o."
+  addresses:
+    - num: "10"
+      street: "Ilica"
+      locality: "Zagreb"
+      region: "Grad Zagreb"
+      code: "10000"
+      country: "HR"
+
+lines:
+  - quantity: 2
+    item:
+      name: "Kava s mlijekom"
+      price: "2.00"
+    taxes:
+      - cat: VAT
+        rate: standard
+
+  - quantity: 2
+    item:
+      name: "Pivo 0,5 l"
+      price: "3.20"
+    taxes:
+      - cat: VAT
+        rate: standard
+      - cat: PP
+        percent: "3%"
+
+payment:
+  instructions:
+    key: "card"

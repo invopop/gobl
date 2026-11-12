@@ -22,8 +22,9 @@ func TestNew(t *testing.T) {
 	assert.Equal(t, currency.EUR, regime.Currency)
 	assert.Equal(t, tax.CategoryVAT, regime.TaxScheme)
 	assert.Equal(t, "Croatia", regime.Name.String())
-	assert.Len(t, regime.Categories, 1)
+	assert.Len(t, regime.Categories, 2)
 	assert.Equal(t, "VAT", regime.Categories[0].Code.String())
+	assert.Equal(t, "PP", regime.Categories[1].Code.String())
 	assert.Len(t, regime.Identities, 1)
 	assert.Equal(t, "OIB", regime.Identities[0].Code.String())
 }

@@ -5,7 +5,16 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
+)
+
+// Local tax categories
+const (
+	// TaxCategoryPP is the consumption tax (porez na potrošnju), a local tax
+	// on drinks served in catering establishments. The code is the one the
+	// Croatian eRačun specification uses for it (HR-TB-2).
+	TaxCategoryPP cbc.Code = "PP"
 )
 
 // Croatia's VAT rates, dated from 1 July 2013, when the current VAT Act
@@ -93,5 +102,39 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 		},
+	},
+	//
+	// Consumption tax
+	//
+	{
+		Code: TaxCategoryPP,
+		Name: i18n.String{
+			i18n.EN: "PP",
+			i18n.HR: "PP",
+		},
+		Title: i18n.String{
+			i18n.EN: "Consumption Tax",
+			i18n.HR: "Porez na potrošnju",
+		},
+		Description: &i18n.String{
+			i18n.EN: here.Doc(`
+				Local tax on drinks served in catering establishments, under the
+				Local Taxes Act. Each municipality or city decides whether to
+				charge it, and at what rate, up to 3%. It has no fixed rates, so
+				each tax line gives its percent.
+			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Croatian Tax Administration - Consumption tax",
+					i18n.HR: "Porezna uprava - Porez na potrošnju",
+				},
+				URL: "https://porezna-uprava.gov.hr/hr/porez-na-potrosnju-4768/4768",
+				At:  cal.NewDateTime(2026, 11, 12, 0, 0, 0),
+			},
+		},
+		Retained: false,
+		Rates:    []*tax.RateDef{},
 	},
 }

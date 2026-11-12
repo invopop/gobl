@@ -1,0 +1,119 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "df99ef086f9065da9a0f6c675d1c0dd0c1e98afdcb402462ba18c8aae536f89c"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "HR",
+		"uuid": "019a7b2e-5c3d-7f10-9a4b-2d6e8f1c3a57",
+		"type": "standard",
+		"series": "POS1",
+		"code": "1001",
+		"issue_date": "2026-11-06",
+		"currency": "EUR",
+		"supplier": {
+			"name": "Kavana Ilica d.o.o.",
+			"tax_id": {
+				"country": "HR",
+				"code": "12345678903"
+			},
+			"addresses": [
+				{
+					"num": "10",
+					"street": "Ilica",
+					"locality": "Zagreb",
+					"region": "Grad Zagreb",
+					"code": "10000",
+					"country": "HR"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "2",
+				"item": {
+					"name": "Kava s mlijekom",
+					"price": "2.00"
+				},
+				"sum": "4.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "25.0%"
+					}
+				],
+				"total": "4.00"
+			},
+			{
+				"i": 2,
+				"quantity": "2",
+				"item": {
+					"name": "Pivo 0,5 l",
+					"price": "3.20"
+				},
+				"sum": "6.40",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "25.0%"
+					},
+					{
+						"cat": "PP",
+						"percent": "3%"
+					}
+				],
+				"total": "6.40"
+			}
+		],
+		"payment": {
+			"instructions": {
+				"key": "card"
+			}
+		},
+		"totals": {
+			"sum": "10.40",
+			"total": "10.40",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "10.40",
+								"percent": "25.0%",
+								"amount": "2.60"
+							}
+						],
+						"amount": "2.60"
+					},
+					{
+						"code": "PP",
+						"rates": [
+							{
+								"base": "6.40",
+								"percent": "3%",
+								"amount": "0.19"
+							}
+						],
+						"amount": "0.19"
+					}
+				],
+				"sum": "2.79"
+			},
+			"tax": "2.79",
+			"total_with_tax": "13.19",
+			"payable": "13.19"
+		}
+	}
+}

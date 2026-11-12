@@ -8,3 +8,7 @@
 - `hr`: added the `cash-basis` invoice tag for suppliers that apply the cash accounting
   scheme of Article 125.i of the VAT Act. It adds the required "Obračun prema
   naplaćenim naknadama" VAT note.
+- `hr`: added the `PP` tax category for the consumption tax (porez na potrošnju), the
+  local tax on drinks served in catering establishments under the Local Taxes Act. Each
+  municipality sets its rate, up to 3%, so the category has no fixed rates and each tax
+  line gives its percent. The code is the one the Croatian eRačun specification uses.
