@@ -129,11 +129,7 @@ func identityHasKey(key cbc.Key) func(any) bool {
 
 // normalizeIdentity removes the separators from UAE identity numbers that are
 // often written with them, such as an Emirates ID printed as
-// 784-1990-1234567-1, so they can be checked as plain digits. It also gives
-// identities without a scope the one their key implies: the TIN is a tax
-// registration, and the trade licence, Emirates ID, passport and Cabinet
-// Decision are the commercial registration numbers the Ministry of Finance
-// lists, so legal registrations.
+// 784-1990-1234567-1, so they can be checked as plain digits.
 func normalizeIdentity(id *org.Identity) {
 	if id == nil {
 		return
@@ -141,13 +137,5 @@ func normalizeIdentity(id *org.Identity) {
 	switch id.Key {
 	case IdentityKeyTIN, IdentityKeyEmiratesID:
 		id.Code = cbc.NormalizeNumericalCode(id.Code)
-	}
-	if id.Scope == "" {
-		switch id.Key {
-		case IdentityKeyTIN:
-			id.Scope = org.IdentityScopeTax
-		case IdentityKeyTradeLicense, IdentityKeyEmiratesID, org.IdentityKeyPassport, IdentityKeyCabinetDecision:
-			id.Scope = org.IdentityScopeLegal
-		}
 	}
 }
