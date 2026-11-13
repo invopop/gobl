@@ -258,8 +258,8 @@ func (h *headerRecorder) Fetch(ctx context.Context, url string, header http.Head
 	return h.inner.Fetch(ctx, url, header)
 }
 
-func (h *headerRecorder) Post(ctx context.Context, url string, body []byte, header http.Header) error {
-	return h.inner.Post(ctx, url, body, header)
+func (h *headerRecorder) Post(ctx context.Context, url string, body []byte) error {
+	return h.inner.Post(ctx, url, body)
 }
 
 func TestWhoAuthorization(t *testing.T) {

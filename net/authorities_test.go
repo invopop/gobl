@@ -69,7 +69,7 @@ func (m *mapFetcher) Fetch(_ context.Context, url string, _ http.Header) ([]byte
 	return nil, ErrFetchFailed
 }
 
-func (m *mapFetcher) Post(_ context.Context, _ string, _ []byte, _ http.Header) error {
+func (m *mapFetcher) Post(_ context.Context, _ string, _ []byte) error {
 	return ErrFetchFailed
 }
 

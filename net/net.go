@@ -28,7 +28,7 @@
 //	§7.2 sender status       Client.VerifyAuthority, Endorsement,
 //	                         Client.VerifySender
 //	§8.2 /who                Client.Who
-//	§8.3 /inbox              Client.Send
+//	§8.3 /inbox              Sign, Client.Send
 //	§9  limits               HTTPFetcher, WithKeyCacheTTL
 //	§11 failure handling     ErrUnavailable, ErrInboxRejected, and the
 //	                         other sentinels below
@@ -77,8 +77,8 @@
 //	WithKeyCacheTTL   change the key cache lifetime; zero disables it
 //	WithFetcher       replace the HTTP transport
 //
-// A client without an identity can still verify and fetch; it cannot mint
-// request tokens, so it cannot call /who or deliver to an inbox.
+// A client without an identity can still verify and send; it cannot mint
+// request tokens, so it cannot call /who.
 //
 // The default HTTPFetcher has a 10-second request timeout, a five-second dial
 // timeout, and the 1 MiB response limit of §9. Its dialer refuses hosts

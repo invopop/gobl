@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/org"
@@ -21,29 +22,79 @@ import (
 // mockPoster is a Fetcher+Poster that records the POST it receives.
 type mockPoster struct {
 	mapFetcher
-	url    string
-	body   []byte
-	header http.Header
-	err    error
+	url  string
+	body []byte
+	err  error
 }
 
-func (m *mockPoster) Post(_ context.Context, url string, body []byte, header http.Header) error {
+func (m *mockPoster) Post(_ context.Context, url string, body []byte) error {
 	m.url = url
 	m.body = body
-	m.header = header
 	return m.err
 }
 
-func buildSignedEnvelope(t *testing.T, key *dsig.PrivateKey, iss, aud Address) *gobl.Envelope {
+// buildSignedEnvelope envelopes a party signed by from for to with Sign.
+func buildSignedEnvelope(t *testing.T, key *dsig.PrivateKey, from, to Address) *gobl.Envelope {
 	t.Helper()
 	party := &org.Party{Name: "Test Sender"}
 	party.SetUUID(uuid.V7())
 	env, err := gobl.Envelop(party)
 	require.NoError(t, err)
-	require.NoError(t, env.Sign(key,
-		head.WithIssuer(iss.String()),
-		head.WithAudience(aud.String())))
+	require.NoError(t, Sign(env, key, from, to))
 	return env
+}
+
+func TestSign(t *testing.T) {
+	ctx := context.Background()
+	key := dsig.NewES256Key()
+
+	t.Run("sets routing and signs for the pair", func(t *testing.T) {
+		env := buildSignedEnvelope(t, key, "Sender.Example.com.", "receiver.example.com")
+		assert.Equal(t, "gobl:sender.example.com", env.Head.From.String())
+		assert.Equal(t, "gobl:receiver.example.com", env.Head.To.String())
+
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		require.NoError(t, c.VerifyDelivery(ctx, env, "receiver.example.com"))
+	})
+
+	t.Run("passes signing options through", func(t *testing.T) {
+		party := &org.Party{Name: "Test"}
+		env, err := gobl.Envelop(party)
+		require.NoError(t, err)
+		exp := time.Now().Add(time.Hour).Truncate(time.Second)
+		require.NoError(t, Sign(env, key, "authority.example.com", "subject.example.com",
+			head.WithExpiration(exp), head.WithVerifier("verify.example.com")))
+		p, err := head.SignedPayload(env.Signatures[0])
+		require.NoError(t, err)
+		assert.Equal(t, "authority.example.com", p.Iss)
+		assert.Equal(t, "subject.example.com", p.Aud)
+		assert.Equal(t, exp.Unix(), p.ExpiresAt)
+		assert.Equal(t, "verify.example.com", p.Verifier)
+	})
+
+	t.Run("options cannot override the pair", func(t *testing.T) {
+		party := &org.Party{Name: "Test"}
+		env, err := gobl.Envelop(party)
+		require.NoError(t, err)
+		require.NoError(t, Sign(env, key, "sender.example.com", "receiver.example.com",
+			head.WithIssuer("other.example.com"), head.WithAudience("other.example.com")))
+		p, err := head.SignedPayload(env.Signatures[0])
+		require.NoError(t, err)
+		assert.Equal(t, "sender.example.com", p.Iss)
+		assert.Equal(t, "receiver.example.com", p.Aud)
+	})
+
+	t.Run("rejects invalid addresses", func(t *testing.T) {
+		env, err := gobl.Envelop(&org.Party{Name: "Test"})
+		require.NoError(t, err)
+		require.ErrorIs(t, Sign(env, key, "not valid!", "receiver.example.com"), ErrAddressInvalid)
+		require.ErrorIs(t, Sign(env, key, "sender.example.com", "localhost"), ErrAddressInvalid)
+		assert.Empty(t, env.Signatures)
+	})
+
+	t.Run("rejects an envelope without a header", func(t *testing.T) {
+		require.Error(t, Sign(new(gobl.Envelope), key, "sender.example.com", "receiver.example.com"))
+	})
 }
 
 func TestSend(t *testing.T) {
@@ -53,48 +104,55 @@ func TestSend(t *testing.T) {
 	key := dsig.NewES256Key()
 	env := buildSignedEnvelope(t, key, sender, receiver)
 
-	t.Run("posts the envelope with a bearer token", func(t *testing.T) {
+	t.Run("posts the envelope to its to address", func(t *testing.T) {
 		poster := new(mockPoster)
-		c := NewClient(WithFetcher(poster), WithIdentity(sender, key))
-		require.NoError(t, c.Send(ctx, receiver, env))
+		c := NewClient(WithFetcher(poster))
+		require.NoError(t, c.Send(ctx, env))
 
 		assert.Equal(t, receiver.InboxURL(), poster.url)
 		posted := new(gobl.Envelope)
 		require.NoError(t, json.Unmarshal(poster.body, posted))
 		assert.Equal(t, env.Head.UUID, posted.Head.UUID)
-
-		auth := poster.header.Get("Authorization")
-		require.NotEmpty(t, auth)
-		claims := tokenPayload(t, auth[len("Bearer "):])
-		assert.Equal(t, sender, claims.Iss)
-		assert.Equal(t, receiver, claims.Aud)
 	})
 
-	t.Run("canonicalizes the address", func(t *testing.T) {
+	t.Run("canonicalizes the to address", func(t *testing.T) {
 		poster := new(mockPoster)
-		c := NewClient(WithFetcher(poster), WithIdentity(sender, key))
-		require.NoError(t, c.Send(ctx, "RECEIVER.example.com.", env))
+		c := NewClient(WithFetcher(poster))
+		e := buildSignedEnvelope(t, key, sender, receiver)
+		e.Head.To = "gobl:RECEIVER.example.com."
+		require.NoError(t, c.Send(ctx, e))
 		assert.Equal(t, receiver.InboxURL(), poster.url)
 	})
 
 	t.Run("propagates a rejection", func(t *testing.T) {
 		poster := &mockPoster{err: ErrInboxRejected}
-		c := NewClient(WithFetcher(poster), WithIdentity(sender, key))
-		err := c.Send(ctx, receiver, env)
-		assert.True(t, errors.Is(err, ErrInboxRejected))
+		c := NewClient(WithFetcher(poster))
+		require.ErrorIs(t, c.Send(ctx, env), ErrInboxRejected)
 	})
 
-	t.Run("rejects an invalid address", func(t *testing.T) {
+	t.Run("rejects an envelope not meant for GOBL Net", func(t *testing.T) {
+		for _, to := range []string{"", "iso6523-actorid-upis::9920:b123123123", "gobl:localhost"} {
+			poster := new(mockPoster)
+			c := NewClient(WithFetcher(poster))
+			e := buildSignedEnvelope(t, key, sender, receiver)
+			e.Head.To = cbc.URI(to)
+			require.ErrorIs(t, c.Send(ctx, e), ErrVerifyFailed)
+			assert.Empty(t, poster.url, "nothing posted")
+		}
+	})
+
+	t.Run("rejects a nil envelope", func(t *testing.T) {
 		c := NewClient(WithFetcher(new(mockPoster)))
-		err := c.Send(ctx, "not valid!", env)
-		assert.True(t, errors.Is(err, ErrAddressInvalid))
+		err := c.Send(ctx, nil)
+		require.ErrorIs(t, err, ErrFetchFailed)
+		assert.Contains(t, err.Error(), "envelope is nil")
 	})
 }
 
 func TestHTTPFetcherPost(t *testing.T) {
 	ctx := context.Background()
 
-	t.Run("202 is success and headers are forwarded", func(t *testing.T) {
+	t.Run("202 is success", func(t *testing.T) {
 		var gotAuth, gotCT string
 		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			assert.Equal(t, http.MethodPost, r.Method)
@@ -104,11 +162,9 @@ func TestHTTPFetcherPost(t *testing.T) {
 		}))
 		defer srv.Close()
 
-		h := http.Header{}
-		h.Set("Authorization", "Bearer token")
-		err := newHTTPFetcher(true).Post(ctx, srv.URL, []byte(`{}`), h)
+		err := newHTTPFetcher(true).Post(ctx, srv.URL, []byte(`{}`))
 		require.NoError(t, err)
-		assert.Equal(t, "Bearer token", gotAuth)
+		assert.Empty(t, gotAuth, "inbox deliveries carry no request token")
 		assert.Equal(t, "application/json", gotCT)
 	})
 
@@ -118,7 +174,7 @@ func TestHTTPFetcherPost(t *testing.T) {
 		}))
 		defer srv.Close()
 
-		err := newHTTPFetcher(true).Post(ctx, srv.URL, []byte(`{}`), nil)
+		err := newHTTPFetcher(true).Post(ctx, srv.URL, []byte(`{}`))
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrInboxRejected))
 		assert.Contains(t, err.Error(), "HTTP 401")
@@ -130,7 +186,7 @@ func TestHTTPFetcherPost(t *testing.T) {
 		}))
 		defer srv.Close()
 
-		err := newHTTPFetcher(true).Post(ctx, srv.URL, []byte(`{}`), nil)
+		err := newHTTPFetcher(true).Post(ctx, srv.URL, []byte(`{}`))
 		require.Error(t, err)
 		assert.False(t, errors.Is(err, ErrInboxRejected))
 		assert.True(t, errors.Is(err, ErrUnavailable))
@@ -142,7 +198,7 @@ func TestHTTPFetcherPost(t *testing.T) {
 		}))
 		defer srv.Close()
 
-		err := newHTTPFetcher(true).Post(ctx, srv.URL, []byte(`{}`), nil)
+		err := newHTTPFetcher(true).Post(ctx, srv.URL, []byte(`{}`))
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrUnavailable))
 		assert.False(t, errors.Is(err, ErrInboxRejected))
@@ -151,16 +207,8 @@ func TestHTTPFetcherPost(t *testing.T) {
 	t.Run("transport error is retryable", func(t *testing.T) {
 		// Unreachable address (port 1 is privileged + usually closed).
 		f := &HTTPFetcher{Client: &http.Client{Timeout: 100 * time.Millisecond}}
-		err := f.Post(ctx, "http://127.0.0.1:1/x", []byte(`{}`), nil)
+		err := f.Post(ctx, "http://127.0.0.1:1/x", []byte(`{}`))
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrUnavailable))
 	})
-}
-
-func TestSendNilEnvelope(t *testing.T) {
-	c := NewClient(WithFetcher(new(mockPoster)))
-	err := c.Send(context.Background(), "receiver.example.com", nil)
-	require.Error(t, err)
-	assert.True(t, errors.Is(err, ErrFetchFailed))
-	assert.Contains(t, err.Error(), "envelope is nil")
 }

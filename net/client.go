@@ -74,14 +74,13 @@ func isPublicIP(ip stdnet.IP) bool {
 
 // Fetcher is the transport used by a Client: Fetch retrieves
 // well-known resources and Post delivers envelopes to an inbox, as
-// used by Client.Send. The header carries any Authorization request
-// token the Client has minted for the request; implementations must
-// forward it. Implementations that never deliver (verification-only
-// transports, test fixtures) may implement Post as a plain error
-// return.
+// used by Client.Send. Fetch's header carries the request token the
+// Client has minted for a /who request; implementations must forward it.
+// Implementations that never deliver (verification-only transports, test
+// fixtures) may implement Post as a plain error return.
 type Fetcher interface {
 	Fetch(ctx context.Context, url string, header http.Header) ([]byte, error)
-	Post(ctx context.Context, url string, body []byte, header http.Header) error
+	Post(ctx context.Context, url string, body []byte) error
 }
 
 // HTTPFetcher implements Fetcher using net/http.
@@ -173,17 +172,15 @@ func transportErr(err error) error {
 	return ErrUnavailable
 }
 
-// Post delivers a JSON body to the given URL, forwarding the given
-// headers on the request. A 202 response is success. Any other 4xx —
+// Post delivers a JSON body to the given URL. A 202 response is success. Any other 4xx —
 // except 429 — reports ErrInboxRejected; 429, 5xx, and transport
 // failures report the retryable ErrUnavailable; anything else
 // reports ErrFetchFailed.
-func (f *HTTPFetcher) Post(ctx context.Context, url string, body []byte, header http.Header) error {
+func (f *HTTPFetcher) Post(ctx context.Context, url string, body []byte) error {
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
 	if err != nil {
 		return fmt.Errorf("%w: %v", ErrFetchFailed, err)
 	}
-	copyHeader(req.Header, header)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 
@@ -234,7 +231,7 @@ type keyCacheEntry struct {
 }
 
 // identity holds the address and signing key a Client uses to mint
-// request tokens for outbound who and inbox requests.
+// request tokens for outbound who requests.
 type identity struct {
 	addr Address
 	key  *dsig.PrivateKey
@@ -274,8 +271,8 @@ func WithSandbox() ClientOption {
 	}
 }
 
-// WithIdentity sets the address and key used to authenticate Who and Send
-// requests. Without an identity, those requests have no Authorization header.
+// WithIdentity sets the address and key used to authenticate Who
+// requests, which require one.
 func WithIdentity(addr Address, key *dsig.PrivateKey) ClientOption {
 	return func(c *Client) {
 		c.identity = &identity{addr: addr, key: key}
@@ -283,12 +280,9 @@ func WithIdentity(addr Address, key *dsig.PrivateKey) ClientOption {
 }
 
 // authHeader returns the headers for a request to aud, containing a
-// freshly minted bearer token when the client has an identity.
+// freshly minted bearer token from the client's identity.
 func (c *Client) authHeader(aud Address) (http.Header, error) {
 	h := http.Header{}
-	if c.identity == nil {
-		return h, nil
-	}
 	token, err := NewToken(c.identity.key, c.identity.addr, aud, 0)
 	if err != nil {
 		return nil, err
