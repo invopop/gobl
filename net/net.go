@@ -27,6 +27,7 @@
 //	§7  sender policy        WithAuthorities, WithSandbox
 //	§7.2 sender status       Client.VerifyAuthority, Endorsement,
 //	                         Client.VerifySender
+//	§7.3 key lineage         Client.DeliveryKeys, Client.FindVerification
 //	§8.2 /who                Client.Who
 //	§8.3 /inbox              Sign, Client.Send
 //	§9  limits               HTTPFetcher, WithKeyCacheTTL
@@ -61,10 +62,10 @@
 // values. Nothing transmits them and no field carries them, so there is no
 // status to parse off the wire and none to put back on it.
 //
-// Client.VerifySender combines the /who lookup with this evaluation, and is
-// usually what an application wants:
+// Client.VerifySender combines delivery verification, the /who lookup and
+// this evaluation, and is usually what an inbox wants:
 //
-//	party, err := client.VerifySender(ctx, addr, requireVerified)
+//	party, err := client.VerifySender(ctx, env, requireVerified)
 //
 // # Clients
 //

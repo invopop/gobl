@@ -47,20 +47,36 @@ func (c *Client) Who(ctx context.Context, addr Address) (*gobl.Envelope, error) 
 	return env, nil
 }
 
-// VerifySender returns addr's party after verifying its identity and a trusted
-// authority endorsement. If requireVerified is true, the endorsement must also
-// include confirmed verifier evidence.
-func (c *Client) VerifySender(ctx context.Context, addr Address, requireVerified bool) (*org.Party, error) {
-	env, err := c.Who(ctx, addr)
+// VerifySender verifies env as a delivery to the client's identity (see
+// VerifyDelivery) and returns its sender's party, after verifying the
+// sender's identity at /who and a trusted authority endorsement. The
+// endorsement must bind a key that signed env. If requireVerified is true,
+// it must also include confirmed verifier evidence.
+func (c *Client) VerifySender(ctx context.Context, env *gobl.Envelope, requireVerified bool) (*org.Party, error) {
+	if c.identity == nil {
+		return nil, fmt.Errorf("%w: verifying a sender requires a client identity", ErrFetchFailed)
+	}
+	keys, err := c.DeliveryKeys(ctx, env, c.identity.addr)
 	if err != nil {
 		return nil, err
 	}
-	end, err := c.VerifyAuthority(ctx, env)
+	from, err := ParseAddress(env.Head.From.Opaque())
 	if err != nil {
 		return nil, err
+	}
+	who, err := c.Who(ctx, from)
+	if err != nil {
+		return nil, err
+	}
+	end, err := c.VerifyAuthority(ctx, who)
+	if err != nil {
+		return nil, err
+	}
+	if !hasKey(keys, end.Key) {
+		return nil, fmt.Errorf("%w: delivery from %q is not signed with its registered key", ErrVerifyFailed, from)
 	}
 	if requireVerified && !end.Verified() {
-		return nil, fmt.Errorf("%w: %s", ErrNotVerified, addr)
+		return nil, fmt.Errorf("%w: %s", ErrNotVerified, from)
 	}
-	return env.Extract().(*org.Party), nil
+	return who.Extract().(*org.Party), nil
 }

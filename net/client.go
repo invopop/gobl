@@ -48,8 +48,21 @@ func safeDialContext(ctx context.Context, network, addr string) (stdnet.Conn, er
 			return nil, fmt.Errorf("%w: refusing to dial non-public address %s (%s)", ErrFetchFailed, host, ip)
 		}
 	}
+	// Dial the checked addresses rather than the host name, which would
+	// resolve again and could return a different, non-public address.
 	d := &stdnet.Dialer{Timeout: dialTimeout}
-	return d.DialContext(ctx, network, stdnet.JoinHostPort(host, port))
+	var lastErr error
+	for _, ip := range ips {
+		conn, err := d.DialContext(ctx, network, stdnet.JoinHostPort(ip.String(), port))
+		if err == nil {
+			return conn, nil
+		}
+		lastErr = err
+	}
+	if lastErr == nil {
+		lastErr = fmt.Errorf("no addresses for %s", host)
+	}
+	return nil, fmt.Errorf("%w: %v", ErrUnavailable, lastErr)
 }
 
 // isPublicIP reports whether ip is a routable, non-special address.

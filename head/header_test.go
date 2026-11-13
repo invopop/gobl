@@ -351,6 +351,28 @@ func TestHeaderSignWithVerifier(t *testing.T) {
 	assert.Equal(t, "authority.example", p.Iss)
 }
 
+func TestHeaderSignWithConfirmation(t *testing.T) {
+	priv := dsig.NewES256Key()
+	h := head.NewHeader()
+	h.UUID = uuid.V7()
+	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
+
+	sig, err := h.Sign(priv, head.WithIssuer("authority.example"))
+	require.NoError(t, err)
+	p, err := head.SignedPayload(sig)
+	require.NoError(t, err)
+	assert.Nil(t, p.Confirmation, "no cnf by default")
+
+	sig, err = h.Sign(priv,
+		head.WithIssuer("authority.example"),
+		head.WithConfirmation("thumb"))
+	require.NoError(t, err)
+	p, err = head.SignedPayload(sig)
+	require.NoError(t, err)
+	require.NotNil(t, p.Confirmation)
+	assert.Equal(t, "thumb", p.Confirmation.JKT)
+}
+
 func TestHeaderSignWithExpiration(t *testing.T) {
 	priv := dsig.NewES256Key()
 	h := head.NewHeader()
