@@ -1,0 +1,42 @@
+{
+  "id": "GOBL-LT",
+  "package": "lt",
+  "subsets": [
+    {
+      "id": "GOBL-LT-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [LT]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-LT-TAX-IDENTITY-01",
+                      "desc": "tax identity code for LT must be 9 digits with 1 as the 8th digit, or 12 digits with 1 as the 11th digit",
+                      "tests": "matches ^(\\d{7}1\\d|\\d{10}1\\d)$"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-LT-TAX-IDENTITY-02",
+                      "desc": "tax identity code for LT failed the checksum",
+                      "tests": "checksum"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
