@@ -46,8 +46,8 @@ described in BCP 14 (RFC 2119 and RFC 8174).
 | **Subject** | The participant a party envelope belongs to. Its address is named by the envelope header's `from` field and confirmed by signatures (§5.1), never read from the party document. One party envelope may serve several subjects, each publishing it under its own `from`. |
 | **Issuer** | The participant identified by a signature's `iss` claim. This is a signature-level role. |
 | **Audience** | The participant identified by a signature's `aud` claim. The signature is bound to this address. |
-| **Sender** | The issuer of a valid document signature whose audience is the receiving inbox. |
-| **Receiver** | The participant operating the inbox to which a document is delivered. For ordinary deliveries, the receiver is also the signature's audience. |
+| **Sender** | The participant named by an envelope's `from`, confirmed by a valid signature with that `iss` and the envelope's `to` as its `aud` (§5). |
+| **Receiver** | The participant named by an envelope's `to`: the inbox it is delivered to, or the requester a `/who` response is for. |
 | **Requester** | The issuer of an HTTP request token. A requester may be an intermediary and need not be the document sender. |
 | **Authority** | A trusted participant that confirms the subject controls its GOBL Net address and countersigns its party envelope. |
 | **Verifier** | A participant, independent of the Authority, that establishes that the details in a party document belong to a real-world organization or person — on a live network, by a KYC/KYB process — and countersigns the party envelope to say so. It binds a party document to a legal identity, and needs to know nothing about any address. What it checks, and how, is its own to define and publish; see §7. |
@@ -67,11 +67,11 @@ Each receiver derives its own from the signatures in front of it and the
 authorities it happens to trust, so two receivers can read the same envelope
 and reach different conclusions about it, and both are correct.
 
-Issuer, Sender, and Requester often refer to the same participant in a direct
-delivery, but the protocol does not assume they are the same. Audience and
-Receiver are equivalent for ordinary document delivery; in a registration
-countersignature the Audience is the Subject rather than the recipient of an
-HTTP request, and a verification countersignature need not have one.
+Sender and Receiver are the `iss` and `aud` of the signature confirming an
+envelope's `from` and `to`; other signatures on the same envelope have their
+own issuers and audiences. A Requester often is the Sender, but the protocol
+does not assume it. A verification countersignature need not have an
+Audience.
 
 An Authority and Verifier MUST be different participants. Other roles may
 overlap where their definitions permit it.
@@ -131,21 +131,23 @@ claims:
 | Claim | Meaning |
 |---|---|
 | `iss` | Signer's canonical GOBL Net address. |
-| `aud` | Address to which the signature is bound; required for ordinary inbox deliveries and registration countersignatures, optional otherwise. |
+| `aud` | Address to which the signature is bound; required on the signature confirming an envelope's `from` and `to`, and on registration countersignatures; optional otherwise, including on envelopes exchanged outside GOBL Net. |
 | `iat` | Signing time, as an RFC 7519 NumericDate. Signers SHOULD always include it; it is required on verification countersignatures. |
 | `exp` | Optional expiry. |
 | `verifier` | Optional verifier named by a registration authority. |
 
 Every GOBL Net envelope MUST carry header `from` and `to` fields holding
-`gobl:` addresses: `from` names the issuer and `to` the recipient. An
-envelope missing either, or using another transport's scheme in either, is
-not meant for GOBL Net, and a participant MUST reject it rather than verify
-it.
+`gobl:` addresses, and a valid signature whose `iss` is the `from` address
+and whose `aud` is the `to` address. An envelope missing either field, or
+using another transport's scheme in either, is not meant for GOBL Net, and a
+participant MUST reject it rather than verify it. An envelope with no
+signature confirming the pair MUST be rejected.
 
-Neither field is signed, so either can be changed without invalidating any
-signature. That lets one signed envelope be addressed to each recipient on
-demand, but it also means neither is evidence on its own: each is only
-accepted when the signatures or the exchange confirm it (§5.1, §5.2).
+Neither field is signed itself; the confirming signature is what makes them
+evidence. Other signatures on the envelope, for other pairs or none, change
+neither. A participant passing an envelope on does not forward it: it sets
+`from` to its own address, `to` to the next recipient, and adds its own
+signature for that pair.
 
 Signature order has no meaning. Implementations MUST search all signatures and
 MUST NOT assign roles by array position.
@@ -153,49 +155,37 @@ MUST NOT assign roles by array position.
 ### 5.1 Party identities
 
 A party envelope contains an `org.Party`. The subject's address is not part
-of the party document: it is the `gobl:` address in the envelope header's
-`from` field, confirmed by signatures. Because `from` is not signed, this lets
-a party be verified before it has any address, and lets one party envelope
-serve several addresses — each publishing it with its own `from` — without
-changing its digest and invalidating the countersignatures it already
-carries.
+of the party document: it is the envelope's `from`, confirmed as §5 requires.
+Because `from` and `to` are not signed, a party can be verified before it has
+any address, and one party envelope can serve several addresses — each
+signing it for its own recipients — without changing its digest and
+invalidating the countersignatures it already carries.
 
 The party MAY list `gobl:` endpoints. They are hints for display and
 discovery only, and MUST NOT be used to determine or check the subject.
 Equally, any holder can reorder or add signatures, so the subject MUST NOT be
 inferred from whichever one appears first.
 
-To accept a party envelope, a participant MUST find a valid signature whose
-`iss` equals the `from` address, or reject it. This establishes only that the subject adopted the party
+The confirming signature establishes only that the subject adopted the party
 document as its own; it says nothing about registration, which is §7.
 
-A public `/who` response has the following additional requirements:
-
-- the subject MUST equal the address queried;
-- `to` MUST equal the requester, the `iss` of the request token (§6); and
-- the envelope MUST contain a valid audience-free self-signature.
-
-The server addresses the envelope to the requester on each response, which
-needs no new signature because `to` is not signed. The requester MUST reject
-a response addressed to anybody else.
+A `/who` response is made for each requester: its `from` MUST be the address
+queried, its `to` the requester — the `iss` of the request token (§6) — and
+the subject signs it with `aud` equal to the requester. The requester MUST
+reject a response from or to anybody else. A server SHOULD NOT keep these
+per-requester signatures in the envelope it stores.
 
 Other self-signatures and countersignatures may be present.
 
 ### 5.2 Deliveries
 
-For an ordinary inbox delivery, the receiver MUST consider every valid
-signature whose `aud` equals its own address. All such signatures MUST share
-one issuer, and that issuer is the sender. A delivery that no signature binds,
-or that two different issuers bind, MUST be rejected: the first has nobody
-accountable for it, and the second leaves the receiver to choose, which is not
-a choice a receiver may make.
+For an inbox delivery, the receiver MUST reject an envelope whose `to` is
+not its own address, or whose `from` and `to` no signature confirms (§5). The
+sender is the `from` address. Signatures by other issuers whose `aud` is the
+receiver say nothing about who sent it.
 
-The envelope's `from` MUST equal the sender and its `to` MUST equal the
-receiver's own address, or the delivery MUST be rejected.
-
-Registration, verification, and deferred identity workflows may carry party
-envelopes without an audience binding. Their receiver-specific rules must be
-applied separately.
+Outside GOBL Net — a party envelope handed to a verifier through its own API,
+say — no `aud` is required and these rules do not apply.
 
 ## 6. Request authentication
 
@@ -311,24 +301,27 @@ envelope throughout and presents it to each participant in turn.
    checks, by whatever means and over whatever period it needs.
 3. On success the verifier countersigns **that exact envelope**, unchanged in
    `uuid` and digest, with `iss` equal to its own address and an `iat`. It MAY
-   add an `exp`, and MAY set `aud` to an address the subject gave it, but
-   neither is required and no receiver relies on `aud`. It does not set a
-   `verifier` claim: that pointer is the authority's to write.
+   add an `exp`. It does not set a `verifier` claim: that pointer is the
+   authority's to write.
 4. The verifier returns the countersigned envelope to the subject. Where the
    subject has given the verifier a GOBL Net address, delivering it to that
-   inbox (§8.3) is RECOMMENDED.
-5. The subject sets `from` to its address and self-signs the envelope from
-   it (§5.1), if it has not already, and registers it with the authority. The authority confirms
-   the subject controls that address, recognises a countersignature from a
-   verifier on its trusted list, countersigns with `aud` equal to the address
-   and the verifier named in the `verifier` claim, and delivers the result to
-   the subject. The subject publishes it at `/who`.
+   inbox (§8.3) is RECOMMENDED: the verifier sets `from` to its own address
+   and `to` to the subject's, and gives its countersignature an `aud` equal
+   to the subject's address so that it confirms the pair (§5). No receiver
+   relies on that `aud` otherwise (§7.2).
+5. The subject signs the envelope with `aud` equal to the authority and
+   delivers it to the authority's inbox, with `from` its own address and `to`
+   the authority's, which shows the authority that the subject controls that
+   address. The authority recognises a countersignature from a verifier on its
+   trusted list, countersigns with `aud` equal to the subject's address and
+   the verifier named in the `verifier` claim, and delivers the result back
+   with `from` its own address and `to` the subject's, which its
+   countersignature confirms. The subject publishes it at `/who` (§5.1).
 
 Signatures are independent of one another and of their order, so step 5 can
 happen long after step 3, and can be repeated for further addresses: each adds
 a self-signature and a registration countersignature to the same envelope,
-and the verification countersignature serves them all. Each address publishes
-the envelope with its own `from`.
+and the verification countersignature serves them all.
 
 Verification comes before registration because the authority's countersignature
 is the last one added. With the verifier's already aboard, a single
@@ -385,24 +378,17 @@ in §7.2, after the verifier's work is done. A verifier MAY still require the
 subject to be registered before it will act, but that is its own admission
 policy and not a rule of the protocol.
 
-For an already-registered subject only, a verifier MAY deliver the
-countersigned envelope to the authority's inbox instead of returning it, which
-re-registers the envelope on the subject's behalf. This is the older
-arrangement and remains conforming, which matters for more than history: it is
-what lets a network replace a verifier without a flag day, running the two
-side by side while countersignatures issued under the previous one are still
-within their `exp`. It does not apply before a first registration, where the
-subject has not yet chosen an authority to be registered with.
+A verifier returns its result to the subject and never to the authority:
+only the subject registers its envelope, and no participant delivers an
+envelope on another's behalf (§5).
 
 The subject cannot subvert any of this by carrying the envelope. The
 countersignature covers the digest, so altering anything invalidates it, and
 the authority verifies it against the verifier's published key. Withholding is
 the subject's right — it is their identity.
 
-Because the authority looks only at the signatures an envelope carries, and
-not at who delivered it, this exchange requires nothing of an authority beyond
-what §7 already specifies — and it is the same property that makes the two
-delivery paths interchangeable.
+This exchange requires nothing of an authority beyond what §7 already
+specifies.
 
 ### 7.2 Determining sender status
 
@@ -466,8 +452,8 @@ envelope or one of these empty responses:
 | `404` | Address does not participate. |
 | `503` | A required key endpoint is unavailable. |
 
-A `200` response MUST be addressed to the requester with `to`, and MUST be
-verified as described in §5.1 before anything in it is used. Authenticated responses SHOULD use `Cache-Control: private`, and a
+A `200` response MUST be from the queried address to the requester, and MUST
+be verified as described in §5.1 before anything in it is used. Authenticated responses SHOULD use `Cache-Control: private`, and a
 caller may cache a verified identity for a bounded period — bounded because a
 cached identity outliving the countersignature that endorsed it is §12's
 problem.
@@ -475,8 +461,8 @@ problem.
 ### 8.3 `POST /.well-known/gobl/inbox`
 
 This endpoint requires both a valid request token and a signed GOBL envelope.
-For ordinary documents, the envelope MUST have exactly one issuer bound to the
-inbox address as described in §5.2. The receiver may then apply its sender
+The envelope MUST be addressed to the inbox's address and confirmed as
+described in §5.2. The receiver may then apply its sender
 status policy (§7.2).
 
 | Status | Meaning |
@@ -526,7 +512,8 @@ be bounded in both entries and lifetime; see §12 on what a stale entry costs.
 
 1. The sender obtains the receiver's address out of band.
 2. The sender may call `/who` for the receiver's invoicing details.
-3. The sender signs the envelope with `iss=sender` and `aud=receiver`.
+3. The sender sets `from` and `to` to its own and the receiver's addresses,
+   and signs the envelope with `iss=sender` and `aud=receiver`.
 4. The sender posts it to the receiver's inbox with a request token.
 5. The receiver verifies the token and resolves the sender (§5.2).
 6. The receiver may look up that sender's `/who` and apply its status policy
@@ -583,11 +570,10 @@ to a transient failure. Retrying is the correct behaviour.
 - **Privacy:** request tokens identify callers but do not make party data
   public. Operators should limit audit-log retention because requester metadata
   can reveal business relationships.
-- **Routing fields:** `from` and `to` are not signed. They are rejected
-  unless the signatures or the exchange confirm them, and security decisions
-  must still rest on the signed claims. Because anyone holding an envelope
-  can readdress it, a `to` on a `/who` response says who it was served to,
-  not who may read it.
+- **Routing fields:** `from` and `to` are not signed; they are accepted only
+  when a valid signature carries the same pair as `iss` and `aud`. That
+  shows the sender addressed the document to the receiver at some point, not
+  that the receiver is the only one holding it.
 - **Verification is not graded.** A subject is verified or it is not, and any
   verifier the authority names satisfies it. A receiver that wants to
   distinguish between verifiers must read the `verifier` claim itself and

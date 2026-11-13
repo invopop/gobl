@@ -20,7 +20,7 @@
 //	§3  addresses            Address, ParseAddress
 //	§4  keys                 Client.FetchKey, Client.FlushKeyCache
 //	§5  signatures           (gobl/head)
-//	§5.1 party identities    Client.VerifyParty, Client.Who
+//	§5.1 party identities    Client.Who
 //	§5.2 deliveries          Client.VerifyDelivery
 //	§6  request tokens       NewToken, Client.VerifyToken,
 //	                         Client.VerifyAuthorization

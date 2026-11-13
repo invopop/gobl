@@ -6,27 +6,22 @@ import (
 	"fmt"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/org"
 )
 
-// Who fetches and verifies addr's party envelope. Its subject must equal
-// addr and have an audience-free self-signature, and its to field must be
-// the client's identity, which WithIdentity sets and the request token
-// presents. HTTP 204 and 202 responses return ErrNoContent and ErrPending.
+// Who fetches addr's party envelope and verifies it as a delivery from
+// addr to the client's identity (see VerifyDelivery), which WithIdentity
+// sets and the request token presents. HTTP 204 and 202 responses return
+// ErrNoContent and ErrPending.
 func (c *Client) Who(ctx context.Context, addr Address) (*gobl.Envelope, error) {
-	// Canonicalize so well-known URLs and the issuer comparison use
-	// the ASCII form regardless of how the address was written.
+	// Canonicalize so well-known URLs and the from comparison use the
+	// ASCII form regardless of how the address was written.
 	addr, err := ParseAddress(string(addr))
 	if err != nil {
 		return nil, err
 	}
 	if c.identity == nil {
 		return nil, fmt.Errorf("%w: who requires a client identity", ErrFetchFailed)
-	}
-	self, err := ParseAddress(string(c.identity.addr))
-	if err != nil {
-		return nil, err
 	}
 	header, err := c.authHeader(addr)
 	if err != nil {
@@ -40,28 +35,14 @@ func (c *Client) Who(ctx context.Context, addr Address) (*gobl.Envelope, error) 
 	if err := json.Unmarshal(data, env); err != nil {
 		return nil, fmt.Errorf("%w: invalid who envelope: %v", ErrFetchFailed, err)
 	}
-	subject, err := c.VerifyParty(ctx, env)
-	if err != nil {
+	if err := c.VerifyDelivery(ctx, env, c.identity.addr); err != nil {
 		return nil, err
 	}
-	if subject != addr {
-		return nil, fmt.Errorf("%w: who response is the identity of %q, not %q", ErrVerifyFailed, subject, addr)
+	if from, _ := ParseAddress(env.Head.From.Opaque()); from != addr {
+		return nil, fmt.Errorf("%w: who response is from %q, not %q", ErrVerifyFailed, from, addr)
 	}
-	if to, _ := ParseAddress(env.Head.To.Opaque()); to != self {
-		return nil, fmt.Errorf("%w: who response is for %q, not %q", ErrVerifyFailed, env.Head.To, self)
-	}
-	// A who response is a public document: it must carry at least
-	// one audience-free self-signature. Audience-bound self-
-	// signatures are ignored; an envelope with only caller-bound
-	// signatures is not a public identity.
-	ok, err := c.subjectSignatureFor(ctx, env, addr, func(p *head.SigningPayload) bool {
-		return p.Aud == ""
-	})
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, fmt.Errorf("%w: who response carries no audience-free self-signature", ErrVerifyFailed)
+	if _, ok := env.Extract().(*org.Party); !ok {
+		return nil, ErrPartyMissing
 	}
 	return env, nil
 }

@@ -23,9 +23,9 @@ var (
 	testRequesterKey = dsig.NewES256Key()
 )
 
-// buildPartyEnvelope returns the JSON of a party envelope self-signed
-// by subject, optionally countersigned by an authority naming a
-// verifier.
+// buildPartyEnvelope returns the JSON of a party envelope from subject
+// to testRequester, signed for it by subject, optionally countersigned by
+// an authority naming a verifier.
 func buildPartyEnvelope(t *testing.T, subjKey *dsig.PrivateKey, subject Address, authKey *dsig.PrivateKey, authority, verifier Address) []byte {
 	t.Helper()
 	party := &org.Party{
@@ -37,7 +37,9 @@ func buildPartyEnvelope(t *testing.T, subjKey *dsig.PrivateKey, subject Address,
 	require.NoError(t, err)
 	env.Head.From = subject.URI()
 	env.Head.To = testRequester.URI()
-	require.NoError(t, env.Sign(subjKey, head.WithIssuer(subject.String())))
+	require.NoError(t, env.Sign(subjKey,
+		head.WithIssuer(subject.String()),
+		head.WithAudience(testRequester.String())))
 	if authKey != nil {
 		opts := []head.SignOption{
 			head.WithIssuer(authority.String()),
@@ -89,53 +91,51 @@ func TestWho(t *testing.T) {
 		assert.NotNil(t, env)
 	})
 
-	t.Run("rejects an issuer that does not match the address", func(t *testing.T) {
+	t.Run("rejects a response from another address", func(t *testing.T) {
 		other := Address("other.example.com")
 		c := NewClient(WithIdentity(testRequester, testRequesterKey), WithFetcher(&mapFetcher{data: map[string][]byte{
-			// Served from subject's who URL, but signed as other.
+			// Served from subject's who URL, but from and signed by other.
 			subject.WhoURL():           buildPartyEnvelope(t, subjKey, other, nil, "", ""),
 			other.KeyURL(subjKey.ID()): jwkOf(subjKey),
 		}}))
 		_, err := c.Who(ctx, subject)
-		require.Error(t, err)
-		assert.True(t, errors.Is(err, ErrVerifyFailed))
-		assert.Contains(t, err.Error(), "identity of")
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.Contains(t, err.Error(), "is from")
 	})
 
-	t.Run("rejects an audience-bound response", func(t *testing.T) {
-		// A who response is a public document; an envelope signed with
-		// an aud is caller-bound and non-conforming.
-		party := &org.Party{
-			Name:      "Bound",
-			Endpoints: []*org.Endpoint{{URI: subject.URI()}},
+	t.Run("rejects a response not signed for the requester", func(t *testing.T) {
+		// Signatures without an aud, or for another audience, do not
+		// confirm the from and to pair.
+		for _, aud := range []string{"", "caller.example.com"} {
+			party := &org.Party{Name: "Bound"}
+			party.SetUUID(uuid.V7())
+			env, err := gobl.Envelop(party)
+			require.NoError(t, err)
+			env.Head.From = subject.URI()
+			env.Head.To = testRequester.URI()
+			opts := []head.SignOption{head.WithIssuer(subject.String())}
+			if aud != "" {
+				opts = append(opts, head.WithAudience(aud))
+			}
+			require.NoError(t, env.Sign(subjKey, opts...))
+			data, err := json.Marshal(env)
+			require.NoError(t, err)
+
+			c := NewClient(WithIdentity(testRequester, testRequesterKey), WithFetcher(&mapFetcher{data: map[string][]byte{
+				subject.WhoURL():             data,
+				subject.KeyURL(subjKey.ID()): jwkOf(subjKey),
+			}}))
+			_, err = c.Who(ctx, subject)
+			require.ErrorIs(t, err, ErrVerifyFailed)
+			assert.Contains(t, err.Error(), "no valid signature")
 		}
-		party.SetUUID(uuid.V7())
-		env, err := gobl.Envelop(party)
-		require.NoError(t, err)
-		env.Head.From = subject.URI()
-		env.Head.To = testRequester.URI()
-		require.NoError(t, env.Sign(subjKey,
-			head.WithIssuer(subject.String()),
-			head.WithAudience("caller.example.com")))
-		data, err := json.Marshal(env)
-		require.NoError(t, err)
-
-		c := NewClient(WithIdentity(testRequester, testRequesterKey), WithFetcher(&mapFetcher{data: map[string][]byte{
-			subject.WhoURL():             data,
-			subject.KeyURL(subjKey.ID()): jwkOf(subjKey),
-		}}))
-		_, err = c.Who(ctx, subject)
-		require.Error(t, err)
-		assert.True(t, errors.Is(err, ErrVerifyFailed))
-		assert.Contains(t, err.Error(), "audience-free")
 	})
 
-	t.Run("accepts hop-bound self-signatures alongside the publication one", func(t *testing.T) {
+	t.Run("accepts other signatures alongside the requester's", func(t *testing.T) {
 		// A published endorsed envelope: the subject's registration
-		// signature is audience-bound to the registry, an authority
-		// countersignature is aboard, and an audience-free
-		// self-signature asserts the public identity. Signature order
-		// is not significant.
+		// signature is bound to the authority, an authority
+		// countersignature is aboard, and the response is signed for
+		// the requester. Signature order is not significant.
 		party := &org.Party{
 			Name:      "Endorsed",
 			Endpoints: []*org.Endpoint{{URI: subject.URI()}},
@@ -152,7 +152,9 @@ func TestWho(t *testing.T) {
 		require.NoError(t, env.Sign(authKey,
 			head.WithIssuer("lookup.example.com"),
 			head.WithAudience(subject.String())))
-		require.NoError(t, env.Sign(subjKey, head.WithIssuer(subject.String())))
+		require.NoError(t, env.Sign(subjKey,
+			head.WithIssuer(subject.String()),
+			head.WithAudience(testRequester.String())))
 		data, err := json.Marshal(env)
 		require.NoError(t, err)
 
@@ -170,7 +172,11 @@ func TestWho(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(subjKey, head.WithIssuer(subject.String())))
+		env.Head.From = subject.URI()
+		env.Head.To = testRequester.URI()
+		require.NoError(t, env.Sign(subjKey,
+			head.WithIssuer(subject.String()),
+			head.WithAudience(testRequester.String())))
 		data, err := json.Marshal(env)
 		require.NoError(t, err)
 
@@ -196,7 +202,7 @@ func TestWho(t *testing.T) {
 		}}))
 		_, err = c.Who(ctx, subject)
 		require.ErrorIs(t, err, ErrVerifyFailed)
-		assert.Contains(t, err.Error(), "is for")
+		assert.Contains(t, err.Error(), "is not")
 	})
 
 	t.Run("rejects a response without a to address", func(t *testing.T) {
