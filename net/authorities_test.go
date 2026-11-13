@@ -75,7 +75,7 @@ func (m *mapFetcher) Post(_ context.Context, _ string, _ []byte) error {
 
 // regExp returns the exp an authority countersignature needs.
 func regExp() head.SignOption {
-	return head.WithExpiration(time.Now().Add(90 * 24 * time.Hour))
+	return head.WithExpiration(time.Now().Add(30 * 24 * time.Hour))
 }
 
 func TestVerifyAuthority(t *testing.T) {
@@ -392,7 +392,7 @@ func TestVerifyAuthority(t *testing.T) {
 		require.NoError(t, env.Sign(authKey,
 			head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(authorityAddr.String()),
-			head.WithExpiration(time.Now().Add(90*24*time.Hour))))
+			head.WithExpiration(time.Now().Add(60*24*time.Hour))))
 
 		c := NewClient(
 			WithAuthorities(authorityAddr),
@@ -829,15 +829,15 @@ func TestVerifyAuthoritySubjectBinding(t *testing.T) {
 		assert.Contains(t, err.Error(), "no exp")
 	})
 
-	t.Run("registration lasting more than a year is rejected", func(t *testing.T) {
+	t.Run("registration lasting more than 90 days is rejected", func(t *testing.T) {
 		env := newEnv(t)
 		require.NoError(t, env.Sign(authKey,
 			head.WithIssuer(authorityAddr.String()),
 			head.WithAudience(subjectAddr.String()),
-			head.WithExpiration(time.Now().Add(400*24*time.Hour))))
+			head.WithExpiration(time.Now().Add(91*24*time.Hour))))
 		_, err := client().VerifyAuthority(ctx, env)
 		require.ErrorIs(t, err, ErrVerifyFailed)
-		assert.Contains(t, err.Error(), "more than a year")
+		assert.Contains(t, err.Error(), "more than 90 days")
 	})
 
 	t.Run("checks a bounded number of signatures per authority", func(t *testing.T) {

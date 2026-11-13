@@ -29,7 +29,7 @@ const maxEnvelopeSignatures = 32
 
 // maxRegistrationLifetime bounds how long after its iat an authority
 // countersignature's exp may fall.
-const maxRegistrationLifetime = 365 * 24 * time.Hour
+const maxRegistrationLifetime = 90 * 24 * time.Hour
 
 // RegisterAuthority appends addr to the default authority list.
 func RegisterAuthority(addr Address) {
@@ -75,7 +75,7 @@ func (e *Endorsement) Verified() bool {
 // VerifyAuthority verifies countersignatures from the client's trusted
 // authorities whose aud binds the envelope to its subject, the address in
 // the header's from field. Each needs an iat no later than now, and an exp
-// that has not passed and is at most a year after it. It returns the
+// that has not passed and is at most 90 days after it. It returns the
 // strongest endorsement found, preferring one with confirmed verifier
 // evidence. The verifier must differ from the authority;
 // self-referential, missing, or invalid verifier evidence leaves a
@@ -160,7 +160,7 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 			continue
 		}
 		if time.Unix(p.ExpiresAt, 0).Sub(time.Unix(p.IssuedAt, 0)) > maxRegistrationLifetime {
-			lastErr = fmt.Errorf("%w: signature by %q has an exp more than a year after its iat", ErrVerifyFailed, issuer)
+			lastErr = fmt.Errorf("%w: signature by %q has an exp more than 90 days after its iat", ErrVerifyFailed, issuer)
 			continue
 		}
 		if expired(p.ExpiresAt) {

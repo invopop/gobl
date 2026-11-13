@@ -136,7 +136,7 @@ claims:
 | `iss` | Signer's canonical GOBL Net address. |
 | `aud` | Address to which the signature is bound; required on the signature confirming an envelope's `from` and `to`, and on countersignatures; optional only on envelopes exchanged outside GOBL Net. |
 | `iat` | Signing time, as an RFC 7519 NumericDate. Required, and MUST NOT be later than the present, allowing the clock skew of §6. |
-| `exp` | Expiry. Required on registration countersignatures, at most one year after `iat`; optional otherwise. |
+| `exp` | Expiry. Required on registration countersignatures, at most 90 days after `iat`; optional otherwise. |
 | `verifier` | Optional verifier named by a registration authority. |
 
 Every GOBL Net envelope MUST carry header `from` and `to` fields holding
@@ -248,12 +248,14 @@ A registration authority countersigns a party envelope with:
 - `iss` equal to the authority address;
 - `aud` equal to the subject's address, which the authority has confirmed the
   subject controls;
-- `iat`, and an `exp` no more than one year after it; and
+- `iat`, and an `exp` no more than 90 days after it; and
 - optionally, `verifier` naming the address that performed KYC/KYB.
 
 The bounded `exp` limits how long a registration outlives the subject's
 control of its address, and how long a leaked, retired authority key can be
-used to forge one with a backdated `iat`.
+used to forge one with a backdated `iat`. As with ACME certificates,
+registrations are short-lived and meant to be renewed automatically: a
+subject SHOULD renew once two thirds of the lifetime has passed (§7.1).
 
 The `aud` is what binds a registration to one address. Without it, any
 address could add its own self-signature to another party's published
@@ -427,8 +429,8 @@ the same envelope.
    unknown authority, or one bound to a different address, is not evidence.
 2. For each candidate, verify it against that authority's published key, and
    reject it unless it has an `iat` no later than the present, allowing the
-   clock skew of §6, and an `exp` that has not passed and is no more than one
-   year after the `iat`.
+   clock skew of §6, and an `exp` that has not passed and is no more than 90
+   days after the `iat`.
 3. A candidate that verifies makes the subject at least **registered**.
 4. If a verifying candidate names a `verifier`, and that verifier is a
    different participant from the authority, and the same envelope carries a
@@ -625,8 +627,8 @@ to a transient failure. Retrying is the correct behaviour.
 - **Address ownership:** an address is a domain, and a domain can change
   hands. A new holder controls its keys, and can present the previous holder's
   party envelope with its countersignatures until the registration's `exp`
-  passes. The one-year limit on that `exp` bounds the exposure; authorities
-  SHOULD use shorter lifetimes, and re-confirm control on renewal.
+  passes. The 90-day limit on that `exp` bounds the exposure, and an
+  authority MUST re-confirm control of the address on every renewal.
 - **Hosted addresses:** whoever operates an address holds its keys. A
   participant using an address under a provider's domain is trusting that
   provider to act as it.
