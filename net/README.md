@@ -262,8 +262,9 @@ own.
 
 The bounded `exp` limits how long a registration outlives the subject's
 control of its address, and how long a leaked, retired authority key can be
-used to forge one with a backdated `iat`. As with ACME certificates,
-registrations are short-lived and meant to be renewed automatically: a
+used to forge one with a backdated `iat`. Like TLS certificates issued
+through ACME (RFC 8555, the protocol behind Let's Encrypt), registrations
+are short-lived and meant to be renewed automatically: a
 subject SHOULD renew once two thirds of the lifetime has passed (§7.1).
 
 The `aud` is what binds a registration to one address. Without it, any
@@ -494,7 +495,7 @@ happens:
 - **Two keys, one of them the current one.** A rollover: the authority adds
   the other key to the lineage and binds it. Signing with both keys proves
   the holder of the current key chose its successor, as in an ACME key
-  change.
+  change (RFC 8555 §7.3.5).
 - **Two keys at a first registration.** The authority starts the lineage
   with whichever key a verification countersignature's `cnf` names, and
   rolls over to the other. If neither is named, it MUST reject the request.
@@ -704,5 +705,8 @@ to a transient failure. Retrying is the correct behaviour.
 - RFC 7517 — JSON Web Key
 - RFC 7518 — JSON Web Algorithms
 - RFC 7519 — JSON Web Token
+- RFC 7638 — JSON Web Key Thumbprint
+- RFC 7800 — Proof-of-Possession Key Semantics for JWTs (`cnf`)
+- RFC 8555 — Automatic Certificate Management Environment (ACME)
 - `github.com/invopop/gobl/dsig` — signature and key primitives
 - `github.com/invopop/gobl/org` — party schema
