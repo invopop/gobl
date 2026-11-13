@@ -145,7 +145,7 @@ func TestSend(t *testing.T) {
 		c := NewClient(WithFetcher(new(mockPoster)))
 		err := c.Send(ctx, nil)
 		require.ErrorIs(t, err, ErrFetchFailed)
-		assert.Contains(t, err.Error(), "envelope is nil")
+		assert.Contains(t, err.Error(), "envelope is nil or has no header")
 	})
 }
 

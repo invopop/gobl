@@ -36,7 +36,7 @@ func Sign(env *gobl.Envelope, key *dsig.PrivateKey, from, to Address, opts ...he
 // return ErrUnavailable.
 func (c *Client) Send(ctx context.Context, env *gobl.Envelope) error {
 	if env == nil || env.Head == nil {
-		return fmt.Errorf("%w: envelope is nil", ErrFetchFailed)
+		return fmt.Errorf("%w: envelope is nil or has no header", ErrFetchFailed)
 	}
 	_, to, err := routing(env)
 	if err != nil {

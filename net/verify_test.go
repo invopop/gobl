@@ -10,6 +10,7 @@ import (
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/note"
@@ -178,6 +179,33 @@ func TestVerifyDelivery(t *testing.T) {
 		err := c.VerifyDelivery(ctx, env, inbox)
 		require.ErrorIs(t, err, ErrVerifyFailed)
 		assert.Contains(t, err.Error(), "not a gobl: address")
+	})
+
+	t.Run("scheme is case-insensitive", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := buildDelivery(t, key, sender, inbox)
+		env.Head.From = "GOBL:supplier.example.com"
+		env.Head.To = "Gobl:customer.example.com"
+
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		require.NoError(t, c.VerifyDelivery(ctx, env, inbox))
+	})
+
+	t.Run("rejects a query or fragment", func(t *testing.T) {
+		for _, uri := range []cbc.URI{
+			"gobl:supplier.example.com?x=1",
+			"gobl:supplier.example.com?",
+			"gobl:supplier.example.com#f",
+		} {
+			key := dsig.NewES256Key()
+			env := buildDelivery(t, key, sender, inbox)
+			env.Head.From = uri
+
+			c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+			err := c.VerifyDelivery(ctx, env, inbox)
+			require.ErrorIs(t, err, ErrVerifyFailed, uri)
+			assert.Contains(t, err.Error(), "query or fragment")
+		}
 	})
 
 	t.Run("rejects a malformed gobl from", func(t *testing.T) {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/cbc"
@@ -30,6 +31,9 @@ func routingAddress(field string, uri cbc.URI) (Address, error) {
 	}
 	if uri.Scheme() != Scheme {
 		return "", fmt.Errorf("%w: %s %q is not a %s: address", ErrVerifyFailed, field, uri, Scheme)
+	}
+	if strings.ContainsAny(string(uri), "?#") {
+		return "", fmt.Errorf("%w: %s %q has a query or fragment", ErrVerifyFailed, field, uri)
 	}
 	addr, err := ParseAddress(uri.Opaque())
 	if err != nil {

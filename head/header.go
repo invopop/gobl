@@ -213,8 +213,8 @@ func WithAudience(aud string) SignOption {
 }
 
 // WithVerifier sets the `verifier` claim in the signed payload: the
-// GOBL Net address (a bare FQDN) of the authority that performed
-// identity verification of the subject. Set by registration
+// GOBL Net address (a bare FQDN) of the participant that performed
+// identity verification (KYC/KYB) of the party. Set by registration
 // authorities on their countersignatures; the named verifier is
 // expected to countersign the same envelope. Default (no option)
 // leaves it unset — the signature asserts registration only.
