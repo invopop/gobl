@@ -292,10 +292,10 @@ type Verification struct {
 	ExpiresAt time.Time
 }
 
-// FindVerification returns the valid countersignature by verifier for the
-// envelope's from address, with an iat no later than now (allowing clock
-// skew) and no exp that has passed.
-func (c *Client) FindVerification(ctx context.Context, env *gobl.Envelope, verifier Address) (*Verification, error) {
+// FindVerification returns the valid countersignature by verifier for
+// subject, with an iat no later than now (allowing clock skew) and no exp
+// that has passed.
+func (c *Client) FindVerification(ctx context.Context, env *gobl.Envelope, verifier, subject Address) (*Verification, error) {
 	if env == nil || env.Head == nil || !env.Signed() {
 		return nil, fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
 	}
@@ -307,7 +307,7 @@ func (c *Client) FindVerification(ctx context.Context, env *gobl.Envelope, verif
 	if err != nil {
 		return nil, err
 	}
-	subject, _, err := routing(env)
+	subject, err = ParseAddress(string(subject))
 	if err != nil {
 		return nil, err
 	}

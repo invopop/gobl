@@ -1117,8 +1117,8 @@ func TestFindVerification(t *testing.T) {
 	newEnv := func(t *testing.T) *gobl.Envelope {
 		env, err := gobl.Envelop(&org.Party{Name: "Subject"})
 		require.NoError(t, err)
-		env.Head.From = subjectAddr.URI()
-		env.Head.To = "gobl:lookup.example"
+		env.Head.From = "gobl:lookup.example"
+		env.Head.To = subjectAddr.URI()
 		return env
 	}
 
@@ -1130,7 +1130,7 @@ func TestFindVerification(t *testing.T) {
 			head.WithAudience(subjectAddr.String()),
 			head.WithConfirmation(testSubjectKey.JKT()),
 			head.WithExpiration(exp)))
-		v, err := c.FindVerification(ctx, env, verifierAddr)
+		v, err := c.FindVerification(ctx, env, verifierAddr, subjectAddr)
 		require.NoError(t, err)
 		assert.Equal(t, verifierAddr, v.Verifier)
 		assert.Equal(t, testSubjectKey.JKT(), v.Key)
@@ -1143,7 +1143,7 @@ func TestFindVerification(t *testing.T) {
 		require.NoError(t, env.Sign(verifKey,
 			head.WithIssuer(verifierAddr.String()),
 			head.WithAudience("other.example")))
-		_, err := c.FindVerification(ctx, env, verifierAddr)
+		_, err := c.FindVerification(ctx, env, verifierAddr, subjectAddr)
 		require.ErrorIs(t, err, ErrVerifyFailed)
 	})
 
@@ -1153,7 +1153,7 @@ func TestFindVerification(t *testing.T) {
 			head.WithIssuer(verifierAddr.String()),
 			head.WithAudience(subjectAddr.String()),
 			head.WithExpiration(time.Now().Add(-time.Hour))))
-		_, err := c.FindVerification(ctx, env, verifierAddr)
+		_, err := c.FindVerification(ctx, env, verifierAddr, subjectAddr)
 		require.ErrorIs(t, err, ErrSignatureExpired)
 	})
 }
