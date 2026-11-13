@@ -27,6 +27,10 @@ var SandboxAuthorities = []Address{
 // Legitimate envelopes carry a handful of signatures.
 const maxEnvelopeSignatures = 32
 
+// maxRegistrationLifetime bounds how long after its iat an authority
+// countersignature's exp may fall.
+const maxRegistrationLifetime = 365 * 24 * time.Hour
+
 // RegisterAuthority appends addr to the default authority list.
 func RegisterAuthority(addr Address) {
 	Authorities = append(Authorities, addr)
@@ -70,7 +74,8 @@ func (e *Endorsement) Verified() bool {
 
 // VerifyAuthority verifies countersignatures from the client's trusted
 // authorities whose aud binds the envelope to its subject, the address in
-// the header's from field. It returns the
+// the header's from field. Each needs an iat no later than now, and an exp
+// that has not passed and is at most a year after it. It returns the
 // strongest endorsement found, preferring one with confirmed verifier
 // evidence. The verifier must differ from the authority;
 // self-referential, missing, or invalid verifier evidence leaves a
@@ -111,6 +116,7 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 	// confirmed verifier.
 	var lastErr, claimErr, unavailableErr error
 	var registered *Endorsement
+	candidates := make(map[Address]int)
 	for _, sig := range env.Signatures {
 		p, err := head.SignedPayload(sig)
 		if err != nil {
@@ -124,6 +130,9 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 			continue
 		}
 		if aud, err := ParseAddress(p.Aud); err != nil || aud != subject {
+			continue
+		}
+		if candidates[issuer]++; candidates[issuer] > maxIssuerCandidates {
 			continue
 		}
 		// Candidate from a known authority — verify it crypto-wise.
@@ -141,15 +150,25 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 			continue
 		}
 		// Claims are only trusted after the signature verifies. Per
-		// RFC 7519, the current time must be strictly before exp. Zero
-		// means the claim is absent (the JSON zero value); any other
-		// value — including a pre-1970 NumericDate — is enforced.
+		// RFC 7519, the current time must be strictly before exp.
+		if err := checkIssued(p); err != nil {
+			lastErr = err
+			continue
+		}
+		if p.ExpiresAt == 0 {
+			lastErr = fmt.Errorf("%w: signature by %q has no exp", ErrVerifyFailed, issuer)
+			continue
+		}
+		if time.Unix(p.ExpiresAt, 0).Sub(time.Unix(p.IssuedAt, 0)) > maxRegistrationLifetime {
+			lastErr = fmt.Errorf("%w: signature by %q has an exp more than a year after its iat", ErrVerifyFailed, issuer)
+			continue
+		}
 		if expired(p.ExpiresAt) {
 			claimErr = fmt.Errorf("%w: exp %s has passed", ErrSignatureExpired,
 				time.Unix(p.ExpiresAt, 0).UTC().Format(time.RFC3339))
 			continue
 		}
-		verifier, err := c.confirmVerifier(ctx, env, issuer, p)
+		verifier, err := c.confirmVerifier(ctx, env, issuer, subject, p)
 		if err != nil {
 			// The verifier's key could not be checked (transient):
 			// surface the condition rather than silently degrading a
@@ -182,10 +201,10 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 // confirmVerifier resolves the verifier claim on a verified authority
 // countersignature. It returns the verifier's address when the claim
 // names a valid address, distinct from the authority, whose countersignature
-// verifies. An absent, self-referential, malformed, or invalid claim returns
+// for subject verifies. An absent, self-referential, malformed, or invalid claim returns
 // "", degrading the endorsement to registered. A transient key-fetch failure
 // returns ErrUnavailable instead of silently downgrading the endorsement.
-func (c *Client) confirmVerifier(ctx context.Context, env *gobl.Envelope, authority Address, p *head.SigningPayload) (Address, error) {
+func (c *Client) confirmVerifier(ctx context.Context, env *gobl.Envelope, authority, subject Address, p *head.SigningPayload) (Address, error) {
 	verifier, err := ParseAddress(p.Verifier)
 	if err != nil {
 		return "", nil //nolint:nilerr // malformed claim degrades to registered
@@ -195,7 +214,7 @@ func (c *Client) confirmVerifier(ctx context.Context, env *gobl.Envelope, author
 	if verifier == authority {
 		return "", nil
 	}
-	if err := c.verifySignatureBy(ctx, env, verifier); err != nil {
+	if err := c.verifySignatureBy(ctx, env, verifier, subject); err != nil {
 		if errors.Is(err, ErrUnavailable) {
 			return "", err
 		}
@@ -205,11 +224,11 @@ func (c *Client) confirmVerifier(ctx context.Context, env *gobl.Envelope, author
 }
 
 // verifySignatureBy reports whether the envelope carries a valid
-// countersignature whose signed iss resolves to addr, with an iat no later
-// than now (allowing clock skew) and no exp that has passed. Its aud is
-// not consulted.
-func (c *Client) verifySignatureBy(ctx context.Context, env *gobl.Envelope, addr Address) error {
+// countersignature by addr for subject, with an iat no later than now
+// (allowing clock skew) and no exp that has passed.
+func (c *Client) verifySignatureBy(ctx context.Context, env *gobl.Envelope, addr, subject Address) error {
 	var lastErr error
+	candidates := 0
 	for _, sig := range env.Signatures {
 		p, err := head.SignedPayload(sig)
 		if err != nil {
@@ -218,6 +237,12 @@ func (c *Client) verifySignatureBy(ctx context.Context, env *gobl.Envelope, addr
 		issuer, err := ParseAddress(p.Iss)
 		if err != nil || issuer != addr {
 			continue
+		}
+		if aud, err := ParseAddress(p.Aud); err != nil || aud != subject {
+			continue
+		}
+		if candidates++; candidates > maxIssuerCandidates {
+			break
 		}
 		pub, err := c.FetchKey(ctx, issuer, sig.KeyID())
 		if err != nil {
@@ -228,12 +253,8 @@ func (c *Client) verifySignatureBy(ctx context.Context, env *gobl.Envelope, addr
 			lastErr = err
 			continue
 		}
-		if p.IssuedAt == 0 {
-			lastErr = fmt.Errorf("%w: signature by %q has no iat", ErrVerifyFailed, addr)
-			continue
-		}
-		if time.Unix(p.IssuedAt, 0).After(time.Now().Add(tokenClockSkew)) {
-			lastErr = fmt.Errorf("%w: signature by %q is issued in the future", ErrVerifyFailed, addr)
+		if err := checkIssued(p); err != nil {
+			lastErr = err
 			continue
 		}
 		if expired(p.ExpiresAt) {
@@ -246,7 +267,7 @@ func (c *Client) verifySignatureBy(ctx context.Context, env *gobl.Envelope, addr
 	if lastErr != nil {
 		return lastErr
 	}
-	return fmt.Errorf("%w: no signature from %q", ErrVerifyFailed, addr)
+	return fmt.Errorf("%w: no signature from %q for %q", ErrVerifyFailed, addr, subject)
 }
 
 // expired reports whether a signed exp claim (zero when absent) has

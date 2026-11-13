@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/cbc"
@@ -44,8 +45,9 @@ func routingAddress(field string, uri cbc.URI) (Address, error) {
 
 // VerifyDelivery checks that env is a GOBL Net envelope for self: its
 // header's from and to fields must hold gobl: addresses, to must be self,
-// and a valid signature must carry from as its iss and to as its aud. The
-// from address is then the sender.
+// and a valid signature must carry from as its iss and to as its aud, with
+// an iat no later than now and a key that is still valid. The from address
+// is then the sender.
 func (c *Client) VerifyDelivery(ctx context.Context, env *gobl.Envelope, self Address) error {
 	if env == nil || env.Head == nil || !env.Signed() {
 		return fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
@@ -66,6 +68,7 @@ func (c *Client) VerifyDelivery(ctx context.Context, env *gobl.Envelope, self Ad
 			ErrVerifyFailed, len(env.Signatures), maxEnvelopeSignatures)
 	}
 	var unavailable error
+	candidates := 0
 	for _, sig := range env.Signatures {
 		p, err := head.SignedPayload(sig)
 		if err != nil {
@@ -77,6 +80,12 @@ func (c *Client) VerifyDelivery(ctx context.Context, env *gobl.Envelope, self Ad
 		if aud, err := ParseAddress(p.Aud); err != nil || aud != to {
 			continue
 		}
+		if checkIssued(p) != nil {
+			continue
+		}
+		if candidates++; candidates > maxIssuerCandidates {
+			break
+		}
 		pub, err := c.FetchKey(ctx, from, sig.KeyID())
 		if err != nil {
 			if errors.Is(err, ErrUnavailable) {
@@ -87,10 +96,30 @@ func (c *Client) VerifyDelivery(ctx context.Context, env *gobl.Envelope, self Ad
 		if err := env.VerifySignature(sig, pub); err != nil {
 			continue
 		}
+		if pub.Allows(time.Now()) != nil {
+			continue
+		}
 		return nil
 	}
 	if unavailable != nil {
 		return unavailable
 	}
 	return fmt.Errorf("%w: no valid signature from %q to %q", ErrVerifyFailed, from, to)
+}
+
+// maxIssuerCandidates bounds how many of an envelope's signatures by one
+// issuer are checked against its keys: each can cost a key fetch from
+// that issuer.
+const maxIssuerCandidates = 4
+
+// checkIssued reports whether a signature carries an iat no later than
+// now, allowing clock skew.
+func checkIssued(p *head.SigningPayload) error {
+	if p.IssuedAt == 0 {
+		return fmt.Errorf("%w: signature by %q has no iat", ErrVerifyFailed, p.Iss)
+	}
+	if time.Unix(p.IssuedAt, 0).After(time.Now().Add(tokenClockSkew)) {
+		return fmt.Errorf("%w: signature by %q is issued in the future", ErrVerifyFailed, p.Iss)
+	}
+	return nil
 }

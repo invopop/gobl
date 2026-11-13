@@ -174,7 +174,7 @@ func (h *Header) Link(category, key cbc.Key) *Link {
 // address of the participant that performed identity verification
 // (KYC/KYB) of the party; it is asserted by a registration
 // authority on its countersignature and is confirmed by the named
-// verifier's own countersignature on the same envelope. Header
+// verifier's own countersignature for the same subject. Header
 // stamps, links, tags, meta, notes and the (unsigned, intent-level)
 // From/To fields can still be modified after signing.
 type SigningPayload struct {

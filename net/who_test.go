@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/dsig"
@@ -44,6 +45,7 @@ func buildPartyEnvelope(t *testing.T, subjKey *dsig.PrivateKey, subject Address,
 		opts := []head.SignOption{
 			head.WithIssuer(authority.String()),
 			head.WithAudience(subject.String()),
+			head.WithExpiration(time.Now().Add(90 * 24 * time.Hour)),
 		}
 		if verifier != "" {
 			opts = append(opts, head.WithVerifier(verifier.String()))
