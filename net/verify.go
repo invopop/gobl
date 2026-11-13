@@ -9,6 +9,7 @@ import (
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 )
 
@@ -49,24 +50,40 @@ func routingAddress(field string, uri cbc.URI) (Address, error) {
 // an iat no later than now and a key that is still valid. The from address
 // is then the sender.
 func (c *Client) VerifyDelivery(ctx context.Context, env *gobl.Envelope, self Address) error {
+	_, err := c.DeliveryKeys(ctx, env, self)
+	return err
+}
+
+// DeliveryKeys makes the checks of VerifyDelivery and returns the keys of
+// every valid signature confirming the envelope's from and to. A sender
+// rotating its key signs with both the old and the new one.
+func (c *Client) DeliveryKeys(ctx context.Context, env *gobl.Envelope, self Address) ([]*dsig.PublicKey, error) {
 	if env == nil || env.Head == nil || !env.Signed() {
-		return fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
+		return nil, fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
 	}
 	want, err := ParseAddress(string(self))
 	if err != nil {
-		return fmt.Errorf("%w: %v", ErrVerifyFailed, err)
+		return nil, fmt.Errorf("%w: %v", ErrVerifyFailed, err)
 	}
 	from, to, err := routing(env)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if to != want {
-		return fmt.Errorf("%w: to %q is not %q", ErrVerifyFailed, to, want)
+		return nil, fmt.Errorf("%w: to %q is not %q", ErrVerifyFailed, to, want)
 	}
+	return c.pairKeys(ctx, env, from, to)
+}
+
+// pairKeys returns the distinct keys of the valid signatures by from with
+// to as their audience, each with an iat no later than now and a key that
+// is still valid.
+func (c *Client) pairKeys(ctx context.Context, env *gobl.Envelope, from, to Address) ([]*dsig.PublicKey, error) {
 	if len(env.Signatures) > maxEnvelopeSignatures {
-		return fmt.Errorf("%w: envelope carries %d signatures (max %d)",
+		return nil, fmt.Errorf("%w: envelope carries %d signatures (max %d)",
 			ErrVerifyFailed, len(env.Signatures), maxEnvelopeSignatures)
 	}
+	var keys []*dsig.PublicKey
 	var unavailable error
 	candidates := 0
 	for _, sig := range env.Signatures {
@@ -99,12 +116,27 @@ func (c *Client) VerifyDelivery(ctx context.Context, env *gobl.Envelope, self Ad
 		if pub.Allows(time.Now()) != nil {
 			continue
 		}
-		return nil
+		if !hasKey(keys, pub.JKT()) {
+			keys = append(keys, pub)
+		}
+	}
+	if len(keys) > 0 {
+		return keys, nil
 	}
 	if unavailable != nil {
-		return unavailable
+		return nil, unavailable
 	}
-	return fmt.Errorf("%w: no valid signature from %q to %q", ErrVerifyFailed, from, to)
+	return nil, fmt.Errorf("%w: no valid signature from %q to %q", ErrVerifyFailed, from, to)
+}
+
+// hasKey reports whether keys includes the key with thumbprint jkt.
+func hasKey(keys []*dsig.PublicKey, jkt string) bool {
+	for _, k := range keys {
+		if k.JKT() == jkt {
+			return true
+		}
+	}
+	return false
 }
 
 // maxIssuerCandidates bounds how many of an envelope's signatures by one

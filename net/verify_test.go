@@ -307,6 +307,24 @@ func TestVerifyDelivery(t *testing.T) {
 		}
 	})
 
+	t.Run("returns every key confirming the pair", func(t *testing.T) {
+		// A sender rotating its key signs with both.
+		oldKey, newKey := dsig.NewES256Key(), dsig.NewES256Key()
+		env := buildDelivery(t, oldKey, sender, inbox)
+		require.NoError(t, Sign(env, newKey, sender, inbox))
+		require.NoError(t, Sign(env, newKey, sender, inbox))
+
+		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+			sender.KeyURL(oldKey.ID()): jwkFromKey(t, oldKey),
+			sender.KeyURL(newKey.ID()): jwkFromKey(t, newKey),
+		}}))
+		keys, err := c.DeliveryKeys(ctx, env, inbox)
+		require.NoError(t, err)
+		require.Len(t, keys, 2, "duplicate signatures by one key count once")
+		assert.Equal(t, oldKey.JKT(), keys[0].JKT())
+		assert.Equal(t, newKey.JKT(), keys[1].JKT())
+	})
+
 	t.Run("unknown signer key", func(t *testing.T) {
 		// The per-key endpoint returns a JWK whose kid does not match
 		// the signature's kid, so the signature never verifies.

@@ -174,7 +174,9 @@ func (h *Header) Link(category, key cbc.Key) *Link {
 // address of the participant that performed identity verification
 // (KYC/KYB) of the party; it is asserted by a registration
 // authority on its countersignature and is confirmed by the named
-// verifier's own countersignature for the same subject. Header
+// verifier's own countersignature for the same subject. Confirmation
+// (optional, set via head.WithConfirmation) is the RFC 7800 `cnf`
+// claim binding the signature's statement to the subject's key. Header
 // stamps, links, tags, meta, notes and the (unsigned, intent-level)
 // From/To fields can still be modified after signing.
 type SigningPayload struct {
@@ -185,6 +187,14 @@ type SigningPayload struct {
 	IssuedAt  int64        `json:"iat,omitempty"`
 	ExpiresAt int64        `json:"exp,omitempty"`
 	Verifier  string       `json:"verifier,omitempty"`
+
+	Confirmation *Confirmation `json:"cnf,omitempty"`
+}
+
+// Confirmation is an RFC 7800 confirmation claim, identifying a key by
+// its RFC 7638 SHA-256 JWK thumbprint.
+type Confirmation struct {
+	JKT string `json:"jkt"`
 }
 
 // SignOption configures a call to Header.Sign / Envelope.Sign.
@@ -195,6 +205,7 @@ type signOptions struct {
 	aud      string
 	exp      int64
 	verifier string
+	jkt      string
 	signer   []dsig.SignerOption
 }
 
@@ -230,22 +241,33 @@ func WithExpiration(t time.Time) SignOption {
 	return func(o *signOptions) { o.exp = t.UTC().Unix() }
 }
 
+// WithConfirmation sets the RFC 7800 `cnf` claim in the signed
+// payload to the given RFC 7638 key thumbprint (dsig.PublicKey's
+// Thumbprint), binding the signature to the holder of that key.
+func WithConfirmation(jkt string) SignOption {
+	return func(o *signOptions) { o.jkt = jkt }
+}
+
 // WithSignerOption forwards a low-level dsig.SignerOption (e.g.
 // dsig.WithJKU) through to the underlying JWS signer.
 func WithSignerOption(opts ...dsig.SignerOption) SignOption {
 	return func(o *signOptions) { o.signer = append(o.signer, opts...) }
 }
 
-func (h *Header) payload(iss, aud string, iat, exp int64, verifier string) *SigningPayload {
-	return &SigningPayload{
+func (h *Header) payload(so *signOptions, iat int64) *SigningPayload {
+	p := &SigningPayload{
 		UUID:      h.UUID,
 		Digest:    h.Digest,
-		Iss:       iss,
-		Aud:       aud,
+		Iss:       so.iss,
+		Aud:       so.aud,
 		IssuedAt:  iat,
-		ExpiresAt: exp,
-		Verifier:  verifier,
+		ExpiresAt: so.exp,
+		Verifier:  so.verifier,
 	}
+	if so.jkt != "" {
+		p.Confirmation = &Confirmation{JKT: so.jkt}
+	}
+	return p
 }
 
 // Sign creates a JWS signature over the header's document identity
@@ -262,7 +284,7 @@ func (h *Header) Sign(key *dsig.PrivateKey, opts ...SignOption) (*dsig.Signature
 		opt(so)
 	}
 	iat := time.Now().UTC().Unix()
-	return dsig.NewSignature(key, h.payload(so.iss, so.aud, iat, so.exp, so.verifier), so.signer...)
+	return dsig.NewSignature(key, h.payload(so, iat), so.signer...)
 }
 
 // Verify checks that the signature covers this header's document

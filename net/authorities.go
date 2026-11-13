@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 )
 
@@ -58,6 +59,12 @@ type Endorsement struct {
 	// when a named verifier's countersignature is absent, invalid, or
 	// expired — verification degrades, registration stands.
 	Verifier Address
+	// Key is the RFC 7638 thumbprint (see dsig.PublicKey's JKT) of
+	// the subject's key that the authority bound the registration to
+	// with its cnf claim. The envelope's from and to are confirmed by
+	// a signature with this key, and deliveries from the subject must
+	// be signed with it too.
+	Key string
 }
 
 // Verified reports whether the subject is verified rather than merely
@@ -74,8 +81,9 @@ func (e *Endorsement) Verified() bool {
 
 // VerifyAuthority verifies countersignatures from the client's trusted
 // authorities whose aud binds the envelope to its subject, the address in
-// the header's from field. Each needs an iat no later than now, and an exp
-// that has not passed and is at most 90 days after it. It returns the
+// the header's from field. Each needs an iat no later than now, an exp
+// that has not passed and is at most 90 days after it, and a cnf naming
+// the key of a signature that confirms the envelope's from and to. It returns the
 // strongest endorsement found, preferring one with confirmed verifier
 // evidence. The verifier must differ from the authority;
 // self-referential, missing, or invalid verifier evidence leaves a
@@ -96,7 +104,7 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 		return nil, fmt.Errorf("%w: envelope carries %d signatures (max %d)",
 			ErrVerifyFailed, len(env.Signatures), maxEnvelopeSignatures)
 	}
-	subject, _, err := routing(env)
+	subject, to, err := routing(env)
 	if err != nil {
 		return nil, err
 	}
@@ -117,6 +125,7 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 	var lastErr, claimErr, unavailableErr error
 	var registered *Endorsement
 	candidates := make(map[Address]int)
+	subjectKeys := &pairKeySet{c: c, env: env, from: subject, to: to}
 	for _, sig := range env.Signatures {
 		p, err := head.SignedPayload(sig)
 		if err != nil {
@@ -149,23 +158,21 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 			lastErr = err
 			continue
 		}
-		// Claims are only trusted after the signature verifies. Per
-		// RFC 7519, the current time must be strictly before exp.
-		if err := checkIssued(p); err != nil {
-			lastErr = err
+		// Claims are only trusted after the signature verifies.
+		if err := checkRegistration(p); err != nil {
+			if errors.Is(err, ErrSignatureExpired) {
+				claimErr = err
+			} else {
+				lastErr = err
+			}
 			continue
 		}
-		if p.ExpiresAt == 0 {
-			lastErr = fmt.Errorf("%w: signature by %q has no exp", ErrVerifyFailed, issuer)
-			continue
-		}
-		if time.Unix(p.ExpiresAt, 0).Sub(time.Unix(p.IssuedAt, 0)) > maxRegistrationLifetime {
-			lastErr = fmt.Errorf("%w: signature by %q has an exp more than 90 days after its iat", ErrVerifyFailed, issuer)
-			continue
-		}
-		if expired(p.ExpiresAt) {
-			claimErr = fmt.Errorf("%w: exp %s has passed", ErrSignatureExpired,
-				time.Unix(p.ExpiresAt, 0).UTC().Format(time.RFC3339))
+		if err := subjectKeys.require(ctx, p.Confirmation.JKT); err != nil {
+			if errors.Is(err, ErrUnavailable) {
+				unavailableErr = err
+			} else {
+				lastErr = err
+			}
 			continue
 		}
 		verifier, err := c.confirmVerifier(ctx, env, issuer, subject, p)
@@ -175,7 +182,7 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 			// genuinely verified endorsement to registered.
 			return nil, err
 		}
-		end := &Endorsement{Authority: issuer, Verifier: verifier}
+		end := &Endorsement{Authority: issuer, Verifier: verifier, Key: p.Confirmation.JKT}
 		if end.Verified() {
 			return end, nil
 		}
@@ -198,6 +205,54 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 	return nil, ErrUnknownAuthority
 }
 
+// pairKeySet fetches, once, the keys confirming an envelope's from and to.
+type pairKeySet struct {
+	c        *Client
+	env      *gobl.Envelope
+	from, to Address
+	keys     []*dsig.PublicKey
+	err      error
+	fetched  bool
+}
+
+// require fails unless the key with thumbprint jkt confirms the pair.
+func (s *pairKeySet) require(ctx context.Context, jkt string) error {
+	if !s.fetched {
+		s.keys, s.err = s.c.pairKeys(ctx, s.env, s.from, s.to)
+		s.fetched = true
+	}
+	if s.err != nil {
+		return s.err
+	}
+	if !hasKey(s.keys, jkt) {
+		return fmt.Errorf("%w: registration is for another key of %q", ErrVerifyFailed, s.from)
+	}
+	return nil
+}
+
+// checkRegistration checks the claims of an authority countersignature:
+// an iat no later than now, an exp at most 90 days after it that has not
+// passed (per RFC 7519, now must be strictly before it), and a cnf.
+func checkRegistration(p *head.SigningPayload) error {
+	if err := checkIssued(p); err != nil {
+		return err
+	}
+	if p.ExpiresAt == 0 {
+		return fmt.Errorf("%w: signature by %q has no exp", ErrVerifyFailed, p.Iss)
+	}
+	if time.Unix(p.ExpiresAt, 0).Sub(time.Unix(p.IssuedAt, 0)) > maxRegistrationLifetime {
+		return fmt.Errorf("%w: signature by %q has an exp more than 90 days after its iat", ErrVerifyFailed, p.Iss)
+	}
+	if expired(p.ExpiresAt) {
+		return fmt.Errorf("%w: exp %s has passed", ErrSignatureExpired,
+			time.Unix(p.ExpiresAt, 0).UTC().Format(time.RFC3339))
+	}
+	if p.Confirmation == nil || p.Confirmation.JKT == "" {
+		return fmt.Errorf("%w: signature by %q has no cnf", ErrVerifyFailed, p.Iss)
+	}
+	return nil
+}
+
 // confirmVerifier resolves the verifier claim on a verified authority
 // countersignature. It returns the verifier's address when the claim
 // names a valid address, distinct from the authority, whose countersignature
@@ -214,7 +269,7 @@ func (c *Client) confirmVerifier(ctx context.Context, env *gobl.Envelope, author
 	if verifier == authority {
 		return "", nil
 	}
-	if err := c.verifySignatureBy(ctx, env, verifier, subject); err != nil {
+	if _, err := c.verificationBy(ctx, env, verifier, subject); err != nil {
 		if errors.Is(err, ErrUnavailable) {
 			return "", err
 		}
@@ -223,10 +278,57 @@ func (c *Client) confirmVerifier(ctx context.Context, env *gobl.Envelope, author
 	return verifier, nil
 }
 
-// verifySignatureBy reports whether the envelope carries a valid
-// countersignature by addr for subject, with an iat no later than now
-// (allowing clock skew) and no exp that has passed.
-func (c *Client) verifySignatureBy(ctx context.Context, env *gobl.Envelope, addr, subject Address) error {
+// Verification is a verifier countersignature on a party envelope, as an
+// authority reads it before naming the verifier.
+type Verification struct {
+	// Verifier is the countersignature's issuer.
+	Verifier Address
+	// Key is the thumbprint in its cnf claim: the subject's key the
+	// verifier saw. Empty when the claim is absent.
+	Key string
+	// IssuedAt and ExpiresAt are its iat and exp; ExpiresAt is zero
+	// when it does not expire.
+	IssuedAt  time.Time
+	ExpiresAt time.Time
+}
+
+// FindVerification returns the valid countersignature by verifier for the
+// envelope's from address, with an iat no later than now (allowing clock
+// skew) and no exp that has passed.
+func (c *Client) FindVerification(ctx context.Context, env *gobl.Envelope, verifier Address) (*Verification, error) {
+	if env == nil || env.Head == nil || !env.Signed() {
+		return nil, fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
+	}
+	if len(env.Signatures) > maxEnvelopeSignatures {
+		return nil, fmt.Errorf("%w: envelope carries %d signatures (max %d)",
+			ErrVerifyFailed, len(env.Signatures), maxEnvelopeSignatures)
+	}
+	verifier, err := ParseAddress(string(verifier))
+	if err != nil {
+		return nil, err
+	}
+	subject, _, err := routing(env)
+	if err != nil {
+		return nil, err
+	}
+	p, err := c.verificationBy(ctx, env, verifier, subject)
+	if err != nil {
+		return nil, err
+	}
+	v := &Verification{Verifier: verifier, IssuedAt: time.Unix(p.IssuedAt, 0).UTC()}
+	if p.Confirmation != nil {
+		v.Key = p.Confirmation.JKT
+	}
+	if p.ExpiresAt != 0 {
+		v.ExpiresAt = time.Unix(p.ExpiresAt, 0).UTC()
+	}
+	return v, nil
+}
+
+// verificationBy returns the payload of a valid countersignature by addr
+// for subject, with an iat no later than now (allowing clock skew) and no
+// exp that has passed.
+func (c *Client) verificationBy(ctx context.Context, env *gobl.Envelope, addr, subject Address) (*head.SigningPayload, error) {
 	var lastErr error
 	candidates := 0
 	for _, sig := range env.Signatures {
@@ -262,12 +364,12 @@ func (c *Client) verifySignatureBy(ctx context.Context, env *gobl.Envelope, addr
 				time.Unix(p.ExpiresAt, 0).UTC().Format(time.RFC3339))
 			continue
 		}
-		return nil
+		return p, nil
 	}
 	if lastErr != nil {
-		return lastErr
+		return nil, lastErr
 	}
-	return fmt.Errorf("%w: no signature from %q for %q", ErrVerifyFailed, addr, subject)
+	return nil, fmt.Errorf("%w: no signature from %q for %q", ErrVerifyFailed, addr, subject)
 }
 
 // expired reports whether a signed exp claim (zero when absent) has
