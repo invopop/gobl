@@ -1,0 +1,55 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$regime: "HR"
+uuid: "01a1cfd2-a2ca-7434-8f52-2858e73791f3"
+type: standard
+series: "R2026"
+code: "042"
+issue_date: "2026-11-06"
+currency: "EUR"
+
+supplier:
+  tax_id:
+    country: "HR"
+    code: "12345678903"
+  name: "Veleprodaja pića d.o.o."
+  addresses:
+    - num: "10"
+      street: "Ilica"
+      locality: "Zagreb"
+      region: "Grad Zagreb"
+      code: "10000"
+      country: "HR"
+
+customer:
+  tax_id:
+    country: "HR"
+    code: "11111111119"
+  name: "Kavana Riva d.o.o."
+  addresses:
+    - num: "5"
+      street: "Obala hrvatskog narodnog preporoda"
+      locality: "Split"
+      region: "Splitsko-dalmatinska"
+      code: "21000"
+      country: "HR"
+
+lines:
+  - quantity: 24
+    item:
+      name: "Pivo 0,5 l, boca"
+      price: "1.20"
+    taxes:
+      - cat: VAT
+        rate: standard
+
+  # The return fee for the bottles is a pass-through item: it is left out of
+  # the VAT base, so it is exempt and carries the hr-pass-through extension.
+  - quantity: 24
+    item:
+      name: "Povratna naknada"
+      price: "0.10"
+    taxes:
+      - cat: VAT
+        key: exempt
+        ext:
+          hr-pass-through: "POVNAK"
