@@ -1,6 +1,6 @@
 ## Changed
 
-- `net`: **breaking**: verifier countersignatures count only when their `aud` is the envelope's `from` address, so each address needs its own verification.
+- `net`: **breaking**: verifier countersignatures count only when their `aud` is the envelope's `from` address, so each address needs its own verification, and they need a `cnf` naming the subject key the verifier saw.
 - `net`: **breaking**: authority countersignatures need an `iat` no later than the present and an `exp` at most 90 days after it.
 - `net`: **breaking**: `Client.VerifyDelivery` and `Client.Who` need an `iat` no later than the present, and a key that is still valid when the envelope is received.
 - `net`: **breaking**: authority countersignatures need a `cnf` naming the key of a signature that confirms the envelope's `from` and `to`; `Endorsement.Key` reports it.

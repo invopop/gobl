@@ -455,15 +455,17 @@ the same envelope.
 4. If a verifying candidate names a `verifier`, and that verifier is a
    different participant from the authority, and the same envelope carries a
    valid countersignature issued by that verifier with `aud` equal to the
-   subject — with an `iat` no later than the present, allowing the clock skew
-   of §6, and no `exp` that has passed — the subject is **verified**.
+   subject and a `cnf` — with an `iat` no later than the present, allowing
+   the clock skew of §6, and no `exp` that has passed — the subject is
+   **verified**. Which key the `cnf` names is the authority's to check
+   (§7.3); the receiver relies on the authority having named the verifier.
 5. Where candidates disagree, the highest status wins: an envelope may carry
    several authority signatures, and one that establishes **verified** is not
    cancelled by another that only establishes **registered**.
 
 A `verifier` claim that is absent, malformed, self-referential, or whose
-countersignature is missing, invalid, expired, lacks an `iat`, or is for
-another address reduces the
+countersignature is missing, invalid, expired, lacks an `iat` or a `cnf`,
+or is for another address reduces the
 status to
 **registered**. It MUST NOT invalidate an otherwise valid registration — a
 claim nobody can corroborate is worth nothing, but it does not make the

@@ -290,7 +290,7 @@ func TestVerifySender(t *testing.T) {
 		buildPartyEnvelope(t, subjKey, subject, authKey, authority, verifier),
 		endorsedEnvelope,
 	))
-	require.NoError(t, endorsedEnvelope.Sign(verifierKey,
+	require.NoError(t, endorsedEnvelope.Sign(verifierKey, head.WithConfirmation(subjKey.JKT()),
 		head.WithIssuer(verifier.String()),
 		head.WithAudience(subject.String())))
 	endorsedData, err := json.Marshal(endorsedEnvelope)

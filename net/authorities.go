@@ -284,7 +284,7 @@ type Verification struct {
 	// Verifier is the countersignature's issuer.
 	Verifier Address
 	// Key is the thumbprint in its cnf claim: the subject's key the
-	// verifier saw. Empty when the claim is absent.
+	// verifier saw.
 	Key string
 	// IssuedAt and ExpiresAt are its iat and exp; ExpiresAt is zero
 	// when it does not expire.
@@ -293,8 +293,8 @@ type Verification struct {
 }
 
 // FindVerification returns the valid countersignature by verifier for
-// subject, with an iat no later than now (allowing clock skew) and no exp
-// that has passed.
+// subject, with an iat no later than now (allowing clock skew), no exp
+// that has passed, and a cnf naming the subject key the verifier saw.
 func (c *Client) FindVerification(ctx context.Context, env *gobl.Envelope, verifier, subject Address) (*Verification, error) {
 	if env == nil || env.Head == nil || !env.Signed() {
 		return nil, fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
@@ -315,9 +315,10 @@ func (c *Client) FindVerification(ctx context.Context, env *gobl.Envelope, verif
 	if err != nil {
 		return nil, err
 	}
-	v := &Verification{Verifier: verifier, IssuedAt: time.Unix(p.IssuedAt, 0).UTC()}
-	if p.Confirmation != nil {
-		v.Key = p.Confirmation.JKT
+	v := &Verification{
+		Verifier: verifier,
+		Key:      p.Confirmation.JKT,
+		IssuedAt: time.Unix(p.IssuedAt, 0).UTC(),
 	}
 	if p.ExpiresAt != 0 {
 		v.ExpiresAt = time.Unix(p.ExpiresAt, 0).UTC()
@@ -326,8 +327,8 @@ func (c *Client) FindVerification(ctx context.Context, env *gobl.Envelope, verif
 }
 
 // verificationBy returns the payload of a valid countersignature by addr
-// for subject, with an iat no later than now (allowing clock skew) and no
-// exp that has passed.
+// for subject, with an iat no later than now (allowing clock skew), no exp
+// that has passed, and a cnf.
 func (c *Client) verificationBy(ctx context.Context, env *gobl.Envelope, addr, subject Address) (*head.SigningPayload, error) {
 	var lastErr error
 	candidates := 0
@@ -362,6 +363,10 @@ func (c *Client) verificationBy(ctx context.Context, env *gobl.Envelope, addr, s
 		if expired(p.ExpiresAt) {
 			lastErr = fmt.Errorf("%w: exp %s has passed", ErrSignatureExpired,
 				time.Unix(p.ExpiresAt, 0).UTC().Format(time.RFC3339))
+			continue
+		}
+		if p.Confirmation == nil || p.Confirmation.JKT == "" {
+			lastErr = fmt.Errorf("%w: signature by %q has no cnf", ErrVerifyFailed, addr)
 			continue
 		}
 		return p, nil

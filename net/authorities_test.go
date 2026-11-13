@@ -158,7 +158,7 @@ func TestVerifyAuthority(t *testing.T) {
 			head.WithIssuer(authorityAddr.String()),
 			head.WithAudience(subjectAddr.String()),
 			head.WithVerifier(verifierAddr.String())))
-		require.NoError(t, env.Sign(verifKey,
+		require.NoError(t, env.Sign(verifKey, regCnf(),
 			head.WithIssuer(verifierAddr.String()),
 			head.WithAudience(subjectAddr.String())))
 
@@ -241,7 +241,7 @@ func TestVerifyAuthority(t *testing.T) {
 			head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(authorityAddr.String()),
 			head.WithVerifier(verifierAddr.String())))
-		require.NoError(t, env.Sign(verifKey, head.WithAudience(subjectAddr.String()),
+		require.NoError(t, env.Sign(verifKey, regCnf(), head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(verifierAddr.String()),
 			head.WithExpiration(time.Now().Add(-time.Hour))))
 
@@ -273,7 +273,7 @@ func TestVerifyAuthority(t *testing.T) {
 			head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(authorityAddr.String()),
 			head.WithVerifier(verifierAddr.String())))
-		require.NoError(t, env.Sign(verifKey, head.WithAudience(subjectAddr.String()), head.WithIssuer(verifierAddr.String())))
+		require.NoError(t, env.Sign(verifKey, regCnf(), head.WithAudience(subjectAddr.String()), head.WithIssuer(verifierAddr.String())))
 
 		other := dsig.NewES256Key()
 		c := NewClient(
@@ -687,7 +687,7 @@ func TestVerifySignatureByEdgeCases(t *testing.T) {
 			head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(authorityAddr.String()),
 			head.WithVerifier(verifierAddr.String())))
-		require.NoError(t, env.Sign(verifKey, head.WithAudience(subjectAddr.String()), head.WithIssuer(verifierAddr.String())))
+		require.NoError(t, env.Sign(verifKey, regCnf(), head.WithAudience(subjectAddr.String()), head.WithIssuer(verifierAddr.String())))
 		bad, err := dsig.NewSignature(verifKey, "not-an-object")
 		require.NoError(t, err)
 		env.Signatures = append(env.Signatures, bad)
@@ -726,7 +726,7 @@ func TestVerifySignatureByEdgeCases(t *testing.T) {
 			head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(secondAddr.String()),
 			head.WithVerifier(verifierAddr.String())))
-		require.NoError(t, env.Sign(verifierKey, head.WithAudience(subjectAddr.String()),
+		require.NoError(t, env.Sign(verifierKey, regCnf(), head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(verifierAddr.String())))
 
 		c := NewClient(
@@ -810,7 +810,7 @@ func TestVerifyAuthoritySubjectBinding(t *testing.T) {
 		// A copied envelope registered at another address keeps its
 		// registration, but not the verification.
 		env := newEnv(t)
-		require.NoError(t, env.Sign(verifKey,
+		require.NoError(t, env.Sign(verifKey, regCnf(),
 			head.WithIssuer(verifierAddr.String()),
 			head.WithAudience(subjectAddr.String())))
 		register(t, env, subjectAddr)
@@ -831,7 +831,7 @@ func TestVerifyAuthoritySubjectBinding(t *testing.T) {
 	t.Run("each address needs its own verification", func(t *testing.T) {
 		env := newEnv(t)
 		for _, addr := range []Address{subjectAddr, "second.example"} {
-			require.NoError(t, env.Sign(verifKey,
+			require.NoError(t, env.Sign(verifKey, regCnf(),
 				head.WithIssuer(verifierAddr.String()),
 				head.WithAudience(addr.String())))
 			register(t, env, addr)
@@ -845,9 +845,20 @@ func TestVerifyAuthoritySubjectBinding(t *testing.T) {
 		}
 	})
 
+	t.Run("verifier signature without a cnf degrades", func(t *testing.T) {
+		env := newEnv(t)
+		require.NoError(t, env.Sign(verifKey,
+			head.WithIssuer(verifierAddr.String()),
+			head.WithAudience(subjectAddr.String())))
+		register(t, env, subjectAddr)
+		end, err := client().VerifyAuthority(ctx, env)
+		require.NoError(t, err)
+		assert.False(t, end.Verified())
+	})
+
 	t.Run("verifier signature without an audience degrades", func(t *testing.T) {
 		env := newEnv(t)
-		require.NoError(t, env.Sign(verifKey, head.WithIssuer(verifierAddr.String())))
+		require.NoError(t, env.Sign(verifKey, regCnf(), head.WithIssuer(verifierAddr.String())))
 		register(t, env, subjectAddr)
 		end, err := client().VerifyAuthority(ctx, env)
 		require.NoError(t, err)
@@ -952,6 +963,8 @@ func TestVerifyAuthoritySubjectBinding(t *testing.T) {
 			Digest: env.Head.Digest,
 			Iss:    verifierAddr.String(),
 			Aud:    subjectAddr.String(),
+
+			Confirmation: &head.Confirmation{JKT: testSubjectKey.JKT()},
 		})
 		require.NoError(t, err)
 		env.Signatures = append(env.Signatures, sig)
@@ -969,6 +982,8 @@ func TestVerifyAuthoritySubjectBinding(t *testing.T) {
 			Iss:      verifierAddr.String(),
 			Aud:      subjectAddr.String(),
 			IssuedAt: time.Now().Add(time.Hour).Unix(),
+
+			Confirmation: &head.Confirmation{JKT: testSubjectKey.JKT()},
 		})
 		require.NoError(t, err)
 		env.Signatures = append(env.Signatures, sig)
@@ -1016,7 +1031,7 @@ func TestVerifyAuthorityUnavailability(t *testing.T) {
 			head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(authorityAddr.String()),
 			head.WithVerifier(verifierAddr.String())))
-		require.NoError(t, env.Sign(verifKey, head.WithAudience(subjectAddr.String()), head.WithIssuer(verifierAddr.String())))
+		require.NoError(t, env.Sign(verifKey, regCnf(), head.WithAudience(subjectAddr.String()), head.WithIssuer(verifierAddr.String())))
 		return env
 	}
 
@@ -1140,16 +1155,26 @@ func TestFindVerification(t *testing.T) {
 
 	t.Run("ignores a verification for another address", func(t *testing.T) {
 		env := newEnv(t)
-		require.NoError(t, env.Sign(verifKey,
+		require.NoError(t, env.Sign(verifKey, regCnf(),
 			head.WithIssuer(verifierAddr.String()),
 			head.WithAudience("other.example")))
 		_, err := c.FindVerification(ctx, env, verifierAddr, subjectAddr)
 		require.ErrorIs(t, err, ErrVerifyFailed)
 	})
 
-	t.Run("rejects an expired verification", func(t *testing.T) {
+	t.Run("rejects a verification without a cnf", func(t *testing.T) {
 		env := newEnv(t)
 		require.NoError(t, env.Sign(verifKey,
+			head.WithIssuer(verifierAddr.String()),
+			head.WithAudience(subjectAddr.String())))
+		_, err := c.FindVerification(ctx, env, verifierAddr, subjectAddr)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.Contains(t, err.Error(), "no cnf")
+	})
+
+	t.Run("rejects an expired verification", func(t *testing.T) {
+		env := newEnv(t)
+		require.NoError(t, env.Sign(verifKey, regCnf(),
 			head.WithIssuer(verifierAddr.String()),
 			head.WithAudience(subjectAddr.String()),
 			head.WithExpiration(time.Now().Add(-time.Hour))))
