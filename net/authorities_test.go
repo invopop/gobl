@@ -69,7 +69,7 @@ func (m *mapFetcher) Fetch(_ context.Context, url string, _ http.Header) ([]byte
 	return nil, ErrFetchFailed
 }
 
-func (m *mapFetcher) Post(_ context.Context, _ string, _ []byte, _ http.Header) error {
+func (m *mapFetcher) Post(_ context.Context, _ string, _ []byte) error {
 	return ErrFetchFailed
 }
 
@@ -92,6 +92,8 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
 		// Subject's self-signature (not an authority) + authority countersignature.
 		require.NoError(t, env.Sign(subjKey, head.WithIssuer(subjectAddr.String())))
 		require.NoError(t, env.Sign(authKey,
@@ -117,6 +119,8 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
 		require.NoError(t, env.Sign(subjKey, head.WithIssuer(subjectAddr.String())))
 		require.NoError(t, env.Sign(authKey,
 			head.WithIssuer(authorityAddr.String()),
@@ -145,7 +149,10 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
 		require.NoError(t, env.Sign(authKey,
+			head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(authorityAddr.String()),
 			head.WithVerifier(authorityAddr.String())))
 
@@ -167,7 +174,10 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
 		require.NoError(t, env.Sign(authKey,
+			head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(authorityAddr.String()),
 			head.WithVerifier("verify.example.net")))
 
@@ -190,7 +200,10 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
 		require.NoError(t, env.Sign(authKey,
+			head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(authorityAddr.String()),
 			head.WithVerifier(verifierAddr.String())))
 		require.NoError(t, env.Sign(verifKey,
@@ -218,7 +231,10 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
 		require.NoError(t, env.Sign(authKey,
+			head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(authorityAddr.String()),
 			head.WithVerifier(verifierAddr.String())))
 		require.NoError(t, env.Sign(verifKey, head.WithIssuer(verifierAddr.String())))
@@ -241,7 +257,10 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
 		require.NoError(t, env.Sign(authKey,
+			head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(authorityAddr.String()),
 			head.WithVerifier("https://verify.example.net")))
 
@@ -261,7 +280,10 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
 		require.NoError(t, env.Sign(authKey,
+			head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(authorityAddr.String()),
 			head.WithExpiration(time.Now().Add(-time.Hour))))
 
@@ -283,7 +305,10 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
 		require.NoError(t, env.Sign(authKey,
+			head.WithAudience(subjectAddr.String()),
 			head.WithIssuer("KYC.Example.COM.")))
 
 		c := NewClient(
@@ -303,7 +328,10 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
 		require.NoError(t, env.Sign(authKey,
+			head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(authorityAddr.String()),
 			head.WithExpiration(time.Unix(-1000, 0))))
 
@@ -328,10 +356,14 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
 		require.NoError(t, env.Sign(authKey,
+			head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(authorityAddr.String()),
 			head.WithExpiration(time.Now().Add(-time.Hour))))
-		require.NoError(t, env.Sign(otherKey, head.WithIssuer(otherAuth.String())))
+		require.NoError(t, env.Sign(otherKey,
+			head.WithAudience(subjectAddr.String()), head.WithIssuer(otherAuth.String())))
 
 		c := NewClient(
 			WithAuthorities(authorityAddr, otherAuth),
@@ -350,7 +382,10 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
 		require.NoError(t, env.Sign(authKey,
+			head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(authorityAddr.String()),
 			head.WithExpiration(time.Now().Add(90*24*time.Hour))))
 
@@ -370,6 +405,8 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
 		require.NoError(t, env.Sign(subjKey, head.WithIssuer(subjectAddr.String())))
 
 		c := NewClient(
@@ -386,7 +423,10 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
 		require.NoError(t, env.Sign(authKey,
+			head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(authorityAddr.String())))
 		// Prepend a signature whose payload does not decode; it must be
 		// stepped past, not fail the whole check.
@@ -409,7 +449,10 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(authKey, head.WithIssuer("localhost")))
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
+		require.NoError(t, env.Sign(authKey,
+			head.WithAudience(subjectAddr.String()), head.WithIssuer("localhost")))
 
 		c := NewClient(WithAuthorities(authorityAddr))
 		_, err = c.VerifyAuthority(ctx, env)
@@ -424,7 +467,10 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.String())))
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
+		require.NoError(t, env.Sign(authKey,
+			head.WithAudience(subjectAddr.String()), head.WithIssuer(authorityAddr.String())))
 		env.Head.Digest = dsig.NewSHA256Digest([]byte("tampered"))
 
 		c := NewClient(
@@ -445,7 +491,10 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.String())))
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
+		require.NoError(t, env.Sign(authKey,
+			head.WithAudience(subjectAddr.String()), head.WithIssuer(authorityAddr.String())))
 		env.Head = nil
 
 		c := NewClient(
@@ -464,6 +513,8 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
 
 		c := NewClient(WithAuthorities(authorityAddr))
 		_, err = c.VerifyAuthority(ctx, env)
@@ -480,7 +531,10 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.String())))
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
+		require.NoError(t, env.Sign(authKey,
+			head.WithAudience(subjectAddr.String()), head.WithIssuer(authorityAddr.String())))
 
 		c := NewClient() // empty authorities
 		_, err = c.VerifyAuthority(ctx, env)
@@ -495,7 +549,10 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(lookupKey, head.WithIssuer(lookup.String())))
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
+		require.NoError(t, env.Sign(lookupKey,
+			head.WithAudience(subjectAddr.String()), head.WithIssuer(lookup.String())))
 
 		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
 			lookup.KeyURL(lookupKey.ID()): jwkOf(lookupKey),
@@ -513,7 +570,10 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.String())))
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
+		require.NoError(t, env.Sign(authKey,
+			head.WithAudience(subjectAddr.String()), head.WithIssuer(authorityAddr.String())))
 
 		other := dsig.NewES256Key()
 		c := NewClient(
@@ -535,6 +595,8 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
 		require.NoError(t, env.Sign(subjKey, head.WithIssuer("mailto:a@b")))
 
 		c := NewClient(WithAuthorities(authorityAddr))
@@ -546,6 +608,7 @@ func TestVerifyAuthority(t *testing.T) {
 
 func TestVerifySignatureByEdgeCases(t *testing.T) {
 	ctx := context.Background()
+	subjectAddr := Address("subject.example")
 	authorityAddr := Address("kyc.example.com")
 	verifierAddr := Address("verify.example.net")
 	authKey := dsig.NewES256Key()
@@ -566,7 +629,10 @@ func TestVerifySignatureByEdgeCases(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
 		require.NoError(t, env.Sign(authKey,
+			head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(authorityAddr.String()),
 			head.WithVerifier(verifierAddr.String())))
 		require.NoError(t, env.Sign(verifKey, head.WithIssuer(verifierAddr.String())))
@@ -599,8 +665,12 @@ func TestVerifySignatureByEdgeCases(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.String())))
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
+		require.NoError(t, env.Sign(authKey,
+			head.WithAudience(subjectAddr.String()), head.WithIssuer(authorityAddr.String())))
 		require.NoError(t, env.Sign(secondKey,
+			head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(secondAddr.String()),
 			head.WithVerifier(verifierAddr.String())))
 		require.NoError(t, env.Sign(verifierKey,
@@ -622,6 +692,122 @@ func TestVerifySignatureByEdgeCases(t *testing.T) {
 	})
 }
 
+func TestVerifyAuthoritySubjectBinding(t *testing.T) {
+	ctx := context.Background()
+	authorityAddr := Address("kyc.example.com")
+	verifierAddr := Address("verify.example.net")
+	subjectAddr := Address("subject.example")
+	authKey := dsig.NewES256Key()
+	verifKey := dsig.NewES256Key()
+
+	jwkOf := func(k *dsig.PrivateKey) []byte {
+		out, err := json.Marshal(k.Public())
+		require.NoError(t, err)
+		return out
+	}
+	client := func() *Client {
+		return NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+				verifierAddr.KeyURL(verifKey.ID()): jwkOf(verifKey),
+			}}),
+		)
+	}
+	newEnv := func(t *testing.T) *gobl.Envelope {
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
+		return env
+	}
+	register := func(t *testing.T, env *gobl.Envelope, aud Address) {
+		require.NoError(t, env.Sign(authKey,
+			head.WithIssuer(authorityAddr.String()),
+			head.WithAudience(aud.String()),
+			head.WithVerifier(verifierAddr.String())))
+	}
+
+	t.Run("ignores a registration bound to another address", func(t *testing.T) {
+		env := newEnv(t)
+		register(t, env, "someone-else.example")
+		_, err := client().VerifyAuthority(ctx, env)
+		assert.ErrorIs(t, err, ErrUnknownAuthority)
+	})
+
+	t.Run("rejects an envelope without a from address", func(t *testing.T) {
+		env := newEnv(t)
+		env.Head.From = ""
+		register(t, env, subjectAddr)
+		_, err := client().VerifyAuthority(ctx, env)
+		assert.ErrorIs(t, err, ErrVerifyFailed)
+	})
+
+	t.Run("ignores a registration without an audience", func(t *testing.T) {
+		env := newEnv(t)
+		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.String())))
+		_, err := client().VerifyAuthority(ctx, env)
+		assert.ErrorIs(t, err, ErrUnknownAuthority)
+	})
+
+	t.Run("one verification serves several addresses", func(t *testing.T) {
+		env := newEnv(t)
+		require.NoError(t, env.Sign(verifKey, head.WithIssuer(verifierAddr.String())))
+		register(t, env, subjectAddr)
+		register(t, env, "second.example")
+		for _, addr := range []Address{subjectAddr, "second.example"} {
+			env.Head.From = addr.URI()
+			end, err := client().VerifyAuthority(ctx, env)
+			require.NoError(t, err)
+			assert.True(t, end.Verified(), addr)
+		}
+	})
+
+	t.Run("verifier audience is not consulted", func(t *testing.T) {
+		env := newEnv(t)
+		require.NoError(t, env.Sign(verifKey,
+			head.WithIssuer(verifierAddr.String()),
+			head.WithAudience("unrelated.example")))
+		register(t, env, subjectAddr)
+		end, err := client().VerifyAuthority(ctx, env)
+		require.NoError(t, err)
+		assert.True(t, end.Verified())
+	})
+
+	t.Run("verifier signature without iat degrades", func(t *testing.T) {
+		env := newEnv(t)
+		sig, err := dsig.NewSignature(verifKey, &head.SigningPayload{
+			UUID:   env.Head.UUID,
+			Digest: env.Head.Digest,
+			Iss:    verifierAddr.String(),
+		})
+		require.NoError(t, err)
+		env.Signatures = append(env.Signatures, sig)
+		register(t, env, subjectAddr)
+		end, err := client().VerifyAuthority(ctx, env)
+		require.NoError(t, err)
+		assert.False(t, end.Verified())
+	})
+
+	t.Run("verifier signature issued in the future degrades", func(t *testing.T) {
+		env := newEnv(t)
+		sig, err := dsig.NewSignature(verifKey, &head.SigningPayload{
+			UUID:     env.Head.UUID,
+			Digest:   env.Head.Digest,
+			Iss:      verifierAddr.String(),
+			IssuedAt: time.Now().Add(time.Hour).Unix(),
+		})
+		require.NoError(t, err)
+		env.Signatures = append(env.Signatures, sig)
+		register(t, env, subjectAddr)
+		end, err := client().VerifyAuthority(ctx, env)
+		require.NoError(t, err)
+		assert.False(t, end.Verified())
+	})
+}
+
 func TestWithAuthoritiesReplacesDefault(t *testing.T) {
 	original := Authorities
 	t.Cleanup(func() { Authorities = original })
@@ -635,6 +821,7 @@ func TestWithAuthoritiesReplacesDefault(t *testing.T) {
 
 func TestVerifyAuthorityUnavailability(t *testing.T) {
 	ctx := context.Background()
+	subjectAddr := Address("subject.example")
 	authorityAddr := Address("kyc.example.com")
 	verifierAddr := Address("verify.example.net")
 	authKey := dsig.NewES256Key()
@@ -651,7 +838,10 @@ func TestVerifyAuthorityUnavailability(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
 		require.NoError(t, env.Sign(authKey,
+			head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(authorityAddr.String()),
 			head.WithVerifier(verifierAddr.String())))
 		require.NoError(t, env.Sign(verifKey, head.WithIssuer(verifierAddr.String())))

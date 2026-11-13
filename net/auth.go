@@ -21,8 +21,8 @@ const (
 	tokenClockSkew  = 30 * time.Second
 )
 
-// TokenClaims is the signed payload of a Who or Send request token. Iss is the
-// requester, which may differ from an envelope signer, and Aud is the target.
+// TokenClaims is the signed payload of a /who request token. Iss is the
+// requester and Aud the address queried.
 type TokenClaims struct {
 	Iss Address `json:"iss"`
 	Aud Address `json:"aud"`
