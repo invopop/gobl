@@ -17,7 +17,10 @@ const CountryCode = "AE"
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("ae", rules.GOBL.Add(CountryCode), taxIdentityRules())
+	rules.Register("ae", rules.GOBL.Add(CountryCode),
+		taxIdentityRules(),
+		orgIdentityRules(),
+	)
 	norm.Register(
 		norm.When(tax.IdentityIn(CountryCode),
 			norm.For(func(id *tax.Identity) {
@@ -63,6 +66,7 @@ func New() *tax.RegimeDef {
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},
+		Identities: identityDefinitions,
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,

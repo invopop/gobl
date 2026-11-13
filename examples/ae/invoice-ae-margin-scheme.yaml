@@ -1,0 +1,47 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "0195ce71-dc9c-72c8-bf2c-9890a4a9f0b3"
+currency: "AED"
+issue_date: "2026-02-11"
+series: "SAMPLE"
+code: "002"
+
+supplier:
+  tax_id:
+    country: "AE"
+    code: "187654321400003"
+  name: "Provide One LLC"
+  emails:
+    - addr: "billing@example.ae"
+  addresses:
+    - num: "16"
+      street: "Sheikh Zayed Road"
+      locality: "Dubai"
+      code: "00000"
+      country: "AE"
+
+customer:
+  tax_id:
+    country: "AE"
+    code: "123456789700003"
+  name: "Sample Consumer"
+  emails:
+    - addr: "email@sample.ae"
+  addresses:
+    - num: "25"
+      street: "Al Maryah Island"
+      locality: "Abu Dhabi"
+      code: "00000"
+      country: "AE"
+
+lines:
+  - quantity: 1
+    item:
+      name: "Second-hand watch"
+      price: "1000.00"
+    taxes:
+      - cat: VAT
+        key: "margin-scheme"
+
+notes:
+  - key: "legal"
+    text: "VAT charged under the Profit Margin Scheme."

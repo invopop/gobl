@@ -19,6 +19,92 @@
   "country": "AE",
   "currency": "AED",
   "tax_scheme": "VAT",
+  "identities": [
+    {
+      "key": "ae-tin",
+      "name": {
+        "ar": "رقم التعريف الضريبي",
+        "en": "Tax Identification Number"
+      },
+      "desc": {
+        "en": "10-digit number issued by the Federal Tax Authority: a 1, an 8-digit business identifier and a Luhn check digit. Not the 15-digit VAT number (TRN), which starts with it and goes in the party's tax ID."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Ministry of Finance - UAE Electronic Invoice Mandatory Field Requirements"
+          },
+          "url": "https://mof.gov.ae/wp-content/uploads/2026/10/UAE-Electronic-Invoice-Mandatory-Field-Requirements.pdf"
+        },
+        {
+          "title": {
+            "en": "Peppol Participant Identifier Schemes - AE:TIN (ISO 6523 ICD 0235)"
+          },
+          "url": "https://docs.peppol.eu/edelivery/codelists/"
+        }
+      ]
+    },
+    {
+      "key": "ae-trade-license",
+      "name": {
+        "ar": "رقم الرخصة التجارية",
+        "en": "Trade License Number"
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Ministry of Finance - UAE Electronic Invoice Mandatory Field Requirements"
+          },
+          "url": "https://mof.gov.ae/wp-content/uploads/2026/10/UAE-Electronic-Invoice-Mandatory-Field-Requirements.pdf"
+        }
+      ]
+    },
+    {
+      "key": "ae-emirates-id",
+      "name": {
+        "ar": "رقم الهوية الإماراتية",
+        "en": "Emirates ID Number"
+      },
+      "desc": {
+        "en": "15-digit number of the Emirates ID card, starting with 784, unique to its holder and kept for life."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Ministry of Finance - UAE Electronic Invoice Mandatory Field Requirements"
+          },
+          "url": "https://mof.gov.ae/wp-content/uploads/2026/10/UAE-Electronic-Invoice-Mandatory-Field-Requirements.pdf"
+        },
+        {
+          "title": {
+            "en": "UAE Government Portal - Emirates ID"
+          },
+          "url": "https://u.ae/en/information-and-services/visa-and-emirates-id/emirates-id"
+        },
+        {
+          "title": {
+            "en": "Gulf News - ID number may not be amended, EIDA says"
+          },
+          "url": "https://gulfnews.com/uae/government/id-number-may-not-be-amended-eida-says-1.1654705"
+        }
+      ]
+    },
+    {
+      "key": "ae-cabinet-decision",
+      "name": {
+        "ar": "رقم قرار مجلس الوزراء",
+        "en": "Cabinet Decision Number"
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Ministry of Finance - UAE Electronic Invoice Mandatory Field Requirements"
+          },
+          "url": "https://mof.gov.ae/wp-content/uploads/2026/10/UAE-Electronic-Invoice-Mandatory-Field-Requirements.pdf"
+        }
+      ]
+    }
+  ],
   "scenarios": [
     {
       "schema": "bill/invoice",
@@ -116,6 +202,17 @@
           "key": "outside-scope",
           "name": {
             "en": "Outside scope"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "margin-scheme",
+          "name": {
+            "ar": "آلية هامش الربح",
+            "en": "Profit Margin Scheme"
+          },
+          "desc": {
+            "en": "Supply of goods under the profit margin scheme, such as second-hand\ngoods, antiques or collectors' items. VAT is due on the margin, not\non the price, and the invoice shows no VAT amount."
           },
           "no_percent": true
         }

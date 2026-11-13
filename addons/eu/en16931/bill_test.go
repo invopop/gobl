@@ -539,6 +539,7 @@ func TestValidateBillCharge(t *testing.T) {
 		l := &bill.Charge{
 			Reason: "Product sample",
 			Amount: num.MakeAmount(100, 2),
+			Taxes:  standardVATSet(),
 		}
 		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
@@ -550,6 +551,7 @@ func TestValidateBillCharge(t *testing.T) {
 				untdid.ExtKeyCharge: "AAE",
 			}),
 			Amount: num.MakeAmount(100, 2),
+			Taxes:  standardVATSet(),
 		}
 		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
@@ -558,6 +560,7 @@ func TestValidateBillCharge(t *testing.T) {
 	t.Run("without reason or extension", func(t *testing.T) {
 		l := &bill.Charge{
 			Amount: num.MakeAmount(100, 2),
+			Taxes:  standardVATSet(),
 		}
 		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
 		assert.ErrorContains(t, err, "either a reason or a charge type extension is required")
@@ -570,10 +573,46 @@ func TestValidateBillCharge(t *testing.T) {
 				untdid.ExtKeyCharge: "AAE",
 			}),
 			Amount: num.MakeAmount(100, 2),
+			Taxes:  standardVATSet(),
 		}
 		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 	})
+
+	t.Run("without taxes (BR-37)", func(t *testing.T) {
+		l := &bill.Charge{
+			Reason: "Freight",
+			Amount: num.MakeAmount(100, 2),
+		}
+		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "GOBL-EU-EN16931-BILL-CHARGE-02")
+		assert.ErrorContains(t, err, "taxes are required (BR-37)")
+	})
+
+	t.Run("without taxes outside EN 16931", func(t *testing.T) {
+		l := &bill.Charge{
+			Reason: "Freight",
+			Amount: num.MakeAmount(100, 2),
+		}
+		err := rules.Validate(l)
+		if err != nil {
+			assert.NotContains(t, err.Error(), "BR-37")
+		}
+	})
+}
+
+// standardVATSet is a tax set with a single standard-rated VAT combo, as
+// EN 16931 requires on document-level discounts and charges (BR-32, BR-37).
+func standardVATSet() tax.Set {
+	return tax.Set{
+		{
+			Category: tax.CategoryVAT,
+			Rate:     "standard",
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				untdid.ExtKeyTaxCategory: en16931.TaxCategoryStandard,
+			}),
+		},
+	}
 }
 
 func TestValidateBillLineDiscount(t *testing.T) {

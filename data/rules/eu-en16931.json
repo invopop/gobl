@@ -134,7 +134,7 @@
       "assert": [
         {
           "id": "GOBL-EU-EN16931-BILL-LINEDISCOUNT-01",
-          "desc": "either a reason or an allowance type extension is required (BR-41)",
+          "desc": "either a reason or an allowance type extension is required (BR-42)",
           "tests": "reason or allowance"
         }
       ]
@@ -145,8 +145,20 @@
       "assert": [
         {
           "id": "GOBL-EU-EN16931-BILL-CHARGE-01",
-          "desc": "either a reason or a charge type extension is required (BR-36)",
+          "desc": "either a reason or a charge type extension is required (BR-38)",
           "tests": "reason or charge"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "taxes",
+          "assert": [
+            {
+              "id": "GOBL-EU-EN16931-BILL-CHARGE-02",
+              "desc": "taxes are required (BR-37)",
+              "tests": "present"
+            }
+          ]
         }
       ]
     },
