@@ -1,0 +1,78 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$regime": "UY",
+  "uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+  "code": "A-00001234",
+  "issue_date": "2025-03-15",
+  "currency": "UYU",
+  "supplier": {
+    "name": "Proveedor Ejemplo S.A.",
+    "tax_id": {
+      "country": "UY",
+      "code": "211003420017"
+    },
+    "addresses": [
+      {
+        "street": "Av. 18 de Julio 1234",
+        "locality": "Montevideo",
+        "region": "Montevideo",
+        "code": "11200",
+        "country": "UY"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Cliente Comercial S.R.L.",
+    "tax_id": {
+      "country": "UY",
+      "code": "216893210012"
+    },
+    "addresses": [
+      {
+        "street": "Rambla República del Perú 500",
+        "locality": "Montevideo",
+        "region": "Montevideo",
+        "code": "11300",
+        "country": "UY"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "quantity": "10",
+      "item": {
+        "name": "Servicios de consultoría",
+        "price": "5000.00"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "general"
+        }
+      ]
+    },
+    {
+      "quantity": "20",
+      "item": {
+        "name": "Productos alimenticios",
+        "price": "200.00"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "reduced"
+        }
+      ]
+    }
+  ],
+  "payment": {
+    "terms": {
+      "due_dates": [
+        {
+          "date": "2025-04-15",
+          "percent": "100%"
+        }
+      ]
+    }
+  }
+}
