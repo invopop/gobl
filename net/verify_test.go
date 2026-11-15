@@ -511,3 +511,49 @@ func TestWhoSignatureUnavailable(t *testing.T) {
 	_, err = c.Who(ctx, subject)
 	require.ErrorIs(t, err, ErrUnavailable)
 }
+
+func TestDeliveryConfirmations(t *testing.T) {
+	ctx := context.Background()
+	sender := Address("supplier.example.com")
+	inbox := Address("lookup.example.org")
+	oldKey, newKey := dsig.NewES256Key(), dsig.NewES256Key()
+	c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+		sender.KeyURL(oldKey.ID()): jwkFromKey(t, oldKey),
+		sender.KeyURL(newKey.ID()): jwkFromKey(t, newKey),
+	}}))
+
+	t.Run("reports each key's signing time and named successor", func(t *testing.T) {
+		env := buildDelivery(t, oldKey, sender, inbox)
+		env.Signatures = nil
+		require.NoError(t, Sign(env, oldKey, sender, inbox, head.WithConfirmation(newKey.JKT())))
+		require.NoError(t, Sign(env, newKey, sender, inbox))
+		cs, err := c.DeliveryConfirmations(ctx, env, inbox)
+		require.NoError(t, err)
+		require.Len(t, cs, 2)
+		bySigner := map[string]*ConfirmingSignature{cs[0].Key.JKT(): cs[0], cs[1].Key.JKT(): cs[1]}
+		assert.Equal(t, newKey.JKT(), bySigner[oldKey.JKT()].Successor)
+		assert.Empty(t, bySigner[newKey.JKT()].Successor)
+		assert.WithinDuration(t, time.Now(), bySigner[oldKey.JKT()].IssuedAt, time.Minute)
+	})
+
+	t.Run("keeps the most recent signature per key", func(t *testing.T) {
+		env := buildDelivery(t, oldKey, sender, inbox)
+		env.Signatures = nil
+		for _, iat := range []time.Time{time.Now().Add(-time.Hour), time.Now(), time.Now().Add(-2 * time.Hour)} {
+			p := &head.SigningPayload{UUID: env.Head.UUID, Digest: env.Head.Digest,
+				Iss: sender.String(), Aud: inbox.String(), IssuedAt: iat.Unix()}
+			sig, err := dsig.NewSignature(oldKey, p)
+			require.NoError(t, err)
+			env.Signatures = append(env.Signatures, sig)
+		}
+		cs, err := c.DeliveryConfirmations(ctx, env, inbox)
+		require.NoError(t, err)
+		require.Len(t, cs, 1)
+		assert.WithinDuration(t, time.Now(), cs[0].IssuedAt, time.Minute)
+	})
+
+	t.Run("fails like DeliveryKeys", func(t *testing.T) {
+		_, err := c.DeliveryConfirmations(ctx, new(gobl.Envelope), inbox)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+	})
+}

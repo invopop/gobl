@@ -482,3 +482,27 @@ func TestFlushKeyCache(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, 2, f.n[url], "flush forces a refetch")
 }
+
+func TestHTTPFetcherRefusesRedirects(t *testing.T) {
+	var followed bool
+	target := httptest.NewServer(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {
+		followed = true
+	}))
+	defer target.Close()
+	for _, code := range []int{http.StatusFound, http.StatusTemporaryRedirect, http.StatusPermanentRedirect} {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, target.URL+r.URL.Path, code)
+		}))
+		f := newHTTPFetcher(true)
+
+		_, err := f.Fetch(context.Background(), srv.URL+"/.well-known/gobl/keys/k", nil)
+		require.ErrorIs(t, err, ErrFetchFailed)
+		assert.ErrorContains(t, err, "redirects are not followed")
+
+		err = f.Post(context.Background(), srv.URL+"/.well-known/gobl/inbox", []byte("{}"))
+		require.ErrorIs(t, err, ErrFetchFailed)
+		assert.ErrorContains(t, err, "redirects are not followed")
+		srv.Close()
+	}
+	assert.False(t, followed)
+}

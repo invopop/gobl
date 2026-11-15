@@ -131,7 +131,7 @@ document UUID and digest, plus these fields, called claims:
 | `aud` | audience | The address the signature is for. Required on the signature confirming `from` and `to`, and on countersignatures. |
 | `iat` | signing time | An RFC 7519 NumericDate. Required, and MUST NOT be later than the present, allowing the clock skew of §6. |
 | `exp` | expiry | Required on registration countersignatures, at most 90 days after the signing time; optional otherwise. |
-| `cnf` | bound key | The subject key a countersignature applies to, as RFC 7800 `{"jkt": "<thumbprint>"}`: the key's RFC 7638 SHA-256 thumbprint, base64url-encoded. Required on countersignatures. |
+| `cnf` | bound key | The key a signature applies to, as RFC 7800 `{"jkt": "<thumbprint>"}`: the key's RFC 7638 SHA-256 thumbprint, base64url-encoded. Required on countersignatures, where it is the subject's key, and on the current key's signature in a key change (§7.3), where it is the new key. |
 | `verifier` | verifier | The verifier's address. Required on registration countersignatures. |
 
 Every GOBL Net envelope MUST carry `from` and `to` header fields holding
@@ -382,7 +382,9 @@ delivery MUST check that the delivery was confirmed with that same key.
 An authority keeps, for each address it registers, the subject's **lineage**:
 the keys it has bound in turn, by thumbprint, since the lineage last started.
 Each registration request is a delivery to the authority, and the keys that
-confirmed it decide what happens:
+confirmed it decide what happens. Only confirming signatures made within the
+past 5 minutes, the maximum age of §6 (allowing its clock skew), count: a
+replayed earlier request does not show that anybody holds its keys now.
 
 - **The current key, or any one key with no lineage yet.** A renewal or a
   first registration: the authority binds that key, starting the lineage if
@@ -390,13 +392,17 @@ confirmed it decide what happens:
 - **One key that is not the current one.** The subject has lost its key, or
   the address has changed hands; the authority cannot tell which. It starts a
   new lineage with that key.
-- **The current key and one not already in the lineage.** A key change: the
-  authority adds the new key and binds it. Signing with both shows that the
+- **The current key and one not already in the lineage, with the current
+  key's signature naming the new one as its bound key.** A key change: the
+  authority adds the new key and binds it. The bound key shows that the
   holder of the current key chose its successor, as in an ACME key change
-  (RFC 8555 §7.3.5).
+  (RFC 8555 §7.3.5); two signatures alone would not, since neither covers
+  the other's key.
 - **Two keys at a first registration.** The authority starts the lineage
   with whichever key a verification countersignature binds, and then adds the
-  other. If neither or both are bound, it MUST reject the request.
+  other, which that key's signature MUST name as its bound key. If neither or
+  both keys are bound by a verification, or the bound one does not name the
+  other, it MUST reject the request.
 - **Anything else** MUST be rejected.
 
 An authority MUST NOT register a subject unless a verification
@@ -491,6 +497,10 @@ globally reachable in the IANA special-purpose address registries), or to a
 translation range such as NAT64 that can reach one, unless an operator has deliberately configured
 otherwise for testing or a local service.
 
+Redirects MUST NOT be followed. A redirect could move a key fetch, a request
+token, or a delivery to plain HTTP or to another host, so it is a definitive
+failure (§11), and endpoints MUST answer at the URLs of §3 directly.
+
 Fetched keys MAY be cached, by URL and only on success. A cache SHOULD be
 bounded in entries and lifetime (§12).
 
@@ -516,7 +526,7 @@ able to tell them apart:
 | Class | Examples | Caller behaviour |
 |---|---|---|
 | **Temporary** | `429`, `5xx`, connection and timeout failures | Retry with backoff. |
-| **Definitive** | a `4xx` other than `429`, a signature that fails to verify | Do not retry without changing the request. |
+| **Definitive** | a `3xx` redirect, a `4xx` other than `429`, a signature that fails to verify | Do not retry without changing the request. |
 | **Absent** | `204` from `/who`, `404` for an unknown key or address | Not a failure: the peer answered that there is nothing. |
 
 A check that could not be performed is never reported as one that failed. An

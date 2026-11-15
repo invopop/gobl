@@ -27,7 +27,7 @@
 //	§7  sender policy        WithAuthorities, WithVerifiers, WithSandbox
 //	§7.2 sender status       Client.VerifyEndorsement, Endorsement,
 //	                         Client.VerifySender
-//	§7.3 key lineage         Client.DeliveryKeys, Client.FindVerifications
+//	§7.3 key lineage         Client.DeliveryConfirmations, Client.FindVerifications, MaxRequestAge
 //	§8.2 /who                Client.Who
 //	§8.3 /inbox              Sign, Client.Send
 //	§9  limits               HTTPFetcher, WithKeyCacheTTL
@@ -79,7 +79,8 @@
 //
 // The default HTTPFetcher has a 10-second request timeout, a five-second dial
 // timeout, and the 1 MiB response limit of §9. Its dialer refuses hosts
-// resolving to non-public addresses, as §9 requires. A custom Fetcher takes that obligation on:
+// resolving to non-public addresses, and it follows no redirects, as §9
+// requires. A custom Fetcher takes that obligation on:
 // implement equivalent protection, or confine it to tests and local services.
 //
 // Keys are cached by URL and only on success, with a maximum of 1,024

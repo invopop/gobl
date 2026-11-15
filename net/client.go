@@ -145,13 +145,12 @@ type HTTPFetcher struct {
 	Client *http.Client
 }
 
-// NewHTTPFetcher creates an HTTPFetcher with sensible defaults.
-// The fetcher's transport rejects any dial whose resolved IP is
-// loopback, private, shared, link-local, multicast, unspecified or
-// reserved, to
-// prevent SSRF attacks via a signed `iss` URI. There is no public
-// escape hatch for the SSRF guard; in-process test fixtures should
-// inject their own Fetcher via WithFetcher.
+// NewHTTPFetcher creates an HTTPFetcher with sensible defaults. Its
+// transport rejects any dial whose resolved IP is not globally reachable
+// (see isPublicIP), to prevent SSRF attacks via a signed `iss` URI, and
+// it follows no redirects. There is no public escape hatch for the SSRF
+// guard; in-process test fixtures should inject their own Fetcher via
+// WithFetcher.
 func NewHTTPFetcher() *HTTPFetcher {
 	return newHTTPFetcher(false)
 }
@@ -174,6 +173,12 @@ func newHTTPFetcher(allowLoopback bool) *HTTPFetcher {
 		Client: &http.Client{
 			Timeout:   defaultTimeout,
 			Transport: transport,
+			// Redirects are not followed (README.md §9): one could
+			// downgrade a key fetch, a request token or a delivery
+			// to plain HTTP.
+			CheckRedirect: func(*http.Request, []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
 		},
 	}
 }
@@ -200,6 +205,9 @@ func (f *HTTPFetcher) Fetch(ctx context.Context, url string, header http.Header)
 	if resp.StatusCode == http.StatusAccepted {
 		return nil, fmt.Errorf("%w: %s", ErrPending, url)
 	}
+	if isRedirect(resp.StatusCode) {
+		return nil, redirectErr(resp.StatusCode, url)
+	}
 	if retryable(resp.StatusCode) {
 		return nil, fmt.Errorf("%w: HTTP %d from %s", ErrUnavailable, resp.StatusCode, url)
 	}
@@ -216,6 +224,17 @@ func (f *HTTPFetcher) Fetch(ctx context.Context, url string, header http.Header)
 
 // retryable reports whether a response status signals a transient
 // condition worth retrying: 429 or any 5xx.
+// isRedirect reports whether status is a redirection.
+func isRedirect(status int) bool {
+	return status >= 300 && status < 400
+}
+
+// redirectErr reports a redirect that was not followed: a definitive
+// failure.
+func redirectErr(status int, url string) error {
+	return fmt.Errorf("%w: HTTP %d from %s: redirects are not followed", ErrFetchFailed, status, url)
+}
+
 func retryable(status int) bool {
 	return status == http.StatusTooManyRequests || status >= 500
 }
@@ -251,6 +270,8 @@ func (f *HTTPFetcher) Post(ctx context.Context, url string, body []byte) error {
 	switch {
 	case resp.StatusCode == http.StatusAccepted:
 		return nil
+	case isRedirect(resp.StatusCode):
+		return redirectErr(resp.StatusCode, url)
 	case resp.StatusCode >= 400 && resp.StatusCode < 500 &&
 		resp.StatusCode != http.StatusTooManyRequests:
 		return fmt.Errorf("%w: HTTP %d from %s", ErrInboxRejected, resp.StatusCode, url)
