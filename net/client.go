@@ -71,8 +71,9 @@ func dialAddrs(ctx context.Context, network, host string, ips []stdnet.IP, port 
 }
 
 // isPublicIP reports whether ip is a routable, non-special address.
-// A loopback, private (RFC 1918 / RFC 6598), link-local, multicast,
-// unspecified, or interface-local-multicast IP is rejected.
+// A loopback, private (RFC 1918, RFC 4193), shared (RFC 6598),
+// link-local, multicast, unspecified or reserved IP, or one in a range
+// that reaches IPv4 through a translator (NAT64), is rejected.
 func isPublicIP(ip stdnet.IP) bool {
 	if ip == nil {
 		return false
@@ -87,8 +88,35 @@ func isPublicIP(ip stdnet.IP) bool {
 		ip.IsMulticast():
 		return false
 	}
+	for _, n := range nonPublicNets {
+		if n.Contains(ip) {
+			return false
+		}
+	}
 	return true
 }
+
+// nonPublicNets lists the non-public ranges the net.IP methods miss.
+var nonPublicNets = func() []*stdnet.IPNet {
+	cidrs := []string{
+		"0.0.0.0/8",      // this network (RFC 791)
+		"100.64.0.0/10",  // shared address space (RFC 6598)
+		"192.0.0.0/24",   // IETF protocol assignments (RFC 6890)
+		"198.18.0.0/15",  // benchmarking (RFC 2544)
+		"240.0.0.0/4",    // reserved, and broadcast (RFC 1112)
+		"64:ff9b::/96",   // NAT64 (RFC 6052)
+		"64:ff9b:1::/48", // local-use NAT64 (RFC 8215)
+	}
+	nets := make([]*stdnet.IPNet, len(cidrs))
+	for i, c := range cidrs {
+		_, n, err := stdnet.ParseCIDR(c)
+		if err != nil {
+			panic(err)
+		}
+		nets[i] = n
+	}
+	return nets
+}()
 
 // Fetcher is the transport used by a Client: Fetch retrieves
 // well-known resources and Post delivers envelopes to an inbox, as
@@ -108,7 +136,8 @@ type HTTPFetcher struct {
 
 // NewHTTPFetcher creates an HTTPFetcher with sensible defaults.
 // The fetcher's transport rejects any dial whose resolved IP is
-// loopback, private, link-local, multicast, or unspecified, to
+// loopback, private, shared, link-local, multicast, unspecified or
+// reserved, to
 // prevent SSRF attacks via a signed `iss` URI. There is no public
 // escape hatch for the SSRF guard; in-process test fixtures should
 // inject their own Fetcher via WithFetcher.

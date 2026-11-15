@@ -11,9 +11,11 @@
 - `head`: `WithConfirmation` sets an RFC 7800 `cnf` claim, read from `SigningPayload.Confirmation`.
 - `dsig`: `JKT` returns a key's RFC 7638 thumbprint in base64url form.
 - `net`: only the first four signatures by one issuer are checked against its keys.
+- `net`: a countersignature with a `verifier` claim never counts as a verification.
 
 ## Fixed
 
 - `net`: `HTTPFetcher` dials the addresses it has checked, rather than resolving the host again.
 - `net`: `HTTPFetcher` dial and lookup errors wrap their cause as well as `ErrUnavailable`.
 - `net`: a delivery with no valid signature reports why the last candidate failed.
+- `net`: `HTTPFetcher` refuses shared (RFC 6598), reserved, benchmarking and NAT64 addresses.

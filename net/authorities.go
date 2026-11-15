@@ -354,8 +354,9 @@ func (c *Client) FindVerifications(ctx context.Context, env *gobl.Envelope, veri
 	return vs, nil
 }
 
-// verificationsBy returns the payloads of the valid countersignatures by
-// addr for subject, each with an iat no later than now (allowing clock
+// verificationsBy returns the payloads of the valid verification
+// countersignatures by addr for subject, those without a verifier claim,
+// each with an iat no later than now (allowing clock
 // skew), no exp that has passed, and a cnf. The error is set only when
 // there are candidates and none is valid.
 func (c *Client) verificationsBy(ctx context.Context, env *gobl.Envelope, addr, subject Address) ([]*head.SigningPayload, error) {
@@ -373,6 +374,9 @@ func (c *Client) verificationsBy(ctx context.Context, env *gobl.Envelope, addr, 
 		}
 		if aud, err := ParseAddress(p.Aud); err != nil || aud != subject {
 			continue
+		}
+		if p.Verifier != "" {
+			continue // a registration, not a verification
 		}
 		if candidates++; candidates > maxIssuerCandidates {
 			break

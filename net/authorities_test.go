@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/note"
@@ -1189,6 +1190,16 @@ func TestFindVerifications(t *testing.T) {
 		assert.True(t, exp.Equal(v.ExpiresAt))
 	})
 
+	t.Run("ignores a registration by the verifier", func(t *testing.T) {
+		env := newEnv(t)
+		require.NoError(t, env.Sign(verifKey, regCnf(), regExp(), regVerifier(),
+			head.WithIssuer(verifierAddr.String()),
+			head.WithAudience(subjectAddr.String())))
+		_, err := c.FindVerifications(ctx, env, verifierAddr, subjectAddr)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.Contains(t, err.Error(), "no signature from")
+	})
+
 	t.Run("ignores a verification for another address", func(t *testing.T) {
 		env := newEnv(t)
 		require.NoError(t, env.Sign(verifKey, regCnf(),
@@ -1321,6 +1332,36 @@ func TestVerifyEndorsementDirect(t *testing.T) {
 		assert.Empty(t, end.Authority)
 		assert.Equal(t, testVerifier, end.Verifier)
 		assert.Equal(t, testSubjectKey.JKT(), end.Key)
+	})
+
+	t.Run("accepts the old key's verification until the subject retires it", func(t *testing.T) {
+		newKey := dsig.NewES256Key()
+		env := newEnv(t)
+		require.NoError(t, Sign(env, newKey, subjectAddr, testRequester))
+		addVerification(t, env, subjectAddr) // binds testSubjectKey, the old key
+		keys := map[string][]byte{subjectAddr.KeyURL(newKey.ID()): jwkFromKey(t, newKey)}
+		direct := func() *Client {
+			return NewClient(WithAuthorities(), WithVerifiers(testVerifier), WithFetcher(&mapFetcher{data: keys}))
+		}
+
+		end, err := direct().VerifyEndorsement(ctx, env)
+		require.NoError(t, err)
+		assert.Equal(t, testSubjectKey.JKT(), end.Key)
+
+		retired := cal.TimestampOf(time.Now().Add(-time.Hour))
+		keys[subjectAddr.KeyURL(testSubjectKey.ID())] = publishedJWK(t, testSubjectKey, nil, &retired)
+		_, err = direct().VerifyEndorsement(ctx, env)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.Contains(t, err.Error(), "endorsement is for another key")
+	})
+
+	t.Run("does not count a registration as a verification", func(t *testing.T) {
+		env := newEnv(t)
+		require.NoError(t, env.Sign(authKey, regCnf(), regExp(), regVerifier(),
+			head.WithIssuer(authorityAddr.String()),
+			head.WithAudience(subjectAddr.String())))
+		_, err := client(WithAuthorities(), WithVerifiers(authorityAddr)).VerifyEndorsement(ctx, env)
+		require.ErrorIs(t, err, ErrNotEndorsed)
 	})
 
 	t.Run("accepts a trusted verifier with no authorities configured", func(t *testing.T) {

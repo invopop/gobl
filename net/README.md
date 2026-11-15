@@ -350,6 +350,9 @@ published key, its audience is the subject, it has a bound key, its signing
 time is no later than the present (allowing the clock skew of §6), and any
 expiry has not passed.
 
+A countersignature with a `verifier` is a registration. It never counts as a
+verification, even when its issuer is also trusted as a verifier.
+
 1. **Through an authority.** Consider each countersignature issued by an
    authority on the trust list. It counts if it is valid, its expiry is no
    more than 90 days after its signing time, its bound key confirmed the
@@ -361,7 +364,9 @@ expiry has not passed.
 2. **Directly.** Failing that, a valid countersignature by a verifier on the
    receiver's own trust list, whose bound key confirmed the envelope, makes
    the subject **verified**. With no authority following the subject's key
-   changes, that must be its current key.
+   changes, a bound key counts for as long as the subject publishes it as
+   valid: a subject changing key retires the old one once a verification
+   binds the new one.
 3. Otherwise the subject is **unverified**. Countersignatures from unknown
    authorities or verifiers, or for other addresses, are not evidence.
 
@@ -480,8 +485,9 @@ limit.
 
 Fetching a key or an identity means requesting an address a peer chose, which
 could be used to reach internal services. An implementation MUST refuse to
-fetch from hosts resolving to loopback, private, link-local, multicast, or
-unspecified addresses, unless an operator has deliberately configured
+fetch from hosts resolving to loopback, private, shared (RFC 6598),
+link-local, multicast, unspecified, or reserved addresses, or to NAT64
+prefixes that reach them, unless an operator has deliberately configured
 otherwise for testing or a local service.
 
 Fetched keys MAY be cached, by URL and only on success. A cache SHOULD be

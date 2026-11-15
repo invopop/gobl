@@ -79,8 +79,7 @@
 //
 // The default HTTPFetcher has a 10-second request timeout, a five-second dial
 // timeout, and the 1 MiB response limit of §9. Its dialer refuses hosts
-// resolving to loopback, private, link-local, multicast or unspecified
-// addresses, as §9 requires. A custom Fetcher takes that obligation on:
+// resolving to non-public addresses, as §9 requires. A custom Fetcher takes that obligation on:
 // implement equivalent protection, or confine it to tests and local services.
 //
 // Keys are cached by URL and only on success, with a maximum of 1,024

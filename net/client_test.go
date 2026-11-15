@@ -363,6 +363,18 @@ func TestIsPublicIP(t *testing.T) {
 		{"0.0.0.0", false},         // unspecified
 		{"::", false},              // unspecified
 		{"224.0.0.1", false},       // multicast
+		{"100.64.0.1", false},      // shared (RFC 6598)
+		{"100.127.255.254", false}, // shared (RFC 6598)
+		{"100.128.0.1", true},      // just past shared
+		{"0.1.2.3", false},         // this network
+		{"192.0.0.8", false},       // IETF protocol assignments
+		{"198.18.0.1", false},      // benchmarking
+		{"240.0.0.1", false},       // reserved
+		{"255.255.255.255", false}, // broadcast
+		{"fd00::1", false},         // unique local (RFC 4193)
+		{"64:ff9b::a00:1", false},  // NAT64 to 10.0.0.1
+		{"64:ff9b:1::1", false},    // local-use NAT64
+		{"::ffff:10.0.0.1", false}, // IPv4-mapped private
 	}
 	for _, tc := range tests {
 		t.Run(tc.ip, func(t *testing.T) {
