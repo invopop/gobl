@@ -8,7 +8,7 @@
 - `net`: **breaking**: `Client.VerifyAuthority` is replaced by `Client.VerifyEndorsement`. Authority countersignatures must name a verifier whose countersignature is valid, and there is no registered-only status; `Endorsement.Verified`, `ErrUnknownAuthority` and `ErrNotVerified` are removed in favour of `ErrNotEndorsed`.
 - `net`: `WithVerifiers` sets verifiers a client accepts directly, without an authority, when their `cnf` names the sender's key. There are none by default.
 - `net`: `Client.DeliveryKeys` returns the keys confirming a delivery, `Client.DeliveryConfirmations` adds each signature's signing time and `cnf`, and `Client.FindVerifications` reads the valid countersignatures of a verifier, for authorities tracking key lineage.
-- `net`: in a key change the current key's confirming signature names the new key with `cnf`, and authorities count only confirming signatures made within `MaxRequestAge` (5 minutes) of a registration request.
+- `net`: in a key change the current key's confirming signature names the new key with `cnf`, which `SignKeyChange` does, and authorities count only confirming signatures made within `MaxRequestAge` (5 minutes) of a registration request. A first registration takes one key, and a key bound before cannot start a lineage again.
 - `head`: `WithConfirmation` sets an RFC 7800 `cnf` claim, read from `SigningPayload.Confirmation`.
 - `dsig`: `JKT` returns a key's RFC 7638 thumbprint in base64url form.
 - `net`: only the first four signatures by one issuer are checked against its keys.

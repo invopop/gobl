@@ -212,3 +212,41 @@ func TestHTTPFetcherPost(t *testing.T) {
 		assert.True(t, errors.Is(err, ErrUnavailable))
 	})
 }
+
+func TestSignKeyChange(t *testing.T) {
+	ctx := context.Background()
+	subject := Address("supplier.example.com")
+	authority := Address("lookup.example.org")
+	current, next := dsig.NewES256Key(), dsig.NewES256Key()
+	c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+		subject.KeyURL(current.ID()): jwkFromKey(t, current),
+		subject.KeyURL(next.ID()):    jwkFromKey(t, next),
+	}}))
+
+	t.Run("the current key names the next", func(t *testing.T) {
+		env := buildSignedEnvelope(t, current, subject, authority)
+		env.Signatures = nil
+		require.NoError(t, SignKeyChange(env, current, next, subject, authority))
+		cs, err := c.DeliveryConfirmations(ctx, env, authority)
+		require.NoError(t, err)
+		require.Len(t, cs, 2)
+		for _, s := range cs {
+			if s.Key.JKT() == current.JKT() {
+				assert.Equal(t, next.JKT(), s.Successor)
+			} else {
+				assert.Empty(t, s.Successor)
+			}
+		}
+	})
+
+	t.Run("needs both keys", func(t *testing.T) {
+		env := buildSignedEnvelope(t, current, subject, authority)
+		require.ErrorIs(t, SignKeyChange(env, current, nil, subject, authority), ErrVerifyFailed)
+		require.ErrorIs(t, SignKeyChange(env, nil, next, subject, authority), ErrVerifyFailed)
+	})
+
+	t.Run("reports an invalid address", func(t *testing.T) {
+		env := buildSignedEnvelope(t, current, subject, authority)
+		require.Error(t, SignKeyChange(env, current, next, "not valid!", authority))
+	})
+}

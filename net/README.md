@@ -379,45 +379,54 @@ delivery MUST check that the delivery was confirmed with that same key.
 
 ### 7.3 Key lineage
 
-An authority keeps, for each address it registers, the subject's **lineage**:
-the keys it has bound in turn, by thumbprint, since the lineage last started.
-Each registration request is a delivery to the authority, and the keys that
-confirmed it decide what happens. Only confirming signatures made within the
-past 5 minutes, the maximum age of §6 (allowing its clock skew), count: a
-replayed earlier request does not show that anybody holds its keys now.
+A subject's key changes over time, and its verification should not have to.
+An authority follows the subject's key so that it can, while a new holder of
+the address cannot take over the old holder's identity.
 
-- **The current key, or any one key with no lineage yet.** A renewal or a
-  first registration: the authority binds that key, starting the lineage if
-  there is none.
-- **One key that is not the current one.** The subject has lost its key, or
-  the address has changed hands; the authority cannot tell which. It starts a
-  new lineage with that key.
-- **The current key and one not already in the lineage, with the current
-  key's signature naming the new one as its bound key.** A key change: the
-  authority adds the new key and binds it. The bound key shows that the
-  holder of the current key chose its successor, as in an ACME key change
-  (RFC 8555 §7.3.5); two signatures alone would not, since neither covers
-  the other's key.
-- **Two keys at a first registration.** The authority starts the lineage
-  with whichever key a verification countersignature binds, and then adds the
-  other, which that key's signature MUST name as its bound key. If neither or
-  both keys are bound by a verification, or the bound one does not name the
-  other, it MUST reject the request.
-- **Anything else** MUST be rejected.
+**What a subject does.** Each registration request is a delivery to the
+authority (§7.1, step 5), signed just before it is sent, in one of three
+ways:
+
+1. **Renew:** sign with the current key.
+2. **Change key:** sign with the current key and the new key, the current
+   key's signature naming the new one as its bound key. The verification
+   carries over.
+3. **Start over:** sign with a new key alone, after losing the current one.
+   This needs a verification for the new key (§7.1, step 2).
+
+A subject SHOULD change keys at renewal, when it is already making a request.
+
+**What the authority keeps.** For each address, the subject's **lineage**:
+the keys it has bound in turn, by thumbprint, since the lineage last started.
+The last is the current key. The lineage is the authority's own record:
+requests carry only the keys they are signed with, and envelopes only the
+current registration.
+
+**How the authority decides.** Only confirming signatures made within the
+past 5 minutes, the maximum age of §6 (allowing its clock skew), count: a
+replayed earlier request does not show that anybody holds its keys now. Then:
+
+- **The current key alone:** a renewal.
+- **One key not in the lineage:** a first registration, a lost key, or a new
+  holder of the address; the authority cannot tell which. A new lineage
+  starts with that key.
+- **The current key and one not in the lineage, the current key's signature
+  naming the other as its bound key:** a key change. The authority adds the
+  new key and binds it. The naming shows that the holder of the current key
+  chose its successor, as in an ACME key change (RFC 8555 §7.3.5); two
+  signatures alone would not, since neither covers the other's key.
+- **Anything else** MUST be rejected: among others, two keys at a first
+  registration, and a key bound before, which cannot become current again.
 
 An authority MUST NOT register a subject unless a verification
 countersignature binds a key in the current lineage. A key change therefore
-needs no new verification, and a new lineage needs one for its key: a subject
-that has lost its key asks its verifier again (§7.1, step 2), and a new holder
-of the address cannot be registered as the old one.
+needs no new verification, while a new lineage needs one for its key, so a
+new holder of the address cannot be registered as the old one.
 
 A verifier relied on directly (§7.2) has no lineage behind it, so a subject
-relying on one needs a new verification whenever it changes key.
-
-A lineage is the authority's own record, so a subject moving to another
-authority after changing key starts a new lineage there, and needs a
-verification for its current key. A subject SHOULD change keys at renewal,
-when it is already making a request.
+relying on one needs a new verification whenever it changes key. A subject
+moving to another authority starts a new lineage there, and needs a
+verification for its current key.
 
 ## 8. Endpoints
 

@@ -31,6 +31,21 @@ func Sign(env *gobl.Envelope, key *dsig.PrivateKey, from, to Address, opts ...he
 	return env.Sign(key, opts...)
 }
 
+// SignKeyChange signs env as from for to with current and next, the
+// current key's signature naming next as its bound key: a registration
+// request changing the subject's key from current to next (README.md
+// §7.3). Options are added to both signatures.
+func SignKeyChange(env *gobl.Envelope, current, next *dsig.PrivateKey, from, to Address, opts ...head.SignOption) error {
+	if current == nil || next == nil {
+		return fmt.Errorf("%w: a key change needs the current and the next key", ErrVerifyFailed)
+	}
+	named := append(opts[:len(opts):len(opts)], head.WithConfirmation(next.JKT()))
+	if err := Sign(env, current, from, to, named...); err != nil {
+		return err
+	}
+	return Sign(env, next, from, to, opts...)
+}
+
 // Send posts env to the inbox of its to address. A 202 response succeeds,
 // definitive 4xx responses return ErrInboxRejected, and transient failures
 // return ErrUnavailable.
