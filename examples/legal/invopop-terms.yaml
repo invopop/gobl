@@ -1,0 +1,174 @@
+$schema: "https://gobl.org/draft-0/legal/contract"
+uuid: "0198a981-8c00-7c21-b104-8f680640d163"
+agreement: "0198a981-8c00-7c21-b104-8f680640d163"
+kind: "terms"
+code: "INV-TOS"
+version: "web-capture-2026-08-13"
+language: "en"
+title: "Invopop Terms & Conditions — illustrative abridged representation"
+description: >-
+  A non-authoritative example derived from Invopop's published terms. It
+  demonstrates document structure and must not replace the live legal text.
+effect:
+  trigger: >-
+    The User accepts the applicable published version by accepting the terms
+    or continuing to use the Services or Platforms.
+parties:
+  - key: "invopop"
+    role: "service-provider"
+    defined_as: "Invopop"
+    entity:
+      name: "Invopop S.L."
+      tax_id:
+        country: "ES"
+        code: "B85905495"
+      emails:
+        - addr: "info@invopop.com"
+  - key: "user"
+    role: "user"
+    defined_as: "User"
+    description: >-
+      A natural or legal person who accesses, accepts, or uses the Invopop
+      website, application, platform, or services.
+definitions:
+  - $anchor: "definition-platform"
+    term: "Platform"
+    meaning: "The Invopop website, application, and associated service platform."
+  - $anchor: "definition-services"
+    term: "Services"
+    meaning: >-
+      Invopop's facilities for registering, managing, signing, and sending
+      business documents and performing related operations.
+  - $anchor: "definition-user"
+    term: "User"
+    meaning: >-
+      The person or entity accessing or using the Platform or Services.
+chapters:
+  - $anchor: "identity"
+    title: "Who we are"
+    sections:
+      - $anchor: "identity-provider"
+        title: "Service provider"
+        content: >-
+          Invopop is a trademark of Invopop S.L., a company registered in
+          Madrid. The published page supplies its registered particulars and
+          contact address and identifies it as the service provider.
+  - $anchor: "service"
+    title: "About the service"
+    sections:
+      - $anchor: "service-scope"
+        title: "Scope and acceptance"
+        content: >-
+          The terms govern access to and use of Invopop's websites, application,
+          platforms, and services together with applicable privacy and cookie
+          policies. A representative accepting for an entity asserts authority
+          and legal capacity to bind it.
+      - $anchor: "service-versions"
+        title: "Published versions"
+        content: >-
+          Invopop may publish changes to the services and terms. Continued use
+          after publication is treated as acceptance, and users are expected to
+          review the version then displayed.
+  - $anchor: "acceptable-use"
+    title: "Use of the service"
+    sections:
+      - $anchor: "user-responsibilities"
+        title: "User responsibilities"
+        content: >-
+          Users must provide accurate registration data, protect credentials,
+          use the services lawfully, and remain responsible for documents and
+          other content they upload, distribute, or send.
+      - $anchor: "prohibited-use"
+        title: "Prohibited use"
+        content: >-
+          Users must not misuse the services, infringe rights, distribute
+          harmful code, defeat security controls, reverse engineer protected
+          software, misrepresent identity, or conduct unauthorized automated
+          extraction.
+      - $anchor: "eligibility"
+        title: "Eligibility and security"
+        content: >-
+          The services are not intended for children under sixteen. Users must
+          keep login details confidential and report suspected compromise.
+  - $anchor: "general-terms"
+    title: "General contractual terms"
+    sections:
+      - $anchor: "severability"
+        title: "Severability"
+        content: >-
+          If a provision is invalid or unenforceable, the remaining provisions
+          continue to apply to the extent permitted by law.
+      - $anchor: "assignment-entire-agreement"
+        title: "Assignment, entire agreement, and waiver"
+        content: >-
+          The User may not assign the terms without prior written consent. The
+          terms supersede prior arrangements concerning use of the services,
+          and a failure to enforce them is not a waiver.
+  - $anchor: "electronic-signature"
+    title: "Electronic signature"
+    sections:
+      - $anchor: "signature-service"
+        title: "Document signing service"
+        content: >-
+          The Platform supports signing and issuing documents using a user's
+          own electronic signature or, where authorized, an application
+          certificate operating on the user's behalf.
+      - $anchor: "signature-responsibility"
+        title: "Responsibility for issued documents"
+        content: >-
+          Users remain responsible for the validity, accuracy, preservation,
+          and legal compliance of documents issued through the service and for
+          the underlying transactions.
+  - $anchor: "intellectual-property"
+    title: "Intellectual and industrial property"
+    sections:
+      - $anchor: "platform-rights"
+        title: "Rights in the Platform"
+        content: >-
+          Invopop or its licensors retain rights in the Platform, software,
+          branding, designs, databases, and content. Use of the services grants
+          only the limited rights expressly provided by the terms.
+  - $anchor: "third-party-links"
+    title: "Third-party links"
+    sections:
+      - $anchor: "external-sites"
+        title: "External sites"
+        content: >-
+          Third-party sites linked from Invopop are outside Invopop's control
+          and operate under their own terms and policies.
+  - $anchor: "termination"
+    title: "Termination"
+    sections:
+      - $anchor: "termination-right"
+        title: "Termination by Invopop"
+        content: >-
+          Invopop may terminate the contractual relationship or an account and
+          may delete or block access to uploaded user content after notice as
+          described in the published terms.
+  - $anchor: "contact"
+    title: "Contact"
+    sections:
+      - $anchor: "contact-email"
+        title: "Questions and complaints"
+        content: >-
+          Questions, complaints, and suggestions concerning the services may
+          be sent to info@invopop.com.
+law:
+  country: "ES"
+  jurisdiction: "Spain"
+disputes:
+  method: "court"
+  forum: "Courts having jurisdiction under applicable Spanish law"
+execution:
+  method: "online-acceptance"
+  statement: >-
+    Acceptance is evidenced by the applicable registration, acceptance, or
+    continued-use event and the exact published version presented to the User.
+  requirements:
+    - party: "user"
+      intent: "execute"
+resources:
+  - key: "published-source"
+    title: "Invopop legal documents — live published source"
+    url: "https://www.invopop.com/legal-documents#terms-and-conditions"
+    mime: "text/html"

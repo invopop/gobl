@@ -1,0 +1,432 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "34fe86a8052549be2512a43d88672826a574282144fb854dfac583208535721e"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/legal/contract",
+		"uuid": "0198b001-1000-7a21-9b8a-48ea44647387",
+		"agreement": "0198b001-1000-7a21-9b8a-48ea44647387",
+		"kind": "agreement",
+		"code": "SSA-2026-0042",
+		"version": "1.0",
+		"language": "en",
+		"title": "SaaS Subscription Agreement",
+		"sub_title": "Nimbus Ledger Cloud",
+		"description": "Fictional negotiated business-to-business agreement used to demonstrate the experimental GOBL legal architecture. It is not legal advice.",
+		"issue_date": "2026-08-13",
+		"effect": {
+			"start": "2026-09-01",
+			"end": "2027-08-31"
+		},
+		"parties": [
+			{
+				"key": "provider",
+				"role": "service-provider",
+				"defined_as": "Provider",
+				"entity": {
+					"name": "Nimbus Ledger Software Ltd",
+					"addresses": [
+						{
+							"num": "24",
+							"street": "Cloud Street",
+							"locality": "London",
+							"code": "EC2A 1AA",
+							"country": "GB"
+						}
+					],
+					"emails": [
+						{
+							"label": "Legal notices",
+							"addr": "legal@nimbus.example"
+						}
+					]
+				},
+				"signatories": [
+					{
+						"key": "provider-signatory",
+						"person": {
+							"name": {
+								"given": "Nora",
+								"surname": "Singh"
+							},
+							"role": "Chief Operating Officer"
+						},
+						"capacity": "Chief Operating Officer"
+					}
+				]
+			},
+			{
+				"key": "customer",
+				"role": "customer",
+				"defined_as": "Customer",
+				"entity": {
+					"name": "Acme Robotics Europe Ltd",
+					"addresses": [
+						{
+							"num": "8",
+							"street": "Foundry Way",
+							"locality": "Manchester",
+							"code": "M1 2AB",
+							"country": "GB"
+						}
+					],
+					"emails": [
+						{
+							"label": "Legal notices",
+							"addr": "legal@acme-robotics.example"
+						}
+					]
+				},
+				"signatories": [
+					{
+						"key": "customer-signatory",
+						"person": {
+							"name": {
+								"given": "Amir",
+								"surname": "Taylor"
+							},
+							"role": "Finance Director"
+						},
+						"capacity": "Finance Director"
+					}
+				]
+			}
+		],
+		"recitals": [
+			{
+				"$anchor": "recital-platform",
+				"content": "Provider operates a hosted financial document automation platform known as Nimbus Ledger Cloud."
+			},
+			{
+				"$anchor": "recital-customer",
+				"content": "Customer wishes to subscribe to the Platform for its internal business operations on the terms of this Agreement."
+			}
+		],
+		"definitions": [
+			{
+				"$anchor": "definition-authorized-user",
+				"term": "Authorized User",
+				"meaning": "An employee or contractor whom Customer permits to use the Platform."
+			},
+			{
+				"$anchor": "definition-availability",
+				"term": "Availability",
+				"meaning": "The percentage of minutes in a calendar month during which the production Platform is capable of receiving and processing requests, excluding Excluded Downtime."
+			},
+			{
+				"$anchor": "definition-customer-data",
+				"term": "Customer Data",
+				"meaning": "Data submitted to the Platform by or for Customer, including documents generated or processed through the Platform."
+			},
+			{
+				"$anchor": "definition-excluded-downtime",
+				"term": "Excluded Downtime",
+				"meaning": "Unavailability caused by announced maintenance within the maintenance allowance, Customer systems or instructions, force majeure, or suspension permitted by this Agreement."
+			},
+			{
+				"$anchor": "definition-platform",
+				"term": "Platform",
+				"meaning": "The hosted Nimbus Ledger Cloud service described in this Agreement."
+			},
+			{
+				"$anchor": "definition-subscription-fee",
+				"term": "Subscription Fee",
+				"meaning": "EUR 48,000 exclusive of VAT for the Initial Term."
+			}
+		],
+		"chapters": [
+			{
+				"$anchor": "subscription",
+				"idx": 1,
+				"title": "Subscription and permitted use",
+				"sections": [
+					{
+						"$anchor": "access-right",
+						"idx": 1,
+						"title": "Access right",
+						"content": "During the Term and subject to payment, Provider grants Customer a non-exclusive, non-transferable right for up to 100 Authorized Users to access and use the Platform for Customer's internal operations."
+					},
+					{
+						"$anchor": "acceptable-use",
+						"idx": 2,
+						"title": "Restrictions",
+						"content": "Customer must not resell the Platform, allow unauthorized access, interfere with its security, introduce malicious code, or reverse engineer it except to the extent that applicable law does not permit that restriction."
+					},
+					{
+						"$anchor": "customer-administration",
+						"idx": 3,
+						"title": "Customer administration",
+						"content": "Customer is responsible for its Authorized Users, account credentials, lawful instructions, and the accuracy and legality of Customer Data."
+					}
+				]
+			},
+			{
+				"$anchor": "fees-payment",
+				"idx": 2,
+				"title": "Fees, invoicing, and payment",
+				"sections": [
+					{
+						"$anchor": "subscription-fee",
+						"idx": 1,
+						"title": "Subscription Fee",
+						"content": "Customer shall pay Provider EUR 48,000 exclusive of VAT for the twelve-month Initial Term. The fee includes 100 Authorized Users and processing of up to 1,000,000 documents during that term."
+					},
+					{
+						"$anchor": "invoicing",
+						"idx": 2,
+						"title": "Invoicing",
+						"content": "Provider shall invoice EUR 24,000 on the Effective Date and EUR 24,000 six months afterward. Valid invoices are payable by bank transfer within 30 calendar days of the invoice date."
+					},
+					{
+						"$anchor": "overage",
+						"idx": 3,
+						"title": "Usage above allowance",
+						"content": "Documents processed above the included allowance will be charged at EUR 0.04 per document and invoiced monthly in arrears."
+					},
+					{
+						"$anchor": "late-payment",
+						"idx": 4,
+						"title": "Late payment",
+						"content": "Undisputed overdue amounts accrue interest at four percentage points above the Bank of England base rate, subject to any mandatory limit. Provider may suspend access after giving ten business days' written notice if an undisputed amount remains unpaid."
+					},
+					{
+						"$anchor": "invoice-disputes",
+						"idx": 5,
+						"title": "Invoice disputes",
+						"content": "Customer must notify Provider of a good-faith invoice dispute within fifteen days, explain the basis, and timely pay all undisputed amounts."
+					}
+				]
+			},
+			{
+				"$anchor": "service-levels",
+				"idx": 3,
+				"title": "Schedule 1 — Service levels and support",
+				"sections": [
+					{
+						"$anchor": "availability-target",
+						"idx": 1,
+						"title": "Monthly availability",
+						"content": "Provider shall make the production Platform available for 99.9% of each calendar month. Provider may perform up to four hours of announced maintenance per month after giving at least 48 hours' notice."
+					},
+					{
+						"$anchor": "availability-measurement",
+						"idx": 2,
+						"title": "Measurement",
+						"content": "Availability equals total monthly minutes minus unavailable minutes, divided by total monthly minutes, multiplied by 100. Excluded Downtime is omitted from both unavailable and total monthly minutes."
+					},
+					{
+						"$anchor": "service-credits",
+						"idx": 3,
+						"title": "Service credits",
+						"content": "If monthly Availability is below 99.9% but at least 99.0%, the credit is 5% of that month's apportioned Subscription Fee; below 99.0% but at least 95.0%, 10%; and below 95.0%, 25%. Customer must request a credit within 30 days. Credits are Customer's sole monetary remedy for failure to meet the availability target, except for wilful misconduct or where that limitation is prohibited by law."
+					},
+					{
+						"$anchor": "support-hours",
+						"idx": 4,
+						"title": "Support channel and hours",
+						"content": "Provider will receive support requests through its support portal. Severity 1 incidents are covered at all times; other incidents are covered 09:00–17:00 UK time on UK business days."
+					},
+					{
+						"$anchor": "incident-response",
+						"idx": 5,
+						"title": "Incident response targets",
+						"content": "For Severity 1 incidents, Provider targets an initial response within one hour and restoration or a workaround within four hours. Severity 2 targets are four business hours and two business days. Severity 3 targets are one business day and five business days. Restoration and workaround times are objectives rather than guarantees."
+					},
+					{
+						"$anchor": "sla-reporting",
+						"idx": 6,
+						"title": "Reporting and chronic failure",
+						"content": "Provider will supply monthly availability data on request. Customer may terminate for cause if Availability is below 99.0% in three months during any rolling six-month period."
+					}
+				]
+			},
+			{
+				"$anchor": "security-data",
+				"idx": 4,
+				"title": "Security and data protection",
+				"sections": [
+					{
+						"$anchor": "security-measures",
+						"idx": 1,
+						"title": "Security measures",
+						"content": "Provider shall maintain appropriate technical and organizational measures designed to protect Customer Data against unauthorized access, alteration, disclosure, or destruction."
+					},
+					{
+						"$anchor": "security-incident",
+						"idx": 2,
+						"title": "Security incidents",
+						"content": "Provider shall notify Customer without undue delay after confirming a security incident affecting Customer Data and shall provide reasonably available information and remediation cooperation."
+					},
+					{
+						"$anchor": "data-processing",
+						"idx": 3,
+						"title": "Personal data",
+						"content": "Each party shall comply with applicable data protection law. Where Provider processes personal data for Customer, the parties' signed data processing addendum applies and prevails for that processing."
+					},
+					{
+						"$anchor": "data-return",
+						"idx": 4,
+						"title": "Export and deletion",
+						"content": "During the Term Customer may export Customer Data using standard Platform functions. For 30 days after termination Provider will make a final standard export available, then delete Customer Data within 60 additional days unless retention is required by law."
+					}
+				]
+			},
+			{
+				"$anchor": "ip-confidentiality",
+				"idx": 5,
+				"title": "Intellectual property and confidentiality",
+				"sections": [
+					{
+						"$anchor": "ownership",
+						"idx": 1,
+						"title": "Ownership",
+						"content": "Customer retains rights in Customer Data. Provider and its licensors retain rights in the Platform, documentation, and service improvements. No ownership transfers except as expressly stated."
+					},
+					{
+						"$anchor": "confidentiality",
+						"idx": 2,
+						"title": "Confidential information",
+						"content": "Each recipient shall use the other's confidential information only to perform this Agreement, protect it with reasonable care, and disclose it only to personnel and advisers with a need to know and equivalent duties. These duties survive for five years, and indefinitely for trade secrets while protected as such by law."
+					}
+				]
+			},
+			{
+				"$anchor": "warranties",
+				"idx": 6,
+				"title": "Warranties",
+				"sections": [
+					{
+						"$anchor": "provider-warranty",
+						"idx": 1,
+						"title": "Provider warranty",
+						"content": "Provider warrants that the Platform will materially conform to its documentation and that services will be performed with reasonable skill and care. Provider will use reasonable efforts to correct a verified breach reported during the Term."
+					},
+					{
+						"$anchor": "disclaimer",
+						"idx": 2,
+						"title": "Disclaimer",
+						"content": "Except for express warranties and rights that cannot be excluded, the Platform is supplied without implied warranties and Provider does not warrant uninterrupted or error-free operation or Customer's achievement of any particular commercial or regulatory outcome."
+					}
+				]
+			},
+			{
+				"$anchor": "liability",
+				"idx": 7,
+				"title": "Liability",
+				"sections": [
+					{
+						"$anchor": "excluded-loss",
+						"idx": 1,
+						"title": "Excluded loss",
+						"content": "Neither party is liable for indirect or consequential loss, or loss of profit, revenue, goodwill, or anticipated savings, except where such an exclusion is prohibited by law."
+					},
+					{
+						"$anchor": "liability-cap",
+						"idx": 2,
+						"title": "General cap",
+						"content": "Each party's aggregate liability arising from this Agreement is capped at the fees paid or payable in the twelve months preceding the event giving rise to liability."
+					},
+					{
+						"$anchor": "cap-exceptions",
+						"idx": 3,
+						"title": "Exceptions",
+						"content": "The exclusions and cap do not apply to payment obligations, fraud, fraudulent misrepresentation, death or personal injury caused by negligence, wilful misconduct, infringement indemnities, or liability that applicable law does not permit a party to limit."
+					}
+				]
+			},
+			{
+				"$anchor": "term-termination",
+				"idx": 8,
+				"title": "Term and termination",
+				"sections": [
+					{
+						"$anchor": "term-renewal",
+						"idx": 1,
+						"title": "Initial Term and renewal",
+						"content": "The Agreement begins on 1 September 2026 and continues for twelve months. It then renews for successive twelve-month terms unless either party gives at least 60 days' written notice before the current term ends."
+					},
+					{
+						"$anchor": "termination-cause",
+						"idx": 2,
+						"title": "Termination for cause",
+						"content": "A party may terminate for a material breach not cured within 30 days after written notice, immediately for an incurable material breach, or if the other party enters an applicable insolvency process. Customer's chronic-SLA termination right in Schedule 1 also applies."
+					},
+					{
+						"$anchor": "termination-effect",
+						"idx": 3,
+						"title": "Effect of termination",
+						"content": "Accrued rights and payment duties remain due. Access ends on termination, subject to the data export period. Provisions intended by their nature to survive, including confidentiality, ownership, liability, and law, continue to apply."
+					}
+				]
+			},
+			{
+				"$anchor": "general",
+				"idx": 9,
+				"title": "General",
+				"sections": [
+					{
+						"$anchor": "notices",
+						"idx": 1,
+						"title": "Notices",
+						"content": "Legal notices must be in writing and delivered by tracked post or email to the addresses stated for the parties. Email notices are received on the next business day absent a delivery-failure message."
+					},
+					{
+						"$anchor": "assignment",
+						"idx": 2,
+						"title": "Assignment",
+						"content": "Neither party may assign this Agreement without the other's written consent, not to be unreasonably withheld, except to an affiliate or in connection with a merger or sale of substantially all relevant assets."
+					},
+					{
+						"$anchor": "force-majeure",
+						"idx": 3,
+						"title": "Force majeure",
+						"content": "Neither party is liable for delay caused by events beyond its reasonable control, excluding Customer's obligation to pay amounts already due."
+					},
+					{
+						"$anchor": "entire-agreement",
+						"idx": 4,
+						"title": "Entire agreement and order of precedence",
+						"content": "This Agreement and its schedules constitute the entire agreement on their subject. Negotiated main-body terms prevail over Schedule 1, and Schedule 1 prevails over documentation, unless expressly stated otherwise."
+					},
+					{
+						"$anchor": "counterparts",
+						"idx": 5,
+						"title": "Counterparts and electronic signature",
+						"content": "This Agreement may be executed in counterparts and by electronic signature, each counterpart forming part of the same instrument."
+					}
+				]
+			}
+		],
+		"law": {
+			"country": "GB",
+			"jurisdiction": "England and Wales"
+		},
+		"disputes": {
+			"method": "court",
+			"forum": "Courts of England and Wales",
+			"language": "en"
+		},
+		"execution": {
+			"method": "electronic-signature",
+			"counterparts": true,
+			"statement": "Each party executes this Agreement through its named representative, who asserts authority to bind that party.",
+			"requirements": [
+				{
+					"party": "provider",
+					"signatory": "provider-signatory",
+					"intent": "execute"
+				},
+				{
+					"party": "customer",
+					"signatory": "customer-signatory",
+					"intent": "execute"
+				}
+			]
+		}
+	}
+}

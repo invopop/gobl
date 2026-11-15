@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/legal/definition",
+  "$ref": "#/$defs/legal.Definition",
+  "$defs": {
+    "legal.Definition": {
+      "properties": {
+        "$anchor": {
+          "type": "string",
+          "title": "Anchor"
+        },
+        "term": {
+          "type": "string",
+          "title": "Term"
+        },
+        "meaning": {
+          "type": "string",
+          "title": "Meaning"
+        }
+      },
+      "type": "object",
+      "required": [
+        "term",
+        "meaning"
+      ],
+      "description": "Definition binds a term used in the contract to its authoritative meaning."
+    }
+  }
+}

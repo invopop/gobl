@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/legal/party",
+  "$ref": "#/$defs/legal.Party",
+  "$defs": {
+    "legal.Party": {
+      "properties": {
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key"
+        },
+        "role": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Role",
+          "description": "Role is a machine-readable description such as buyer, seller, employer,\nlicensor, or processor. Contract-specific roles are permitted."
+        },
+        "defined_as": {
+          "type": "string",
+          "title": "Defined As",
+          "description": "DefinedAs is the human label used for the party in the contract text."
+        },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "description": "Description identifies an open class of parties in standard terms or an\noffer before a specific legal person has adhered to it."
+        },
+        "entity": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Entity",
+          "description": "Entity contains the party's legal identity and contact details when the\nparty is already known. An open role may instead use Description and be\nbound to a concrete entity by a later Assent."
+        },
+        "signatories": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/legal/signatory"
+          },
+          "type": "array",
+          "title": "Signatories",
+          "description": "Signatories are people authorised or expected to act for this party."
+        }
+      },
+      "type": "object",
+      "required": [
+        "key",
+        "role",
+        "defined_as"
+      ],
+      "description": "Party identifies a legal person and the role it has in an agreement."
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/legal/signatory",
+  "$ref": "#/$defs/legal.Signatory",
+  "$defs": {
+    "legal.Signatory": {
+      "properties": {
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key"
+        },
+        "person": {
+          "$ref": "https://gobl.org/draft-0/org/person",
+          "title": "Person"
+        },
+        "capacity": {
+          "type": "string",
+          "title": "Capacity"
+        },
+        "authority": {
+          "$ref": "https://gobl.org/draft-0/legal/reference",
+          "title": "Authority Evidence"
+        }
+      },
+      "type": "object",
+      "required": [
+        "key",
+        "person"
+      ],
+      "description": "Signatory describes a human who may provide assent on behalf of a party."
+    }
+  }
+}

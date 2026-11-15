@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/legal/reference",
+  "$ref": "#/$defs/legal.Reference",
+  "$defs": {
+    "legal.Reference": {
+      "properties": {
+        "relation": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Relation"
+        },
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID"
+        },
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code"
+        },
+        "title": {
+          "type": "string",
+          "title": "Title"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "title": "URL"
+        },
+        "digest": {
+          "$ref": "https://gobl.org/draft-0/dsig/digest",
+          "title": "Digest"
+        }
+      },
+      "type": "object",
+      "required": [
+        "relation"
+      ],
+      "description": "Reference identifies another immutable legal artifact."
+    }
+  }
+}

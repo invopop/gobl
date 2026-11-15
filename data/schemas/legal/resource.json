@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/legal/resource",
+  "$ref": "#/$defs/legal.Resource",
+  "$defs": {
+    "legal.Resource": {
+      "properties": {
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key"
+        },
+        "title": {
+          "type": "string",
+          "title": "Title"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "title": "URL"
+        },
+        "mime": {
+          "type": "string",
+          "format": "mime",
+          "title": "MIME Type"
+        },
+        "digest": {
+          "$ref": "https://gobl.org/draft-0/dsig/digest",
+          "title": "Digest"
+        },
+        "incorporated": {
+          "type": "boolean",
+          "title": "Incorporated"
+        }
+      },
+      "type": "object",
+      "required": [
+        "key",
+        "title",
+        "url"
+      ],
+      "description": "Resource is supporting or incorporated material."
+    }
+  }
+}
