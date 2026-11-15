@@ -598,6 +598,36 @@ a caller that does not retry can lose a document to a temporary failure.
   public. Operators should limit how long they keep request logs, which can
   reveal business relationships.
 
+### 12.1 Bindings
+
+A valid signature only says what it binds. Each fact a participant relies on
+is tied to the document, the addresses, the subject's key, and the present by
+the checks below. A check with any of these missing lets a valid signature be
+reused for something it never said, so a new fact or claim needs its own row,
+with each column filled or a reason it need not be.
+
+| Fact | Evidence | Document | Addresses | Key | Time |
+|---|---|---|---|---|---|
+| `from` sent this envelope to `to` (§5.2) | The confirming signature | UUID and digest, and the digest matches the document | Issuer is `from`, audience is `to`, and `to` is the receiver | Published by `from` | Signing time not in the future; key valid at receipt |
+| The party at `/who` is what the subject presents to this requester (§5.1) | The confirming signature on the response | As above | Issuer is the address queried, audience is the requester | Published by the subject | As above |
+| A verifier vouches for the party at this address (§7) | A verification countersignature | As above | Audience is the subject | Bound key confirmed the party envelope | Signing time not in the future; expiry, if any, not passed |
+| An authority registered the subject (§7.2) | A registration countersignature | As above | Audience is the subject; the named verifier's countersignature has the same audience | Bound key confirmed the party envelope | Signing time not in the future; expiry present, not passed, at most 90 days later |
+| The verified subject sent this delivery (§7.2) | The delivery's confirming signature | As in the first row | `from` is the subject | The bound key confirmed the delivery | As in the first row |
+| A requester asking `/who` is who it says (§6) | A request token | None | Issuer is the requester, audience is the address queried | Published by the requester | Lifetime and age limits of §6 |
+
+Whose signatures count is never read from the envelope: only the trust lists
+decide which authorities and verifiers are evidence, and live and sandbox
+lists are never combined (§7).
+
+Nothing binds these, so they are never evidence:
+
+- party endpoints (§5.1), header fields other than `from` and `to`, and
+  `from` and `to` without a confirming signature;
+- the order of signatures (§5.1);
+- the parties named inside a document, which receivers reconcile with the
+  sender's verified party (§12, document content); and
+- how thorough a verification was, beyond the verifier's address (§12).
+
 ## 13. References
 
 - RFC 2119 and RFC 8174: requirement keywords
