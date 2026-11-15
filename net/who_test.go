@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"strings"
 	"testing"
 	"time"
 
@@ -80,6 +81,19 @@ func TestWho(t *testing.T) {
 		party, ok := env.Extract().(*org.Party)
 		require.True(t, ok)
 		assert.Equal(t, "Test Subject", party.Name)
+	})
+
+	t.Run("rejects party details changed after signing", func(t *testing.T) {
+		raw := buildPartyEnvelope(t, subjKey, subject, nil, "", "")
+		changed := strings.Replace(string(raw), `"Test Subject"`, `"Somebody Else"`, 1)
+		require.NotEqual(t, string(raw), changed)
+		c := NewClient(WithIdentity(testRequester, testRequesterKey), WithFetcher(&mapFetcher{data: map[string][]byte{
+			subject.WhoURL():             []byte(changed),
+			subject.KeyURL(subjKey.ID()): jwkOf(subjKey),
+		}}))
+		_, err := c.Who(ctx, subject)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.Contains(t, err.Error(), "digest does not match")
 	})
 
 	t.Run("canonicalizes a non-canonical address", func(t *testing.T) {

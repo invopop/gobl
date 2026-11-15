@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 
@@ -42,6 +43,19 @@ func partyEnvelopeFor(t *testing.T, key *dsig.PrivateKey, addr Address, opts ...
 	env = new(gobl.Envelope)
 	require.NoError(t, json.Unmarshal(data, env))
 	return env
+}
+
+// tamper returns a copy of env with the first match of was replaced by
+// is in its JSON, leaving its header and signatures as they were.
+func tamper(t *testing.T, env *gobl.Envelope, was, is string) *gobl.Envelope {
+	t.Helper()
+	data, err := json.Marshal(env)
+	require.NoError(t, err)
+	changed := strings.Replace(string(data), was, is, 1)
+	require.NotEqual(t, string(data), changed)
+	out := new(gobl.Envelope)
+	require.NoError(t, json.Unmarshal([]byte(changed), out))
+	return out
 }
 
 // buildTestEnvelope envelopes a plain document (not a party), signed
@@ -458,6 +472,25 @@ func TestVerifyDelivery(t *testing.T) {
 	t.Run("not signed", func(t *testing.T) {
 		c := NewClient()
 		require.ErrorIs(t, c.VerifyDelivery(ctx, new(gobl.Envelope), inbox), ErrVerifyFailed)
+	})
+
+	t.Run("rejects a document changed after signing", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := tamper(t, buildDelivery(t, key, sender, inbox), "test message content", "changed")
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		err := c.VerifyDelivery(ctx, env, inbox)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.Contains(t, err.Error(), "digest does not match")
+	})
+
+	t.Run("rejects an envelope without a digest", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := buildDelivery(t, key, sender, inbox)
+		env.Head.Digest = nil
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		err := c.VerifyDelivery(ctx, env, inbox)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.Contains(t, err.Error(), "no digest")
 	})
 
 	t.Run("rejects an envelope with too many signatures", func(t *testing.T) {

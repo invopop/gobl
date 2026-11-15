@@ -1200,6 +1200,17 @@ func TestFindVerifications(t *testing.T) {
 		assert.Contains(t, err.Error(), "no signature from")
 	})
 
+	t.Run("rejects party details changed after signing", func(t *testing.T) {
+		env := newEnv(t)
+		require.NoError(t, env.Sign(verifKey, regCnf(),
+			head.WithIssuer(verifierAddr.String()),
+			head.WithAudience(subjectAddr.String())))
+		env = tamper(t, env, `"Subject"`, `"Somebody Else"`)
+		_, err := c.FindVerifications(ctx, env, verifierAddr, subjectAddr)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.Contains(t, err.Error(), "digest does not match")
+	})
+
 	t.Run("ignores a verification for another address", func(t *testing.T) {
 		env := newEnv(t)
 		require.NoError(t, env.Sign(verifKey, regCnf(),
@@ -1362,6 +1373,15 @@ func TestVerifyEndorsementDirect(t *testing.T) {
 			head.WithAudience(subjectAddr.String())))
 		_, err := client(WithAuthorities(), WithVerifiers(authorityAddr)).VerifyEndorsement(ctx, env)
 		require.ErrorIs(t, err, ErrNotEndorsed)
+	})
+
+	t.Run("rejects party details changed after verification", func(t *testing.T) {
+		env := newEnv(t)
+		addVerification(t, env, subjectAddr)
+		env = tamper(t, env, "party doc", "other details")
+		_, err := client(WithVerifiers(testVerifier)).VerifyEndorsement(ctx, env)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.Contains(t, err.Error(), "digest does not match")
 	})
 
 	t.Run("accepts a trusted verifier with no authorities configured", func(t *testing.T) {

@@ -134,6 +134,10 @@ document UUID and digest, plus these fields, called claims:
 | `cnf` | bound key | The key a signature applies to, as RFC 7800 `{"jkt": "<thumbprint>"}`: the key's RFC 7638 SHA-256 thumbprint, base64url-encoded. Required on countersignatures, where it is the subject's key, and on the current key's signature in a key change (§7.3), where it is the new key. |
 | `verifier` | verifier | The verifier's address. Required on registration countersignatures. |
 
+A signature covers the document only through its digest, so a participant
+MUST reject an envelope whose document does not match its digest before
+relying on any of its signatures.
+
 Every GOBL Net envelope MUST carry `from` and `to` header fields holding
 `gobl:` addresses, and a valid signature whose issuer is `from` and whose
 audience is `to`: the signature that **confirms** the envelope. The fields

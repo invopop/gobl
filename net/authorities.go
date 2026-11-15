@@ -66,6 +66,7 @@ type Endorsement struct {
 
 // VerifyEndorsement returns the endorsement of the subject of a party
 // envelope, the address in its header's from field (README.md §7.2).
+// The envelope's document must match its digest.
 //
 // It first looks for a countersignature from a trusted authority, bound to
 // the subject with aud, with an iat no later than now, an exp that has not
@@ -92,6 +93,9 @@ func (c *Client) VerifyEndorsement(ctx context.Context, env *gobl.Envelope) (*En
 	if len(env.Signatures) > maxEnvelopeSignatures {
 		return nil, fmt.Errorf("%w: envelope carries %d signatures (max %d)",
 			ErrVerifyFailed, len(env.Signatures), maxEnvelopeSignatures)
+	}
+	if err := checkDigest(env); err != nil {
+		return nil, err
 	}
 	subject, to, err := routing(env)
 	if err != nil {
@@ -316,7 +320,8 @@ type Verification struct {
 // FindVerifications returns the valid countersignatures by verifier for
 // subject: each with an iat no later than now (allowing clock skew), no
 // exp that has passed, and a cnf naming the subject key the verifier saw.
-// It returns an error when there are none.
+// It returns an error when there are none, or when the envelope's document
+// does not match its digest.
 func (c *Client) FindVerifications(ctx context.Context, env *gobl.Envelope, verifier, subject Address) ([]*Verification, error) {
 	if env == nil || env.Head == nil || !env.Signed() {
 		return nil, fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
@@ -324,6 +329,9 @@ func (c *Client) FindVerifications(ctx context.Context, env *gobl.Envelope, veri
 	if len(env.Signatures) > maxEnvelopeSignatures {
 		return nil, fmt.Errorf("%w: envelope carries %d signatures (max %d)",
 			ErrVerifyFailed, len(env.Signatures), maxEnvelopeSignatures)
+	}
+	if err := checkDigest(env); err != nil {
+		return nil, err
 	}
 	verifier, err := ParseAddress(string(verifier))
 	if err != nil {

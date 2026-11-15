@@ -45,7 +45,7 @@ func routingAddress(field string, uri cbc.URI) (Address, error) {
 }
 
 // VerifyDelivery checks that env is a GOBL Net envelope for self: its
-// header's from and to fields must hold gobl: addresses, to must be self,
+// document must match its digest, its header's from and to fields must hold gobl: addresses, to must be self,
 // and a valid signature must carry from as its iss and to as its aud, with
 // an iat no later than now and a key that is still valid. The from address
 // is then the sender.
@@ -90,6 +90,9 @@ type ConfirmingSignature struct {
 func (c *Client) DeliveryConfirmations(ctx context.Context, env *gobl.Envelope, self Address) ([]*ConfirmingSignature, error) {
 	if env == nil || env.Head == nil || !env.Signed() {
 		return nil, fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
+	}
+	if err := checkDigest(env); err != nil {
+		return nil, err
 	}
 	want, err := ParseAddress(string(self))
 	if err != nil {
@@ -216,6 +219,18 @@ func hasKey(keys []*dsig.PublicKey, jkt string) bool {
 // issuer are checked against its keys: each can cost a key fetch from
 // that issuer.
 const maxIssuerCandidates = 4
+
+// checkDigest fails unless env's document matches the digest in its
+// header, which is what signatures cover.
+func checkDigest(env *gobl.Envelope) error {
+	if env.Head.Digest == nil {
+		return fmt.Errorf("%w: envelope has no digest", ErrVerifyFailed)
+	}
+	if d, err := env.Digest(); err != nil || env.Head.Digest.Equals(d) != nil {
+		return fmt.Errorf("%w: envelope digest does not match its document", ErrVerifyFailed)
+	}
+	return nil
+}
 
 // checkIssued reports whether a signature carries an iat no later than
 // now, allowing clock skew.
