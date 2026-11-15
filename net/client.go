@@ -230,6 +230,7 @@ func copyHeader(dst, src http.Header) {
 type Client struct {
 	fetcher     Fetcher
 	authorities []Address
+	verifiers   []Address
 	identity    *identity
 
 	keyTTL   time.Duration
@@ -267,6 +268,14 @@ func WithAuthorities(addrs ...Address) ClientOption {
 	}
 }
 
+// WithVerifiers sets verifiers the client accepts directly, without an
+// authority naming them (README.md §7.2). There are none by default.
+func WithVerifiers(addrs ...Address) ClientOption {
+	return func(c *Client) {
+		c.verifiers = append([]Address{}, addrs...)
+	}
+}
+
 // WithKeyCacheTTL overrides how long fetched public keys are reused
 // before being fetched again. Zero disables the cache; the default is
 // five minutes.
@@ -276,7 +285,8 @@ func WithKeyCacheTTL(d time.Duration) ClientOption {
 	}
 }
 
-// WithSandbox replaces the client's trust list with SandboxAuthorities.
+// WithSandbox replaces the client's trusted authorities with
+// SandboxAuthorities.
 // If combined with WithAuthorities, the last option wins.
 func WithSandbox() ClientOption {
 	return func(c *Client) {

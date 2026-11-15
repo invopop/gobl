@@ -12,6 +12,7 @@ import (
 )
 
 // Authorities is the default list of trusted registration authorities.
+// There is no default list of trusted verifiers; see WithVerifiers.
 var Authorities = []Address{
 	"lookup.gobl.org",
 }
@@ -22,7 +23,7 @@ var SandboxAuthorities = []Address{
 	"lookup.sandbox.gobl.org",
 }
 
-// maxEnvelopeSignatures bounds how many signatures VerifyAuthority is
+// maxEnvelopeSignatures bounds how many signatures VerifyEndorsement is
 // willing to examine: each candidate can cost a network key fetch, so
 // an unbounded envelope would be a fetch-amplification gadget.
 // Legitimate envelopes carry a handful of signatures.
@@ -37,10 +38,10 @@ func RegisterAuthority(addr Address) {
 	Authorities = append(Authorities, addr)
 }
 
-// Endorsement is this package's representation of the sender status
-// defined in README.md §7.2: the conclusion a receiver reaches about a
+// Endorsement is this package's representation of a verified sender
+// status (README.md §7.2): the conclusion a receiver reaches about a
 // subject after evaluating the countersignatures its party envelope
-// carries against this client's trust list.
+// carries against this client's trust lists.
 //
 // There is no "endorsement" on the wire. The envelope carries
 // countersignatures; the status is computed from them, and it is never
@@ -49,56 +50,44 @@ func RegisterAuthority(addr Address) {
 // an Endorsement is always a return value, never something to construct
 // or send.
 type Endorsement struct {
-	// Authority is the trusted address whose countersignature
-	// endorsed the envelope: the subject is a registered identity.
+	// Authority is the trusted authority whose countersignature named
+	// the verifier. Empty when the verifier is on the client's own
+	// trust list and was accepted directly.
 	Authority Address
-	// Verifier is the address the authority named as having performed
-	// identity verification (KYC/KYB) of the subject, confirmed by
-	// the verifier's own countersignature on the same envelope. Empty
-	// when the identity is registered but not verified, including
-	// when a named verifier's countersignature is absent, invalid, or
-	// expired — verification degrades, registration stands.
+	// Verifier is the address whose countersignature confirms the
+	// subject's identity (KYC/KYB).
 	Verifier Address
 	// Key is the RFC 7638 thumbprint (see dsig.PublicKey's JKT) of
-	// the subject's key that the authority bound the registration to
-	// with its cnf claim. The envelope's from and to are confirmed by
-	// a signature with this key, and deliveries from the subject must
-	// be signed with it too.
+	// the subject's key the endorsement is bound to with cnf. The
+	// envelope's from and to are confirmed by a signature with this
+	// key, and deliveries from the subject must be signed with it too.
 	Key string
 }
 
-// Verified reports whether the subject is verified rather than merely
-// registered (README.md §7.2). Both name conclusions this client reaches,
-// not values carried by the envelope.
+// VerifyEndorsement returns the endorsement of the subject of a party
+// envelope, the address in its header's from field (README.md §7.2).
 //
-// It is a boolean because the status is one: any verifier the authority
-// names satisfies it, and the protocol does not grade them. A receiver
-// that wants to distinguish between verifiers must read Verifier itself
-// and decide which addresses it accepts.
-func (e *Endorsement) Verified() bool {
-	return e != nil && e.Verifier != ""
-}
-
-// VerifyAuthority verifies countersignatures from the client's trusted
-// authorities whose aud binds the envelope to its subject, the address in
-// the header's from field. Each needs an iat no later than now, an exp
-// that has not passed and is at most 90 days after it, and a cnf naming
-// the key of a signature that confirms the envelope's from and to. It returns the
-// strongest endorsement found, preferring one with confirmed verifier
-// evidence. The verifier must differ from the authority;
-// self-referential, missing, or invalid verifier evidence leaves a
-// registration-only endorsement valid. It returns ErrUnknownAuthority when no
-// trusted candidate exists, ErrSignatureExpired for expired authority evidence,
-// ErrUnavailable for transient key lookup failures, or ErrVerifyFailed when
-// candidates fail cryptographic verification.
-func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endorsement, error) {
+// It first looks for a countersignature from a trusted authority, bound to
+// the subject with aud, with an iat no later than now, an exp that has not
+// passed and is at most 90 days after it, a cnf naming the key of a
+// signature that confirms the envelope's from and to, and a verifier,
+// other than the authority, whose own countersignature for the subject is
+// valid. Failing that, it accepts a valid countersignature for the subject
+// from a verifier on the client's own trust list (WithVerifiers) whose cnf
+// names such a key.
+//
+// It returns ErrNotEndorsed when no trusted candidate exists,
+// ErrSignatureExpired for expired evidence, ErrUnavailable for transient
+// key lookup failures, or ErrVerifyFailed when candidates fail
+// verification.
+func (c *Client) VerifyEndorsement(ctx context.Context, env *gobl.Envelope) (*Endorsement, error) {
 	// A malformed envelope may carry signatures without a header;
 	// reject rather than let header verification panic.
 	if env == nil || env.Head == nil || len(env.Signatures) == 0 {
 		return nil, fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
 	}
-	if len(c.authorities) == 0 {
-		return nil, fmt.Errorf("%w: no authorities registered on this client", ErrUnknownAuthority)
+	if len(c.authorities) == 0 && len(c.verifiers) == 0 {
+		return nil, fmt.Errorf("%w: no authorities or verifiers trusted by this client", ErrNotEndorsed)
 	}
 	if len(env.Signatures) > maxEnvelopeSignatures {
 		return nil, fmt.Errorf("%w: envelope carries %d signatures (max %d)",
@@ -108,34 +97,29 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 	if err != nil {
 		return nil, err
 	}
-	// Both sides of the lookup are canonicalized so U-Label or
-	// trailing-dot forms — configured or signed — compare equal.
-	auths := make(map[Address]bool, len(c.authorities))
-	for _, a := range c.authorities {
-		if canon, err := ParseAddress(string(a)); err == nil {
-			auths[canon] = true
-		}
-	}
-
-	// claimErr records a candidate that verified but carries an
-	// expired exp; unavailableErr records a transient key-fetch
-	// failure and outranks it. registered holds the first valid
-	// registered-only endorsement while the search continues for a
-	// confirmed verifier.
-	var lastErr, claimErr, unavailableErr error
-	var registered *Endorsement
-	candidates := make(map[Address]int)
 	subjectKeys := &pairKeySet{c: c, env: env, from: subject, to: to}
+	errs := new(candidateErrs)
+	if end := c.authorityEndorsement(ctx, env, subject, subjectKeys, errs); end != nil {
+		return end, nil
+	}
+	if end := c.directEndorsement(ctx, env, subject, subjectKeys, errs); end != nil {
+		return end, nil
+	}
+	return nil, errs.result()
+}
+
+// authorityEndorsement returns the first valid endorsement by a trusted
+// authority, recording why each other candidate failed.
+func (c *Client) authorityEndorsement(ctx context.Context, env *gobl.Envelope, subject Address, subjectKeys *pairKeySet, errs *candidateErrs) *Endorsement {
+	auths := canonical(c.authorities)
+	candidates := make(map[Address]int)
 	for _, sig := range env.Signatures {
 		p, err := head.SignedPayload(sig)
 		if err != nil {
 			continue
 		}
 		issuer, err := ParseAddress(p.Iss)
-		if err != nil {
-			continue
-		}
-		if !auths[issuer] {
+		if err != nil || !auths[issuer] {
 			continue
 		}
 		if aud, err := ParseAddress(p.Aud); err != nil || aud != subject {
@@ -144,65 +128,102 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 		if candidates[issuer]++; candidates[issuer] > maxIssuerCandidates {
 			continue
 		}
-		// Candidate from a known authority — verify it crypto-wise.
 		pub, err := c.FetchKey(ctx, issuer, sig.KeyID())
 		if err != nil {
-			if errors.Is(err, ErrUnavailable) {
-				unavailableErr = err
-			} else {
-				lastErr = err
-			}
+			errs.add(err)
 			continue
 		}
 		if err := env.Head.Verify(sig, pub); err != nil {
-			lastErr = err
+			errs.add(err)
 			continue
 		}
 		// Claims are only trusted after the signature verifies.
 		if err := checkRegistration(p); err != nil {
-			if errors.Is(err, ErrSignatureExpired) {
-				claimErr = err
-			} else {
-				lastErr = err
-			}
+			errs.add(err)
 			continue
 		}
 		if err := subjectKeys.require(ctx, p.Confirmation.JKT); err != nil {
-			if errors.Is(err, ErrUnavailable) {
-				unavailableErr = err
-			} else {
-				lastErr = err
-			}
+			errs.add(err)
 			continue
 		}
 		verifier, err := c.confirmVerifier(ctx, env, issuer, subject, p)
 		if err != nil {
-			// The verifier's key could not be checked (transient):
-			// surface the condition rather than silently degrading a
-			// genuinely verified endorsement to registered.
-			return nil, err
+			errs.add(err)
+			continue
 		}
-		end := &Endorsement{Authority: issuer, Verifier: verifier, Key: p.Confirmation.JKT}
-		if end.Verified() {
-			return end, nil
+		return &Endorsement{Authority: issuer, Verifier: verifier, Key: p.Confirmation.JKT}
+	}
+	return nil
+}
+
+// directEndorsement returns the first valid endorsement by a verifier on
+// the client's own trust list, recording why each other candidate failed.
+func (c *Client) directEndorsement(ctx context.Context, env *gobl.Envelope, subject Address, subjectKeys *pairKeySet, errs *candidateErrs) *Endorsement {
+	seen := make(map[Address]bool, len(c.verifiers))
+	for _, a := range c.verifiers {
+		verifier, err := ParseAddress(string(a))
+		if err != nil || seen[verifier] {
+			continue
 		}
-		if registered == nil {
-			registered = end
+		seen[verifier] = true
+		p, err := c.verificationBy(ctx, env, verifier, subject)
+		if err != nil {
+			errs.add(err)
+			continue
+		}
+		if p == nil {
+			continue
+		}
+		if err := subjectKeys.require(ctx, p.Confirmation.JKT); err != nil {
+			errs.add(err)
+			continue
+		}
+		return &Endorsement{Verifier: verifier, Key: p.Confirmation.JKT}
+	}
+	return nil
+}
+
+// candidateErrs keeps the most telling reason trusted candidates failed:
+// a transient failure, then expired evidence, then any other.
+type candidateErrs struct {
+	unavailable, expired, other error
+}
+
+func (e *candidateErrs) add(err error) {
+	switch {
+	case errors.Is(err, ErrUnavailable):
+		e.unavailable = err
+	case errors.Is(err, ErrSignatureExpired):
+		e.expired = err
+	default:
+		e.other = err
+	}
+}
+
+func (e *candidateErrs) result() error {
+	switch {
+	case e.unavailable != nil:
+		return e.unavailable
+	case e.expired != nil:
+		return e.expired
+	case e.other != nil && errors.Is(e.other, ErrVerifyFailed):
+		return e.other
+	case e.other != nil:
+		return fmt.Errorf("%w: %v", ErrVerifyFailed, e.other)
+	}
+	return ErrNotEndorsed
+}
+
+// canonical returns the set of canonical forms of addrs, so U-Label or
+// trailing-dot forms — configured or signed — compare equal.
+func canonical(addrs []Address) map[Address]bool {
+	set := make(map[Address]bool, len(addrs))
+	for _, a := range addrs {
+		if canon, err := ParseAddress(string(a)); err == nil {
+			set[canon] = true
 		}
 	}
-	if registered != nil {
-		return registered, nil
-	}
-	if unavailableErr != nil {
-		return nil, unavailableErr
-	}
-	if claimErr != nil {
-		return nil, claimErr
-	}
-	if lastErr != nil {
-		return nil, fmt.Errorf("%w: %v", ErrVerifyFailed, lastErr)
-	}
-	return nil, ErrUnknownAuthority
+	return set
 }
 
 // pairKeySet fetches, once, the keys confirming an envelope's from and to.
@@ -225,7 +246,7 @@ func (s *pairKeySet) require(ctx context.Context, jkt string) error {
 		return s.err
 	}
 	if !hasKey(s.keys, jkt) {
-		return fmt.Errorf("%w: registration is for another key of %q", ErrVerifyFailed, s.from)
+		return fmt.Errorf("%w: endorsement is for another key of %q", ErrVerifyFailed, s.from)
 	}
 	return nil
 }
@@ -253,27 +274,28 @@ func checkRegistration(p *head.SigningPayload) error {
 	return nil
 }
 
-// confirmVerifier resolves the verifier claim on a verified authority
-// countersignature. It returns the verifier's address when the claim
-// names a valid address, distinct from the authority, whose countersignature
-// for subject verifies. An absent, self-referential, malformed, or invalid claim returns
-// "", degrading the endorsement to registered. A transient key-fetch failure
-// returns ErrUnavailable instead of silently downgrading the endorsement.
+// confirmVerifier returns the verifier an authority countersignature
+// names, after checking that it is a valid address, distinct from the
+// authority, whose own countersignature for subject is valid.
 func (c *Client) confirmVerifier(ctx context.Context, env *gobl.Envelope, authority, subject Address, p *head.SigningPayload) (Address, error) {
+	if p.Verifier == "" {
+		return "", fmt.Errorf("%w: signature by %q names no verifier", ErrVerifyFailed, authority)
+	}
 	verifier, err := ParseAddress(p.Verifier)
 	if err != nil {
-		return "", nil //nolint:nilerr // malformed claim degrades to registered
+		return "", fmt.Errorf("%w: signature by %q names an invalid verifier: %v", ErrVerifyFailed, authority, err)
 	}
 	// Registration and identity verification must be performed by distinct
 	// participants. A self-referential claim provides no verifier evidence.
 	if verifier == authority {
-		return "", nil
+		return "", fmt.Errorf("%w: signature by %q names itself as verifier", ErrVerifyFailed, authority)
 	}
-	if _, err := c.verificationBy(ctx, env, verifier, subject); err != nil {
-		if errors.Is(err, ErrUnavailable) {
-			return "", err
-		}
-		return "", nil //nolint:nilerr // invalid or absent signature degrades
+	vp, err := c.verificationBy(ctx, env, verifier, subject)
+	if err != nil {
+		return "", err
+	}
+	if vp == nil {
+		return "", noVerification(verifier, subject)
 	}
 	return verifier, nil
 }
@@ -315,6 +337,9 @@ func (c *Client) FindVerification(ctx context.Context, env *gobl.Envelope, verif
 	if err != nil {
 		return nil, err
 	}
+	if p == nil {
+		return nil, noVerification(verifier, subject)
+	}
 	v := &Verification{
 		Verifier: verifier,
 		Key:      p.Confirmation.JKT,
@@ -328,7 +353,8 @@ func (c *Client) FindVerification(ctx context.Context, env *gobl.Envelope, verif
 
 // verificationBy returns the payload of a valid countersignature by addr
 // for subject, with an iat no later than now (allowing clock skew), no exp
-// that has passed, and a cnf.
+// that has passed, and a cnf. It returns nil and no error when the
+// envelope carries no candidate.
 func (c *Client) verificationBy(ctx context.Context, env *gobl.Envelope, addr, subject Address) (*head.SigningPayload, error) {
 	var lastErr error
 	candidates := 0
@@ -371,10 +397,13 @@ func (c *Client) verificationBy(ctx context.Context, env *gobl.Envelope, addr, s
 		}
 		return p, nil
 	}
-	if lastErr != nil {
-		return nil, lastErr
-	}
-	return nil, fmt.Errorf("%w: no signature from %q for %q", ErrVerifyFailed, addr, subject)
+	return nil, lastErr
+}
+
+// noVerification reports that an envelope has no countersignature by
+// verifier for subject.
+func noVerification(verifier, subject Address) error {
+	return fmt.Errorf("%w: no signature from %q for %q", ErrVerifyFailed, verifier, subject)
 }
 
 // expired reports whether a signed exp claim (zero when absent) has
