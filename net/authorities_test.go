@@ -1132,7 +1132,7 @@ func TestWithSandbox(t *testing.T) {
 	})
 }
 
-func TestFindVerification(t *testing.T) {
+func TestFindVerifications(t *testing.T) {
 	ctx := context.Background()
 	subjectAddr := Address("subject.example")
 	verifierAddr := Address("verify.example.net")
@@ -1156,8 +1156,10 @@ func TestFindVerification(t *testing.T) {
 			head.WithAudience(subjectAddr.String()),
 			head.WithConfirmation(testSubjectKey.JKT()),
 			head.WithExpiration(exp)))
-		v, err := c.FindVerification(ctx, env, verifierAddr, subjectAddr)
+		vs, err := c.FindVerifications(ctx, env, verifierAddr, subjectAddr)
 		require.NoError(t, err)
+		require.Len(t, vs, 1)
+		v := vs[0]
 		assert.Equal(t, verifierAddr, v.Verifier)
 		assert.Equal(t, testSubjectKey.JKT(), v.Key)
 		assert.WithinDuration(t, time.Now(), v.IssuedAt, time.Minute)
@@ -1169,7 +1171,7 @@ func TestFindVerification(t *testing.T) {
 		require.NoError(t, env.Sign(verifKey, regCnf(),
 			head.WithIssuer(verifierAddr.String()),
 			head.WithAudience("other.example")))
-		_, err := c.FindVerification(ctx, env, verifierAddr, subjectAddr)
+		_, err := c.FindVerifications(ctx, env, verifierAddr, subjectAddr)
 		require.ErrorIs(t, err, ErrVerifyFailed)
 	})
 
@@ -1178,7 +1180,7 @@ func TestFindVerification(t *testing.T) {
 		require.NoError(t, env.Sign(verifKey,
 			head.WithIssuer(verifierAddr.String()),
 			head.WithAudience(subjectAddr.String())))
-		_, err := c.FindVerification(ctx, env, verifierAddr, subjectAddr)
+		_, err := c.FindVerifications(ctx, env, verifierAddr, subjectAddr)
 		require.ErrorIs(t, err, ErrVerifyFailed)
 		assert.Contains(t, err.Error(), "no cnf")
 	})
@@ -1189,8 +1191,23 @@ func TestFindVerification(t *testing.T) {
 			head.WithIssuer(verifierAddr.String()),
 			head.WithAudience(subjectAddr.String()),
 			head.WithExpiration(time.Now().Add(-time.Hour))))
-		_, err := c.FindVerification(ctx, env, verifierAddr, subjectAddr)
+		_, err := c.FindVerifications(ctx, env, verifierAddr, subjectAddr)
 		require.ErrorIs(t, err, ErrSignatureExpired)
+	})
+
+	t.Run("returns every valid verification", func(t *testing.T) {
+		env := newEnv(t)
+		other := dsig.NewES256Key()
+		for _, k := range []*dsig.PrivateKey{testSubjectKey, other} {
+			require.NoError(t, env.Sign(verifKey, head.WithConfirmation(k.JKT()),
+				head.WithIssuer(verifierAddr.String()),
+				head.WithAudience(subjectAddr.String())))
+		}
+		vs, err := c.FindVerifications(ctx, env, verifierAddr, subjectAddr)
+		require.NoError(t, err)
+		require.Len(t, vs, 2)
+		assert.Equal(t, testSubjectKey.JKT(), vs[0].Key)
+		assert.Equal(t, other.JKT(), vs[1].Key)
 	})
 }
 
@@ -1272,6 +1289,20 @@ func TestVerifyEndorsementDirect(t *testing.T) {
 		_, err := client(WithVerifiers(testVerifier)).VerifyEndorsement(ctx, env)
 		require.ErrorIs(t, err, ErrVerifyFailed)
 		assert.Contains(t, err.Error(), "another key")
+	})
+
+	t.Run("finds the verification for the current key", func(t *testing.T) {
+		// After a key change the envelope may carry the verifier's
+		// earlier countersignature too.
+		env := newEnv(t)
+		require.NoError(t, env.Sign(testVerifierKey,
+			head.WithConfirmation(dsig.NewES256Key().JKT()),
+			head.WithIssuer(testVerifier.String()),
+			head.WithAudience(subjectAddr.String())))
+		addVerification(t, env, subjectAddr)
+		end, err := client(WithVerifiers(testVerifier)).VerifyEndorsement(ctx, env)
+		require.NoError(t, err)
+		assert.Equal(t, testSubjectKey.JKT(), end.Key)
 	})
 
 	t.Run("rejects an expired verification", func(t *testing.T) {

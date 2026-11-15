@@ -27,7 +27,7 @@
 //	§7  sender policy        WithAuthorities, WithVerifiers, WithSandbox
 //	§7.2 sender status       Client.VerifyEndorsement, Endorsement,
 //	                         Client.VerifySender
-//	§7.3 key lineage         Client.DeliveryKeys, Client.FindVerification
+//	§7.3 key lineage         Client.DeliveryKeys, Client.FindVerifications
 //	§8.2 /who                Client.Who
 //	§8.3 /inbox              Sign, Client.Send
 //	§9  limits               HTTPFetcher, WithKeyCacheTTL

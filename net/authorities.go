@@ -166,19 +166,18 @@ func (c *Client) directEndorsement(ctx context.Context, env *gobl.Envelope, subj
 			continue
 		}
 		seen[verifier] = true
-		p, err := c.verificationBy(ctx, env, verifier, subject)
+		ps, err := c.verificationsBy(ctx, env, verifier, subject)
 		if err != nil {
 			errs.add(err)
 			continue
 		}
-		if p == nil {
-			continue
+		for _, p := range ps {
+			if err := subjectKeys.require(ctx, p.Confirmation.JKT); err != nil {
+				errs.add(err)
+				continue
+			}
+			return &Endorsement{Verifier: verifier, Key: p.Confirmation.JKT}
 		}
-		if err := subjectKeys.require(ctx, p.Confirmation.JKT); err != nil {
-			errs.add(err)
-			continue
-		}
-		return &Endorsement{Verifier: verifier, Key: p.Confirmation.JKT}
 	}
 	return nil
 }
@@ -290,11 +289,11 @@ func (c *Client) confirmVerifier(ctx context.Context, env *gobl.Envelope, author
 	if verifier == authority {
 		return "", fmt.Errorf("%w: signature by %q names itself as verifier", ErrVerifyFailed, authority)
 	}
-	vp, err := c.verificationBy(ctx, env, verifier, subject)
+	ps, err := c.verificationsBy(ctx, env, verifier, subject)
 	if err != nil {
 		return "", err
 	}
-	if vp == nil {
+	if len(ps) == 0 {
 		return "", noVerification(verifier, subject)
 	}
 	return verifier, nil
@@ -314,10 +313,11 @@ type Verification struct {
 	ExpiresAt time.Time
 }
 
-// FindVerification returns the valid countersignature by verifier for
-// subject, with an iat no later than now (allowing clock skew), no exp
-// that has passed, and a cnf naming the subject key the verifier saw.
-func (c *Client) FindVerification(ctx context.Context, env *gobl.Envelope, verifier, subject Address) (*Verification, error) {
+// FindVerifications returns the valid countersignatures by verifier for
+// subject: each with an iat no later than now (allowing clock skew), no
+// exp that has passed, and a cnf naming the subject key the verifier saw.
+// It returns an error when there are none.
+func (c *Client) FindVerifications(ctx context.Context, env *gobl.Envelope, verifier, subject Address) ([]*Verification, error) {
 	if env == nil || env.Head == nil || !env.Signed() {
 		return nil, fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
 	}
@@ -333,29 +333,33 @@ func (c *Client) FindVerification(ctx context.Context, env *gobl.Envelope, verif
 	if err != nil {
 		return nil, err
 	}
-	p, err := c.verificationBy(ctx, env, verifier, subject)
+	ps, err := c.verificationsBy(ctx, env, verifier, subject)
 	if err != nil {
 		return nil, err
 	}
-	if p == nil {
+	if len(ps) == 0 {
 		return nil, noVerification(verifier, subject)
 	}
-	v := &Verification{
-		Verifier: verifier,
-		Key:      p.Confirmation.JKT,
-		IssuedAt: time.Unix(p.IssuedAt, 0).UTC(),
+	vs := make([]*Verification, len(ps))
+	for i, p := range ps {
+		vs[i] = &Verification{
+			Verifier: verifier,
+			Key:      p.Confirmation.JKT,
+			IssuedAt: time.Unix(p.IssuedAt, 0).UTC(),
+		}
+		if p.ExpiresAt != 0 {
+			vs[i].ExpiresAt = time.Unix(p.ExpiresAt, 0).UTC()
+		}
 	}
-	if p.ExpiresAt != 0 {
-		v.ExpiresAt = time.Unix(p.ExpiresAt, 0).UTC()
-	}
-	return v, nil
+	return vs, nil
 }
 
-// verificationBy returns the payload of a valid countersignature by addr
-// for subject, with an iat no later than now (allowing clock skew), no exp
-// that has passed, and a cnf. It returns nil and no error when the
-// envelope carries no candidate.
-func (c *Client) verificationBy(ctx context.Context, env *gobl.Envelope, addr, subject Address) (*head.SigningPayload, error) {
+// verificationsBy returns the payloads of the valid countersignatures by
+// addr for subject, each with an iat no later than now (allowing clock
+// skew), no exp that has passed, and a cnf. The error is set only when
+// there are candidates and none is valid.
+func (c *Client) verificationsBy(ctx context.Context, env *gobl.Envelope, addr, subject Address) ([]*head.SigningPayload, error) {
+	var valid []*head.SigningPayload
 	var lastErr error
 	candidates := 0
 	for _, sig := range env.Signatures {
@@ -395,7 +399,10 @@ func (c *Client) verificationBy(ctx context.Context, env *gobl.Envelope, addr, s
 			lastErr = fmt.Errorf("%w: signature by %q has no cnf", ErrVerifyFailed, addr)
 			continue
 		}
-		return p, nil
+		valid = append(valid, p)
+	}
+	if len(valid) > 0 {
+		return valid, nil
 	}
 	return nil, lastErr
 }
