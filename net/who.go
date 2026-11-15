@@ -59,10 +59,7 @@ func (c *Client) VerifySender(ctx context.Context, env *gobl.Envelope) (*org.Par
 	if err != nil {
 		return nil, err
 	}
-	from, err := ParseAddress(env.Head.From.Opaque())
-	if err != nil {
-		return nil, err
-	}
+	from, _, _ := routing(env) // checked by DeliveryKeys
 	who, err := c.Who(ctx, from)
 	if err != nil {
 		return nil, err

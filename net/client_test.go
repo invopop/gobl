@@ -310,6 +310,41 @@ func TestSafeDialContext(t *testing.T) {
 	})
 }
 
+func TestDialAddrs(t *testing.T) {
+	ctx := context.Background()
+	ln, err := stdnet.Listen("tcp", "127.0.0.1:0")
+	require.NoError(t, err)
+	defer ln.Close() //nolint:errcheck
+	_, port, err := stdnet.SplitHostPort(ln.Addr().String())
+	require.NoError(t, err)
+	loopback := stdnet.ParseIP("127.0.0.1")
+
+	t.Run("connects to the first address accepting", func(t *testing.T) {
+		closed, err := stdnet.Listen("tcp", "127.0.0.2:0")
+		if err != nil {
+			t.Skip("127.0.0.2 not available")
+		}
+		require.NoError(t, closed.Close())
+		conn, err := dialAddrs(ctx, "tcp", "example.com", []stdnet.IP{stdnet.ParseIP("127.0.0.2"), loopback}, port)
+		require.NoError(t, err)
+		require.NoError(t, conn.Close())
+	})
+
+	t.Run("wraps the last dial error as unavailable", func(t *testing.T) {
+		cctx, cancel := context.WithCancel(ctx)
+		cancel()
+		_, err := dialAddrs(cctx, "tcp", "example.com", []stdnet.IP{loopback}, port)
+		require.ErrorIs(t, err, ErrUnavailable)
+		assert.ErrorIs(t, err, context.Canceled)
+	})
+
+	t.Run("no addresses", func(t *testing.T) {
+		_, err := dialAddrs(ctx, "tcp", "example.com", nil, port)
+		require.ErrorIs(t, err, ErrUnavailable)
+		assert.ErrorContains(t, err, "no addresses for example.com")
+	})
+}
+
 func TestIsPublicIP(t *testing.T) {
 	tests := []struct {
 		ip   string

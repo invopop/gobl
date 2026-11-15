@@ -50,6 +50,11 @@ func safeDialContext(ctx context.Context, network, addr string) (stdnet.Conn, er
 	}
 	// Dial the checked addresses rather than the host name, which would
 	// resolve again and could return a different, non-public address.
+	return dialAddrs(ctx, network, host, ips, port)
+}
+
+// dialAddrs connects to the first of ips that accepts on port.
+func dialAddrs(ctx context.Context, network, host string, ips []stdnet.IP, port string) (stdnet.Conn, error) {
 	d := &stdnet.Dialer{Timeout: dialTimeout}
 	var lastErr error
 	for _, ip := range ips {

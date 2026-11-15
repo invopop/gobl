@@ -166,6 +166,29 @@ func TestVerifyEndorsement(t *testing.T) {
 		assert.Contains(t, err.Error(), "names no verifier")
 	})
 
+	t.Run("rejects an envelope its subject did not sign for the pair", func(t *testing.T) {
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
+		require.NoError(t, env.Sign(authKey, regCnf(), regExp(), regVerifier(),
+			head.WithIssuer(authorityAddr.String()),
+			head.WithAudience(subjectAddr.String())))
+		addVerification(t, env, subjectAddr)
+
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+			}}),
+		)
+		_, err = c.VerifyEndorsement(ctx, env)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.ErrorContains(t, err, "no valid signature from")
+	})
+
 	t.Run("confirms a verifier named by the authority", func(t *testing.T) {
 		verifierAddr := Address("verify.example.net")
 		verifKey := dsig.NewES256Key()
@@ -1193,6 +1216,55 @@ func TestFindVerifications(t *testing.T) {
 			head.WithExpiration(time.Now().Add(-time.Hour))))
 		_, err := c.FindVerifications(ctx, env, verifierAddr, subjectAddr)
 		require.ErrorIs(t, err, ErrSignatureExpired)
+	})
+
+	t.Run("rejects an unsigned envelope", func(t *testing.T) {
+		_, err := c.FindVerifications(ctx, newEnv(t), verifierAddr, subjectAddr)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		_, err = c.FindVerifications(ctx, nil, verifierAddr, subjectAddr)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+	})
+
+	t.Run("rejects too many signatures", func(t *testing.T) {
+		env := newEnv(t)
+		for range maxEnvelopeSignatures + 1 {
+			require.NoError(t, env.Sign(verifKey))
+		}
+		_, err := c.FindVerifications(ctx, env, verifierAddr, subjectAddr)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.ErrorContains(t, err, "signatures (max")
+	})
+
+	t.Run("rejects invalid addresses", func(t *testing.T) {
+		env := newEnv(t)
+		require.NoError(t, env.Sign(verifKey, regCnf(),
+			head.WithIssuer(verifierAddr.String()),
+			head.WithAudience(subjectAddr.String())))
+		_, err := c.FindVerifications(ctx, env, "not an address", subjectAddr)
+		require.ErrorIs(t, err, ErrAddressInvalid)
+		_, err = c.FindVerifications(ctx, env, verifierAddr, "not an address")
+		require.ErrorIs(t, err, ErrAddressInvalid)
+	})
+
+	t.Run("reports a verifier key that cannot be fetched", func(t *testing.T) {
+		env := newEnv(t)
+		require.NoError(t, env.Sign(dsig.NewES256Key(), regCnf(),
+			head.WithIssuer(verifierAddr.String()),
+			head.WithAudience(subjectAddr.String())))
+		_, err := c.FindVerifications(ctx, env, verifierAddr, subjectAddr)
+		require.ErrorIs(t, err, ErrFetchFailed)
+	})
+
+	t.Run("checks a bounded number of verifications", func(t *testing.T) {
+		env := newEnv(t)
+		for range maxIssuerCandidates + 1 {
+			require.NoError(t, env.Sign(verifKey, regCnf(),
+				head.WithIssuer(verifierAddr.String()),
+				head.WithAudience(subjectAddr.String())))
+		}
+		vs, err := c.FindVerifications(ctx, env, verifierAddr, subjectAddr)
+		require.NoError(t, err)
+		assert.Len(t, vs, maxIssuerCandidates)
 	})
 
 	t.Run("returns every valid verification", func(t *testing.T) {
