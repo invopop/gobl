@@ -6,31 +6,39 @@
 
 ## Abstract
 
-GOBL Net is a decentralized discovery and delivery protocol for signed GOBL
-documents. A participant is identified by a fully qualified domain name
-(FQDN). HTTPS binds that address to these well-known resources:
+GOBL Net lets organizations find each other and exchange signed GOBL
+documents, such as invoices, without a central operator. Each participant is
+identified by a domain name, its *address*, and serves three resources over
+HTTPS at that domain:
 
 | Resource | Purpose |
 |---|---|
-| `/.well-known/gobl/keys/<kid>` | Publish one verification key. |
-| `/.well-known/gobl/who` | Publish a signed `org.Party` identity. |
+| `/.well-known/gobl/keys/<kid>` | Publish a public key, so others can check the participant's signatures. |
+| `/.well-known/gobl/who` | Publish the participant's identity: a signed `org.Party`. |
 | `/.well-known/gobl/inbox` | Accept signed GOBL envelopes. |
 
-A signature names its issuer in the signed `iss` claim. The participant
-checking it obtains the key from the issuer's domain and relies on Web PKI to
-authenticate the HTTPS response. That establishes control of an address and
-nothing more. Two optional roles build on it by countersigning party
-envelopes: a verifier, which establishes that the party describes a
-real-world organization — on a live network, by a KYC/KYB process; and a
-registration authority, a public index that registers verified parties at
-their addresses and tells receivers which verifiers to rely on (§7).
+Documents travel in GOBL envelopes signed by their sender. A receiver checks
+the signature with the key published at the sender's domain, and because
+HTTPS authenticates the domain, a valid signature proves the envelope came
+from whoever controls that address. It proves nothing more: anyone can
+register a domain.
 
-**This document defines the protocol.** It is implementation-neutral and names
-no API of any language: every requirement here is on the wire or on the
-behaviour of a participant. The Go package alongside it is a reference
-implementation from which libraries in other languages can be made; its API is
-documented in the package itself (`go doc github.com/invopop/gobl/net`), which
-maps each section below onto the types and methods implementing it. The
+Two further roles tell a receiver who is behind an address:
+
+- A **verifier** checks that a participant's details belong to a real
+  organization (on a live network, through a KYC/KYB process) and that this
+  organization controls the address. It records the result by adding its own
+  signature to the participant's identity.
+- A **registration authority** keeps a public index of verified
+  participants. It decides which verifiers to rely on, keeps each
+  registration current, and adds its own signature naming the verifier.
+
+A receiver that relies on the authority or the verifier treats the sender as
+**verified** (§7).
+
+This document defines the protocol, independent of any programming language.
+The Go package alongside it is a reference implementation; its documentation
+(`go doc github.com/invopop/gobl/net`) maps each section onto the code. The
 reference server and CLI live in
 [`github.com/invopop/gobl.dev`](https://github.com/invopop/gobl.dev/#gobl-net).
 
@@ -43,43 +51,31 @@ described in BCP 14 (RFC 2119 and RFC 8174).
 
 | Term | Meaning |
 |---|---|
-| **Participant** | An entity identified by a GOBL Net address. A participant may hold different roles in different exchanges. |
-| **Subject** | The participant a party envelope belongs to. Its address is named by the envelope header's `from` field and confirmed by signatures (§5.1), never read from the party document. One party may serve several subjects, each holding its own copy of the envelope. |
-| **Issuer** | The participant identified by a signature's `iss` claim. This is a signature-level role. |
-| **Audience** | The participant identified by a signature's `aud` claim. The signature is bound to this address. |
-| **Sender** | The participant named by an envelope's `from`, confirmed by a valid signature with that `iss` and the envelope's `to` as its `aud` (§5). |
-| **Receiver** | The participant named by an envelope's `to`: the inbox it is delivered to, or the requester a `/who` response is for. |
-| **Requester** | The issuer of a `/who` request token (§6): the participant the response is for. |
-| **Authority** | A trusted participant that registers verified Subjects: it confirms the Subject controls its GOBL Net address, keeps its key lineage (§7.3), and countersigns its party envelope, naming the Verifier. |
-| **Verifier** | A participant, independent of the Authority, that establishes that the details in a party document belong to a real-world organization or person — on a live network, by a KYC/KYB process — and that this organization controls the Subject's address, and countersigns the party envelope for that address to say so. It binds a party document to a legal identity at one address. What it checks, and how, is its own to define and publish; see §7. |
-| **Registration countersignature** | A signature issued by an Authority over a party envelope, binding it to the Subject's address with `aud` and to the Subject's key with `cnf`, and naming the Verifier. |
-| **Verification countersignature** | A signature issued by a Verifier over the same party envelope, binding it to the Subject's address with `aud`, and naming the key the Subject presented with `cnf`. Its `exp` is optional. |
-| **Sender status** | What a receiver concludes about a Subject after evaluating the countersignatures its party envelope carries, by the procedure in §7.2. One of the two below. |
-| **Unverified** | The receiver found no valid endorsement from an Authority or Verifier it trusts. It has only the Subject's own account of itself. This is a statement about what *this* receiver can corroborate, not about whether the Subject was verified by somebody. |
-| **Verified** | A Verifier has countersigned the party envelope, and the receiver either trusts an Authority that named that Verifier on the same envelope, or trusts the Verifier itself — so a participant the receiver relies on has established who the party is. |
-| **Party envelope** | A signed GOBL envelope containing an `org.Party`. It carries the subject's signature for its current recipient, and may carry registration and verification countersignatures. |
+| **Address** | A domain name identifying a participant, such as `supplier.example.com` (§3). |
+| **Participant** | Anyone with an address. One participant may play different roles in different exchanges. |
+| **Envelope** | A GOBL envelope: a document, a header, and signatures. The header's `from` and `to` fields hold the sending and receiving addresses. |
+| **Signature** | A signature over an envelope's document. It also signs a few fields (§5) saying who made it, who it is for, and when. |
+| **Issuer** | The participant that made a signature. |
+| **Audience** | The participant a signature is for. A signature counts only for its audience. |
+| **Sender**, **Receiver** | An envelope's `from` and `to`. They count only when a signature by the sender, with the receiver as its audience, confirms them (§5). |
+| **Party envelope** | An envelope whose document is an `org.Party`: a participant's name, tax identities, and other details. |
+| **Subject** | The participant a party envelope describes: its `from` address. |
+| **Requester** | A participant asking another for its party envelope at `/who` (§6). |
+| **Countersignature** | A signature added to a subject's party envelope by another participant, saying something about the subject. Its audience is always the subject. There are two kinds, below. |
+| **Verifier** | A participant that confirms who a subject is: that the party details describe a real organization or person (on a live network, by a KYC/KYB process) that controls the subject's address. It says so with a **verification countersignature**. |
+| **Authority** | A registration authority: a participant that registers subjects a verifier has confirmed, and publishes them as a public index. It decides which verifiers it will name, follows the subject's key as it changes (§7.3), and re-confirms control of the address at least every 90 days. It says so with a **registration countersignature** naming the verifier. It does not confirm identity itself, and MUST be a different participant from the verifier it names. |
+| **Trust list** | The authorities a receiver relies on, and optionally verifiers it relies on directly (§7). |
+| **Verified** | The receiver can link the subject to a verifier it relies on, through an authority on its trust list or directly (§7.2). |
+| **Unverified** | Anything else. The receiver knows the subject controls its address and key, but the party details are only the subject's own claim. |
 
-A countersignature is a signature on the wire; a sender status is a conclusion
-a receiver reaches about one. The distinction matters because **no status is
-ever transmitted**. Verified and unverified name conclusions,
-not values: no field carries them, and nothing in an envelope asserts one.
-Each receiver derives its own from the signatures in front of it and the
-authorities and verifiers it happens to trust, so two receivers can read the same envelope
-and reach different conclusions about it, and both are correct.
+Verified and unverified are conclusions a receiver reaches, not values carried
+in an envelope. Receivers with different trust lists can reach different
+conclusions about the same envelope, and both are correct.
 
-Sender and Receiver are the `iss` and `aud` of the signature confirming an
-envelope's `from` and `to`; countersignatures on the same envelope have their
-own issuers and audiences. Exchanges are peer to peer: nothing is relayed, so
-there is no intermediary role. A countersignature's Audience is always the
-Subject.
+## 3. Addresses
 
-An Authority and Verifier MUST be different participants. Other roles may
-overlap where their definitions permit it.
-
-## 3. Addresses and discovery
-
-A GOBL Net address is an FQDN without a scheme, port, path, query, or fragment.
-An address is canonicalized by:
+An address is a fully qualified domain name, without a scheme, port, path,
+query, or fragment. It is canonicalized by:
 
 1. trimming surrounding whitespace and one trailing dot;
 2. converting internationalized names to lowercase ASCII A-labels using the
@@ -90,10 +86,9 @@ An address is canonicalized by:
 An empty address and one that fails any of these steps are both invalid, and
 an implementation SHOULD distinguish them so a caller can tell a missing value
 from a malformed one. Protocol fields and comparisons MUST use the canonical
-ASCII form, so that two participants comparing the same address by different
-routes always agree.
+form.
 
-For address `supplier.example.com`:
+For the address `supplier.example.com`:
 
 ```text
 supplier.example.com
@@ -104,126 +99,110 @@ https://supplier.example.com/.well-known/gobl/inbox
 https://supplier.example.com/.well-known/jwks.json
 ```
 
-The first form is used in signed `iss`, `aud`, and `verifier` claims. The
-`gobl:` URI is used in optional `org.Party` endpoints and optional envelope
-routing fields. Production endpoints MUST use HTTPS.
+The bare form is used inside signatures (§5). The `gobl:` form is used in an
+envelope's `from` and `to` fields and in optional `org.Party` endpoints.
+Production endpoints MUST use HTTPS.
 
 ## 4. Keys
 
-Each signing key MUST be available as a single RFC 7517 JWK at
-`/.well-known/gobl/keys/<kid>`. Unknown or removed key IDs return `404`. The
-optional `/.well-known/jwks.json` endpoint exposes all keys as an RFC 7517 JWK
-Set for generic tooling; GOBL Net verification uses the per-key endpoint.
+A participant publishes the public keys it signs with at its address. Each key
+MUST be available as a single RFC 7517 JSON Web Key at
+`/.well-known/gobl/keys/<kid>`, where `kid` is the key's ID; unknown or
+removed IDs return `404`. Signatures name their key by ID and do not carry a
+`jku` header. The optional `/.well-known/jwks.json` lists all keys for generic
+tooling, but is not used by this protocol.
 
 A published key may include `valid_from` and `valid_until`. A signature MUST
-be rejected if its `iat`, which every GOBL Net signature carries (§5), falls
-outside those bounds; a missing bound skips its comparison. Because the
-signer chooses `iat`, a key that has been retired could still sign with a
-backdated one, so a delivery or `/who` response MUST also be signed with a key
-whose bounds include the time it is received (§5.2). Retired keys SHOULD remain
-available while countersignatures made with them are still within their
-`exp`, and for checking historical signatures.
-
-Signatures identify keys with `kid`; they do not carry a `jku` header.
+be rejected if its signing time (§5) falls outside them; a missing bound is
+not checked. Because the signer chooses the signing time, a retired key could
+still sign with a backdated one, so a delivery or `/who` response MUST also be
+signed with a key whose bounds include the time it is received. Retired keys
+SHOULD stay published while countersignatures made with them have not
+expired, and for checking historical signatures.
 
 ## 5. Envelope signatures
 
-The signed payload contains the document `uuid` and digest plus these protocol
-claims:
+A signature is a JSON Web Signature (RFC 7515) covering the envelope's
+document UUID and digest, plus these fields, called claims:
 
-| Claim | Meaning |
-|---|---|
-| `iss` | Signer's canonical GOBL Net address. |
-| `aud` | Address to which the signature is bound; required on the signature confirming an envelope's `from` and `to`, and on countersignatures; optional only on envelopes exchanged outside GOBL Net. |
-| `iat` | Signing time, as an RFC 7519 NumericDate. Required, and MUST NOT be later than the present, allowing the clock skew of §6. |
-| `exp` | Expiry. Required on registration countersignatures, at most 90 days after `iat`; optional otherwise. |
-| `verifier` | Verifier named by a registration authority. Required on registration countersignatures. |
-| `cnf` | RFC 7800 confirmation, `{"jkt": "<thumbprint>"}`: the subject key a countersignature is bound to, by its RFC 7638 SHA-256 JWK thumbprint, base64url-encoded. Required on registration and verification countersignatures. |
+| Claim | Name used in this document | Meaning |
+|---|---|---|
+| `iss` | issuer | The signer's address. |
+| `aud` | audience | The address the signature is for. Required on the signature confirming `from` and `to`, and on countersignatures. |
+| `iat` | signing time | An RFC 7519 NumericDate. Required, and MUST NOT be later than the present, allowing the clock skew of §6. |
+| `exp` | expiry | Required on registration countersignatures, at most 90 days after the signing time; optional otherwise. |
+| `cnf` | bound key | The subject key a countersignature applies to, as RFC 7800 `{"jkt": "<thumbprint>"}`: the key's RFC 7638 SHA-256 thumbprint, base64url-encoded. Required on countersignatures. |
+| `verifier` | verifier | The verifier's address. Required on registration countersignatures. |
 
-Every GOBL Net envelope MUST carry header `from` and `to` fields holding
-`gobl:` addresses, and a valid signature whose `iss` is the `from` address
-and whose `aud` is the `to` address. An envelope missing either field, or
-using another transport's scheme in either, is not meant for GOBL Net, and a
-participant MUST reject it rather than verify it. An envelope with no
-signature confirming the pair MUST be rejected.
+Every GOBL Net envelope MUST carry `from` and `to` header fields holding
+`gobl:` addresses, and a valid signature whose issuer is `from` and whose
+audience is `to`: the signature that **confirms** the envelope. The fields
+themselves are not signed, so that signature is what makes them evidence. A
+participant MUST reject an envelope missing either field, using another
+scheme in either, or with no confirming signature.
 
-Neither field is signed itself; the confirming signature is what makes them
-evidence. Other signatures on the envelope, for other pairs or none, change
-neither. A participant passing an envelope on does not forward it: it sets
-`from` to its own address, `to` to the next recipient, and adds its own
-signature for that pair.
+A participant passing an envelope on sets `from` to its own address and `to`
+to the next recipient, and adds its own confirming signature: nothing is
+forwarded on another's behalf. Once an envelope is accepted, its confirming
+signature has served its purpose. A holder MAY remove it, and SHOULD before
+passing the envelope on, so signatures do not build up towards the limit in
+§9. Countersignatures (§7) are the only signatures that matter beyond the
+exchange that carries them.
 
-Only countersignatures (§7) mean anything beyond the exchange that carries
-them. Once an envelope is accepted, any other signature confirming a pair
-has served its purpose: a holder MAY remove it, and SHOULD before passing the
-envelope on, so envelopes do not accumulate signatures towards the limit in
-§9.
-
-Signature order has no meaning. Implementations MUST search all signatures and
-MUST NOT assign roles by array position.
+Signature order has no meaning. Implementations MUST search all signatures
+and MUST NOT assign roles by position.
 
 ### 5.1 Party identities
 
-A party envelope contains an `org.Party`. The subject's address is not part
-of the party document: it is the envelope's `from`, confirmed as §5 requires.
-Because `from` and `to` are not signed, a party can be verified before it has
-any address, and one party can serve several addresses, each holding its own
-copy of the envelope. Copies share a digest, so the countersignatures on one
-are valid on all.
+The subject's address is not part of the party document: it is the envelope's
+`from`, confirmed as above. A party can therefore be verified before it has an
+address, and one party can serve several addresses, each with its own copy of
+the envelope. The party MAY list `gobl:` endpoints, but they are only hints
+for display and MUST NOT be used to determine the subject. Nor does the first
+signature determine it: anyone holding an envelope can add or reorder
+signatures, so the subject MUST NOT be taken from signature order.
 
-The party MAY list `gobl:` endpoints. They are hints for display and
-discovery only, and MUST NOT be used to determine or check the subject.
-Equally, any holder can reorder or add signatures, so the subject MUST NOT be
-inferred from whichever one appears first.
-
-The confirming signature establishes only that the subject adopted the party
-document as its own; it says nothing about registration, which is §7.
+The confirming signature shows only that the subject adopted the party details
+as its own. Whether anybody vouches for them is §7.
 
 A `/who` response is made for each requester: its `from` MUST be the address
-queried, its `to` the requester — the `iss` of the request token (§6) — and
-the subject signs it with `aud` equal to the requester. The requester MUST
-reject a response from or to anybody else. A server does not keep these
-per-requester signatures in the envelope it stores (§5).
-
-Other self-signatures and countersignatures may be present.
+queried and its `to` the requester (the issuer of the request token, §6),
+confirmed by the subject's signature. The requester MUST reject a response
+from or to anybody else. A server does not keep these per-requester
+signatures in the envelope it stores.
 
 ### 5.2 Deliveries
 
-For an inbox delivery, the receiver MUST reject an envelope whose `to` is
-not its own address, or whose `from` and `to` no signature confirms (§5) with
-a key that is valid at the time of receipt (§4). The
-sender is the `from` address. Signatures by other issuers whose `aud` is the
-receiver say nothing about who sent it.
+A receiver MUST reject a delivered envelope whose `to` is not its own address,
+or whose confirming signature was not made with a key valid at the time of
+receipt (§4). The sender is the `from` address; signatures by anybody else say
+nothing about who sent it.
 
-Outside GOBL Net — a party envelope handed to a verifier through its own API,
-say — no `aud` is required and these rules do not apply.
+Envelopes exchanged outside GOBL Net, such as a party envelope handed to a
+verifier through its own API, need no audience and are not subject to these
+rules.
 
 ## 6. Request authentication
 
-Requests to `/who` MUST include a compact ES256 request token as
-`Authorization: Bearer <token>`, which tells the server who to address and
-sign the response for (§5.1). Inbox deliveries carry no token: the envelope's
-own signature authenticates the sender (§5.2), and re-posting an envelope
-gains nothing because acceptance is idempotent (§8.3). Key discovery is
-unauthenticated.
-
-The token contains:
+Requests to `/who` MUST carry a request token, so the server knows who to
+make the response for (§5.1). The token is a compact JSON Web Token
+(RFC 7519) signed with ES256, sent as `Authorization: Bearer <token>`
+(RFC 6750). Deliveries need no token, because the envelope's own signature
+identifies the sender and delivering an envelope twice changes nothing
+(§8.3). Key requests need no authentication.
 
 | Claim | Requirement |
 |---|---|
-| `iss` | Requester's canonical address. |
-| `aud` | Address queried. |
+| `iss` | The requester's address. |
+| `aud` | The address queried. |
 | `iat` | Required issue time. |
 | `exp` | Required expiry. |
-| `jti` | Optional unique identifier, to let a receiver detect replay. |
+| `jti` | Optional unique identifier, to let a server detect replay. |
 
-Verifying a token means checking, against the issuer's published key: the
-signature, the audience, the key's validity window, and freshness.
-
-The freshness parameters are **normative**, because they decide whether two
-independent implementations interoperate at all. A participant that chooses
-its own values will have tokens rejected by conforming peers for no visible
-reason.
+A server checks the token against the requester's published key: the
+signature, the audience, the key's validity bounds, and freshness. The
+freshness parameters are normative, because peers using other values would
+reject each other's tokens:
 
 | Parameter | Value |
 |---|---|
@@ -233,298 +212,207 @@ reason.
 | Permitted clock skew | 30 seconds |
 | Maximum age, regardless of `exp` | 5 minutes |
 
-An issuer MUST NOT mint a token whose lifetime falls outside the minimum and
-maximum above. A verifier MUST apply the permitted skew to both `iat` and
-`exp`, and MUST reject a token issued more than the maximum age ago even when
-its `exp` has not passed — an over-long `exp` does not extend a token's life.
+A requester MUST NOT mint a token whose lifetime is outside the minimum and
+maximum. A server MUST apply the clock skew to both `iat` and `exp`, and MUST
+reject a token issued more than the maximum age ago even if its `exp` has not
+passed.
 
-If the issuer's key endpoint is temporarily unavailable the token cannot be
-checked, which is not the same as being invalid: the server SHOULD answer
-`503`, not `401`, so the caller retries rather than re-authenticates.
+If the requester's key cannot be fetched because of a temporary failure, the
+token cannot be checked, which is not the same as being invalid: the server
+SHOULD answer `503`, not `401`, so the caller retries.
 
-## 7. Authorities, verifiers, and sender policy
+## 7. Verification and registration
 
-A registration authority countersigns a party envelope with:
+Signatures prove control of an address. Verifiers and authorities establish
+who is behind it, by countersigning the subject's party envelope.
 
-- `iss` equal to the authority address;
-- `aud` equal to the subject's address, which the authority has confirmed the
-  subject controls;
-- `iat`, and an `exp` no more than 90 days after it;
-- `cnf` naming the subject's key that the authority has registered for that
-  address (§7.3); and
-- `verifier` naming the address that performed KYC/KYB, whose
-  countersignature is on the same envelope.
+**Verifiers.** A verifier confirms that the party details describe a real
+organization, and that this organization controls the subject's address. On a
+live network that means a KYC/KYB process: the organization exists in a
+company registry, the identifiers and legal name in the party match the
+registry, and whoever presented them may act for the organization. This is
+the only part of the protocol whose evidence comes from outside the network.
+A verifier SHOULD publish what it checks, because its address is all a
+receiver learns about how thorough the check was (§12).
 
-An authority registers only verified subjects. It is a public index of
-them: the default place for a receiver to look, and the party that decides
-which verifiers are worth relying on, so that a receiver need not.
+A verification countersignature MUST have the subject's address as its
+audience, and MUST bind the subject's key that the verifier was presented
+with (§7.1). The audience stops a verification being reused with a copy of
+the envelope at another address; the bound key stops it carrying over to a
+new holder of the same address. Its expiry is optional.
 
-The `cnf` binds the registration to the holder of a key as well as of an
-address. Whoever holds an address later — after a domain lapses and is
-registered again, say — controls its published keys, but cannot sign with
-the registered one, so it cannot present the earlier registration as its
-own.
+**Authorities.** An authority registers only verified subjects, and publishes
+them as a public index: the default place for a receiver to look, and the one
+that decides which verifiers are worth relying on, so that receivers need
+not. A registration countersignature MUST have:
 
-The bounded `exp` limits how long a registration outlives the subject's
-control of its address, and how long a leaked, retired authority key can be
-used to forge one with a backdated `iat`. Like TLS certificates issued
-through ACME (RFC 8555, the protocol behind Let's Encrypt), registrations
-are short-lived and meant to be renewed automatically: a
-subject SHOULD renew once two thirds of the lifetime has passed (§7.1).
+- the subject's address as its audience, once the authority has confirmed the
+  subject controls it (§7.1, step 5);
+- a signing time, and an expiry no more than 90 days later;
+- a bound key: the subject's key that the authority has registered (§7.3);
+  and
+- a `verifier` naming a different participant from the authority, whose
+  valid verification countersignature is on the same envelope.
 
-The `aud` is what binds a registration to one address. Without it, any
-address could add its own self-signature to another party's published
-envelope and present that party's registration as its own. A subject using
-one party at several addresses keeps a copy of the envelope at each, with
-that address's registration countersignature.
+The bound key means a later holder of the address, after a domain lapses and
+is bought by someone else, say, cannot present the registration as its own:
+it controls the address's published keys, but not the registered one. The
+short expiry limits how long a registration outlives the subject's control of
+its address, and how long a leaked, retired authority key could forge one
+with a backdated signing time. Like TLS certificates issued through ACME
+(RFC 8555, the protocol behind Let's Encrypt), registrations are meant to be
+renewed automatically: a subject SHOULD renew once two thirds of the lifetime
+has passed.
 
-The verifier MUST be a different participant from the registration authority
-and MUST countersign the same envelope, with `aud` equal to the subject's
-address and `cnf` naming the subject's key it was presented with. That `aud`
-is what stops a verification travelling with a copied envelope: without it,
-anybody could take a verified party's envelope, register it at an address of
-their own, and have an authority name the verifier for it. The `cnf` does the
-same across a change in who holds the address, and an authority follows the
-subject's key from it as the subject rotates keys (§7.3), so a verification
-never needs renewing for a new key. Separating these roles prevents the
-authority from attesting to identity checks that no independent verifier
-performed.
+A subject using one party at several addresses keeps a copy of the envelope
+at each, each with its own countersignatures.
 
-**A verifier binds a party document to a legal identity.** The other layers
-establish control: the keys in §4 are trusted because the TLS certificate at
-that address vouches for them, and the authority's countersignature attests
-that the subject holds the address and has adopted the party. A domain anyone
-can register, with keys anyone can publish, shows only that one participant
-holds both. Confirming that the party document describes a real organization
-is the verifier's work, and the only part of this protocol whose evidence
-comes from outside the network.
+**Sandbox networks** exist to exercise the exchange, not to establish
+anything about anybody, so a sandbox verifier may check as little as control
+of the email address in the party. A live authority MUST NOT name such a
+verifier. The authority is the safeguard here: a receiver relying on it takes
+its word on which verifiers are worth naming, since a countersignature does
+not say how thorough a check was (§12).
 
-On a live network that means a **KYC/KYB process**: confirming the
-organization exists in a company registry, that the identifiers and legal name
-the party publishes match what the registry holds, and that whoever presented
-it is entitled to act for it. A verifier SHOULD publish what it checks,
-because its address is the only signal a receiver gets about the strength of
-that check (§12).
+**Trust lists.** Each receiver keeps a trust list of the authorities it
+relies on. The default live authority is `lookup.gobl.org`, and the default
+sandbox authority is `lookup.sandbox.gobl.org`. Live and sandbox lists MUST
+NOT be combined: their registrations look the same, so a receiver trusting
+both could not tell a test identity from a real one.
 
-A sandbox network is deliberately weaker. A verifier there may do something as
-slight as confirming control of the email address the party publishes, because
-the point is to exercise the exchange rather than to establish anything about
-anybody. Such a verifier belongs to a sandbox network only, and a live
-authority MUST NOT name one in a `verifier` claim. The authority is the gate
-here, not the receiver: §7.2 asks only that a named verifier be independent
-and that its countersignature verify, so a receiver relying on an authority
-takes its word on which verifiers are worth naming. An endorsement carries no grade (§12), so
-it cannot tell a mailbox check from a registry check by looking. The disjoint
-trust lists below are the other half of that separation — a receiver trusting
-only live authorities never sees a sandbox endorsement at all.
+A receiver MAY also rely on verifiers directly, without an authority, where it
+has its own agreement with one, say. That list is empty by default. An
+authority remains the first choice: it follows the subject's keys (§7.3), and
+it is where other receivers look.
 
-Each receiver holds a **trust list** of the authorities it accepts. The
-default live authority is `lookup.gobl.org` and the default sandbox authority
-is `lookup.sandbox.gobl.org`. The two lists are disjoint and MUST NOT be
-combined: a sandbox registration carries the same shape as a live one, so a
-receiver that trusted both could not tell a test identity from a real one.
-
-A receiver MAY also hold a trust list of verifiers it accepts directly,
-without an authority naming them — where it has its own agreement with a
-verifier, say. That list is empty by default, and an authority remains the
-first choice: it follows the subject's keys (§7.3), and it is where
-other receivers will look.
-
-Sender status is a **policy for sending**, not a prerequisite for receiving. A
-receive-only address may publish only an inbox and keys, and may return `204`
-from `/who`.
+Sender status is a policy for sending, not a requirement for receiving. A
+receive-only address may publish only an inbox and keys, and may answer
+`/who` with `204`.
 
 ### 7.1 The verification exchange
 
-A verifier establishes who a party is and countersigns the party envelope to
-say so. The exchange is **subject-mediated**: the subject holds its own
-envelope throughout and presents it to each participant in turn.
+The subject holds its own party envelope throughout and presents it to the
+verifier, then to the authority. Nobody delivers it on the subject's behalf.
 
-1. The subject prepares its party envelope — an `org.Party` with the details
-   to be verified.
+1. The subject prepares its party envelope.
 2. It asks a verifier of its choosing to verify it for an address. The
-   verifier performs its checks, by whatever means and over whatever period
-   it needs. They MUST establish both that the party document describes the
-   organization presenting it, and that this organization controls the
-   address. A delivery from the address (§5) proves control, but not who
-   holds it: the verifier MUST tie the two together itself, for example by
-   having the delivery made within a verification it has already
-   authenticated. The key that signed that delivery is the one the verifier
-   binds. The checks may start before the subject has an address; the
-   countersignature cannot.
-3. On success the verifier countersigns **that exact envelope**, unchanged in
-   `uuid` and digest, with `iss` equal to its own address, `aud` equal to the
-   subject's address, `cnf` naming the subject's key from step 2, and an
-   `iat`. It MAY add an `exp`. It does not set a
-   `verifier` claim: that pointer is the authority's to write.
-4. The verifier returns the countersigned envelope to the subject. Delivering
-   it to the subject's inbox (§8.3) is RECOMMENDED: the verifier sets `from` to
-   its own address and `to` to the subject's, and its countersignature
-   confirms the pair (§5).
-5. The subject signs the envelope with `aud` equal to the authority and
-   delivers it to the authority's inbox, with `from` its own address and `to`
-   the authority's, which shows the authority that the subject controls that
-   address. The authority records the key that signed the delivery (§7.3). It
-   recognises a countersignature for that address from a verifier on its
-   trusted list, whose `cnf` names a key in the subject's lineage, and MUST
-   reject the request without one. It countersigns with `aud` equal to the subject's address, `cnf` naming the
-   recorded key and the verifier named in the `verifier` claim. It delivers
-   the result back
-   with `from` its own address and `to` the subject's, which its
-   countersignature confirms. The subject publishes it at `/who` (§5.1).
+   verifier's checks MUST establish that the party describes the organization
+   presenting it, and that this organization controls the address. A delivery
+   from the address (§5.2) proves control but not who holds it, so the
+   verifier MUST tie the two together, for example by having the delivery
+   made within a verification session it has already authenticated. The key
+   that confirmed that delivery is the one the verifier binds. The checks may
+   start before the subject has an address; the countersignature cannot.
+3. On success the verifier countersigns that exact envelope, unchanged in
+   UUID and digest, as issuer, with the subject's address as audience, the
+   key from step 2 as bound key, and a signing time. It MAY add an expiry. It
+   does not set a `verifier`: that is the authority's to write.
+4. The verifier returns the envelope to the subject. Delivering it to the
+   subject's inbox, from the verifier's address to the subject's, is
+   RECOMMENDED, and SHOULD be retried on temporary failures (§11). Any other
+   route, such as the verifier's own API or a link in an email, also conforms.
+   A countersignature is a statement already made: a verifier MUST NOT treat
+   an undeliverable result as a failed verification, and MUST NOT sign again
+   on a retry, which would extend the countersignature's life. A subject that
+   never received one asks again, at step 2.
+5. The subject delivers the envelope to the authority's inbox, from its own
+   address to the authority's, which shows it controls the address. The
+   authority MUST reject the request unless it carries a valid verification
+   countersignature from a verifier the authority accepts, binding a key in
+   the subject's lineage (§7.3). It then countersigns, binding the key that
+   confirmed the delivery and naming the verifier, and delivers the result
+   to the subject's inbox. The subject publishes it at `/who`.
 
-Signatures are independent of one another and of their order, so step 5 can
-happen long after step 3. A further address needs its own verification
-countersignature, so its copy of the envelope goes through steps 2 to 5; a
-verifier that has already checked the organization need only establish that
-the same organization controls the new address.
+Steps 3 and 5 may be far apart. Another address needs its own verification,
+though a verifier that has already checked the organization need only confirm
+it controls the new address. A subject whose receivers rely on its verifier
+directly may stop after step 4 and publish the envelope at `/who`.
 
-Verification comes before registration because an authority registers only
-verified subjects. A subject whose receivers trust its verifier directly
-(§7) may stop after step 4 and publish the envelope at `/who` as it is.
+**Renewal** repeats step 5 before the registration expires, with the
+verification countersignature still on the envelope. An authority MAY limit
+how old a verification without an expiry it will accept, using its signing
+time, and SHOULD NOT accept one made with a key that is no longer valid.
 
-The same steps also describe keeping an identity current. An authority
-countersignature carries an `exp`, and a subject renews by submitting the
-endorsed envelope again before it passes — the verification countersignature
-travelling with it, since an authority that cannot see one will not renew.
-A verification countersignature with no `exp` remains usable for as
-long as the authority is willing to name it; an authority MAY apply its own
-limit on its age, using `iat`. An authority SHOULD NOT name a verifier whose
-countersignature was made with a key that is no longer valid. Registering and
-renewing are therefore one operation applied at different times, not two.
-
-How the envelope gets back to the subject in step 4 is not constrained. What
-the exchange requires is that the subject ends up holding that exact envelope;
-the means are between a verifier and its own customers. A verifier that
-returns it by some other route — its own API, a link in an email, a console
-the subject signs into — conforms, as does one that reports progress or
-history however it likes. None of that belongs in this specification.
-
-Inbox delivery is recommended because it costs neither side anything new.
-A party envelope moving between two participants is what §8.3 is for, a
-subject with an address already operates an inbox by virtue of being on the
-network, and it
-is the same route the authority itself uses in step 5 — so a verifier that
-takes it publishes no endpoint of its own, and a subject that implements
-only the inbox can work with any verifier that follows the recommendation.
-A verifier choosing another route is choosing to require something of its
-own customers, which is its business rather than the network's.
-
-Where the inbox is used, delivery SHOULD be retried on the temporary failures
-of §11. However the envelope is returned, a countersignature is a statement
-that has already been made: a verifier MUST NOT treat an unreturnable result
-as a failed verification, and MUST NOT re-sign on a retry — that would extend
-the countersignature's life each time it was re-sent. A subject that never
-received one asks for it again, which is step 2.
-
-A verifier needs no relationship with any authority. It checks that the
-details in the party document belong to the organization presenting them, and
-that this organization controls the address, and countersigns on that basis.
-It does not need to know which authority the subject will register with,
-whether it will register at all, or whether that authority would accept its
-countersignature — the last of which is the authority's decision, made
-after the verifier's work is done.
-
-A verifier returns its result to the subject and never to the authority:
-only the subject registers its envelope, and no participant delivers an
-envelope on another's behalf (§5).
-
-The subject cannot subvert any of this by carrying the envelope. The
-countersignature covers the digest, so altering anything invalidates it, and
-the authority verifies it against the verifier's published key. Withholding is
-the subject's right — it is their identity.
-
-This exchange requires nothing of an authority beyond what §7 already
-specifies.
+A verifier needs no relationship with any authority: whether and where the
+subject registers is the subject's choice, and whether to accept the verifier
+is the authority's. The subject cannot alter a countersigned envelope, since
+countersignatures cover its digest; it can only withhold it, which is its
+right.
 
 ### 7.2 Determining sender status
 
-A receiver reaches a sender status by evaluating the countersignatures a party
-envelope carries against its own trust lists. The procedure is normative: two
-conforming receivers with the same trust lists MUST reach the same status for
-the same envelope.
+A receiver decides a subject's status from the countersignatures on its party
+envelope and its own trust lists. The procedure is normative: receivers with
+the same trust lists MUST reach the same status for the same envelope.
 
-A verification countersignature is **valid** for the subject when it verifies
-against its issuer's published key, its `aud` equals the subject, it has a
-`cnf`, an `iat` no later than the present, allowing the clock skew of §6, and
-no `exp` that has passed.
+A countersignature is **valid** when it verifies against its issuer's
+published key, its audience is the subject, it has a bound key, its signing
+time is no later than the present (allowing the clock skew of §6), and any
+expiry has not passed.
 
-1. Consider every signature whose `iss` is an authority on the trust list and
-   whose `aud` equals the subject. For each, verify it against that
-   authority's published key, and reject it unless it has an `iat` no later
-   than the present, allowing the clock skew of §6, an `exp` that has not
-   passed and is no more than 90 days after the `iat`, a `cnf` naming the key
-   of a signature confirming the envelope's `from` and `to` (§5), and a
-   `verifier` naming a different participant from the authority whose
-   countersignature on the same envelope is valid. Which key that
-   countersignature's `cnf` names is the authority's to check (§7.3). The
-   first candidate that passes makes the subject **verified**.
-2. Failing that, consider every signature whose `iss` is a verifier on the
-   receiver's own trust list. One that is valid, and whose `cnf` names the
-   key of a signature confirming the envelope's `from` and `to`, makes the
-   subject **verified**. With no authority following the subject's keys, the
-   verifier's `cnf` must name a current one.
-3. Otherwise the subject is **unverified**, whatever else the envelope
-   carries — a countersignature from an unknown authority or verifier, or one
-   bound to a different address, is not evidence.
+1. **Through an authority.** Consider each countersignature issued by an
+   authority on the trust list. It counts if it is valid, its expiry is no
+   more than 90 days after its signing time, its bound key confirmed the
+   envelope (§5), and its `verifier` names a different participant whose
+   valid countersignature is on the same envelope. Which key the verifier's
+   countersignature binds is the authority's concern (§7.3). The first that
+   counts makes the subject **verified**. One whose verifier is missing,
+   malformed, the authority itself, or not valid does not count.
+2. **Directly.** Failing that, a valid countersignature by a verifier on the
+   receiver's own trust list, whose bound key confirmed the envelope, makes
+   the subject **verified**. With no authority following the subject's key
+   changes, that must be its current key.
+3. Otherwise the subject is **unverified**. Countersignatures from unknown
+   authorities or verifiers, or for other addresses, are not evidence.
 
-An authority countersignature whose named verifier is absent, malformed,
-self-referential, or whose countersignature is not valid, is rejected: an
-authority registers only verified subjects, so a registration without a
-verification is not one.
+A key that cannot be fetched is not a rejection. A receiver MUST NOT report
+unverified because of a temporary failure while a countersignature remains
+unchecked, and SHOULD handle it as §11 describes.
 
-A key endpoint that cannot be reached is not a rejection. "Could not check"
-is not "not verified": a receiver MUST NOT report **unverified** on a
-temporary failure while a candidate remains unchecked, and SHOULD treat it as
-§11 does, so a verified sender is never quietly demoted by somebody else's
-outage.
-
-A status describes the holder of the key the endorsement binds. A receiver
-applying it to a delivery MUST check that the delivery is confirmed (§5) by
-that same key, or the status does not apply to it.
+A status applies to the holder of the bound key. A receiver applying it to a
+delivery MUST check that the delivery was confirmed with that same key.
 
 ### 7.3 Key lineage
 
-An authority keeps, for each address it registers, the **lineage** of the
-subject's keys: the keys it has bound in turn, by thumbprint, since the
-lineage last started. Every registration request is a delivery (§5.2) to the
-authority's inbox, and the keys confirming its `from` and `to` decide what
-happens:
+An authority keeps, for each address it registers, the subject's **lineage**:
+the keys it has bound in turn, by thumbprint, since the lineage last started.
+Each registration request is a delivery to the authority, and the keys that
+confirmed it decide what happens:
 
-- **One key, in the lineage's current position or with no lineage yet.** A
-  first registration or a renewal: the authority binds that key. A first
-  registration starts the lineage with it.
-- **One key, not the current one.** The subject has lost its key, or the
-  address has changed hands; the authority cannot tell which. It starts a new
-  lineage with that key, and registers it.
-- **Two keys, one of them the current one.** A rollover: the authority adds
-  the other key to the lineage and binds it. Signing with both keys proves
-  the holder of the current key chose its successor, as in an ACME key
-  change (RFC 8555 §7.3.5).
+- **The current key, or any one key with no lineage yet.** A renewal or a
+  first registration: the authority binds that key, starting the lineage if
+  there is none.
+- **One key that is not the current one.** The subject has lost its key, or
+  the address has changed hands; the authority cannot tell which. It starts a
+  new lineage with that key.
+- **The current key and one not already in the lineage.** A key change: the
+  authority adds the new key and binds it. Signing with both shows that the
+  holder of the current key chose its successor, as in an ACME key change
+  (RFC 8555 §7.3.5).
 - **Two keys at a first registration.** The authority starts the lineage
-  with whichever key a verification countersignature's `cnf` names, and
-  rolls over to the other. If neither is named, it MUST reject the request.
+  with whichever key a verification countersignature binds, and then adds the
+  other. If neither or both are bound, it MUST reject the request.
 - **Anything else** MUST be rejected.
 
-An authority MUST NOT register a subject unless a verifier's countersignature
-binds, with `cnf`, a key in the current lineage. A rollover therefore needs no
-new verification, and a new lineage needs one for its key: a subject that has
-lost its key asks its verifier again (§7.1, step 2), and a new holder of the
-address cannot be registered as the old one.
+An authority MUST NOT register a subject unless a verification
+countersignature binds a key in the current lineage. A key change therefore
+needs no new verification, and a new lineage needs one for its key: a subject
+that has lost its key asks its verifier again (§7.1, step 2), and a new holder
+of the address cannot be registered as the old one.
 
-A verifier accepted directly (§7.2) has no lineage behind it, so a subject
+A verifier relied on directly (§7.2) has no lineage behind it, so a subject
 relying on one needs a new verification whenever it changes key.
 
-A lineage is the authority's own record, so a subject that moves to another
-authority after rotating its key starts a new lineage there, and needs a
-verification for its current key. A subject SHOULD rotate keys at renewal,
+A lineage is the authority's own record, so a subject moving to another
+authority after changing key starts a new lineage there, and needs a
+verification for its current key. A subject SHOULD change keys at renewal,
 when it is already making a request.
 
 ## 8. Endpoints
 
 ### 8.1 `GET /.well-known/gobl/keys/<kid>`
 
-This endpoint is public and returns one JWK as `application/json`.
+Public. Returns one JSON Web Key as `application/json`.
 
 | Status | Meaning |
 |---|---|
@@ -534,187 +422,162 @@ This endpoint is public and returns one JWK as `application/json`.
 
 ### 8.2 `GET /.well-known/gobl/who`
 
-This endpoint requires a valid request token. It returns a signed party
-envelope or one of these empty responses:
+Requires a request token (§6). Returns the participant's party envelope, made
+for the requester (§5.1), or one of these empty responses:
 
 | Status | Meaning |
 |---|---|
 | `200` | Party envelope returned. |
-| `202` | Request recorded for possible deferred disclosure. |
+| `202` | Request recorded for possible later disclosure. |
 | `204` | The participant does not publish identity details. |
 | `401` | Request token missing or invalid. |
 | `404` | Address does not participate. |
-| `503` | A required key endpoint is unavailable. |
+| `503` | A required key could not be fetched. |
 
-A `200` response MUST be from the queried address to the requester, and MUST
-be verified as described in §5.1 before anything in it is used. Authenticated responses SHOULD use `Cache-Control: private`, and a
-caller may cache a verified identity for a bounded period — bounded because a
-cached identity outliving the countersignature that endorsed it is §12's
-problem.
+A requester MUST check a `200` response as §5.1 describes before using it.
+Responses SHOULD use `Cache-Control: private`. A requester may cache a
+checked identity, but only for a bounded time, so the cache does not outlive
+the countersignatures behind it.
 
 ### 8.3 `POST /.well-known/gobl/inbox`
 
-This endpoint requires a signed GOBL envelope and no request token.
-The envelope MUST be addressed to the inbox's address and confirmed as
-described in §5.2. The receiver may then apply its sender
-status policy (§7.2).
+Accepts a signed GOBL envelope; no request token. The envelope MUST be
+addressed to the inbox's address and confirmed as §5.2 describes. The
+receiver may then apply its sender status policy (§7.2).
 
 | Status | Meaning |
 |---|---|
 | `202` | Envelope accepted and durably recorded. |
 | `400` | Body is unreadable or invalid JSON. |
-| `401` | Delivery signature failed. |
+| `401` | The envelope's confirming signature failed. |
 | `403` | Sender policy rejected the envelope. |
 | `422` | Envelope failed structural validation. |
 | `500` | Persistence failed. |
-| `503` | A required key endpoint is unavailable. |
+| `503` | A required key could not be fetched. |
 
 Acceptance MUST be idempotent on the envelope UUID and digest: the same
-envelope delivered twice is acknowledged twice and stored once, which is what
-makes the retry rule in §11 safe. Only `202` means the envelope was accepted;
-any other `2xx` MUST NOT be read as success.
+envelope delivered twice is acknowledged twice and stored once, which makes
+retries safe (§11). Only `202` means the envelope was accepted; any other
+`2xx` MUST NOT be read as success.
 
 ## 9. Limits
 
-These bound what a participant will do on a peer's behalf. They are a defence
-against a hostile or broken peer rather than a tuning parameter, so an
-implementation that raises them weakens itself and not the protocol.
+These protect a participant from a hostile or broken peer. Raising them
+weakens the implementation, not the protocol.
 
 | Limit | Value |
 |---|---|
 | Response body accepted from a peer | 1 MiB |
-| Signatures verified per envelope | 32 |
-| Signatures checked against keys per issuer, per envelope | 4 |
+| Signatures per envelope | 32 |
+| Signatures checked against keys, per issuer per envelope | 4 |
 
-An issuer's signatures beyond the second limit are ignored, so an envelope
-cannot make a receiver fetch more than a few keys from any one address. An
-envelope carrying more signatures than the first limit MUST be rejected rather
-than partially verified. Because each round trip through an authority or
-verifier appends a signature, a party envelope approaching the limit will stop
-being endorsable before it stops being valid; a participant that countersigns
-SHOULD refuse an envelope close enough to the limit that its own signature
-would exhaust it, and say so, rather than produce the signature that breaks
-the document.
+An envelope with more signatures than the limit MUST be rejected rather than
+partly checked. Signatures by one issuer beyond the second limit are ignored,
+so an envelope cannot make a receiver fetch more than a few keys from one
+address. Each countersignature adds to an envelope, so a participant about to
+countersign SHOULD refuse, and say so, if its signature would reach the
+limit.
 
-Fetching a key or an identity means issuing an HTTP request to an address a
-peer chose, which is a server-side request forgery primitive. An implementation
-MUST refuse to fetch from hosts resolving to loopback, private, link-local,
-multicast, or unspecified addresses, except where an operator has deliberately
-configured otherwise for testing or a local service.
+Fetching a key or an identity means requesting an address a peer chose, which
+could be used to reach internal services. An implementation MUST refuse to
+fetch from hosts resolving to loopback, private, link-local, multicast, or
+unspecified addresses, unless an operator has deliberately configured
+otherwise for testing or a local service.
 
-Fetched keys MAY be cached, keyed by URL and only on success. A cache SHOULD
-be bounded in both entries and lifetime; see §12 on what a stale entry costs.
+Fetched keys MAY be cached, by URL and only on success. A cache SHOULD be
+bounded in entries and lifetime (§12).
 
 ## 10. Typical delivery flow
 
 1. The sender obtains the receiver's address out of band.
-2. The sender may call `/who` for the receiver's invoicing details.
+2. The sender may call the receiver's `/who` for its invoicing details.
 3. The sender sets `from` and `to` to its own and the receiver's addresses,
-   and signs the envelope with `iss=sender` and `aud=receiver`.
+   and signs the envelope as issuer with the receiver as audience.
 4. The sender posts it to the receiver's inbox.
-5. The receiver verifies the envelope; the sender is its `from` (§5.2).
-6. The receiver may look up that sender's `/who` and apply its status policy
-   (§7.2).
+5. The receiver checks the confirming signature; the sender is the `from`
+   address (§5.2).
+6. The receiver may fetch the sender's `/who` and decide its status (§7.2).
 7. A `202` confirms durable receipt.
 
-Only step 6 involves sender status, and that requirement falls on the
-sender. Any response document is a new delivery and is subject to the same
-rules.
+A reply is a new delivery, subject to the same rules.
 
 ## 11. Failure handling
 
-Every failure in this protocol falls into one of three classes, and an
-implementation MUST be able to tell them apart — reporting a temporary failure
-as a definitive one turns somebody else's outage into a rejection the caller
-cannot distinguish from a refusal.
+Every failure falls into one of three classes, and an implementation MUST be
+able to tell them apart:
 
 | Class | Examples | Caller behaviour |
 |---|---|---|
 | **Temporary** | `429`, `5xx`, connection and timeout failures | Retry with backoff. |
-| **Definitive** | a `4xx` other than `429`, a signature that fails verification | Do not retry without changing the request. |
-| **Absent** | `204` from `/who`, `404` for an unknown key or address | Not a failure. The peer answered, and the answer is that there is nothing. |
+| **Definitive** | a `4xx` other than `429`, a signature that fails to verify | Do not retry without changing the request. |
+| **Absent** | `204` from `/who`, `404` for an unknown key or address | Not a failure: the peer answered that there is nothing. |
 
-Two consequences run through the rest of this document.
+A check that could not be performed is never reported as one that failed. An
+unreachable key endpoint means a signature is unknown, not invalid: a server
+answers `503` rather than `401` (§6), and a receiver does not downgrade a
+sender's status (§7.2). Otherwise somebody else's outage becomes a rejection
+the caller cannot tell from a refusal.
 
-A check that could not be *performed* is never reported as one that *failed*.
-An unreachable key endpoint means the signature is unknown, not invalid: a
-server answers `503` rather than `401` (§6), and a receiver does not downgrade
-a sender's status (§7.2).
-
-Delivery retries are safe because inbox acceptance is idempotent on the
-envelope UUID and digest (§8.3). A caller that retries a delivery it is unsure
-about cannot create a duplicate; one that does not retry can lose a document
-to a transient failure. Retrying is the correct behaviour.
+Delivery retries are safe because inbox acceptance is idempotent (§8.3), and
+a caller that does not retry can lose a document to a temporary failure.
 
 ## 12. Security considerations
 
-- **Web PKI:** control of an address and its TLS certificate controls its
-  published keys. Applications must compare verified issuers with the
-  identities they expect, or apply a sender status policy (§7.2). An
-  implementation MUST authenticate the HTTPS response when fetching a key; a
-  key fetched over an unauthenticated channel proves nothing.
-- **Key removal:** a cached key may continue to be accepted after it is
-  withdrawn, until the cache entry expires. Key caches SHOULD be short-lived
-  and an implementation SHOULD offer a way to flush them during incident
-  response, since removing a key from publication is otherwise not an
-  immediate revocation.
-- **Countersignature freshness:** authority and verifier `exp` claims bound
-  their lifetimes. Identity caches must be bounded too, or a cached identity
-  outlives the countersignature that justified trusting it.
-- **Resource limits:** the limits in §9 are a defence against a hostile peer,
-  not a tuning parameter. Servers should impose comparable limits on the
-  requests they accept.
-- **Privacy:** request tokens identify callers but do not make party data
-  public. Operators should limit audit-log retention because requester metadata
-  can reveal business relationships.
-- **Routing fields:** `from` and `to` are not signed; they are accepted only
-  when a valid signature carries the same pair as `iss` and `aud`. That
-  shows the sender addressed the document to the receiver at some point, not
-  that the receiver is the only one holding it.
-- **Verification is not graded.** A subject is verified or it is not, and any
-  verifier a trusted authority names satisfies it. A receiver that wants to
-  distinguish between verifiers must read the `verifier` claim itself and
-  decide which addresses it accepts. It follows that an authority admits a
-  weak verifier at the cost of every sender it marks verified, and that a
-  verifier's address is the only trust signal a receiver gets: it should name
-  what is being vouched for, and a change in what the verifier checks is a
-  change in what that name means.
-- **Verifier scope:** a verifier attests to a party's identity at the
-  address in its `aud`, at the point in time given by its `iat`. It says
-  nothing about any document the subject later sends. An `exp`, where
-  present, bounds how long the attestation may be relied upon at all; where
-  absent, the authority decides how old an attestation it is willing to name.
+- **Web PKI:** whoever controls an address and its TLS certificate controls
+  its published keys. An implementation MUST authenticate the HTTPS response
+  when fetching a key. Applications must compare the senders they see with
+  the ones they expect, or apply a sender status policy (§7.2).
+- **Key removal:** a cached key may still be accepted after it is withdrawn,
+  until the cache entry expires. Key caches SHOULD be short-lived, and an
+  implementation SHOULD offer a way to flush them during an incident.
+- **Expiry:** countersignature expiries bound how long they can be relied on.
+  Identity caches must be bounded too, or a cached identity outlives the
+  countersignatures behind it.
+- **Verification is not graded:** a subject is verified or not, and any
+  verifier a trusted authority names counts. A receiver wanting to
+  distinguish verifiers must read the `verifier` and decide which it accepts.
+  An authority that names a weak verifier weakens every subject it registers
+  with it.
+- **Verifier scope:** a verification describes the subject at its address
+  when it was signed. It says nothing about documents the subject sends
+  later. An expiry, if present, bounds how long it may be relied on; without
+  one, the authority decides how old a verification it accepts.
 - **Document content:** this protocol establishes who sent an envelope and
-  who that sender is. It does not establish that the parties named inside the
-  document are who they claim: a verified sender can still issue an invoice
-  naming another organization as its supplier. As on any delivery network,
-  receivers must reconcile the document's parties — tax identities, legal
-  names — with the sender's verified party before acting on it.
-- **Address ownership:** an address is a domain, and a domain can change
-  hands. A new holder controls its published keys but not the registered
-  one, so registration and verification countersignatures bound with `cnf`
-  do not carry over to it (§7.3): it can be verified and registered afresh,
-  but not as the previous holder. An authority MUST re-confirm control of
-  the address on every renewal.
+  who that sender is, not that the parties named inside the document are who
+  they claim. A verified sender can still issue an invoice naming another
+  organization as its supplier, so receivers must reconcile the document's
+  parties, such as tax identities and legal names, with the sender's verified
+  party before acting on it.
+- **Address ownership:** a domain can change hands. A new holder controls the
+  published keys but not the registered one, so earlier countersignatures do
+  not carry over to it (§7.3). It can be verified and registered afresh, but
+  not as the previous holder. An authority MUST re-confirm control of the
+  address on every renewal.
 - **Hosted addresses:** whoever operates an address holds its keys. A
-  participant using an address under a provider's domain is trusting that
+  participant using an address under a provider's domain trusts that
   provider to act as it.
-- **Unsigned header data:** stamps, notes, links and other header fields are
-  not covered by any signature, and are only the sender's assertion.
+- **Unsigned header data:** `from` and `to` count only when a signature
+  confirms them, and even then show only that the sender addressed the
+  envelope to the receiver at some point, not that nobody else holds it.
+  Stamps, notes, links, and other header fields are not signed at all, and
+  are only the sender's claim.
 - **Replay:** a delivery may be posted again, intentionally or not. Inbox
   acceptance is idempotent (§8.3), and a receiver SHOULD recognise documents
   it has already processed by their UUID for as long as it keeps them.
+- **Privacy:** request tokens identify requesters but do not make party data
+  public. Operators should limit how long they keep request logs, which can
+  reveal business relationships.
 
 ## 13. References
 
-- RFC 2119 and RFC 8174 — requirement keywords
-- RFC 6750 — Bearer token usage
-- RFC 7515 — JSON Web Signature
-- RFC 7517 — JSON Web Key
-- RFC 7518 — JSON Web Algorithms
-- RFC 7519 — JSON Web Token
-- RFC 7638 — JSON Web Key Thumbprint
-- RFC 7800 — Proof-of-Possession Key Semantics for JWTs (`cnf`)
-- RFC 8555 — Automatic Certificate Management Environment (ACME)
-- `github.com/invopop/gobl/dsig` — signature and key primitives
-- `github.com/invopop/gobl/org` — party schema
+- RFC 2119 and RFC 8174: requirement keywords
+- RFC 6750: Bearer token usage
+- RFC 7515: JSON Web Signature
+- RFC 7517: JSON Web Key
+- RFC 7518: JSON Web Algorithms
+- RFC 7519: JSON Web Token
+- RFC 7638: JSON Web Key Thumbprint
+- RFC 7800: Proof-of-Possession Key Semantics for JWTs (`cnf`)
+- RFC 8555: Automatic Certificate Management Environment (ACME)
+- `github.com/invopop/gobl/dsig`: signature and key primitives
+- `github.com/invopop/gobl/org`: party schema
