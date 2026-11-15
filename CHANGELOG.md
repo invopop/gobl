@@ -18,6 +18,10 @@ This file is generated from the change files in the [changes](./changes) directo
 - `icc`: new International Chamber of Commerce catalogue with the `icc-incoterms-2010` and `icc-incoterms-2020` extensions for the Incoterms® 2010 and 2020 rule codes on delivery details.
 - `untdid`: `untdid-delivery-terms` extension for the UNTDID 4053 delivery terms codes `1` (arranged by the supplier) and `2` (arranged by a logistic service provider) on delivery details.
 
+### Added
+
+- `il`: Israel tax regime with VAT (Ma'am) support, tax identity validation, org identity support, and invoice scenarios
+
 ### Changed
 
 - `convert`: **breaking**: `Converter.Import` takes the `*ImportOptions`, as `Export` takes the `*ExportOptions`, so converters receive the requested formats.
