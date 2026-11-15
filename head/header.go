@@ -242,8 +242,9 @@ func WithExpiration(t time.Time) SignOption {
 }
 
 // WithConfirmation sets the RFC 7800 `cnf` claim in the signed
-// payload to the given RFC 7638 key thumbprint (dsig.PublicKey's
-// Thumbprint), binding the signature to the holder of that key.
+// payload to the given RFC 7638 key thumbprint, base64url-encoded
+// without padding as returned by dsig.PublicKey's JKT, binding the
+// signature to the holder of that key.
 func WithConfirmation(jkt string) SignOption {
 	return func(o *signOptions) { o.jkt = jkt }
 }

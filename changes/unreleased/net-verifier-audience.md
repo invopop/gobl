@@ -15,3 +15,5 @@
 ## Fixed
 
 - `net`: `HTTPFetcher` dials the addresses it has checked, rather than resolving the host again.
+- `net`: `HTTPFetcher` dial and lookup errors wrap their cause as well as `ErrUnavailable`.
+- `net`: a delivery with no valid signature reports why the last candidate failed.

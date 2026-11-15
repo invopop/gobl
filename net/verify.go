@@ -84,7 +84,7 @@ func (c *Client) pairKeys(ctx context.Context, env *gobl.Envelope, from, to Addr
 			ErrVerifyFailed, len(env.Signatures), maxEnvelopeSignatures)
 	}
 	var keys []*dsig.PublicKey
-	var unavailable error
+	var unavailable, reason error
 	candidates := 0
 	for _, sig := range env.Signatures {
 		p, err := head.SignedPayload(sig)
@@ -97,7 +97,8 @@ func (c *Client) pairKeys(ctx context.Context, env *gobl.Envelope, from, to Addr
 		if aud, err := ParseAddress(p.Aud); err != nil || aud != to {
 			continue
 		}
-		if checkIssued(p) != nil {
+		if err := checkIssued(p); err != nil {
+			reason = err
 			continue
 		}
 		if candidates++; candidates > maxIssuerCandidates {
@@ -107,13 +108,17 @@ func (c *Client) pairKeys(ctx context.Context, env *gobl.Envelope, from, to Addr
 		if err != nil {
 			if errors.Is(err, ErrUnavailable) {
 				unavailable = err
+			} else {
+				reason = err
 			}
 			continue
 		}
 		if err := env.VerifySignature(sig, pub); err != nil {
+			reason = err
 			continue
 		}
-		if pub.Allows(time.Now()) != nil {
+		if err := pub.Allows(time.Now()); err != nil {
+			reason = err
 			continue
 		}
 		if !hasKey(keys, pub.JKT()) {
@@ -125,6 +130,9 @@ func (c *Client) pairKeys(ctx context.Context, env *gobl.Envelope, from, to Addr
 	}
 	if unavailable != nil {
 		return nil, unavailable
+	}
+	if reason != nil {
+		return nil, fmt.Errorf("%w: no valid signature from %q to %q: %v", ErrVerifyFailed, from, to, reason)
 	}
 	return nil, fmt.Errorf("%w: no valid signature from %q to %q", ErrVerifyFailed, from, to)
 }

@@ -409,7 +409,9 @@ func TestVerifyDelivery(t *testing.T) {
 		env := buildDelivery(t, key, sender, inbox)
 		pairSignature(t, env, key, 0)
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
-		require.ErrorIs(t, c.VerifyDelivery(ctx, env, inbox), ErrVerifyFailed)
+		err := c.VerifyDelivery(ctx, env, inbox)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.ErrorContains(t, err, "has no iat")
 	})
 
 	t.Run("rejects a signature issued in the future", func(t *testing.T) {
@@ -417,7 +419,9 @@ func TestVerifyDelivery(t *testing.T) {
 		env := buildDelivery(t, key, sender, inbox)
 		pairSignature(t, env, key, time.Now().Add(time.Hour).Unix())
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
-		require.ErrorIs(t, c.VerifyDelivery(ctx, env, inbox), ErrVerifyFailed)
+		err := c.VerifyDelivery(ctx, env, inbox)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.ErrorContains(t, err, "issued in the future")
 	})
 
 	t.Run("rejects a key retired since signing", func(t *testing.T) {

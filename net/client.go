@@ -41,7 +41,7 @@ func safeDialContext(ctx context.Context, network, addr string) (stdnet.Conn, er
 	}
 	ips, err := stdnet.DefaultResolver.LookupIP(ctx, "ip", host)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
+		return nil, fmt.Errorf("%w: %w", ErrUnavailable, err)
 	}
 	for _, ip := range ips {
 		if !isPublicIP(ip) {
@@ -62,7 +62,7 @@ func safeDialContext(ctx context.Context, network, addr string) (stdnet.Conn, er
 	if lastErr == nil {
 		lastErr = fmt.Errorf("no addresses for %s", host)
 	}
-	return nil, fmt.Errorf("%w: %v", ErrUnavailable, lastErr)
+	return nil, fmt.Errorf("%w: %w", ErrUnavailable, lastErr)
 }
 
 // isPublicIP reports whether ip is a routable, non-special address.
