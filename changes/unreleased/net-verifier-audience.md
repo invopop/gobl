@@ -18,4 +18,4 @@
 - `net`: `HTTPFetcher` dials the addresses it has checked, rather than resolving the host again.
 - `net`: `HTTPFetcher` dial and lookup errors wrap their cause as well as `ErrUnavailable`.
 - `net`: a delivery with no valid signature reports why the last candidate failed.
-- `net`: `HTTPFetcher` refuses shared (RFC 6598), reserved, benchmarking and NAT64 addresses.
+- `net`: `HTTPFetcher` refuses every IANA special-purpose range that is not globally reachable, and the NAT64, 6to4 and Teredo ranges.

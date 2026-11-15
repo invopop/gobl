@@ -353,28 +353,39 @@ func TestIsPublicIP(t *testing.T) {
 		{"8.8.8.8", true},
 		{"1.1.1.1", true},
 		{"2606:4700:4700::1111", true},
-		{"127.0.0.1", false},       // loopback
-		{"::1", false},             // loopback
-		{"10.0.0.1", false},        // private
-		{"192.168.1.1", false},     // private
-		{"172.16.0.1", false},      // private
-		{"169.254.169.254", false}, // link-local (AWS metadata)
-		{"fe80::1", false},         // link-local
-		{"0.0.0.0", false},         // unspecified
-		{"::", false},              // unspecified
-		{"224.0.0.1", false},       // multicast
-		{"100.64.0.1", false},      // shared (RFC 6598)
-		{"100.127.255.254", false}, // shared (RFC 6598)
-		{"100.128.0.1", true},      // just past shared
-		{"0.1.2.3", false},         // this network
-		{"192.0.0.8", false},       // IETF protocol assignments
-		{"198.18.0.1", false},      // benchmarking
-		{"240.0.0.1", false},       // reserved
-		{"255.255.255.255", false}, // broadcast
-		{"fd00::1", false},         // unique local (RFC 4193)
-		{"64:ff9b::a00:1", false},  // NAT64 to 10.0.0.1
-		{"64:ff9b:1::1", false},    // local-use NAT64
-		{"::ffff:10.0.0.1", false}, // IPv4-mapped private
+		{"127.0.0.1", false},           // loopback
+		{"::1", false},                 // loopback
+		{"10.0.0.1", false},            // private
+		{"192.168.1.1", false},         // private
+		{"172.16.0.1", false},          // private
+		{"169.254.169.254", false},     // link-local (AWS metadata)
+		{"fe80::1", false},             // link-local
+		{"0.0.0.0", false},             // unspecified
+		{"::", false},                  // unspecified
+		{"224.0.0.1", false},           // multicast
+		{"100.64.0.1", false},          // shared (RFC 6598)
+		{"100.127.255.254", false},     // shared (RFC 6598)
+		{"100.128.0.1", true},          // just past shared
+		{"0.1.2.3", false},             // this network
+		{"192.0.0.8", false},           // IETF protocol assignments
+		{"198.18.0.1", false},          // benchmarking
+		{"240.0.0.1", false},           // reserved
+		{"255.255.255.255", false},     // broadcast
+		{"fd00::1", false},             // unique local (RFC 4193)
+		{"64:ff9b::a00:1", false},      // NAT64 to 10.0.0.1
+		{"64:ff9b:1::1", false},        // local-use NAT64
+		{"::ffff:10.0.0.1", false},     // IPv4-mapped private
+		{"192.0.2.1", false},           // TEST-NET-1
+		{"198.51.100.1", false},        // TEST-NET-2
+		{"203.0.113.1", false},         // TEST-NET-3
+		{"192.88.99.1", false},         // 6to4 relay anycast
+		{"2001:db8::1", false},         // documentation
+		{"3fff::1", false},             // documentation
+		{"2001:0:4136:e378::1", false}, // Teredo
+		{"2002:a00:1::1", false},       // 6to4 for 10.0.0.1
+		{"100::1", false},              // discard-only
+		{"5f00::1", false},             // segment routing
+		{"2a00:1450:4001::1", true},    // global unicast
 	}
 	for _, tc := range tests {
 		t.Run(tc.ip, func(t *testing.T) {

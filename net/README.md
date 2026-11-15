@@ -485,9 +485,10 @@ limit.
 
 Fetching a key or an identity means requesting an address a peer chose, which
 could be used to reach internal services. An implementation MUST refuse to
-fetch from hosts resolving to loopback, private, shared (RFC 6598),
-link-local, multicast, unspecified, or reserved addresses, or to NAT64
-prefixes that reach them, unless an operator has deliberately configured
+fetch from hosts resolving to an address that is not globally reachable
+(loopback, private, link-local, multicast, unspecified, or listed as not
+globally reachable in the IANA special-purpose address registries), or to a
+translation range such as NAT64 that can reach one, unless an operator has deliberately configured
 otherwise for testing or a local service.
 
 Fetched keys MAY be cached, by URL and only on success. A cache SHOULD be

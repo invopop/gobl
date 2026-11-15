@@ -70,10 +70,10 @@ func dialAddrs(ctx context.Context, network, host string, ips []stdnet.IP, port 
 	return nil, fmt.Errorf("%w: %w", ErrUnavailable, lastErr)
 }
 
-// isPublicIP reports whether ip is a routable, non-special address.
-// A loopback, private (RFC 1918, RFC 4193), shared (RFC 6598),
-// link-local, multicast, unspecified or reserved IP, or one in a range
-// that reaches IPv4 through a translator (NAT64), is rejected.
+// isPublicIP reports whether ip is globally reachable: not loopback,
+// private, link-local, multicast or unspecified, and in none of the IANA
+// special-purpose ranges that are not globally reachable, nor in a
+// translation range (NAT64, 6to4, Teredo) that can reach them.
 func isPublicIP(ip stdnet.IP) bool {
 	if ip == nil {
 		return false
@@ -96,16 +96,27 @@ func isPublicIP(ip stdnet.IP) bool {
 	return true
 }
 
-// nonPublicNets lists the non-public ranges the net.IP methods miss.
+// nonPublicNets lists the ranges the net.IP methods miss, from the IANA
+// IPv4 and IPv6 special-purpose address registries.
 var nonPublicNets = func() []*stdnet.IPNet {
 	cidrs := []string{
-		"0.0.0.0/8",      // this network (RFC 791)
-		"100.64.0.0/10",  // shared address space (RFC 6598)
-		"192.0.0.0/24",   // IETF protocol assignments (RFC 6890)
-		"198.18.0.0/15",  // benchmarking (RFC 2544)
-		"240.0.0.0/4",    // reserved, and broadcast (RFC 1112)
-		"64:ff9b::/96",   // NAT64 (RFC 6052)
-		"64:ff9b:1::/48", // local-use NAT64 (RFC 8215)
+		"0.0.0.0/8",       // this network (RFC 791)
+		"100.64.0.0/10",   // shared address space (RFC 6598)
+		"192.0.0.0/24",    // IETF protocol assignments (RFC 6890)
+		"192.0.2.0/24",    // documentation, TEST-NET-1 (RFC 5737)
+		"192.88.99.0/24",  // 6to4 relay anycast (RFC 7526)
+		"198.18.0.0/15",   // benchmarking (RFC 2544)
+		"198.51.100.0/24", // documentation, TEST-NET-2 (RFC 5737)
+		"203.0.113.0/24",  // documentation, TEST-NET-3 (RFC 5737)
+		"240.0.0.0/4",     // reserved, and broadcast (RFC 1112)
+		"64:ff9b::/96",    // NAT64 (RFC 6052)
+		"64:ff9b:1::/48",  // local-use NAT64 (RFC 8215)
+		"100::/64",        // discard-only (RFC 6666)
+		"2001::/23",       // IETF protocol assignments, including Teredo (RFC 2928)
+		"2001:db8::/32",   // documentation (RFC 3849)
+		"2002::/16",       // 6to4 (RFC 3056)
+		"3fff::/20",       // documentation (RFC 9637)
+		"5f00::/16",       // segment routing SIDs (RFC 9602)
 	}
 	nets := make([]*stdnet.IPNet, len(cidrs))
 	for i, c := range cidrs {
