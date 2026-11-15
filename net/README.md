@@ -612,6 +612,7 @@ with each column filled or a reason it need not be.
 | The party at `/who` is what the subject presents to this requester (§5.1) | The confirming signature on the response | As above | Issuer is the address queried, audience is the requester | Published by the subject | As above |
 | A verifier vouches for the party at this address (§7) | A verification countersignature | As above | Audience is the subject | Bound key confirmed the party envelope | Signing time not in the future; expiry, if any, not passed |
 | An authority registered the subject (§7.2) | A registration countersignature | As above | Audience is the subject; the named verifier's countersignature has the same audience | Bound key confirmed the party envelope | Signing time not in the future; expiry present, not passed, at most 90 days later |
+| The holder of the current key chose the new key (§7.3) | The current key's confirming signature on a registration request | As in the first row | Issuer is the subject, audience is the authority | Its bound key is the new key; the current key is the lineage's | Signing time within the past 5 minutes |
 | The verified subject sent this delivery (§7.2) | The delivery's confirming signature | As in the first row | `from` is the subject | The bound key confirmed the delivery | As in the first row |
 | A requester asking `/who` is who it says (§6) | A request token | None | Issuer is the requester, audience is the address queried | Published by the requester | Lifetime and age limits of §6 |
 
