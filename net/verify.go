@@ -220,9 +220,12 @@ func hasKey(keys []*dsig.PublicKey, jkt string) bool {
 // that issuer.
 const maxIssuerCandidates = 4
 
-// checkDigest fails unless env's document matches the digest in its
-// header, which is what signatures cover.
+// checkDigest fails unless env has a document matching the digest in
+// its header, which is what signatures cover.
 func checkDigest(env *gobl.Envelope) error {
+	if env.Document == nil || env.Document.IsEmpty() {
+		return fmt.Errorf("%w: envelope has no document", ErrVerifyFailed)
+	}
 	if env.Head.Digest == nil {
 		return fmt.Errorf("%w: envelope has no digest", ErrVerifyFailed)
 	}

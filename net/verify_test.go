@@ -483,6 +483,16 @@ func TestVerifyDelivery(t *testing.T) {
 		assert.Contains(t, err.Error(), "digest does not match")
 	})
 
+	t.Run("rejects an envelope without a document", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := buildDelivery(t, key, sender, inbox)
+		env.Document = nil
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		err := c.VerifyDelivery(ctx, env, inbox)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.Contains(t, err.Error(), "no document")
+	})
+
 	t.Run("rejects an envelope without a digest", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		env := buildDelivery(t, key, sender, inbox)

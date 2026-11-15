@@ -252,6 +252,15 @@ func TestTampering(t *testing.T) {
 		{name: "invoice body changed with its digest recomputed", edit: func(ex *exchange) {
 			ex.delivery = ex.rehash(ex.delivery, "Invoice 1", "Invoice 2")
 		}},
+		{name: "invoice with no document, confirmed over its digest", edit: func(ex *exchange) {
+			ex.delivery.Document = nil
+			d, err := ex.delivery.Digest()
+			require.NoError(t, err)
+			ex.delivery.Head.Digest = d
+			ex.delivery.Signatures = nil
+			ex.add(ex.delivery, twSupplierKey, head.SigningPayload{
+				Iss: twSupplier.String(), Aud: twReceiver.String(), IssuedAt: now.Unix()})
+		}},
 		{name: "invoice UUID changed", edit: func(ex *exchange) {
 			ex.delivery.Head.UUID = uuid.V7()
 		}},
@@ -460,6 +469,7 @@ func TestTampering(t *testing.T) {
 		"cnf":      map[string]any{"jkt": twMalloryKey.JKT()},
 		"verifier": twMallory.String(),
 		"uuid":     uuid.V7().String(),
+		"dig":      map[string]any{"alg": "sha256", "val": strings.Repeat("0", 64)},
 	}
 	roles := []struct {
 		name   string

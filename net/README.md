@@ -135,8 +135,8 @@ document UUID and digest, plus these fields, called claims:
 | `verifier` | verifier | The verifier's address. Required on registration countersignatures. |
 
 A signature covers the document only through its digest, so a participant
-MUST reject an envelope whose document does not match its digest before
-relying on any of its signatures.
+MUST reject an envelope with no document, or whose document does not match
+its digest, before relying on any of its signatures.
 
 Every GOBL Net envelope MUST carry `from` and `to` header fields holding
 `gobl:` addresses, and a valid signature whose issuer is `from` and whose
