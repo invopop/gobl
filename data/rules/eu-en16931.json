@@ -151,12 +151,17 @@
       ],
       "subsets": [
         {
-          "field": "taxes",
-          "assert": [
+          "guard": "not informative",
+          "subsets": [
             {
-              "id": "GOBL-EU-EN16931-BILL-CHARGE-02",
-              "desc": "taxes are required (BR-37)",
-              "tests": "present"
+              "field": "taxes",
+              "assert": [
+                {
+                  "id": "GOBL-EU-EN16931-BILL-CHARGE-02",
+                  "desc": "taxes are required (BR-37)",
+                  "tests": "present"
+                }
+              ]
             }
           ]
         }

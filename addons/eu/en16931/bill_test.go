@@ -589,6 +589,16 @@ func TestValidateBillCharge(t *testing.T) {
 		assert.ErrorContains(t, err, "taxes are required (BR-37)")
 	})
 
+	t.Run("informative without taxes", func(t *testing.T) {
+		l := &bill.Charge{
+			Reason:      "Freight",
+			Amount:      num.MakeAmount(100, 2),
+			Informative: true,
+		}
+		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
+	})
+
 	t.Run("without taxes outside EN 16931", func(t *testing.T) {
 		l := &bill.Charge{
 			Reason: "Freight",
