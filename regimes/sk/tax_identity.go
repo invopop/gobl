@@ -9,13 +9,18 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// taxCodeRegexp matches a normalized Slovak DIČ: exactly 10 digits, the first of
-// which gives the type of person, from 1 (natural person) to 7 (VAT group). An
-// IČ DPH is the prefix "SK" followed by the same DIČ. The prefix, spaces and
-// hyphens are removed during normalization (tax.NormalizeIdentity), so only the
-// digits reach this validation.
-//
-// Reference: Peppol participant identifier scheme 0245 (SK:DIC), code lists v9.7.
+/*
+	The Slovak DIČ (Daňové identifikačné číslo) is 10 digits long. The first
+digit gives the type of person, from 1 (natural person) to 7 (VAT group),
+and the whole number is divisible by 11. The IČ DPH of a VAT payer is the
+prefix SK followed by the same DIČ.
+
+	Source: https://docs.peppol.eu/edelivery/codelists/v9.7/Peppol%20Code%20Lists%20-%20Participant%20identifier%20schemes%20v9.7.html
+	(Participant identifier scheme 0245, SK:DIC)
+*/
+
+// We use a regex to reject anything outside 10 plain digits starting with 1-7.
+// The SK prefix, spaces and hyphens are removed during normalization.
 var taxCodeRegexp = regexp.MustCompile(`^[1-7]\d{9}$`)
 
 func taxIdentityRules() *rules.Set {
@@ -33,17 +38,13 @@ func taxIdentityRules() *rules.Set {
 	)
 }
 
-// validateTaxCodeChecksum applies the Slovak DIČ checksum: the whole 10-digit
-// number must be divisible by 11. Each assertion is evaluated independently, so a
-// code that already failed the format rule still reaches this function; ParseInt
-// rejects anything that is not a plain integer.
-//
-// Reference: Peppol participant identifier scheme 0245 (SK:DIC), code lists v9.7,
-// "The DIČ number is divisible by 11".
 func validateTaxCodeChecksum(code string) bool {
+	// Each rule runs on its own, so a malformed code also reaches this check
 	n, err := strconv.ParseInt(code, 10, 64)
 	if err != nil {
 		return false
 	}
+
+	// MOD 11 over the whole number
 	return n%11 == 0
 }

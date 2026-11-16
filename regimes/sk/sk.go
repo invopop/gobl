@@ -1,4 +1,4 @@
-// Package sk provides tax regime support for Slovakia.
+// Package sk provides the Slovak tax regime.
 package sk
 
 import (
@@ -14,7 +14,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// CountryCode is the ISO 3166-1 alpha-2 code for Slovakia.
+// CountryCode is the tax country code for Slovakia.
 const CountryCode = "SK"
 
 func init() {
@@ -32,7 +32,7 @@ func init() {
 	)
 }
 
-// New instantiates a new Slovakia regime.
+// New provides the tax region definition for Slovakia.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
 		Country:   CountryCode,
@@ -42,6 +42,8 @@ func New() *tax.RegimeDef {
 			i18n.EN: "Slovakia",
 			i18n.SK: "Slovensko",
 		},
+
+		// Short description
 		Description: i18n.String{
 			i18n.EN: here.Doc(`
 				Slovakia's tax system is administered by the Financial Administration of the
@@ -61,6 +63,8 @@ func New() *tax.RegimeDef {
 				persons and entrepreneurs, is the identity type "ICO".
 			`),
 		},
+
+		// Trustworthy sources about tax systems in Slovakia (Finančná správa)
 		Sources: []*cbc.Source{
 			{
 				Title: i18n.NewString("Finančná správa - Daň z pridanej hodnoty (VAT)"),
@@ -79,7 +83,7 @@ func New() *tax.RegimeDef {
 			},
 			{
 				Title: i18n.NewString("Peppol Code Lists - Participant identifier schemes 0245 (SK:DIC) and 0158 (SK:ICO)"),
-				URL:   "https://docs.peppol.eu/edelivery/codelists/",
+				URL:   "https://docs.peppol.eu/edelivery/codelists/v9.7/Peppol%20Code%20Lists%20-%20Participant%20identifier%20schemes%20v9.7.html",
 				At:    cal.NewDateTime(2026, 11, 16, 0, 0, 0),
 			},
 		},

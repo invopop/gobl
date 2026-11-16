@@ -12,20 +12,27 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+/*
+	The Slovak IČO (Identifikačné číslo organizácie) is the number the
+Statistical Office of the Slovak Republic assigns to every legal person and
+entrepreneur. It is 8 digits long, the last one being a check digit
+calculated with weights 8 down to 2 and a MOD 11 algorithm, the same as the
+Czech IČO.
+
+	Source: https://docs.peppol.eu/edelivery/codelists/v9.7/Peppol%20Code%20Lists%20-%20Participant%20identifier%20schemes%20v9.7.html
+	(Participant identifier scheme 0158, SK:ICO)
+*/
+
 const (
-	// IdentityTypeICO is the IČO (identifikačné číslo organizácie), the number the
-	// Statistical Office of the Slovak Republic assigns to every legal person and
-	// entrepreneur, and which goes on commercial documents (§ 3a Commercial Code).
+	// IdentityTypeICO is the Slovak IČO
 	IdentityTypeICO cbc.Code = "ICO"
 )
 
-// icoRegexp matches a normalized IČO: exactly 8 digits.
-//
-// Reference: Peppol participant identifier scheme 0158 (SK:ICO), code lists v9.7.
+// We use a regex to reject anything outside 8 plain digits.
 var icoRegexp = regexp.MustCompile(`^\d{8}$`)
 
-// icoSeparators are the characters an IČO is written with, such as the spaces
-// of "36 396 567". Any other character stays and fails the format rule.
+// Separators an IČO is written with, as in "36 396 567". Any other character
+// stays and fails the format rule.
 var icoSeparators = strings.NewReplacer(" ", "", " ", "", ".", "", "-", "", "/", "")
 
 var identityTypeDefinitions = []*cbc.Definition{
@@ -57,31 +64,27 @@ func orgIdentityRules() *rules.Set {
 	)
 }
 
-// normalizeOrgIdentity removes the separators from an IČO, which is often
-// written in groups of three digits such as "36 396 567".
 func normalizeOrgIdentity(id *org.Identity) {
 	if id == nil || id.Type != IdentityTypeICO {
 		return
 	}
+
+	// Remove the separators only
 	id.Code = cbc.Code(icoSeparators.Replace(id.Code.String()))
 }
 
-// validateICOCheckDigit applies the IČO check digit. A malformed code is left
-// to the format rule.
-//
-// Format: 7 digits + check digit. Validation: MOD 11 with weights 8 down to 2,
-// where the check digit is 11 minus the remainder, modulo 10. The IČO shares
-// this algorithm with the Czech IČO (see regimes/cz).
-//
-// Reference: Peppol participant identifier scheme 0158 (SK:ICO), code lists v9.7,
-// "Check number: mod11 (weights: 8, 7, 6, 5, 4, 3, 2)".
 func validateICOCheckDigit(code string) bool {
+	// A malformed code is left to the format rule
 	if !icoRegexp.MatchString(code) {
 		return true
 	}
+
+	// Weighted sum of the first 7 digits, weights 8 down to 2
 	sum := 0
 	for i, c := range code[:7] {
 		sum += int(c-'0') * (8 - i)
 	}
+
+	// MOD 11 reduction: 11 minus the remainder, modulo 10
 	return int(code[7]-'0') == (11-sum%11)%10
 }
