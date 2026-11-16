@@ -26,6 +26,7 @@ func TestAddressNormalize(t *testing.T) {
 			Door:          " 1 ",
 			Street:        " Main St. ",
 			StreetExtra:   "  Apt. 3  ",
+			StreetThird:   "  West Wing ",
 			Locality:      "  Town ",
 			Region:        "  City ",
 			State:         "  MAD  ",
@@ -40,6 +41,7 @@ func TestAddressNormalize(t *testing.T) {
 		assert.Equal(t, "1", a.Door)
 		assert.Equal(t, "Main St.", a.Street)
 		assert.Equal(t, "Apt. 3", a.StreetExtra)
+		assert.Equal(t, "West Wing", a.StreetThird)
 		assert.Equal(t, "Town", a.Locality)
 		assert.Equal(t, "City", a.Region)
 		assert.Equal(t, "MAD", a.State.String())
@@ -127,6 +129,15 @@ func TestAddressLineTwo(t *testing.T) {
 		assert.Equal(t, "12 Main St.", a.LineOne())
 		assert.Equal(t, "Apt. 3", a.LineTwo())
 	})
+}
+
+func TestAddressLineThree(t *testing.T) {
+	a := &org.Address{
+		Street:      "Main St.",
+		StreetExtra: "Apt. 3",
+		StreetThird: "West Wing",
+	}
+	assert.Equal(t, "West Wing", a.LineThree())
 }
 
 func TestAddressCountryCase(t *testing.T) {
