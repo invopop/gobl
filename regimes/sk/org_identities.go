@@ -31,8 +31,8 @@ const (
 // We use a regex to reject anything outside 8 plain digits.
 var icoRegexp = regexp.MustCompile(`^\d{8}$`)
 
-// Separators an IČO is written with, as in "36 396 567". Any other character
-// stays and fails the format rule.
+// Separators that may appear in a written IČO, such as the spaces in "36 396 567".
+// Normalization removes only these, so any other character stays and fails the format rule.
 var icoSeparators = strings.NewReplacer(" ", "", " ", "", ".", "", "-", "", "/", "")
 
 var identityTypeDefinitions = []*cbc.Definition{
