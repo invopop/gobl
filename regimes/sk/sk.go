@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -19,10 +20,15 @@ const CountryCode = "SK"
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("sk", rules.GOBL.Add(CountryCode),
+		billInvoiceRules(),
+		orgIdentityRules(),
 		taxIdentityRules(),
 	)
 	norm.Register(
 		norm.When(tax.IdentityIn(CountryCode), norm.For(func(tID *tax.Identity) { tax.NormalizeIdentity(tID) })),
+	)
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn(CountryCode)),
+		norm.For(normalizeOrgIdentity),
 	)
 }
 
@@ -45,10 +51,14 @@ func New() *tax.RegimeDef {
 				VAT (daň z pridanej hodnoty, DPH) applies at a standard rate, with reduced rates
 				for certain goods and services such as foodstuffs, medicines, medical devices,
 				books, and accommodation. Exports and intra-EU supplies to VAT-registered buyers
-				are zero-rated.
+				are exempt with the right to deduct.
 
-				Businesses registered for VAT are identified by their IČ DPH, formed by the
-				prefix SK followed by ten digits (e.g. SK2020273893).
+				Every taxpayer has a DIČ (daňové identifikačné číslo), a ten digit number whose
+				first digit gives the type of person. Businesses registered for VAT also have an
+				IČ DPH, formed by the prefix SK followed by the same ten digits (e.g.
+				SK2020273893). Both go in the tax ID code, which the supplier of an invoice must
+				have. The IČO, the eight digit number the Statistical Office assigns to legal
+				persons and entrepreneurs, is the identity type "ICO".
 			`),
 		},
 		Sources: []*cbc.Source{
@@ -67,8 +77,14 @@ func New() *tax.RegimeDef {
 				URL:   "https://www.financnasprava.sk/en/",
 				At:    cal.NewDateTime(2026, 8, 6, 0, 0, 0),
 			},
+			{
+				Title: i18n.NewString("Peppol Code Lists - Participant identifier schemes 0245 (SK:DIC) and 0158 (SK:ICO)"),
+				URL:   "https://docs.peppol.eu/edelivery/codelists/",
+				At:    cal.NewDateTime(2026, 11, 16, 0, 0, 0),
+			},
 		},
 		TimeZone:   "Europe/Bratislava",
+		Identities: identityTypeDefinitions,
 		Categories: taxCategories,
 		Scenarios:  []*tax.ScenarioSet{bill.InvoiceScenarios()},
 	}
