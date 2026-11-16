@@ -49,6 +49,7 @@ func TestTINValidation(t *testing.T) {
 		{name: "non-numeric", code: "12345ABCDE", err: "[GOBL-AE-ORG-IDENTITY-01]"},
 		{name: "not starting with 1", code: "2234567895", err: "[GOBL-AE-ORG-IDENTITY-01]"},
 		{name: "wrong check digit", code: "1234567890", err: "[GOBL-AE-ORG-IDENTITY-02]"},
+		{name: "no business identifier", code: "1000000008", err: "[GOBL-AE-ORG-IDENTITY-04]"},
 	}
 
 	ctx := tax.RegimeContext(ae.CountryCode)
