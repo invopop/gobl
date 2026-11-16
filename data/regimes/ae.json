@@ -21,13 +21,13 @@
   "tax_scheme": "VAT",
   "identities": [
     {
-      "key": "ae-tin",
+      "code": "TIN",
       "name": {
         "ar": "رقم التعريف الضريبي",
         "en": "Tax Identification Number"
       },
       "desc": {
-        "en": "10-digit number issued by the Federal Tax Authority: a 1, an 8-digit business identifier and a Luhn check digit. Not the 15-digit VAT number (TRN), which starts with it and goes in the party's tax ID."
+        "en": "10-digit number issued by the Federal Tax Authority, starting with 1 and ending in a Luhn check digit. Not the 15-digit VAT number (TRN), which starts with it and goes in the party's tax ID."
       },
       "sources": [
         {
@@ -45,7 +45,7 @@
       ]
     },
     {
-      "key": "ae-trade-license",
+      "code": "TL",
       "name": {
         "ar": "رقم الرخصة التجارية",
         "en": "Trade License Number"
@@ -60,7 +60,7 @@
       ]
     },
     {
-      "key": "ae-emirates-id",
+      "code": "EID",
       "name": {
         "ar": "رقم الهوية الإماراتية",
         "en": "Emirates ID Number"
@@ -90,7 +90,7 @@
       ]
     },
     {
-      "key": "ae-cabinet-decision",
+      "code": "CD",
       "name": {
         "ar": "رقم قرار مجلس الوزراء",
         "en": "Cabinet Decision Number"

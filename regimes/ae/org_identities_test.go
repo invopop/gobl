@@ -18,18 +18,18 @@ func TestIdentityDefinitions(t *testing.T) {
 	r := tax.RegimeDefFor(l10n.AE)
 	require.NotNil(t, r)
 
-	keys := []cbc.Key{
-		ae.IdentityKeyTIN,
-		ae.IdentityKeyTradeLicense,
-		ae.IdentityKeyEmiratesID,
-		ae.IdentityKeyCabinetDecision,
+	types := []cbc.Code{
+		ae.IdentityTypeTIN,
+		ae.IdentityTypeTradeLicense,
+		ae.IdentityTypeEmiratesID,
+		ae.IdentityTypeCabinetDecision,
 	}
-	assert.Len(t, r.Identities, len(keys))
-	for _, key := range keys {
-		def := cbc.GetKeyDefinition(key, r.Identities)
-		if assert.NotNil(t, def, key) {
-			assert.NotEmpty(t, def.Name.In(i18n.EN), key)
-			assert.NotEmpty(t, def.Name.In(i18n.AR), key)
+	assert.Len(t, r.Identities, len(types))
+	for _, typ := range types {
+		def := cbc.GetCodeDefinition(typ, r.Identities)
+		if assert.NotNil(t, def, typ) {
+			assert.NotEmpty(t, def.Name.In(i18n.EN), typ)
+			assert.NotEmpty(t, def.Name.In(i18n.AR), typ)
 		}
 	}
 }
@@ -47,15 +47,14 @@ func TestTINValidation(t *testing.T) {
 		{name: "too long", code: "12345678901", err: "[GOBL-AE-ORG-IDENTITY-01]"},
 		{name: "a full TRN", code: "134567890123003", err: "[GOBL-AE-ORG-IDENTITY-01]"},
 		{name: "non-numeric", code: "12345ABCDE", err: "[GOBL-AE-ORG-IDENTITY-01]"},
-		{name: "wrong check digit", code: "1234567890", err: "[GOBL-AE-ORG-IDENTITY-01]"},
 		{name: "not starting with 1", code: "2234567895", err: "[GOBL-AE-ORG-IDENTITY-01]"},
-		{name: "no business identifier", code: "1000000008", err: "[GOBL-AE-ORG-IDENTITY-01]"},
+		{name: "wrong check digit", code: "1234567890", err: "[GOBL-AE-ORG-IDENTITY-02]"},
 	}
 
 	ctx := tax.RegimeContext(ae.CountryCode)
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			id := &org.Identity{Key: ae.IdentityKeyTIN, Code: tt.code}
+			id := &org.Identity{Type: ae.IdentityTypeTIN, Code: tt.code}
 			err := rules.Validate(id, ctx)
 			if tt.err == "" {
 				assert.NoError(t, err)
@@ -66,10 +65,10 @@ func TestTINValidation(t *testing.T) {
 	}
 
 	t.Run("the rule only applies under the AE regime", func(t *testing.T) {
-		id := &org.Identity{Key: ae.IdentityKeyTIN, Code: "123"}
+		id := &org.Identity{Type: ae.IdentityTypeTIN, Code: "123"}
 		err := rules.Validate(id, tax.RegimeContext("DE"))
 		if err != nil {
-			assert.NotContains(t, err.Error(), "GOBL-AE-ORG-IDENTITY-01")
+			assert.NotContains(t, err.Error(), "GOBL-AE-ORG-IDENTITY")
 		}
 	})
 }
@@ -82,16 +81,16 @@ func TestEmiratesIDValidation(t *testing.T) {
 	}{
 		{name: "valid", code: "784199012345671"},
 
-		{name: "too short", code: "78419901234567", err: "[GOBL-AE-ORG-IDENTITY-02]"},
-		{name: "too long", code: "7841990123456712", err: "[GOBL-AE-ORG-IDENTITY-02]"},
-		{name: "non-numeric", code: "784ABCD12345671", err: "[GOBL-AE-ORG-IDENTITY-02]"},
-		{name: "not starting with 784", code: "123199012345671", err: "[GOBL-AE-ORG-IDENTITY-02]"},
+		{name: "too short", code: "78419901234567", err: "[GOBL-AE-ORG-IDENTITY-03]"},
+		{name: "too long", code: "7841990123456712", err: "[GOBL-AE-ORG-IDENTITY-03]"},
+		{name: "non-numeric", code: "784ABCD12345671", err: "[GOBL-AE-ORG-IDENTITY-03]"},
+		{name: "not starting with 784", code: "123199012345671", err: "[GOBL-AE-ORG-IDENTITY-03]"},
 	}
 
 	ctx := tax.RegimeContext(ae.CountryCode)
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			id := &org.Identity{Key: ae.IdentityKeyEmiratesID, Code: tt.code}
+			id := &org.Identity{Type: ae.IdentityTypeEmiratesID, Code: tt.code}
 			err := rules.Validate(id, ctx)
 			if tt.err == "" {
 				assert.NoError(t, err)
@@ -104,8 +103,8 @@ func TestEmiratesIDValidation(t *testing.T) {
 
 func TestIdentitiesWithoutFormatRules(t *testing.T) {
 	ctx := tax.RegimeContext(ae.CountryCode)
-	for _, key := range []cbc.Key{ae.IdentityKeyTradeLicense, ae.IdentityKeyCabinetDecision} {
-		id := &org.Identity{Key: key, Code: "CN-1234567"}
-		assert.NoError(t, rules.Validate(id, ctx), key)
+	for _, typ := range []cbc.Code{ae.IdentityTypeTradeLicense, ae.IdentityTypeCabinetDecision} {
+		id := &org.Identity{Type: typ, Code: "CN-1234567"}
+		assert.NoError(t, rules.Validate(id, ctx), typ)
 	}
 }

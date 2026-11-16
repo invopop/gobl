@@ -27,12 +27,11 @@ func TestTaxIdentityRules(t *testing.T) {
 		{name: "too long", code: "1234567890123456", err: "IDENTITY-01"},
 		{name: "non-numeric", code: "12345678ABCD345", err: "IDENTITY-01"},
 		{name: "not normalized", code: "1234-5678-9700-003", err: "IDENTITY-01"},
+		{name: "not starting with 1", code: "223456789500003", err: "IDENTITY-01"},
 
 		// Invalid TIN in the first 10 digits
-		{name: "wrong check digit", code: "123456789012345", err: "IDENTITY-01"},
-		{name: "check digit over all 15 digits", code: "123456789000003", err: "IDENTITY-01"},
-		{name: "not starting with 1", code: "223456789500003", err: "IDENTITY-01"},
-		{name: "no business identifier", code: "100000000800003", err: "IDENTITY-01"},
+		{name: "wrong check digit", code: "123456789012345", err: "IDENTITY-02"},
+		{name: "check digit over all 15 digits", code: "123456789000003", err: "IDENTITY-02"},
 	}
 
 	for _, tt := range tests {

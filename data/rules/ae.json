@@ -17,8 +17,23 @@
                   "assert": [
                     {
                       "id": "GOBL-AE-TAX-IDENTITY-01",
-                      "desc": "invalid UAE tax identity code format or check digit",
-                      "tests": "valid TRN"
+                      "desc": "UAE tax identity code must be 15 digits starting with 1",
+                      "tests": "matches ^1\\d{14}$"
+                    }
+                  ]
+                },
+                {
+                  "guard": "matches ^1\\d{14}$",
+                  "subsets": [
+                    {
+                      "guard": "present",
+                      "assert": [
+                        {
+                          "id": "GOBL-AE-TAX-IDENTITY-02",
+                          "desc": "UAE tax identity code must start with a TIN with a valid check digit",
+                          "tests": "valid TIN check digit"
+                        }
+                      ]
                     }
                   ]
                 }
@@ -36,28 +51,45 @@
           "guard": "context: regime in [AE]",
           "subsets": [
             {
-              "guard": "is TIN",
+              "guard": "type in [TIN]",
               "subsets": [
                 {
                   "field": "code",
                   "assert": [
                     {
                       "id": "GOBL-AE-ORG-IDENTITY-01",
-                      "desc": "UAE TIN must be 10 digits starting with 1, with a valid check digit",
-                      "tests": "valid TIN"
+                      "desc": "UAE TIN must be 10 digits starting with 1",
+                      "tests": "matches ^1\\d{9}$"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "guard": "matches ^1\\d{9}$",
+                      "subsets": [
+                        {
+                          "guard": "present",
+                          "assert": [
+                            {
+                              "id": "GOBL-AE-ORG-IDENTITY-02",
+                              "desc": "UAE TIN must end in a valid check digit",
+                              "tests": "valid TIN check digit"
+                            }
+                          ]
+                        }
+                      ]
                     }
                   ]
                 }
               ]
             },
             {
-              "guard": "is Emirates ID",
+              "guard": "type in [EID]",
               "subsets": [
                 {
                   "field": "code",
                   "assert": [
                     {
-                      "id": "GOBL-AE-ORG-IDENTITY-02",
+                      "id": "GOBL-AE-ORG-IDENTITY-03",
                       "desc": "Emirates ID number must be 15 digits starting with 784",
                       "tests": "matches ^784\\d{12}$"
                     }

@@ -9,39 +9,48 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// Identity keys for the UAE identification numbers that can appear on
-// invoices.
+// Identity types for the UAE identification numbers that can appear on
+// invoices. Except for the TIN, they are the codes PINT AE uses for the types
+// of commercial registration number.
 const (
-	// IdentityKeyTIN is the 10-digit Tax Identification Number the Federal Tax
-	// Authority (FTA) issues to businesses. It is not the 15-digit VAT number
-	// (TRN), which goes in the party's tax ID.
-	IdentityKeyTIN cbc.Key = "ae-tin"
-	// IdentityKeyTradeLicense is the number of the commercial or trade licence
-	// issued by an emirate's licensing authority.
-	IdentityKeyTradeLicense cbc.Key = "ae-trade-license"
-	// IdentityKeyEmiratesID is the number of the Emirates ID card issued to
+	// IdentityTypeTIN is the 10-digit Tax Identification Number the Federal
+	// Tax Authority (FTA) issues to businesses. It is not the 15-digit VAT
+	// number (TRN), which goes in the party's tax ID.
+	IdentityTypeTIN cbc.Code = "TIN"
+	// IdentityTypeTradeLicense is the number of the commercial or trade
+	// licence issued by an emirate's licensing authority.
+	IdentityTypeTradeLicense cbc.Code = "TL"
+	// IdentityTypeEmiratesID is the number of the Emirates ID card issued to
 	// UAE citizens and residents.
-	IdentityKeyEmiratesID cbc.Key = "ae-emirates-id"
-	// IdentityKeyCabinetDecision is the number of the Cabinet Decision that
+	IdentityTypeEmiratesID cbc.Code = "EID"
+	// IdentityTypeCabinetDecision is the number of the Cabinet Decision that
 	// establishes an entity.
-	IdentityKeyCabinetDecision cbc.Key = "ae-cabinet-decision"
+	IdentityTypeCabinetDecision cbc.Code = "CD"
 )
 
-// emiratesIDPattern is the format of the Emirates ID number: 15 digits, the
-// first three 784, the international code of the UAE. The last one is a
-// verification digit whose algorithm is not published, so it is not checked.
-const emiratesIDPattern = `^784\d{12}$`
+const (
+	// tinPattern is the format of the TIN, as the Federal Tax Authority
+	// registered it under ISO 6523 (ICD 0235): 10 digits, the first one 1,
+	// the UAE's identifier under the GCC agreement. The last one is a Luhn
+	// check digit.
+	tinPattern = `^1\d{9}$`
+	// emiratesIDPattern is the format of the Emirates ID number: 15 digits,
+	// the first three 784, the international code of the UAE. The last one is
+	// a verification digit whose algorithm is not published, so it is not
+	// checked.
+	emiratesIDPattern = `^784\d{12}$`
+)
 
-// identityDefinitions lists the identity keys the AE regime defines.
+// identityDefinitions lists the identity types the AE regime defines.
 var identityDefinitions = []*cbc.Definition{
 	{
-		Key: IdentityKeyTIN,
+		Code: IdentityTypeTIN,
 		Name: i18n.String{
 			i18n.EN: "Tax Identification Number",
 			i18n.AR: "رقم التعريف الضريبي",
 		},
 		Desc: i18n.String{
-			i18n.EN: "10-digit number issued by the Federal Tax Authority: a 1, an 8-digit business identifier and a Luhn check digit. Not the 15-digit VAT number (TRN), which starts with it and goes in the party's tax ID.",
+			i18n.EN: "10-digit number issued by the Federal Tax Authority, starting with 1 and ending in a Luhn check digit. Not the 15-digit VAT number (TRN), which starts with it and goes in the party's tax ID.",
 		},
 		Sources: []*cbc.Source{
 			mofMandatoryFieldsSource,
@@ -52,7 +61,7 @@ var identityDefinitions = []*cbc.Definition{
 		},
 	},
 	{
-		Key: IdentityKeyTradeLicense,
+		Code: IdentityTypeTradeLicense,
 		Name: i18n.String{
 			i18n.EN: "Trade License Number",
 			i18n.AR: "رقم الرخصة التجارية",
@@ -60,7 +69,7 @@ var identityDefinitions = []*cbc.Definition{
 		Sources: []*cbc.Source{mofMandatoryFieldsSource},
 	},
 	{
-		Key: IdentityKeyEmiratesID,
+		Code: IdentityTypeEmiratesID,
 		Name: i18n.String{
 			i18n.EN: "Emirates ID Number",
 			i18n.AR: "رقم الهوية الإماراتية",
@@ -81,7 +90,7 @@ var identityDefinitions = []*cbc.Definition{
 		},
 	},
 	{
-		Key: IdentityKeyCabinetDecision,
+		Code: IdentityTypeCabinetDecision,
 		Name: i18n.String{
 			i18n.EN: "Cabinet Decision Number",
 			i18n.AR: "رقم قرار مجلس الوزراء",
@@ -105,36 +114,27 @@ func orgIdentityRules() *rules.Set {
 		rules.When(
 			is.InContext(tax.RegimeIn(CountryCode)),
 			rules.When(
-				is.Func("is TIN", identityHasKey(IdentityKeyTIN)),
+				org.IdentityTypeIn(IdentityTypeTIN),
 				rules.Field("code",
-					rules.Assert("01", "UAE TIN must be 10 digits starting with 1, with a valid check digit",
-						is.Func("valid TIN", isValidTIN),
+					rules.Assert("01", "UAE TIN must be 10 digits starting with 1",
+						is.Matches(tinPattern),
+					),
+					rules.When(
+						is.Matches(tinPattern),
+						rules.AssertIfPresent("02", "UAE TIN must end in a valid check digit",
+							is.Func("valid TIN check digit", tinCheckDigitIsValid),
+						),
 					),
 				),
 			),
 			rules.When(
-				is.Func("is Emirates ID", identityHasKey(IdentityKeyEmiratesID)),
+				org.IdentityTypeIn(IdentityTypeEmiratesID),
 				rules.Field("code",
-					rules.Assert("02", "Emirates ID number must be 15 digits starting with 784",
+					rules.Assert("03", "Emirates ID number must be 15 digits starting with 784",
 						is.Matches(emiratesIDPattern),
 					),
 				),
 			),
 		),
 	)
-}
-
-// isValidTIN reports whether an identity code is a valid TIN.
-func isValidTIN(val any) bool {
-	code, ok := val.(cbc.Code)
-	return ok && validTIN(code)
-}
-
-// identityHasKey returns a predicate that reports whether an identity has the
-// given key.
-func identityHasKey(key cbc.Key) func(any) bool {
-	return func(val any) bool {
-		id, ok := val.(*org.Identity)
-		return ok && id != nil && id.Key == key
-	}
 }

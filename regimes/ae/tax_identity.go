@@ -2,8 +2,6 @@
 package ae
 
 import (
-	"regexp"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pkg/luhn"
 	"github.com/invopop/gobl/rules"
@@ -11,44 +9,32 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-var (
-	// trnRegexp is the format of the TRN: 15 digits, the first 10 of them the
-	// TIN.
-	trnRegexp = regexp.MustCompile(`^\d{15}$`)
-	// tinRegexp is the format of the TIN, as the Federal Tax Authority
-	// registered it under ISO 6523 (ICD 0235): 10 digits, the first one 1,
-	// the UAE's identifier under the GCC agreement.
-	tinRegexp = regexp.MustCompile(`^1\d{9}$`)
-)
-
-// tinNoBusiness is a TIN's 8-digit business identifier when it is all zeros,
-// which the Federal Tax Authority never issues.
-const tinNoBusiness = "00000000"
+// trnPattern is the format of the TRN: 15 digits, the first 10 of them the
+// TIN. The last 5 tell the tax the number is for, and have no published list.
+const trnPattern = `^1\d{14}$`
 
 func taxIdentityRules() *rules.Set {
 	return rules.For(new(tax.Identity),
 		rules.When(tax.IdentityIn("AE"),
 			rules.Field("code",
-				rules.AssertIfPresent("01", "invalid UAE tax identity code format or check digit",
-					is.Func("valid TRN", isValidTRN),
+				rules.AssertIfPresent("01", "UAE tax identity code must be 15 digits starting with 1",
+					is.Matches(trnPattern),
+				),
+				rules.When(
+					is.Matches(trnPattern),
+					rules.AssertIfPresent("02", "UAE tax identity code must start with a TIN with a valid check digit",
+						is.Func("valid TIN check digit", tinCheckDigitIsValid),
+					),
 				),
 			),
 		),
 	)
 }
 
-// isValidTRN reports whether a code is a TRN: 15 digits that start with a
-// valid TIN. The last 5 digits tell the tax the number is for, and have no
-// published list.
-func isValidTRN(val any) bool {
+// tinCheckDigitIsValid reports whether the first 10 digits of a code, the
+// TIN, end in a valid Luhn check digit. It is used on TINs and on TRNs, which
+// start with one, after their format is checked.
+func tinCheckDigitIsValid(val any) bool {
 	code, ok := val.(cbc.Code)
-	return ok && trnRegexp.MatchString(code.String()) && validTIN(code[:10])
-}
-
-// validTIN reports whether a code is a TIN: 10 digits starting with 1, with a
-// business identifier that is not all zeros and a Luhn check digit at the end.
-func validTIN(code cbc.Code) bool {
-	return tinRegexp.MatchString(code.String()) &&
-		code[1:9] != tinNoBusiness &&
-		luhn.Check(code)
+	return ok && len(code) >= 10 && luhn.Check(code[:10])
 }
