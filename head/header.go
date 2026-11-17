@@ -169,11 +169,10 @@ func (h *Header) Link(category, key cbc.Key) *Link {
 // JWT-standard NumericDate (Unix seconds, per RFC 7519 §2).
 // ExpiresAt (optional, set via head.WithExpiration) is the
 // JWT-standard `exp` claim (RFC 7519 §4.1.4): the time after which
-// the signature's assertions should no longer be relied upon — used
-// by authorities to bound the lifetime of their countersignatures.
+// the signature's assertions should no longer be relied upon.
 // Verifier (optional, set via head.WithVerifier) names the GOBL Net
-// address of the authority that performed identity verification
-// (KYC/KYB) of the subject; it is asserted by a registration
+// address of the participant that performed identity verification
+// (KYC/KYB) of the party; it is asserted by a registration
 // authority on its countersignature and is confirmed by the named
 // verifier's own countersignature on the same envelope. Header
 // stamps, links, tags, meta, notes and the (unsigned, intent-level)
@@ -214,8 +213,8 @@ func WithAudience(aud string) SignOption {
 }
 
 // WithVerifier sets the `verifier` claim in the signed payload: the
-// GOBL Net address (a bare FQDN) of the authority that performed
-// identity verification of the subject. Set by registration
+// GOBL Net address (a bare FQDN) of the participant that performed
+// identity verification (KYC/KYB) of the party. Set by registration
 // authorities on their countersignatures; the named verifier is
 // expected to countersign the same envelope. Default (no option)
 // leaves it unset — the signature asserts registration only.
