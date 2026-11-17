@@ -5,7 +5,7 @@
     "en": "United Arab Emirates"
   },
   "description": {
-    "en": "The UAE tax system is administered by the Federal Tax Authority (FTA).\nVAT was introduced on January 1, 2018, with standard, zero, and\nexempt rate categories.\n\nBusinesses must register for VAT if taxable supplies and imports\nexceed AED 375,000 in a 12-month period, with voluntary registration\navailable above AED 187,500. Registered businesses receive a Tax\nRegistration Number (TRN) which must be included on all tax invoices.\n\nSimplified VAT invoices may be used when the recipient is not VAT\nregistered, or when the transaction value does not exceed AED 10,000\nfor VAT-registered recipients. Credit notes are supported for\ncorrecting invoices."
+    "en": "The UAE tax system is administered by the Federal Tax Authority (FTA).\nVAT was introduced on January 1, 2018, with standard, zero, and\nexempt rate categories.\n\nBusinesses must register for VAT if taxable supplies and imports\nexceed AED 375,000 in a 12-month period, with voluntary registration\navailable above AED 187,500. Registered businesses receive a Tax\nRegistration Number (TRN) which must be included on all tax invoices.\n\nSimplified VAT invoices may be used when the recipient is not VAT\nregistered, or when the transaction value does not exceed AED 10,000\nfor VAT-registered recipients. Credit notes are supported for\ncorrecting invoices.\n\nSupplies of eligible goods under the profit margin scheme use the\n\"margin-scheme\" tag, with the \"exempt\" VAT key on their lines. VAT\nis due on the margin and reported in the VAT return, so the invoice\nshows no VAT amount, only a statement that the scheme applies."
   },
   "sources": [
     {
@@ -19,6 +19,23 @@
   "country": "AE",
   "currency": "AED",
   "tax_scheme": "VAT",
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "margin-scheme",
+          "name": {
+            "ar": "آلية هامش الربح",
+            "en": "Profit Margin Scheme"
+          },
+          "desc": {
+            "en": "Supply of eligible goods, such as second-hand goods, antiques or\ncollectors' items, under the profit margin scheme. Use the\n\"exempt\" VAT key on those lines. VAT is due on the margin and\nreported in the VAT return, so the invoice shows no VAT amount."
+          }
+        }
+      ]
+    }
+  ],
   "identities": [
     {
       "code": "TIN",
@@ -134,6 +151,19 @@
             "key": "simplified",
             "text": "Simplified Tax Invoice"
           }
+        },
+        {
+          "tags": [
+            "margin-scheme"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "margin-scheme",
+            "text": "VAT charged under the Profit Margin Scheme"
+          }
         }
       ]
     }
@@ -202,17 +232,6 @@
           "key": "outside-scope",
           "name": {
             "en": "Outside scope"
-          },
-          "no_percent": true
-        },
-        {
-          "key": "margin-scheme",
-          "name": {
-            "ar": "آلية هامش الربح",
-            "en": "Profit Margin Scheme"
-          },
-          "desc": {
-            "en": "Supply of goods under the profit margin scheme, such as second-hand\ngoods, antiques or collectors' items. VAT is due on the margin, not\non the price, and the invoice shows no VAT amount."
           },
           "no_percent": true
         }

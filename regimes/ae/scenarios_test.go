@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/ae"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 
@@ -100,4 +101,52 @@ func TestInvoiceScenarios(t *testing.T) {
 	require.NotNil(t, i.Tax)
 	assert.Len(t, i.Tax.Notes, 1)
 	assert.Equal(t, "Simplified Tax Invoice", i.Tax.Notes[0].Text)
+}
+
+func TestMarginSchemeScenario(t *testing.T) {
+	marginNotes := func(inv *bill.Invoice) []*tax.Note {
+		var notes []*tax.Note
+		if inv.Tax == nil {
+			return nil
+		}
+		for _, n := range inv.Tax.Notes {
+			if n.Key == ae.TagMarginScheme {
+				notes = append(notes, n)
+			}
+		}
+		return notes
+	}
+	testInvoice := func(t *testing.T) *bill.Invoice {
+		t.Helper()
+		inv := testInvoiceSimplified(t)
+		inv.Tags = tax.WithTags(ae.TagMarginScheme)
+		inv.Lines[0].Taxes = tax.Set{{Category: tax.CategoryVAT, Key: tax.KeyExempt}}
+		return inv
+	}
+
+	t.Run("adds the statement with the tag", func(t *testing.T) {
+		inv := testInvoice(t)
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+		notes := marginNotes(inv)
+		require.Len(t, notes, 1)
+		assert.Equal(t, tax.CategoryVAT, notes[0].Category)
+		assert.Equal(t, "VAT charged under the Profit Margin Scheme", notes[0].Text)
+		assert.Equal(t, "0.00", inv.Totals.Tax.String())
+		assert.Equal(t, "60.00", inv.Totals.Payable.String())
+	})
+
+	t.Run("no statement without the tag", func(t *testing.T) {
+		inv := testInvoice(t)
+		inv.Tags = tax.Tags{}
+		require.NoError(t, inv.Calculate())
+		assert.Empty(t, marginNotes(inv))
+	})
+
+	t.Run("calculating twice keeps one statement", func(t *testing.T) {
+		inv := testInvoice(t)
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Calculate())
+		assert.Len(t, marginNotes(inv), 1)
+	})
 }

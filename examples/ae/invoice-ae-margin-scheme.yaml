@@ -4,6 +4,8 @@ currency: "AED"
 issue_date: "2026-02-11"
 series: "SAMPLE"
 code: "002"
+$tags:
+  - "margin-scheme"
 
 supplier:
   tax_id:
@@ -40,8 +42,5 @@ lines:
       price: "1000.00"
     taxes:
       - cat: VAT
-        key: "margin-scheme"
+        key: "exempt"
 
-notes:
-  - key: "legal"
-    text: "VAT charged under the Profit Margin Scheme."

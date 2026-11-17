@@ -54,6 +54,11 @@ func New() *tax.RegimeDef {
 				registered, or when the transaction value does not exceed AED 10,000
 				for VAT-registered recipients. Credit notes are supported for
 				correcting invoices.
+
+				Supplies of eligible goods under the profit margin scheme use the
+				"margin-scheme" tag, with the "exempt" VAT key on their lines. VAT
+				is due on the margin and reported in the VAT return, so the invoice
+				shows no VAT amount, only a statement that the scheme applies.
 			`),
 		},
 		Sources: []*cbc.Source{
@@ -63,6 +68,9 @@ func New() *tax.RegimeDef {
 			},
 		},
 		TimeZone: "Asia/Dubai",
+		Tags: []*tax.TagSet{
+			invoiceTags,
+		},
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},

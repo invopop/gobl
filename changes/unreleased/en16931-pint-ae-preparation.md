@@ -1,7 +1,7 @@
 ## Added
 
 - `ae`: identity types for the Tax Identification Number (`TIN`), trade licence (`TL`), Emirates ID (`EID`) and Cabinet Decision (`CD`). TINs must be 10 digits starting with 1 (`GOBL-AE-ORG-IDENTITY-01`) and end in a Luhn check digit (`GOBL-AE-ORG-IDENTITY-02`), with a business identifier that is not all zeros (`GOBL-AE-ORG-IDENTITY-04`), as the Federal Tax Authority registered them under ISO 6523. Emirates ID numbers must be 15 digits starting with 784 (`GOBL-AE-ORG-IDENTITY-03`).
-- `ae`: VAT key `margin-scheme` for supplies under the profit margin scheme. Like `exempt`, it takes no percent, so the invoice shows no VAT amount. Shown in the new `invoice-ae-margin-scheme` example.
+- `ae`: `margin-scheme` tag for supplies under the profit margin scheme, with a scenario that adds the statement the invoice must carry ("VAT charged under the Profit Margin Scheme") as a VAT note. Lines use the `exempt` key, so the invoice shows no VAT amount. Shown in the new `invoice-ae-margin-scheme` example.
 
 ## Changed
 

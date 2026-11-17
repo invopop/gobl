@@ -4,18 +4,30 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "1634cb4cdde98f62a4719c7348174a936db94f7f26fa63dd7f7bcec202e33853"
+			"val": "8b61fb1e7226605483cc56e621918519ed5ee22afbf840c237758f2d52e99bb4"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "AE",
+		"$tags": [
+			"margin-scheme"
+		],
 		"uuid": "0195ce71-dc9c-72c8-bf2c-9890a4a9f0b3",
 		"type": "standard",
 		"series": "SAMPLE",
 		"code": "002",
 		"issue_date": "2026-02-11",
 		"currency": "AED",
+		"tax": {
+			"notes": [
+				{
+					"cat": "VAT",
+					"key": "margin-scheme",
+					"text": "VAT charged under the Profit Margin Scheme"
+				}
+			]
+		},
 		"supplier": {
 			"name": "Provide One LLC",
 			"tax_id": {
@@ -70,7 +82,7 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"key": "margin-scheme"
+						"key": "exempt"
 					}
 				],
 				"total": "1000.00"
@@ -85,7 +97,7 @@
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "margin-scheme",
+								"key": "exempt",
 								"base": "1000.00",
 								"amount": "0.00"
 							}
@@ -98,12 +110,6 @@
 			"tax": "0.00",
 			"total_with_tax": "1000.00",
 			"payable": "1000.00"
-		},
-		"notes": [
-			{
-				"key": "legal",
-				"text": "VAT charged under the Profit Margin Scheme."
-			}
-		]
+		}
 	}
 }
