@@ -35,7 +35,7 @@ const (
 	// check digit.
 	tinPattern = `^1\d{9}$`
 	// emiratesIDPattern is the format of the Emirates ID number: 15 digits,
-	// the first three 784, the international code of the UAE. The last one is
+	// the first three 784, the ISO 3166-1 numeric code of the UAE. The last one is
 	// a verification digit whose algorithm is not published, so it is not
 	// checked.
 	emiratesIDPattern = `^784\d{12}$`
@@ -55,8 +55,8 @@ var identityDefinitions = []*cbc.Definition{
 		Sources: []*cbc.Source{
 			mofMandatoryFieldsSource,
 			{
-				Title: i18n.NewString("Peppol Participant Identifier Schemes - AE:TIN (ISO 6523 ICD 0235)"),
-				URL:   "https://docs.peppol.eu/edelivery/codelists/",
+				Title: i18n.NewString("Peppol Code Lists v9.7 - Participant Identifier Schemes - AE:TIN (ISO 6523 ICD 0235)"),
+				URL:   "https://docs.peppol.eu/edelivery/codelists/v9.7/Peppol%20Code%20Lists%20-%20Participant%20identifier%20schemes%20v9.7.json",
 			},
 		},
 	},
@@ -82,10 +82,6 @@ var identityDefinitions = []*cbc.Definition{
 			{
 				Title: i18n.NewString("UAE Government Portal - Emirates ID"),
 				URL:   "https://u.ae/en/information-and-services/visa-and-emirates-id/emirates-id",
-			},
-			{
-				Title: i18n.NewString("Gulf News - ID number may not be amended, EIDA says"),
-				URL:   "https://gulfnews.com/uae/government/id-number-may-not-be-amended-eida-says-1.1654705",
 			},
 		},
 	},

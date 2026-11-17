@@ -5,7 +5,7 @@
     "en": "United Arab Emirates"
   },
   "description": {
-    "en": "The UAE tax system is administered by the Federal Tax Authority (FTA).\nVAT was introduced on January 1, 2018, with standard, zero, and\nexempt rate categories.\n\nBusinesses must register for VAT if taxable supplies and imports\nexceed AED 375,000 in a 12-month period, with voluntary registration\navailable above AED 187,500. Registered businesses receive a Tax\nRegistration Number (TRN) which must be included on all tax invoices.\n\nSimplified VAT invoices may be used when the recipient is not VAT\nregistered, or when the transaction value does not exceed AED 10,000\nfor VAT-registered recipients. Credit notes are supported for\ncorrecting invoices.\n\nSupplies of eligible goods under the profit margin scheme use the\n\"margin-scheme\" tag, with the \"exempt\" VAT key on their lines. VAT\nis due on the margin and reported in the VAT return, so the invoice\nshows no VAT amount, only a statement that the scheme applies."
+    "en": "The UAE tax system is administered by the Federal Tax Authority (FTA).\nVAT was introduced on January 1, 2018, with standard, zero, and\nexempt rate categories.\n\nBusinesses must register for VAT if taxable supplies and imports\nexceed AED 375,000 in a 12-month period, with voluntary registration\navailable above AED 187,500. Registered businesses receive a Tax\nRegistration Number (TRN) which must be included on all tax invoices.\n\nSimplified VAT invoices may be used when the recipient is not VAT\nregistered, or when the transaction value does not exceed AED 10,000\nfor VAT-registered recipients. Credit notes are supported for\ncorrecting invoices.\n\nSupplies of eligible goods under the profit margin scheme use the\n\"margin-scheme\" tag, with the \"exempt\" VAT key on their lines. VAT\nis due on the margin and reported in the VAT return, so the invoice\nshows no VAT amount, only a statement that the scheme applies.\n\nElectronic invoicing is mandatory for any person conducting\nbusiness in the UAE, unless excluded by Ministerial Decision No. 243\nof 2025, following the phased timeline of Ministerial Decision\nNo. 244 of 2025. Electronic invoices follow PINT AE, the UAE's\nPeppol specification, and identify the parties by their 10-digit\nTax Identification Number (TIN)."
   },
   "sources": [
     {
@@ -13,6 +13,12 @@
         "en": "Federal Tax Authority - VAT"
       },
       "url": "https://tax.gov.ae/en/taxes/Vat/vat.topics/registration.for.vat.aspx"
+    },
+    {
+      "title": {
+        "en": "Ministry of Finance - UAE Electronic Invoice Mandatory Field Requirements"
+      },
+      "url": "https://mof.gov.ae/wp-content/uploads/2026/10/UAE-Electronic-Invoice-Mandatory-Field-Requirements.pdf"
     }
   ],
   "time_zone": "Asia/Dubai",
@@ -55,9 +61,9 @@
         },
         {
           "title": {
-            "en": "Peppol Participant Identifier Schemes - AE:TIN (ISO 6523 ICD 0235)"
+            "en": "Peppol Code Lists v9.7 - Participant Identifier Schemes - AE:TIN (ISO 6523 ICD 0235)"
           },
-          "url": "https://docs.peppol.eu/edelivery/codelists/"
+          "url": "https://docs.peppol.eu/edelivery/codelists/v9.7/Peppol%20Code%20Lists%20-%20Participant%20identifier%20schemes%20v9.7.json"
         }
       ]
     },
@@ -97,12 +103,6 @@
             "en": "UAE Government Portal - Emirates ID"
           },
           "url": "https://u.ae/en/information-and-services/visa-and-emirates-id/emirates-id"
-        },
-        {
-          "title": {
-            "en": "Gulf News - ID number may not be amended, EIDA says"
-          },
-          "url": "https://gulfnews.com/uae/government/id-number-may-not-be-amended-eida-says-1.1654705"
         }
       ]
     },

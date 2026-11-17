@@ -59,6 +59,13 @@ func New() *tax.RegimeDef {
 				"margin-scheme" tag, with the "exempt" VAT key on their lines. VAT
 				is due on the margin and reported in the VAT return, so the invoice
 				shows no VAT amount, only a statement that the scheme applies.
+
+				Electronic invoicing is mandatory for any person conducting
+				business in the UAE, unless excluded by Ministerial Decision No. 243
+				of 2025, following the phased timeline of Ministerial Decision
+				No. 244 of 2025. Electronic invoices follow PINT AE, the UAE's
+				Peppol specification, and identify the parties by their 10-digit
+				Tax Identification Number (TIN).
 			`),
 		},
 		Sources: []*cbc.Source{
@@ -66,6 +73,7 @@ func New() *tax.RegimeDef {
 				Title: i18n.NewString("Federal Tax Authority - VAT"),
 				URL:   "https://tax.gov.ae/en/taxes/Vat/vat.topics/registration.for.vat.aspx",
 			},
+			mofMandatoryFieldsSource,
 		},
 		TimeZone: "Asia/Dubai",
 		Tags: []*tax.TagSet{
