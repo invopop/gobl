@@ -25,9 +25,6 @@ func taxIdentityRules() *rules.Set {
 					rules.AssertIfPresent("02", "UAE tax identity code must start with a TIN with a valid check digit",
 						is.Func("valid TIN check digit", tinCheckDigitIsValid),
 					),
-					rules.AssertIfPresent("03", "UAE tax identity code must start with a TIN whose business identifier is not all zeros",
-						is.Func("TIN business identifier set", tinBusinessIDIsSet),
-					),
 				),
 			),
 		),
@@ -40,17 +37,4 @@ func taxIdentityRules() *rules.Set {
 func tinCheckDigitIsValid(val any) bool {
 	code, ok := val.(cbc.Code)
 	return ok && len(code) >= 10 && luhn.Check(code[:10])
-}
-
-// tinNoBusiness is a TIN's 8-digit business identifier, between the leading 1
-// and the check digit, when it is all zeros, which the Federal Tax Authority
-// never issues.
-const tinNoBusiness = "00000000"
-
-// tinBusinessIDIsSet reports whether the business identifier of the TIN at the
-// start of a code is not all zeros. It is used on TINs and on TRNs, which
-// start with one, after their format is checked.
-func tinBusinessIDIsSet(val any) bool {
-	code, ok := val.(cbc.Code)
-	return ok && len(code) >= 10 && code[1:9] != tinNoBusiness
 }

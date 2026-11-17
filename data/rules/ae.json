@@ -34,16 +34,6 @@
                           "tests": "valid TIN check digit"
                         }
                       ]
-                    },
-                    {
-                      "guard": "present",
-                      "assert": [
-                        {
-                          "id": "GOBL-AE-TAX-IDENTITY-03",
-                          "desc": "UAE tax identity code must start with a TIN whose business identifier is not all zeros",
-                          "tests": "TIN business identifier set"
-                        }
-                      ]
                     }
                   ]
                 }
@@ -83,16 +73,6 @@
                               "id": "GOBL-AE-ORG-IDENTITY-02",
                               "desc": "UAE TIN must end in a valid check digit",
                               "tests": "valid TIN check digit"
-                            }
-                          ]
-                        },
-                        {
-                          "guard": "present",
-                          "assert": [
-                            {
-                              "id": "GOBL-AE-ORG-IDENTITY-04",
-                              "desc": "UAE TIN must have a business identifier that is not all zeros",
-                              "tests": "TIN business identifier set"
                             }
                           ]
                         }
