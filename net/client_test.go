@@ -28,7 +28,7 @@ func (m *mockFetcher) Fetch(_ context.Context, url string, _ http.Header) ([]byt
 	return m.data, m.err
 }
 
-func (m *mockFetcher) Post(_ context.Context, _ string, _ []byte, _ http.Header) error {
+func (m *mockFetcher) Post(_ context.Context, _ string, _ []byte) error {
 	return ErrFetchFailed
 }
 
@@ -111,8 +111,8 @@ func (f *countingFetcher) Fetch(ctx context.Context, url string, header http.Hea
 	return f.inner.Fetch(ctx, url, header)
 }
 
-func (f *countingFetcher) Post(ctx context.Context, url string, body []byte, header http.Header) error {
-	return f.inner.Post(ctx, url, body, header)
+func (f *countingFetcher) Post(ctx context.Context, url string, body []byte) error {
+	return f.inner.Post(ctx, url, body)
 }
 
 func TestFetchKeyCache(t *testing.T) {
@@ -357,7 +357,7 @@ func TestHTTPFetcherPostNilContext(t *testing.T) {
 	// NewRequestWithContext panics on a nil context, so the func must
 	// error rather than crash.
 	var ctx context.Context //nolint:staticcheck
-	err := NewHTTPFetcher().Post(ctx, "http://example.invalid", []byte(`{}`), nil)
+	err := NewHTTPFetcher().Post(ctx, "http://example.invalid", []byte(`{}`))
 	require.Error(t, err)
 	assert.True(t, errors.Is(err, ErrFetchFailed))
 }
@@ -374,9 +374,6 @@ func TestAuthHeaderMintFailure(t *testing.T) {
 	require.Error(t, err)
 	assert.True(t, errors.Is(err, ErrAddressInvalid))
 
-	err = c.Send(context.Background(), "receiver.example.com", buildSignedEnvelope(t, key, "sender.example.com", "receiver.example.com"))
-	require.Error(t, err)
-	assert.True(t, errors.Is(err, ErrAddressInvalid), "token minting fails before delivery")
 }
 
 func TestKeyCacheEviction(t *testing.T) {
