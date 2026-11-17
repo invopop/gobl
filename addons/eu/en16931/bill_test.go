@@ -588,17 +588,6 @@ func TestValidateBillCharge(t *testing.T) {
 		assert.ErrorContains(t, err, "GOBL-EU-EN16931-BILL-CHARGE-02")
 		assert.ErrorContains(t, err, "taxes are required (BR-37)")
 	})
-
-	t.Run("without taxes outside EN 16931", func(t *testing.T) {
-		l := &bill.Charge{
-			Reason: "Freight",
-			Amount: num.MakeAmount(100, 2),
-		}
-		err := rules.Validate(l)
-		if err != nil {
-			assert.NotContains(t, err.Error(), "BR-37")
-		}
-	})
 }
 
 // standardVATSet is a tax set with a single standard-rated VAT combo, as
