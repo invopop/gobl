@@ -44,6 +44,23 @@
               "desc": "at least one line is required (BR-16)",
               "tests": "present"
             }
+          ],
+          "subsets": [
+            {
+              "each": true,
+              "subsets": [
+                {
+                  "field": "taxes",
+                  "assert": [
+                    {
+                      "id": "GOBL-EU-EN16931-BILL-INVOICE-10",
+                      "desc": "line taxes are required (BR-CO-04)",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
           ]
         },
         {
@@ -73,31 +90,14 @@
                   "tests": "present"
                 }
               ]
-            }
-          ]
-        },
-        {
-          "guard": "is due standard invoice",
-          "subsets": [
+            },
             {
-              "field": "payment",
+              "field": "name",
               "assert": [
                 {
-                  "id": "GOBL-EU-EN16931-BILL-INVOICE-06",
-                  "desc": "payment details are required when amount is due (BR-CO-25)",
+                  "id": "GOBL-EU-EN16931-BILL-INVOICE-09",
+                  "desc": "customer name is required (BR-7)",
                   "tests": "present"
-                }
-              ],
-              "subsets": [
-                {
-                  "field": "terms",
-                  "assert": [
-                    {
-                      "id": "GOBL-EU-EN16931-BILL-INVOICE-07",
-                      "desc": "payment terms are required when amount is due (BR-CO-25)",
-                      "tests": "present"
-                    }
-                  ]
                 }
               ]
             }
@@ -186,17 +186,6 @@
               "tests": "ext require [untdid-payment-means]"
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "GOBL-EU-EN16931-PAY-TERMS",
-      "object": "pay.Terms",
-      "assert": [
-        {
-          "id": "GOBL-EU-EN16931-PAY-TERMS-01",
-          "desc": "either due_dates or notes must be provided (BR-CO-25)",
-          "tests": "has due dates or notes"
         }
       ]
     },

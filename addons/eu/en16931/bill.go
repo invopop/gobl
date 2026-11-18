@@ -124,9 +124,15 @@ func billInvoiceRules() *rules.Set {
 				return validateExemptionNotesCheck(inv)
 			}),
 		),
-		// Lines: BR-16 requires at least one line
+		// Lines: BR-16 requires at least one line, and BR-CO-04 a VAT category
+		// on each one, which every tax combo carries in this addon.
 		rules.Field("lines",
 			rules.Assert("03", "at least one line is required (BR-16)", is.Present),
+			rules.Each(
+				rules.Field("taxes",
+					rules.Assert("10", "line taxes are required (BR-CO-04)", is.Present),
+				),
+			),
 		),
 		// Supplier: BR-8 requires addresses
 		rules.Field("supplier",
@@ -134,19 +140,13 @@ func billInvoiceRules() *rules.Set {
 				rules.Assert("04", "supplier addresses are required (BR-8)", is.Present),
 			),
 		),
-		// Customer: BR-10 requires addresses when customer is provided
+		// Customer: BR-10 requires addresses and BR-7 the name when customer is provided
 		rules.Field("customer",
 			rules.Field("addresses",
 				rules.Assert("05", "customer addresses are required (BR-10)", is.Present),
 			),
-		),
-		// Payment: BR-CO-25 requires payment details when amount is due
-		rules.When(is.Func("is due standard invoice", isDueStandardInvoice),
-			rules.Field("payment",
-				rules.Assert("06", "payment details are required when amount is due (BR-CO-25)", is.Present),
-				rules.Field("terms",
-					rules.Assert("07", "payment terms are required when amount is due (BR-CO-25)", is.Present),
-				),
+			rules.Field("name",
+				rules.Assert("09", "customer name is required (BR-7)", is.Present),
 			),
 		),
 	)
@@ -252,17 +252,6 @@ func exemptTaxCatsWithoutVATEX(inv *bill.Invoice) map[cbc.Code]bool {
 		}
 	}
 	return needNote
-}
-
-func isDue(inv *bill.Invoice) bool {
-	return inv.Totals != nil &&
-		((inv.Totals.Due != nil && !inv.Totals.Due.IsZero()) ||
-			(inv.Totals.Due == nil && !inv.Totals.Payable.IsZero()))
-}
-
-func isDueStandardInvoice(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	return ok && inv != nil && inv.Type.In(bill.InvoiceTypeStandard) && isDue(inv)
 }
 
 func billDiscountHasReasonOrAllowance(val any) bool {

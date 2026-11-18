@@ -54,11 +54,6 @@
           "title": "Extended Street",
           "description": "Additional street address details."
         },
-        "street_third": {
-          "type": "string",
-          "title": "Third Street Line",
-          "description": "Third line of street details, for addresses that need more than two."
-        },
         "locality": {
           "type": "string",
           "title": "Locality",

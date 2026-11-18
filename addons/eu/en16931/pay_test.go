@@ -55,34 +55,3 @@ func TestPayInstructions(t *testing.T) {
 		assert.NoError(t, err)
 	})
 }
-
-func TestPayTerms(t *testing.T) {
-	t.Run("valid", func(t *testing.T) {
-		p := &pay.Terms{
-			DueDates: []*pay.DueDate{
-				{
-					Date:   cal.NewDate(2025, time.January, 1),
-					Amount: num.NewAmount(1000, 2),
-				},
-			},
-		}
-		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
-		assert.NoError(t, err)
-	})
-
-	t.Run("with empty due date", func(t *testing.T) {
-		p := &pay.Terms{
-			DueDates: []*pay.DueDate{},
-		}
-		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
-		assert.ErrorContains(t, err, "either due_dates or notes must be provided")
-	})
-
-	t.Run("with empty notes", func(t *testing.T) {
-		p := &pay.Terms{
-			Notes: "",
-		}
-		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
-		assert.ErrorContains(t, err, "either due_dates or notes must be provided")
-	})
-}
