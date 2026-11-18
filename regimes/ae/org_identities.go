@@ -29,11 +29,11 @@ const (
 )
 
 const (
-	// tinPattern is the format of the TIN, as the Federal Tax Authority
+	// TINPattern is the format of the TIN, as the Federal Tax Authority
 	// registered it under ISO 6523 (ICD 0235): 10 digits, the first one 1,
 	// the UAE's identifier under the GCC agreement. The last one is a Luhn
-	// check digit.
-	tinPattern = `^1\d{9}$`
+	// check digit, which the pattern does not check.
+	TINPattern = `^1\d{9}$`
 	// emiratesIDPattern is the format of the Emirates ID number: 15 digits,
 	// the first three 784, the ISO 3166-1 numeric code of the UAE. The last one is
 	// a verification digit whose algorithm is not published, so it is not
@@ -113,10 +113,10 @@ func orgIdentityRules() *rules.Set {
 				org.IdentityTypeIn(IdentityTypeTIN),
 				rules.Field("code",
 					rules.Assert("01", "UAE TIN must be 10 digits starting with 1",
-						is.Matches(tinPattern),
+						is.Matches(TINPattern),
 					),
 					rules.When(
-						is.Matches(tinPattern),
+						is.Matches(TINPattern),
 						rules.AssertIfPresent("02", "UAE TIN must end in a valid check digit",
 							is.Func("valid TIN check digit", tinCheckDigitIsValid),
 						),
