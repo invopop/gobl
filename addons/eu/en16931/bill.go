@@ -124,9 +124,15 @@ func billInvoiceRules() *rules.Set {
 				return validateExemptionNotesCheck(inv)
 			}),
 		),
-		// Lines: BR-16 requires at least one line
+		// Lines: BR-16 requires at least one line, and BR-CO-04 a VAT category
+		// on each one, which every tax combo carries in this addon.
 		rules.Field("lines",
 			rules.Assert("03", "at least one line is required (BR-16)", is.Present),
+			rules.Each(
+				rules.Field("taxes",
+					rules.Assert("10", "line taxes are required (BR-CO-04)", is.Present),
+				),
+			),
 		),
 		// Supplier: BR-8 requires addresses
 		rules.Field("supplier",

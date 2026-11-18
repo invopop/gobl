@@ -44,6 +44,23 @@
               "desc": "at least one line is required (BR-16)",
               "tests": "present"
             }
+          ],
+          "subsets": [
+            {
+              "each": true,
+              "subsets": [
+                {
+                  "field": "taxes",
+                  "assert": [
+                    {
+                      "id": "GOBL-EU-EN16931-BILL-INVOICE-10",
+                      "desc": "line taxes are required (BR-CO-04)",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
           ]
         },
         {

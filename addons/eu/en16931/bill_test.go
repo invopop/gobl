@@ -44,6 +44,13 @@ func TestInvoiceValidation(t *testing.T) {
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "document type extension is required")
 	})
+	t.Run("line without taxes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Taxes = nil
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "line taxes are required (BR-CO-04)")
+	})
 	t.Run("supplier and customer with addresses", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
