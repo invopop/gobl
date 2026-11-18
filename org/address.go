@@ -31,8 +31,6 @@ type Address struct {
 	Street string `json:"street,omitempty" jsonschema:"title=Street"`
 	// Additional street address details.
 	StreetExtra string `json:"street_extra,omitempty" jsonschema:"title=Extended Street"`
-	// Third line of street details, for addresses that need more than two.
-	StreetThird string `json:"street_third,omitempty" jsonschema:"title=Third Street Line"`
 	// Name of a village, town, district, or city, typically inside a region.
 	Locality string `json:"locality,omitempty" jsonschema:"title=Locality"`
 	// Name of a city, province, county, or state, inside a country.
@@ -84,12 +82,6 @@ func (a *Address) LineTwo() string {
 	return a.StreetExtra
 }
 
-// LineThree returns the third line of the address which for GOBL
-// is the `StreetThird` field.
-func (a *Address) LineThree() string {
-	return a.StreetThird
-}
-
 // CompleteNumber will combine all the number related details, such
 // as number, block, floor, and door, into a single string separated
 // by spaces.
@@ -124,7 +116,6 @@ func normalizeAddress(a *Address) {
 	a.Door = cbc.NormalizeString(a.Door)
 	a.Street = cbc.NormalizeString(a.Street)
 	a.StreetExtra = cbc.NormalizeString(a.StreetExtra)
-	a.StreetThird = cbc.NormalizeString(a.StreetThird)
 	a.Locality = cbc.NormalizeString(a.Locality)
 	a.Region = cbc.NormalizeString(a.Region)
 	a.State = cbc.NormalizeAlphanumericalCode(a.State)
