@@ -25,9 +25,10 @@ var invoiceTags = &tax.TagSet{
 			Desc: i18n.String{
 				i18n.EN: here.Doc(`
 					Supply of eligible goods, such as second-hand goods, antiques or
-					collectors' items, under the profit margin scheme. Use the
-					"exempt" VAT key on those lines. VAT is due on the margin and
-					reported in the VAT return, so the invoice shows no VAT amount.
+					collectors' items, under the profit margin scheme. Margin scheme
+					lines use the "exempt" VAT key, as they do for Italy, Greece and
+					Portugal. VAT is due on the margin and reported in the VAT return,
+					so the invoice shows no VAT amount.
 				`),
 			},
 		},

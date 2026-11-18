@@ -59,6 +59,8 @@ func New() *tax.RegimeDef {
 				"margin-scheme" tag, with the "exempt" VAT key on their lines. VAT
 				is due on the margin and reported in the VAT return, so the invoice
 				shows no VAT amount, only a statement that the scheme applies.
+				Using the "exempt" key is deliberate: GOBL classifies margin scheme
+				lines the same way for Italy, Greece and Portugal.
 
 				Electronic invoicing is mandatory for any person conducting
 				business in the UAE, unless excluded by Ministerial Decision No. 243
