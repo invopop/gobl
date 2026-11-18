@@ -84,6 +84,10 @@
             "title": "Greece MyData v1.x"
           },
           {
+            "const": "hr-eracun-v1",
+            "title": "Croatia eRačun (HR CIUS 2025)"
+          },
+          {
             "const": "it-sdi-v1",
             "title": "Italy SDI FatturaPA v1.x"
           },
