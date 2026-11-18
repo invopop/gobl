@@ -1,6 +1,7 @@
 ## Changed
 
 - `eu-en16931-v2017`: **breaking**: document-level charges must have taxes (BR-37), as discounts already must (BR-32). Charges without taxes now fail with `GOBL-EU-EN16931-BILL-CHARGE-02`. Informative charges fail too, as they can't have taxes and EN 16931 has no way to express them.
+- `eu-en16931-v2017`: **breaking**: an invoice customer must have a name (BR-7), with or without a tax ID. Customers without a name now fail with `GOBL-EU-EN16931-BILL-INVOICE-09`.
 
 ## Fixed
 

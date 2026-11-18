@@ -134,10 +134,13 @@ func billInvoiceRules() *rules.Set {
 				rules.Assert("04", "supplier addresses are required (BR-8)", is.Present),
 			),
 		),
-		// Customer: BR-10 requires addresses when customer is provided
+		// Customer: BR-10 requires addresses and BR-7 the name when customer is provided
 		rules.Field("customer",
 			rules.Field("addresses",
 				rules.Assert("05", "customer addresses are required (BR-10)", is.Present),
+			),
+			rules.Field("name",
+				rules.Assert("09", "customer name is required (BR-7)", is.Present),
 			),
 		),
 	)

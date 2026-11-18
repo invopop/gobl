@@ -73,6 +73,16 @@
                   "tests": "present"
                 }
               ]
+            },
+            {
+              "field": "name",
+              "assert": [
+                {
+                  "id": "GOBL-EU-EN16931-BILL-INVOICE-09",
+                  "desc": "customer name is required (BR-7)",
+                  "tests": "present"
+                }
+              ]
             }
           ]
         }

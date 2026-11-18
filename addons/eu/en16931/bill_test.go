@@ -64,6 +64,14 @@ func TestInvoiceValidation(t *testing.T) {
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "addresses are required")
 	})
+	t.Run("customer without name", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.Name = ""
+		inv.Customer.TaxID = nil
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer name is required (BR-7)")
+	})
 	t.Run("nil customer", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer = nil
