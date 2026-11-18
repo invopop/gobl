@@ -36,6 +36,14 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 			Expected: "44391838042",
 		},
 		{
+			Code:     "FR83271674000036", // SIRET to VAT
+			Expected: "10832716740",
+		},
+		{
+			Code:     "39183804300018", // SIRET with an invalid SIREN
+			Expected: "39183804300018",
+		},
+		{
 			Code:     "391838043",
 			Expected: "391838043",
 		},

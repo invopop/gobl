@@ -16,6 +16,7 @@ var (
 	taxCodeVATRegexp   = regexp.MustCompile(`^[A-Z\d]{2}\d{9}$`)
 	taxCodeWithLetters = regexp.MustCompile(`[A-Z]`)
 	taxCodeSIRENRegexp = regexp.MustCompile(`^\d{9}$`)
+	taxCodeSIRETRegexp = regexp.MustCompile(`^\d{14}$`)
 )
 
 const (
@@ -33,9 +34,13 @@ func normalizeTaxIdentity(tID *tax.Identity) {
 	tax.NormalizeIdentity(tID)
 
 	str := tID.Code.String()
+	// A SIRET given in place of the VAT code starts with its SIREN.
+	if taxCodeSIRETRegexp.MatchString(str) && validateSIRENTaxCode(cbc.Code(str[:9])) == nil {
+		str = str[:9]
+	}
 	// Check if we have a valid SIREN so we can try and
 	// normalize with the check digit.
-	if err := validateSIRENTaxCode(tID.Code); err != nil {
+	if err := validateSIRENTaxCode(cbc.Code(str)); err != nil {
 		return
 	}
 	chk := calculateVATCheckDigit(str)
