@@ -3,44 +3,6 @@
   "package": "sk",
   "subsets": [
     {
-      "id": "GOBL-SK-BILL-INVOICE",
-      "object": "bill.Invoice",
-      "subsets": [
-        {
-          "guard": "context: regime in [SK]",
-          "subsets": [
-            {
-              "field": "supplier",
-              "assert": [
-                {
-                  "id": "GOBL-SK-BILL-INVOICE-01",
-                  "desc": "invoice supplier tax ID code (DIČ or IČ DPH) required for Slovak regime",
-                  "tests": "has tax ID code"
-                }
-              ],
-              "subsets": [
-                {
-                  "field": "tax_id",
-                  "subsets": [
-                    {
-                      "field": "country",
-                      "assert": [
-                        {
-                          "id": "GOBL-SK-BILL-INVOICE-02",
-                          "desc": "invoice supplier tax ID country must be SK for Slovak regime",
-                          "tests": "one of [SK]"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
       "id": "GOBL-SK-ORG-IDENTITY",
       "object": "org.Identity",
       "subsets": [

@@ -66,28 +66,12 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.Equal(t, "2020273893", inv.Supplier.TaxID.Code.String())
 	})
 
-	t.Run("missing supplier tax ID", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Supplier.TaxID = nil
-		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, rules.Validate(inv), "[GOBL-SK-BILL-INVOICE-01]")
-	})
-
-	t.Run("supplier tax ID without code", func(t *testing.T) {
+	// Supplier tax IDs are checked when a party registers, not on each invoice
+	t.Run("supplier without tax ID", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Supplier.TaxID = &tax.Identity{Country: "SK"}
 		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, rules.Validate(inv), "[GOBL-SK-BILL-INVOICE-01]")
-	})
-
-	t.Run("supplier tax ID from another country", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Supplier.TaxID = &tax.Identity{Country: "CZ", Code: "12345679"}
-		inv.SetRegime("SK")
-		require.NoError(t, inv.Calculate())
-		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "[GOBL-SK-BILL-INVOICE-02]")
-		assert.NotContains(t, err.Error(), "[GOBL-SK-BILL-INVOICE-01]")
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("supplier tax ID with invalid DIČ", func(t *testing.T) {
@@ -95,15 +79,6 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Supplier.TaxID.Code = "2020273894"
 		require.NoError(t, inv.Calculate())
 		assert.ErrorContains(t, rules.Validate(inv), "[GOBL-SK-TAX-IDENTITY-02]")
-	})
-
-	// The rule covers the supplier only; § 74(1)(a) does not require the
-	// buyer's tax ID on every invoice.
-	t.Run("customer without tax ID", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Customer.TaxID = nil
-		require.NoError(t, inv.Calculate())
-		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("customer with IČO", func(t *testing.T) {

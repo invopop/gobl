@@ -1,6 +1,5 @@
 ## Added
 
-- `sk`: rule `GOBL-SK-BILL-INVOICE-01`, the supplier of a Slovak invoice needs a tax ID code (DIČ or IČ DPH), § 74(1)(a) of the VAT Act 222/2004, and `GOBL-SK-BILL-INVOICE-02`, that tax ID must be Slovak.
 - `sk`: identity type `ICO` for the IČO, with separators removed and validated as 8 digits with its mod 11 check digit, following Peppol participant identifier scheme 0158.
 
 ## Changed

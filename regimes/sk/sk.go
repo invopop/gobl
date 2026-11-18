@@ -20,7 +20,6 @@ const CountryCode = "SK"
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("sk", rules.GOBL.Add(CountryCode),
-		billInvoiceRules(),
 		orgIdentityRules(),
 		taxIdentityRules(),
 	)
@@ -58,9 +57,9 @@ func New() *tax.RegimeDef {
 				Every taxpayer has a DIČ (daňové identifikačné číslo), a ten digit number whose
 				first digit gives the type of person. Businesses registered for VAT also have an
 				IČ DPH, formed by the prefix SK followed by the same ten digits (e.g.
-				SK2020273893). Both go in the tax ID code, which the supplier of an invoice must
-				have. The IČO, the eight digit number the Statistical Office assigns to legal
-				persons and entrepreneurs, is the identity type "ICO".
+				SK2020273893). Both go in the tax ID code. The IČO, the eight digit number the
+				Statistical Office assigns to legal persons and entrepreneurs, is the identity
+				type "ICO".
 			`),
 		},
 
