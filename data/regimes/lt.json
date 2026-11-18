@@ -1,0 +1,216 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Lithuania",
+    "lt": "Lietuva"
+  },
+  "description": {
+    "en": "Lithuania's tax system is administered by the State Tax Inspectorate under the\nMinistry of Finance (Valstybinė mokesčių inspekcija, VMI). VAT is governed by the\nLaw on Value Added Tax No. IX-751.\n\nVAT (pridėtinės vertės mokestis, PVM) applies at a standard rate, with reduced\nrates for certain goods and services such as accommodation, passenger transport,\ncultural events, medicines, and books.\n\nBusinesses registered for VAT are identified by their VAT payer code (PVM\nmokėtojo kodas), formed by the prefix LT followed by 9 or 12 digits\n(e.g. LT100538411)."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "e-TAR - Pridėtinės vertės mokesčio įstatymas Nr. IX-751"
+      },
+      "url": "https://www.e-tar.lt/portal/lt/legalAct/TAR.ED68997709F5/asr",
+      "at": "2026-10-08T00:00:00"
+    },
+    {
+      "title": {
+        "en": "VMI - Standartinis 21 proc. PVM tarifas (19 str.)"
+      },
+      "url": "https://www.vmi.lt/evmi/standartinis-21-proc.-pvm-tarifas-19-str.-",
+      "at": "2026-10-08T00:00:00"
+    },
+    {
+      "title": {
+        "en": "VMI - Lengvatinis 12 proc. PVM tarifas (19 str.)"
+      },
+      "url": "https://www.vmi.lt/evmi/lengvatinis-12-proc.-pvm-tarifas-19-str.-",
+      "at": "2026-10-08T00:00:00"
+    },
+    {
+      "title": {
+        "en": "VMI - Lengvatinis 5 proc. PVM tarifas (19 str.)"
+      },
+      "url": "https://www.vmi.lt/evmi/lengvatinis-5-proc.-pvm-tarifas-19-str.-",
+      "at": "2026-10-08T00:00:00"
+    },
+    {
+      "title": {
+        "en": "VMI - Lengvatinis 9 proc. PVM tarifas (19 str.)"
+      },
+      "url": "https://www.vmi.lt/evmi/lengvatinis-9-proc.-pvm-tarifas-19-str.-",
+      "at": "2026-10-08T00:00:00"
+    },
+    {
+      "title": {
+        "en": "Ministry of Finance of the Republic of Lithuania - Value Added Tax"
+      },
+      "url": "https://finmin.lrv.lt/en/competence-areas/taxation/main-taxes/value-added-tax/",
+      "at": "2026-10-08T00:00:00"
+    }
+  ],
+  "time_zone": "Europe/Vilnius",
+  "country": "LT",
+  "currency": "EUR",
+  "tax_scheme": "VAT",
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "lt": "PVM"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "lt": "Pridėtinės vertės mokestis"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate"
+          },
+          "values": [
+            {
+              "since": "2009-09-01",
+              "percent": "21.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate"
+          },
+          "desc": {
+            "en": "Accommodation under tourism legislation, passenger transport on regular routes and the passengers' baggage, and admission to art and culture institutions and events."
+          },
+          "values": [
+            {
+              "since": "2026-01-01",
+              "percent": "12.0%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Super-reduced Rate"
+          },
+          "desc": {
+            "en": "Reimbursed medicines, medical aids and foods for special medical purposes, prescription medicines, technical aids for persons with disabilities and their repair, newspapers, magazines and periodicals, and books and non-periodical information publications."
+          },
+          "values": [
+            {
+              "since": "2004-01-01",
+              "percent": "5.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "e-TAR - Pridėtinės vertės mokesčio įstatymas Nr. IX-751, 19 straipsnis"
+          },
+          "url": "https://www.e-tar.lt/portal/lt/legalAct/TAR.ED68997709F5/asr",
+          "at": "2026-10-08T00:00:00"
+        },
+        {
+          "title": {
+            "en": "e-Seimas - Pridėtinės vertės mokesčio įstatymo 2, 58 ir 91 straipsnių pakeitimo įstatymas Nr. XI-386"
+          },
+          "url": "https://e-seimas.lrs.lt/portal/legalAct/lt/TAD/TAIS.350400",
+          "at": "2026-10-08T00:00:00"
+        },
+        {
+          "title": {
+            "en": "e-TAR - Pridėtinės vertės mokesčio įstatymo Nr. IX-751 19 straipsnio pakeitimo įstatymas Nr. XV-287"
+          },
+          "url": "https://www.e-tar.lt/portal/lt/legalAct/14bbc1a04dd411f0b070ee7f1ceefc75",
+          "at": "2026-10-08T00:00:00"
+        }
+      ]
+    }
+  ]
+}
