@@ -28,6 +28,10 @@ const (
 	IdentityTypeCabinetDecision cbc.Code = "CD"
 )
 
+// TINScheme is the ISO 6523 ICD the Federal Tax Authority registered for the
+// TIN, which is also the scheme of UAE Peppol endpoints (0235:<TIN>).
+const TINScheme cbc.Code = "0235"
+
 const (
 	// TINPattern is the format of the TIN, as the Federal Tax Authority
 	// registered it under ISO 6523 (ICD 0235): 10 digits, the first one 1,
