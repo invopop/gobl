@@ -26,8 +26,26 @@ func TestTaxIdentityRules(t *testing.T) {
 			inputCode: "2020273893",
 		},
 		{
-			name:      "valid divisible by 11, natural person",
+			name:      "valid divisible by 11, VAT group",
 			inputCode: "7120001713",
+		},
+		{
+			name:      "valid test DIČ issued by FS SR",
+			inputCode: "2099999902",
+		},
+		{
+			name:      "valid natural person",
+			inputCode: "1000000001",
+		},
+		{
+			name:         "first digit 8 is no type of person, checksum still valid",
+			inputCode:    "8000000008",
+			expectedErrs: []string{"IDENTITY-01"},
+		},
+		{
+			name:         "first digit 9 is no type of person, checksum still valid",
+			inputCode:    "9000000009",
+			expectedErrs: []string{"IDENTITY-01"},
 		},
 		{
 			name:      "empty code",

@@ -5,7 +5,7 @@
     "sk": "Slovensko"
   },
   "description": {
-    "en": "Slovakia's tax system is administered by the Financial Administration of the\nSlovak Republic (Finančná správa Slovenskej republiky). As an EU member state,\nSlovakia follows the EU VAT Directive.\n\nVAT (daň z pridanej hodnoty, DPH) applies at a standard rate, with reduced rates\nfor certain goods and services such as foodstuffs, medicines, medical devices,\nbooks, and accommodation. Exports and intra-EU supplies to VAT-registered buyers\nare zero-rated.\n\nBusinesses registered for VAT are identified by their IČ DPH, formed by the\nprefix SK followed by ten digits (e.g. SK2020273893)."
+    "en": "Slovakia's tax system is administered by the Financial Administration of the\nSlovak Republic (Finančná správa Slovenskej republiky). As an EU member state,\nSlovakia follows the EU VAT Directive.\n\nVAT (daň z pridanej hodnoty, DPH) applies at a standard rate, with reduced rates\nfor certain goods and services such as foodstuffs, medicines, medical devices,\nbooks, and accommodation. Exports and intra-EU supplies to VAT-registered buyers\nare exempt with the right to deduct.\n\nEvery taxpayer has a DIČ (daňové identifikačné číslo), a ten digit number whose\nfirst digit gives the type of person. Businesses registered for VAT also have an\nIČ DPH, formed by the prefix SK followed by the same ten digits (e.g.\nSK2020273893). Both go in the tax ID code. The IČO, the eight digit number the\nStatistical Office assigns to legal persons and entrepreneurs, is the identity\ntype \"ICO\"."
   },
   "sources": [
     {
@@ -28,12 +28,28 @@
       },
       "url": "https://www.financnasprava.sk/en/",
       "at": "2026-08-06T00:00:00"
+    },
+    {
+      "title": {
+        "en": "Peppol Code Lists - Participant identifier schemes 0245 (SK:DIC) and 0158 (SK:ICO)"
+      },
+      "url": "https://docs.peppol.eu/edelivery/codelists/v9.7/Peppol%20Code%20Lists%20-%20Participant%20identifier%20schemes%20v9.7.html",
+      "at": "2026-11-16T00:00:00"
     }
   ],
   "time_zone": "Europe/Bratislava",
   "country": "SK",
   "currency": "EUR",
   "tax_scheme": "VAT",
+  "identities": [
+    {
+      "code": "ICO",
+      "name": {
+        "en": "Organisation Identification Number (IČO)",
+        "sk": "Identifikačné číslo organizácie (IČO)"
+      }
+    }
+  ],
   "scenarios": [
     {
       "schema": "bill/invoice",
