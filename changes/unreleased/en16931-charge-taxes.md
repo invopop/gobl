@@ -5,3 +5,7 @@
 ## Fixed
 
 - `eu-en16931-v2017`: the charge and line discount reason rules cite BR-38 and BR-42, not BR-36 (charge amount) and BR-41 (line allowance amount). Fault codes are unchanged.
+
+## Removed
+
+- `eu-en16931-v2017`: payment details and terms are no longer required when an amount is due (`GOBL-EU-EN16931-BILL-INVOICE-06` and `-07`), nor must payment terms have due dates or notes (`GOBL-EU-EN16931-PAY-TERMS-01`). These applied BR-CO-25, which the EN 16931 validation artefacts dropped in version 1.3.16.
