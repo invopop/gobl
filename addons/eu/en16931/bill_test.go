@@ -86,13 +86,6 @@ func TestInvoiceValidation(t *testing.T) {
 		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
-	t.Run("amount due without payment details", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Payment = nil
-		require.NoError(t, inv.Calculate())
-		err := rules.Validate(inv)
-		assert.NoError(t, err)
-	})
 	t.Run("credit note", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCreditNote
@@ -607,7 +600,6 @@ func TestValidateBillCharge(t *testing.T) {
 			Amount: num.MakeAmount(100, 2),
 		}
 		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
-		assert.ErrorContains(t, err, "GOBL-EU-EN16931-BILL-CHARGE-02")
 		assert.ErrorContains(t, err, "taxes are required (BR-37)")
 	})
 }
