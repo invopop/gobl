@@ -1,0 +1,115 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "a0dafbe89312ebfc032d5a899bec1131e52d2871cc421724bc8433c7ac0c6f19"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "CL",
+		"uuid": "6d2a1b3f-2e5c-4b0f-9a4d-3c7e8f9b0d12",
+		"type": "debit-note",
+		"series": "SAMPLE",
+		"code": "003",
+		"issue_date": "2026-03-20",
+		"currency": "CLP",
+		"preceding": [
+			{
+				"issue_date": "2026-03-01",
+				"series": "SAMPLE",
+				"code": "001"
+			}
+		],
+		"supplier": {
+			"name": "Comercial Andina Limitada",
+			"tax_id": {
+				"country": "CL",
+				"code": "760864285"
+			},
+			"addresses": [
+				{
+					"num": "1234",
+					"street": "Avenida Providencia",
+					"locality": "Providencia",
+					"region": "Región Metropolitana",
+					"code": "7500000",
+					"country": "CL"
+				}
+			],
+			"emails": [
+				{
+					"addr": "facturacion@andina.example.cl"
+				}
+			]
+		},
+		"customer": {
+			"name": "Distribuidora del Sur SpA",
+			"tax_id": {
+				"country": "CL",
+				"code": "187654327"
+			},
+			"addresses": [
+				{
+					"num": "88",
+					"street": "Calle Los Alerces",
+					"locality": "Concepción",
+					"region": "Biobío",
+					"code": "4030000",
+					"country": "CL"
+				}
+			],
+			"emails": [
+				{
+					"addr": "compras@delsur.example.cl"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "5",
+				"item": {
+					"name": "Recargo por interés de mora",
+					"price": "8000"
+				},
+				"sum": "40000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "19.0%"
+					}
+				],
+				"total": "40000"
+			}
+		],
+		"totals": {
+			"sum": "40000",
+			"total": "40000",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "40000",
+								"percent": "19.0%",
+								"amount": "7600"
+							}
+						],
+						"amount": "7600"
+					}
+				],
+				"sum": "7600"
+			},
+			"tax": "7600",
+			"total_with_tax": "47600",
+			"payable": "47600"
+		}
+	}
+}

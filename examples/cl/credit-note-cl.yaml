@@ -1,0 +1,51 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "5c1f0a2e-1d4b-4a9e-8f3c-2b6d7e8a9c01"
+type: "credit-note"
+currency: "CLP"
+series: "SAMPLE"
+code: "002"
+issue_date: "2026-03-15"
+
+preceding:
+  - series: "SAMPLE"
+    code: "001"
+    issue_date: "2026-03-01"
+
+supplier:
+  tax_id:
+    country: "CL"
+    code: "760864285"
+  name: "Comercial Andina Limitada"
+  emails:
+    - addr: "facturacion@andina.example.cl"
+  addresses:
+    - num: "1234"
+      street: "Avenida Providencia"
+      locality: "Providencia"
+      region: "Región Metropolitana"
+      code: "7500000"
+      country: "CL"
+
+customer:
+  tax_id:
+    country: "CL"
+    code: "187654327"
+  name: "Distribuidora del Sur SpA"
+  emails:
+    - addr: "compras@delsur.example.cl"
+  addresses:
+    - num: "88"
+      street: "Calle Los Alerces"
+      locality: "Concepción"
+      region: "Biobío"
+      code: "4030000"
+      country: "CL"
+
+lines:
+  - quantity: 3
+    item:
+      name: "Licencia anual de software"
+      price: "120000"
+    taxes:
+      - cat: VAT
+        rate: "standard"

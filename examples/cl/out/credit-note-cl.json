@@ -1,0 +1,115 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "37e1e7bba7e040c95c1ec55fde45c508c8928c491fe88e405a65689a3a56b793"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "CL",
+		"uuid": "5c1f0a2e-1d4b-4a9e-8f3c-2b6d7e8a9c01",
+		"type": "credit-note",
+		"series": "SAMPLE",
+		"code": "002",
+		"issue_date": "2026-03-15",
+		"currency": "CLP",
+		"preceding": [
+			{
+				"issue_date": "2026-03-01",
+				"series": "SAMPLE",
+				"code": "001"
+			}
+		],
+		"supplier": {
+			"name": "Comercial Andina Limitada",
+			"tax_id": {
+				"country": "CL",
+				"code": "760864285"
+			},
+			"addresses": [
+				{
+					"num": "1234",
+					"street": "Avenida Providencia",
+					"locality": "Providencia",
+					"region": "Región Metropolitana",
+					"code": "7500000",
+					"country": "CL"
+				}
+			],
+			"emails": [
+				{
+					"addr": "facturacion@andina.example.cl"
+				}
+			]
+		},
+		"customer": {
+			"name": "Distribuidora del Sur SpA",
+			"tax_id": {
+				"country": "CL",
+				"code": "187654327"
+			},
+			"addresses": [
+				{
+					"num": "88",
+					"street": "Calle Los Alerces",
+					"locality": "Concepción",
+					"region": "Biobío",
+					"code": "4030000",
+					"country": "CL"
+				}
+			],
+			"emails": [
+				{
+					"addr": "compras@delsur.example.cl"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "3",
+				"item": {
+					"name": "Licencia anual de software",
+					"price": "120000"
+				},
+				"sum": "360000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "19.0%"
+					}
+				],
+				"total": "360000"
+			}
+		],
+		"totals": {
+			"sum": "360000",
+			"total": "360000",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "360000",
+								"percent": "19.0%",
+								"amount": "68400"
+							}
+						],
+						"amount": "68400"
+					}
+				],
+				"sum": "68400"
+			},
+			"tax": "68400",
+			"total_with_tax": "428400",
+			"payable": "428400"
+		}
+	}
+}

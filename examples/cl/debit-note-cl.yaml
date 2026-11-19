@@ -1,0 +1,51 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "6d2a1b3f-2e5c-4b0f-9a4d-3c7e8f9b0d12"
+type: "debit-note"
+currency: "CLP"
+series: "SAMPLE"
+code: "003"
+issue_date: "2026-03-20"
+
+preceding:
+  - series: "SAMPLE"
+    code: "001"
+    issue_date: "2026-03-01"
+
+supplier:
+  tax_id:
+    country: "CL"
+    code: "760864285"
+  name: "Comercial Andina Limitada"
+  emails:
+    - addr: "facturacion@andina.example.cl"
+  addresses:
+    - num: "1234"
+      street: "Avenida Providencia"
+      locality: "Providencia"
+      region: "Región Metropolitana"
+      code: "7500000"
+      country: "CL"
+
+customer:
+  tax_id:
+    country: "CL"
+    code: "187654327"
+  name: "Distribuidora del Sur SpA"
+  emails:
+    - addr: "compras@delsur.example.cl"
+  addresses:
+    - num: "88"
+      street: "Calle Los Alerces"
+      locality: "Concepción"
+      region: "Biobío"
+      code: "4030000"
+      country: "CL"
+
+lines:
+  - quantity: 5
+    item:
+      name: "Recargo por interés de mora"
+      price: "8000"
+    taxes:
+      - cat: VAT
+        rate: "standard"
