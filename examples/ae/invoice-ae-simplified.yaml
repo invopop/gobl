@@ -10,7 +10,7 @@ tax:
 supplier:
   tax_id:
     country: "AE"
-    code: "123456789012346"
+    code: "187654321400003"
   name: "Provide One LLC"
   emails:
     - addr: "billing@example.ae"
