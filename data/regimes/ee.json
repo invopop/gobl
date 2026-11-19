@@ -1,0 +1,187 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Estonia",
+    "et": "Eesti"
+  },
+  "description": {
+    "en": "Estonia's tax system is administered by the Estonian Tax and Customs\nBoard (Maksu- ja Tolliamet, EMTA). As an EU member state, Estonia follows\nthe EU VAT Directive with standard and reduced rates.\n\nVAT (Käibemaks) is applied to most goods and services. The standard rate\nis 24% since 1 July 2025, raised from 22% (in force since 1 January 2024),\nwhich in turn replaced the long-standing 20% rate in force since 2009.\n\nBusinesses register for VAT via a KMKR number (käibemaksukohustuslase\nregistreerimisnumber) in the format EE followed by 9 digits. Credit notes\nare supported for invoice corrections."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Estonian Tax and Customs Board - VAT rates"
+      },
+      "url": "https://www.emta.ee/en/business-client/taxes-and-payment/value-added-tax/vat-rates-and-supply-exempt-tax/standard-vat-rate"
+    }
+  ],
+  "time_zone": "Europe/Tallinn",
+  "country": "EE",
+  "currency": "EUR",
+  "tax_scheme": "VAT",
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "et": "Käibemaks"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "et": "Käibemaks"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate"
+          },
+          "values": [
+            {
+              "since": "2025-07-01",
+              "percent": "24.0%"
+            },
+            {
+              "since": "2024-01-01",
+              "percent": "22.0%"
+            },
+            {
+              "since": "2009-07-01",
+              "percent": "20.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate"
+          },
+          "values": [
+            {
+              "percent": "13.0%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Super-Reduced Rate"
+          },
+          "values": [
+            {
+              "percent": "9.0%"
+            }
+          ]
+        },
+        {
+          "rate": "zero",
+          "keys": [
+            "zero"
+          ],
+          "name": {
+            "en": "Zero Rate"
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Estonian Tax and Customs Board - VAT rates"
+          },
+          "url": "https://www.emta.ee/en/business-client/taxes-and-payment/value-added-tax/vat-rates-and-supply-exempt-tax/standard-vat-rate"
+        }
+      ]
+    }
+  ]
+}
