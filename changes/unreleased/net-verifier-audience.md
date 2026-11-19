@@ -21,3 +21,4 @@
 - `net`: a delivery with no valid signature reports why the last candidate failed.
 - `net`: `HTTPFetcher` refuses every IANA special-purpose range that is not globally reachable, and the NAT64, 6to4 and Teredo ranges.
 - `net`: `HTTPFetcher` follows no redirects, and reports one as a definitive `ErrFetchFailed`.
+- `net`: `Client.VerifyDelivery`, `Client.Who`, `Client.VerifyEndorsement` and `Client.FindVerifications` reject an envelope with no document, or whose document does not match its digest.
