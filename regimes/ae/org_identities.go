@@ -9,22 +9,11 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// Identity types for the UAE identification numbers that can appear on
-// invoices. Except for the TIN, they are the codes PINT AE uses for the types
-// of commercial registration number.
+// Identity types for UAE numbers on invoices.
 const (
-	// IdentityTypeTIN is the 10-digit Tax Identification Number the Federal
-	// Tax Authority (FTA) issues to businesses. It is not the 15-digit VAT
-	// number (TRN), which goes in the party's tax ID.
-	IdentityTypeTIN cbc.Code = "TIN"
-	// IdentityTypeTradeLicense is the number of the commercial or trade
-	// licence issued by an emirate's licensing authority.
-	IdentityTypeTradeLicense cbc.Code = "TL"
-	// IdentityTypeEmiratesID is the number of the Emirates ID card issued to
-	// UAE citizens and residents.
-	IdentityTypeEmiratesID cbc.Code = "EID"
-	// IdentityTypeCabinetDecision is the number of the Cabinet Decision that
-	// establishes an entity.
+	IdentityTypeTIN             cbc.Code = "TIN" // the FTA's 10-digit TIN, not the 15-digit TRN of the tax ID
+	IdentityTypeTradeLicense    cbc.Code = "TL"
+	IdentityTypeEmiratesID      cbc.Code = "EID"
 	IdentityTypeCabinetDecision cbc.Code = "CD"
 )
 
@@ -33,19 +22,12 @@ const (
 const TINScheme cbc.Code = "0235"
 
 const (
-	// TINPattern is the format of the TIN, as the Federal Tax Authority
-	// registered it under ISO 6523 (ICD 0235): 10 digits, the first one 1,
-	// the UAE's identifier under the GCC agreement. The last one is a Luhn
-	// check digit, which the pattern does not check.
+	// TINPattern is the TIN format: 10 digits starting with 1. Its Luhn check digit is checked apart.
 	TINPattern = `^1\d{9}$`
-	// emiratesIDPattern is the format of the Emirates ID number: 15 digits,
-	// the first three 784, the ISO 3166-1 numeric code of the UAE. The last one is
-	// a verification digit whose algorithm is not published, so it is not
-	// checked.
+	// emiratesIDPattern is the Emirates ID format; its check digit algorithm isn't published.
 	emiratesIDPattern = `^784\d{12}$`
 )
 
-// identityDefinitions lists the identity types the AE regime defines.
 var identityDefinitions = []*cbc.Definition{
 	{
 		Code: IdentityTypeTIN,
@@ -99,16 +81,13 @@ var identityDefinitions = []*cbc.Definition{
 	},
 }
 
-// mofMandatoryFieldsSource is the Ministry of Finance's list of mandatory
-// e-invoice fields. It defines the TIN and lists the types of commercial
-// registration number issued in the UAE: trade licence, Emirates ID, passport
-// and Cabinet Decision.
+// mofMandatoryFieldsSource is the MoF list of mandatory e-invoice fields.
 var mofMandatoryFieldsSource = &cbc.Source{
 	Title: i18n.NewString("Ministry of Finance - UAE Electronic Invoice Mandatory Field Requirements"),
 	URL:   "https://mof.gov.ae/wp-content/uploads/2026/10/UAE-Electronic-Invoice-Mandatory-Field-Requirements.pdf",
 }
 
-// orgIdentityRules checks the format of the UAE identities that have one.
+// orgIdentityRules validates identities on UAE documents.
 func orgIdentityRules() *rules.Set {
 	return rules.For(new(org.Identity),
 		rules.When(

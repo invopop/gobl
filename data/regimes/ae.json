@@ -5,7 +5,7 @@
     "en": "United Arab Emirates"
   },
   "description": {
-    "en": "The UAE tax system is administered by the Federal Tax Authority (FTA).\nVAT was introduced on January 1, 2018, with standard, zero, and\nexempt rate categories.\n\nBusinesses must register for VAT if taxable supplies and imports\nexceed AED 375,000 in a 12-month period, with voluntary registration\navailable above AED 187,500. Registered businesses receive a Tax\nRegistration Number (TRN) which must be included on all tax invoices.\n\nSimplified VAT invoices may be used when the recipient is not VAT\nregistered, or when the transaction value does not exceed AED 10,000\nfor VAT-registered recipients. Credit notes are supported for\ncorrecting invoices.\n\nSupplies of eligible goods under the profit margin scheme use the\n\"margin-scheme\" tag, with the \"exempt\" VAT key on their lines. VAT\nis due on the margin and reported in the VAT return, so the invoice\nshows no VAT amount, only a statement that the scheme applies.\nUsing the \"exempt\" key is deliberate: GOBL classifies margin scheme\nlines the same way for Italy, Greece and Portugal.\n\nElectronic invoicing is mandatory for any person conducting\nbusiness in the UAE, unless excluded by Ministerial Decision No. 243\nof 2025, following the phased timeline of Ministerial Decision\nNo. 244 of 2025. Electronic invoices follow PINT AE, the UAE's\nPeppol specification, and identify the parties by their 10-digit\nTax Identification Number (TIN)."
+    "en": "The UAE tax system is administered by the Federal Tax Authority (FTA).\nVAT was introduced on January 1, 2018, with standard, zero, and\nexempt rate categories.\n\nBusinesses must register for VAT if taxable supplies and imports\nexceed AED 375,000 in a 12-month period, with voluntary registration\navailable above AED 187,500. Registered businesses receive a Tax\nRegistration Number (TRN) which must be included on all tax invoices.\n\nSimplified VAT invoices may be used when the recipient is not VAT\nregistered, or when the transaction value does not exceed AED 10,000\nfor VAT-registered recipients. Credit notes are supported for\ncorrecting invoices. Electronic invoicing is being phased in through\nPINT AE, the UAE's Peppol specification."
   },
   "sources": [
     {
@@ -36,7 +36,7 @@
             "en": "Profit Margin Scheme"
           },
           "desc": {
-            "en": "Supply of eligible goods, such as second-hand goods, antiques or\ncollectors' items, under the profit margin scheme. Margin scheme\nlines use the \"exempt\" VAT key, as they do for Italy, Greece and\nPortugal. VAT is due on the margin and reported in the VAT return,\nso the invoice shows no VAT amount."
+            "en": "Supply of eligible goods, such as second-hand goods, antiques or\ncollectors' items, under the profit margin scheme. Margin scheme\nlines use the \"exempt\" VAT key. VAT is due on the margin and\nreported in the VAT return, so the invoice shows no VAT amount."
           }
         }
       ]

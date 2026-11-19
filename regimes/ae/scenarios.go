@@ -9,8 +9,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// TagMarginScheme identifies an invoice for a supply under the profit margin
-// scheme.
+// TagMarginScheme marks a supply under the profit margin scheme.
 const TagMarginScheme cbc.Key = "margin-scheme"
 
 var invoiceTags = &tax.TagSet{
@@ -26,9 +25,8 @@ var invoiceTags = &tax.TagSet{
 				i18n.EN: here.Doc(`
 					Supply of eligible goods, such as second-hand goods, antiques or
 					collectors' items, under the profit margin scheme. Margin scheme
-					lines use the "exempt" VAT key, as they do for Italy, Greece and
-					Portugal. VAT is due on the margin and reported in the VAT return,
-					so the invoice shows no VAT amount.
+					lines use the "exempt" VAT key. VAT is due on the margin and
+					reported in the VAT return, so the invoice shows no VAT amount.
 				`),
 			},
 		},

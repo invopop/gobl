@@ -9,12 +9,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// TRNPattern is the format of the TRN: 15 digits, the first 10 of them the
-// TIN (Ministry of Finance, UAE Electronic Invoice Mandatory Field
-// Requirements, definition 11). Each tax registration, such as VAT or
-// Corporate Tax, has its own TRN. PINT AE also requires a VAT TRN to end in
-// 03 (IBR-132-AE), which the PINT addon checks. The first 10 digits end in
-// a Luhn check digit, which the pattern does not check.
+// TRNPattern is the TRN format: 15 digits starting with the TIN.
 const TRNPattern = `^1\d{14}$`
 
 func taxIdentityRules() *rules.Set {
@@ -35,11 +30,7 @@ func taxIdentityRules() *rules.Set {
 	)
 }
 
-// tinCheckDigitIsValid reports whether the first 10 digits of a code, the
-// TIN, end in a valid Luhn check digit, as the Federal Tax Authority
-// registered the TIN under ISO 6523 (Peppol participant identifier scheme
-// AE:TIN, ICD 0235). It is used on TINs and on TRNs, which start with one
-// (see TRNPattern), after their format is checked.
+// tinCheckDigitIsValid checks the Luhn digit of the TIN, the first 10 digits of a TIN or TRN.
 func tinCheckDigitIsValid(val any) bool {
 	code, ok := val.(cbc.Code)
 	return ok && len(code) >= 10 && luhn.Check(code[:10])

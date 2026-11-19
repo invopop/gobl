@@ -53,21 +53,8 @@ func New() *tax.RegimeDef {
 				Simplified VAT invoices may be used when the recipient is not VAT
 				registered, or when the transaction value does not exceed AED 10,000
 				for VAT-registered recipients. Credit notes are supported for
-				correcting invoices.
-
-				Supplies of eligible goods under the profit margin scheme use the
-				"margin-scheme" tag, with the "exempt" VAT key on their lines. VAT
-				is due on the margin and reported in the VAT return, so the invoice
-				shows no VAT amount, only a statement that the scheme applies.
-				Using the "exempt" key is deliberate: GOBL classifies margin scheme
-				lines the same way for Italy, Greece and Portugal.
-
-				Electronic invoicing is mandatory for any person conducting
-				business in the UAE, unless excluded by Ministerial Decision No. 243
-				of 2025, following the phased timeline of Ministerial Decision
-				No. 244 of 2025. Electronic invoices follow PINT AE, the UAE's
-				Peppol specification, and identify the parties by their 10-digit
-				Tax Identification Number (TIN).
+				correcting invoices. Electronic invoicing is being phased in through
+				PINT AE, the UAE's Peppol specification.
 			`),
 		},
 		Sources: []*cbc.Source{

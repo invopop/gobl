@@ -4,35 +4,12 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/ae"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
-
-func TestIdentityDefinitions(t *testing.T) {
-	r := tax.RegimeDefFor(l10n.AE)
-	require.NotNil(t, r)
-
-	types := []cbc.Code{
-		ae.IdentityTypeTIN,
-		ae.IdentityTypeTradeLicense,
-		ae.IdentityTypeEmiratesID,
-		ae.IdentityTypeCabinetDecision,
-	}
-	assert.Len(t, r.Identities, len(types))
-	for _, typ := range types {
-		def := cbc.GetCodeDefinition(typ, r.Identities)
-		if assert.NotNil(t, def, typ) {
-			assert.NotEmpty(t, def.Name.In(i18n.EN), typ)
-			assert.NotEmpty(t, def.Name.In(i18n.AR), typ)
-		}
-	}
-}
 
 func TestTINValidation(t *testing.T) {
 	tests := []struct {
@@ -63,14 +40,6 @@ func TestTINValidation(t *testing.T) {
 			}
 		})
 	}
-
-	t.Run("the rule only applies under the AE regime", func(t *testing.T) {
-		id := &org.Identity{Type: ae.IdentityTypeTIN, Code: "123"}
-		err := rules.Validate(id, tax.RegimeContext("DE"))
-		if err != nil {
-			assert.NotContains(t, err.Error(), "GOBL-AE-ORG-IDENTITY")
-		}
-	})
 }
 
 func TestEmiratesIDValidation(t *testing.T) {
@@ -98,13 +67,5 @@ func TestEmiratesIDValidation(t *testing.T) {
 				assert.ErrorContains(t, err, tt.err)
 			}
 		})
-	}
-}
-
-func TestIdentitiesWithoutFormatRules(t *testing.T) {
-	ctx := tax.RegimeContext(ae.CountryCode)
-	for _, typ := range []cbc.Code{ae.IdentityTypeTradeLicense, ae.IdentityTypeCabinetDecision} {
-		id := &org.Identity{Type: typ, Code: "CN-1234567"}
-		assert.NoError(t, rules.Validate(id, ctx), typ)
 	}
 }

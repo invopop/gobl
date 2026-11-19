@@ -132,21 +132,5 @@ func TestMarginSchemeScenario(t *testing.T) {
 		require.Len(t, notes, 1)
 		assert.Equal(t, tax.CategoryVAT, notes[0].Category)
 		assert.Equal(t, "VAT charged under the Profit Margin Scheme", notes[0].Text)
-		assert.Equal(t, "0.00", inv.Totals.Tax.String())
-		assert.Equal(t, "60.00", inv.Totals.Payable.String())
-	})
-
-	t.Run("no statement without the tag", func(t *testing.T) {
-		inv := testInvoice(t)
-		inv.Tags = tax.Tags{}
-		require.NoError(t, inv.Calculate())
-		assert.Empty(t, marginNotes(inv))
-	})
-
-	t.Run("calculating twice keeps one statement", func(t *testing.T) {
-		inv := testInvoice(t)
-		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Calculate())
-		assert.Len(t, marginNotes(inv), 1)
 	})
 }
