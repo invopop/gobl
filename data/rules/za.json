@@ -1,0 +1,58 @@
+{
+  "id": "GOBL-ZA",
+  "package": "za",
+  "subsets": [
+    {
+      "id": "GOBL-ZA-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [ZA]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-ZA-TAX-IDENTITY-01",
+                      "desc": "invalid South African VAT identity code",
+                      "tests": "matches ^4\\d{9}$"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ZA-ORG-IDENTITY",
+      "object": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [ZA]",
+          "subsets": [
+            {
+              "guard": "is CIPC",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-ZA-ORG-IDENTITY-01",
+                      "desc": "invalid CIPC registration number format",
+                      "tests": "matches ^\\d{4}/\\d{6}/\\d{2}$"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
