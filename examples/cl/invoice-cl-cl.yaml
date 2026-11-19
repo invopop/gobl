@@ -1,0 +1,37 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$regime: "CL"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: "CLP"
+issue_date: "2026-01-15"
+series: "CL"
+code: "001"
+
+supplier:
+  tax_id:
+    country: "CL"
+    code: "76.086.428-5"
+  name: "Proveedor Ejemplo SpA"
+  emails:
+    - addr: "facturacion@example.cl"
+  addresses:
+    - street: "Av. Libertador Bernardo O'Higgins 123"
+      locality: "Santiago"
+      region: "Metropolitana"
+      country: "CL"
+
+customer:
+  name: "Cliente Ejemplo Ltda."
+  tax_id:
+    country: "CL"
+    code: "12.531.909-2"
+  emails:
+    - addr: "compras@example.cl"
+
+lines:
+  - quantity: 1
+    item:
+      name: "Servicios profesionales"
+      price: "100000"
+    taxes:
+      - cat: "VAT"
+        rate: "general"
