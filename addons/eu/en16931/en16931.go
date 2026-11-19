@@ -34,7 +34,6 @@ func init() {
 		billChargeRules(),
 		billLineChargeRules(),
 		payInstructionsRules(),
-		payTermsRules(),
 		orgItemRules(),
 		orgAttachmentRules(),
 		orgPartyRules(),

@@ -5,7 +5,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/rules"
-	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -45,17 +44,4 @@ func payInstructionsRules() *rules.Set {
 			),
 		),
 	)
-}
-
-func payTermsRules() *rules.Set {
-	return rules.For(new(pay.Terms),
-		rules.Assert("01", "either due_dates or notes must be provided (BR-CO-25)",
-			is.Func("has due dates or notes", payTermsHasDueDatesOrNotes),
-		),
-	)
-}
-
-func payTermsHasDueDatesOrNotes(val any) bool {
-	t, ok := val.(*pay.Terms)
-	return !ok || t == nil || len(t.DueDates) > 0 || t.Notes != ""
 }

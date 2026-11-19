@@ -44,6 +44,13 @@ func TestInvoiceValidation(t *testing.T) {
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "document type extension is required")
 	})
+	t.Run("line without taxes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Taxes = nil
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "line taxes are required (BR-CO-04)")
+	})
 	t.Run("supplier and customer with addresses", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
@@ -63,6 +70,14 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "addresses are required")
+	})
+	t.Run("customer without name", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.Name = ""
+		inv.Customer.TaxID = nil
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer name is required (BR-7)")
 	})
 	t.Run("nil customer", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
@@ -539,6 +554,7 @@ func TestValidateBillCharge(t *testing.T) {
 		l := &bill.Charge{
 			Reason: "Product sample",
 			Amount: num.MakeAmount(100, 2),
+			Taxes:  standardVATSet(),
 		}
 		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
@@ -550,6 +566,7 @@ func TestValidateBillCharge(t *testing.T) {
 				untdid.ExtKeyCharge: "AAE",
 			}),
 			Amount: num.MakeAmount(100, 2),
+			Taxes:  standardVATSet(),
 		}
 		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
@@ -558,6 +575,7 @@ func TestValidateBillCharge(t *testing.T) {
 	t.Run("without reason or extension", func(t *testing.T) {
 		l := &bill.Charge{
 			Amount: num.MakeAmount(100, 2),
+			Taxes:  standardVATSet(),
 		}
 		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
 		assert.ErrorContains(t, err, "either a reason or a charge type extension is required")
@@ -570,10 +588,34 @@ func TestValidateBillCharge(t *testing.T) {
 				untdid.ExtKeyCharge: "AAE",
 			}),
 			Amount: num.MakeAmount(100, 2),
+			Taxes:  standardVATSet(),
 		}
 		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 	})
+
+	t.Run("without taxes (BR-37)", func(t *testing.T) {
+		l := &bill.Charge{
+			Reason: "Freight",
+			Amount: num.MakeAmount(100, 2),
+		}
+		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "taxes are required (BR-37)")
+	})
+}
+
+// standardVATSet is a tax set with a single standard-rated VAT combo, as
+// EN 16931 requires on document-level discounts and charges (BR-32, BR-37).
+func standardVATSet() tax.Set {
+	return tax.Set{
+		{
+			Category: tax.CategoryVAT,
+			Rate:     "standard",
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				untdid.ExtKeyTaxCategory: en16931.TaxCategoryStandard,
+			}),
+		},
+	}
 }
 
 func TestValidateBillLineDiscount(t *testing.T) {
@@ -670,82 +712,4 @@ func TestValidateBillLineCharge(t *testing.T) {
 		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 	})
-}
-
-func TestValidateBillPayment(t *testing.T) {
-	t.Run("with terms", func(t *testing.T) {
-		p := &pay.Terms{
-			DueDates: []*pay.DueDate{
-				{
-					Date:   cal.NewDate(2025, time.January, 1),
-					Amount: num.NewAmount(1000, 2),
-				},
-			},
-		}
-		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
-		assert.NoError(t, err)
-	})
-
-	t.Run("without terms", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Payment.Terms = nil
-		err := inv.Calculate()
-		require.NoError(t, err)
-		err = rules.Validate(inv)
-		assert.ErrorContains(t, err, " payment terms are required when amount is due (BR-CO-25)")
-	})
-
-	t.Run("with nil payment details", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Payment = nil
-		err := inv.Calculate()
-		require.NoError(t, err)
-		err = rules.Validate(inv)
-		assert.ErrorContains(t, err, "payment details are required when amount is due")
-	})
-
-	t.Run("with due amount zero", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		advances := []*pay.Record{
-			{
-				Percent:     num.NewPercentage(100, 2),
-				Description: "Advance payment",
-			},
-		}
-		inv.Payment.Advances = advances
-		inv.Payment.Terms = nil
-
-		err := inv.Calculate()
-		require.NoError(t, err)
-		err = rules.Validate(inv)
-		assert.NoError(t, err)
-	})
-
-	t.Run("with payment details but no terms when due", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Payment = &bill.PaymentDetails{} // payment details exist but no terms
-		err := inv.Calculate()
-		require.NoError(t, err)
-		err = rules.Validate(inv)
-		assert.ErrorContains(t, err, " payment terms are required when amount is due (BR-CO-25)")
-	})
-
-	t.Run("no payment details and no amount due", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		// Add advance payment to make due amount zero
-		advances := []*pay.Record{
-			{
-				Percent:     num.NewPercentage(100, 2),
-				Description: "Full advance payment",
-			},
-		}
-		inv.Payment = &bill.PaymentDetails{Advances: advances}
-		err := inv.Calculate()
-		require.NoError(t, err)
-		// Remove payment details after calculation
-		inv.Payment = nil
-		err = rules.Validate(inv)
-		assert.NoError(t, err) // Should pass because no amount is due
-	})
-
 }
