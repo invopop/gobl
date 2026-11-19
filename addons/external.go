@@ -190,4 +190,12 @@ func init() {
 		},
 		Module: "github.com/invopop/gobl.ro.anaf",
 	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "hr-eracun-v1",
+		Name: i18n.String{
+			i18n.EN: "Croatia eRačun (HR CIUS 2025)",
+			i18n.HR: "Hrvatska eRačun (HR CIUS 2025)",
+		},
+		Module: "github.com/invopop/gobl.hr.eracun",
+	})
 }

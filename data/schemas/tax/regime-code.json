@@ -82,6 +82,10 @@
           "title": "United Kingdom"
         },
         {
+          "const": "HR",
+          "title": "Croatia"
+        },
+        {
           "const": "IE",
           "title": "Ireland"
         },
