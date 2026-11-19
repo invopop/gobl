@@ -1,0 +1,45 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "IS"
+uuid: "5e7a3c9d-8b2f-4a6e-b1d4-2c5f8a3e6b9c"
+currency: ISK
+series: "2026"
+code: "0002"
+issue_date: "2026-05-20"
+
+supplier:
+  name: Bókaútgáfa Snorra ehf.
+  tax_id:
+    country: "IS"
+    code: "1201743399"
+  addresses:
+    - street: Skólavörðustígur 12
+      locality: Reykjavík
+      code: "101"
+      country: "IS"
+
+customer:
+  name: Bókasafn Hafnarfjarðar
+  tax_id:
+    country: "IS"
+    code: "1503854239"
+  addresses:
+    - street: Strandgata 1
+      locality: Hafnarfjörður
+      code: "220"
+      country: "IS"
+
+lines:
+  - quantity: "40"
+    item:
+      name: Íslenskar samtímabókmenntir (kilja)
+      price: "4990"
+    taxes:
+      - cat: VAT
+        rate: reduced
+  - quantity: "10"
+    item:
+      name: Ljóðasafn 2025
+      price: "6490"
+    taxes:
+      - cat: VAT
+        rate: reduced
