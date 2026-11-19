@@ -1107,6 +1107,59 @@ func TestVerifyEndorsementUnavailability(t *testing.T) {
 		assert.False(t, errors.Is(err, ErrVerifyFailed))
 	})
 
+	t.Run("an unreachable verifier key outranks an expired verification", func(t *testing.T) {
+		otherKey := dsig.NewES256Key()
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		env.Head.From = subjectAddr.URI()
+		env.Head.To = testRequester.URI()
+		signPair(t, env)
+		require.NoError(t, env.Sign(otherKey, regCnf(),
+			head.WithAudience(subjectAddr.String()), head.WithIssuer(verifierAddr.String())))
+		require.NoError(t, env.Sign(verifKey, regCnf(), head.WithExpiration(time.Now().Add(-time.Minute)),
+			head.WithAudience(subjectAddr.String()), head.WithIssuer(verifierAddr.String())))
+		c := NewClient(
+			WithAuthorities(),
+			WithVerifiers(verifierAddr),
+			WithFetcher(&mapFetcher{
+				data: map[string][]byte{verifierAddr.KeyURL(verifKey.ID()): jwkOf(verifKey)},
+				errs: map[string]error{verifierAddr.KeyURL(otherKey.ID()): fmt.Errorf("%w: HTTP 503", ErrUnavailable)},
+			}),
+		)
+		_, err = c.VerifyEndorsement(ctx, env)
+		require.ErrorIs(t, err, ErrUnavailable)
+		_, err = c.FindVerifications(ctx, env, verifierAddr, subjectAddr)
+		require.ErrorIs(t, err, ErrUnavailable)
+	})
+
+	t.Run("checks at most four signatures per issuer across a whole check", func(t *testing.T) {
+		env := buildVerified(t)
+		require.NoError(t, env.Sign(authKey, regCnf(), regExp(),
+			head.WithAudience(subjectAddr.String()),
+			head.WithIssuer(authorityAddr.String()),
+			head.WithVerifier(verifierAddr.String())))
+		for range 4 {
+			require.NoError(t, env.Sign(dsig.NewES256Key(), regCnf(),
+				head.WithAudience(subjectAddr.String()), head.WithIssuer(verifierAddr.String())))
+		}
+		f := &countingFetcher{inner: &mapFetcher{
+			data: map[string][]byte{authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey)},
+			errs: map[string]error{verifierAddr.KeyURL(verifKey.ID()): fmt.Errorf("%w: HTTP 503", ErrUnavailable)},
+		}, n: map[string]int{}}
+		c := NewClient(WithAuthorities(authorityAddr), WithVerifiers(verifierAddr), WithFetcher(f))
+		_, err := c.VerifyEndorsement(ctx, env)
+		require.ErrorIs(t, err, ErrUnavailable)
+		fetches := 0
+		for url, n := range f.n {
+			if strings.HasPrefix(url, "https://"+verifierAddr.String()+"/") {
+				fetches += n
+			}
+		}
+		assert.Equal(t, maxIssuerCandidates, fetches)
+	})
+
 	t.Run("removed verifier key is rejected", func(t *testing.T) {
 		// A definitive 404 means the key is gone — revoked.
 		c := NewClient(

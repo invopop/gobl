@@ -82,6 +82,12 @@ type Endorsement struct {
 // key lookup failures, or ErrVerifyFailed when candidates fail
 // verification.
 func (c *Client) VerifyEndorsement(ctx context.Context, env *gobl.Envelope) (*Endorsement, error) {
+	return c.endorsement(ctx, env, nil)
+}
+
+// endorsement implements VerifyEndorsement. When signedWith is not nil,
+// only an endorsement binding one of its keys counts.
+func (c *Client) endorsement(ctx context.Context, env *gobl.Envelope, signedWith []*dsig.PublicKey) (*Endorsement, error) {
 	// A malformed envelope may carry signatures without a header;
 	// reject rather than let header verification panic.
 	if env == nil || env.Head == nil || len(env.Signatures) == 0 {
@@ -101,22 +107,80 @@ func (c *Client) VerifyEndorsement(ctx context.Context, env *gobl.Envelope) (*En
 	if err != nil {
 		return nil, err
 	}
-	subjectKeys := &pairKeySet{c: c, env: env, from: subject, to: to}
-	errs := new(candidateErrs)
-	if end := c.authorityEndorsement(ctx, env, subject, subjectKeys, errs); end != nil {
+	s := &endorsementCheck{
+		c:          c,
+		env:        env,
+		subject:    subject,
+		keys:       &pairKeySet{c: c, env: env, from: subject, to: to},
+		signedWith: signedWith,
+		budget:     make(issuerBudget),
+		found:      make(map[Address]foundVerifications),
+	}
+	if end := s.authorityEndorsement(ctx); end != nil {
 		return end, nil
 	}
-	if end := c.directEndorsement(ctx, env, subject, subjectKeys, errs); end != nil {
+	if end := s.directEndorsement(ctx); end != nil {
 		return end, nil
 	}
-	return nil, errs.result()
+	return nil, s.errs.result()
+}
+
+// endorsementCheck is the state of one VerifyEndorsement call.
+type endorsementCheck struct {
+	c          *Client
+	env        *gobl.Envelope
+	subject    Address
+	keys       *pairKeySet
+	signedWith []*dsig.PublicKey
+	errs       candidateErrs
+	budget     issuerBudget
+	found      map[Address]foundVerifications
+}
+
+type foundVerifications struct {
+	ps  []*head.SigningPayload
+	err error
+}
+
+// issuerBudget counts, per issuer, the signatures checked against its
+// keys, so no envelope triggers more than maxIssuerCandidates key
+// fetches for one issuer.
+type issuerBudget map[Address]int
+
+// spend reports whether another signature by issuer may be checked.
+func (b issuerBudget) spend(issuer Address) bool {
+	b[issuer]++
+	return b[issuer] <= maxIssuerCandidates
+}
+
+// bind checks that an endorsement's key jkt confirms the subject's from
+// and to and, when required, signed the delivery.
+func (s *endorsementCheck) bind(ctx context.Context, jkt string) error {
+	if err := s.keys.require(ctx, jkt); err != nil {
+		return err
+	}
+	if s.signedWith != nil && !hasKey(s.signedWith, jkt) {
+		return fmt.Errorf("%w: delivery from %q is not signed with its endorsed key", ErrVerifyFailed, s.subject)
+	}
+	return nil
+}
+
+// verifications returns the valid verifications by verifier for the
+// subject, checking them once per call.
+func (s *endorsementCheck) verifications(ctx context.Context, verifier Address) ([]*head.SigningPayload, error) {
+	if f, ok := s.found[verifier]; ok {
+		return f.ps, f.err
+	}
+	ps, err := s.c.verificationsBy(ctx, s.env, verifier, s.subject, s.budget)
+	s.found[verifier] = foundVerifications{ps, err}
+	return ps, err
 }
 
 // authorityEndorsement returns the first valid endorsement by a trusted
 // authority, recording why each other candidate failed.
-func (c *Client) authorityEndorsement(ctx context.Context, env *gobl.Envelope, subject Address, subjectKeys *pairKeySet, errs *candidateErrs) *Endorsement {
+func (s *endorsementCheck) authorityEndorsement(ctx context.Context) *Endorsement {
+	c, env, subject, errs := s.c, s.env, s.subject, &s.errs
 	auths := canonical(c.authorities)
-	candidates := make(map[Address]int)
 	for _, sig := range env.Signatures {
 		p, err := head.SignedPayload(sig)
 		if err != nil {
@@ -129,7 +193,7 @@ func (c *Client) authorityEndorsement(ctx context.Context, env *gobl.Envelope, s
 		if aud, err := ParseAddress(p.Aud); err != nil || aud != subject {
 			continue
 		}
-		if candidates[issuer]++; candidates[issuer] > maxIssuerCandidates {
+		if !s.budget.spend(issuer) {
 			continue
 		}
 		pub, err := c.FetchKey(ctx, issuer, sig.KeyID())
@@ -146,11 +210,11 @@ func (c *Client) authorityEndorsement(ctx context.Context, env *gobl.Envelope, s
 			errs.add(err)
 			continue
 		}
-		if err := subjectKeys.require(ctx, p.Confirmation.JKT); err != nil {
+		if err := s.bind(ctx, p.Confirmation.JKT); err != nil {
 			errs.add(err)
 			continue
 		}
-		verifier, err := c.confirmVerifier(ctx, env, issuer, subject, p)
+		verifier, err := s.confirmVerifier(ctx, issuer, p)
 		if err != nil {
 			errs.add(err)
 			continue
@@ -162,22 +226,22 @@ func (c *Client) authorityEndorsement(ctx context.Context, env *gobl.Envelope, s
 
 // directEndorsement returns the first valid endorsement by a verifier on
 // the client's own trust list, recording why each other candidate failed.
-func (c *Client) directEndorsement(ctx context.Context, env *gobl.Envelope, subject Address, subjectKeys *pairKeySet, errs *candidateErrs) *Endorsement {
-	seen := make(map[Address]bool, len(c.verifiers))
-	for _, a := range c.verifiers {
+func (s *endorsementCheck) directEndorsement(ctx context.Context) *Endorsement {
+	seen := make(map[Address]bool, len(s.c.verifiers))
+	for _, a := range s.c.verifiers {
 		verifier, err := ParseAddress(string(a))
 		if err != nil || seen[verifier] {
 			continue
 		}
 		seen[verifier] = true
-		ps, err := c.verificationsBy(ctx, env, verifier, subject)
+		ps, err := s.verifications(ctx, verifier)
 		if err != nil {
-			errs.add(err)
+			s.errs.add(err)
 			continue
 		}
 		for _, p := range ps {
-			if err := subjectKeys.require(ctx, p.Confirmation.JKT); err != nil {
-				errs.add(err)
+			if err := s.bind(ctx, p.Confirmation.JKT); err != nil {
+				s.errs.add(err)
 				continue
 			}
 			return &Endorsement{Verifier: verifier, Key: p.Confirmation.JKT}
@@ -203,6 +267,10 @@ func (e *candidateErrs) add(err error) {
 	}
 }
 
+func (e *candidateErrs) empty() bool {
+	return e.unavailable == nil && e.expired == nil && e.other == nil
+}
+
 func (e *candidateErrs) result() error {
 	switch {
 	case e.unavailable != nil:
@@ -212,7 +280,7 @@ func (e *candidateErrs) result() error {
 	case e.other != nil && errors.Is(e.other, ErrVerifyFailed):
 		return e.other
 	case e.other != nil:
-		return fmt.Errorf("%w: %v", ErrVerifyFailed, e.other)
+		return fmt.Errorf("%w: %w", ErrVerifyFailed, e.other)
 	}
 	return ErrNotEndorsed
 }
@@ -280,7 +348,7 @@ func checkRegistration(p *head.SigningPayload) error {
 // confirmVerifier returns the verifier an authority countersignature
 // names, after checking that it is a valid address, distinct from the
 // authority, whose own countersignature for subject is valid.
-func (c *Client) confirmVerifier(ctx context.Context, env *gobl.Envelope, authority, subject Address, p *head.SigningPayload) (Address, error) {
+func (s *endorsementCheck) confirmVerifier(ctx context.Context, authority Address, p *head.SigningPayload) (Address, error) {
 	if p.Verifier == "" {
 		return "", fmt.Errorf("%w: signature by %q names no verifier", ErrVerifyFailed, authority)
 	}
@@ -293,12 +361,12 @@ func (c *Client) confirmVerifier(ctx context.Context, env *gobl.Envelope, author
 	if verifier == authority {
 		return "", fmt.Errorf("%w: signature by %q names itself as verifier", ErrVerifyFailed, authority)
 	}
-	ps, err := c.verificationsBy(ctx, env, verifier, subject)
+	ps, err := s.verifications(ctx, verifier)
 	if err != nil {
 		return "", err
 	}
 	if len(ps) == 0 {
-		return "", noVerification(verifier, subject)
+		return "", noVerification(verifier, s.subject)
 	}
 	return verifier, nil
 }
@@ -341,7 +409,7 @@ func (c *Client) FindVerifications(ctx context.Context, env *gobl.Envelope, veri
 	if err != nil {
 		return nil, err
 	}
-	ps, err := c.verificationsBy(ctx, env, verifier, subject)
+	ps, err := c.verificationsBy(ctx, env, verifier, subject, make(issuerBudget))
 	if err != nil {
 		return nil, err
 	}
@@ -364,13 +432,13 @@ func (c *Client) FindVerifications(ctx context.Context, env *gobl.Envelope, veri
 
 // verificationsBy returns the payloads of the valid verification
 // countersignatures by addr for subject, those without a verifier claim,
-// each with an iat no later than now (allowing clock
-// skew), no exp that has passed, and a cnf. The error is set only when
-// there are candidates and none is valid.
-func (c *Client) verificationsBy(ctx context.Context, env *gobl.Envelope, addr, subject Address) ([]*head.SigningPayload, error) {
+// each with an iat no later than now (allowing clock skew), no exp that
+// has passed, and a cnf. Each signature checked spends budget for addr.
+// The error is set only when there are candidates and none is valid,
+// and reports a transient failure over expired evidence over any other.
+func (c *Client) verificationsBy(ctx context.Context, env *gobl.Envelope, addr, subject Address, budget issuerBudget) ([]*head.SigningPayload, error) {
 	var valid []*head.SigningPayload
-	var lastErr error
-	candidates := 0
+	var errs candidateErrs
 	for _, sig := range env.Signatures {
 		p, err := head.SignedPayload(sig)
 		if err != nil {
@@ -386,29 +454,29 @@ func (c *Client) verificationsBy(ctx context.Context, env *gobl.Envelope, addr, 
 		if p.Verifier != "" {
 			continue // a registration, not a verification
 		}
-		if candidates++; candidates > maxIssuerCandidates {
+		if !budget.spend(issuer) {
 			break
 		}
 		pub, err := c.FetchKey(ctx, issuer, sig.KeyID())
 		if err != nil {
-			lastErr = err
+			errs.add(err)
 			continue
 		}
 		if err := env.Head.Verify(sig, pub); err != nil {
-			lastErr = err
+			errs.add(err)
 			continue
 		}
 		if err := checkIssued(p); err != nil {
-			lastErr = err
+			errs.add(err)
 			continue
 		}
 		if expired(p.ExpiresAt) {
-			lastErr = fmt.Errorf("%w: exp %s has passed", ErrSignatureExpired,
-				time.Unix(p.ExpiresAt, 0).UTC().Format(time.RFC3339))
+			errs.add(fmt.Errorf("%w: exp %s has passed", ErrSignatureExpired,
+				time.Unix(p.ExpiresAt, 0).UTC().Format(time.RFC3339)))
 			continue
 		}
 		if p.Confirmation == nil || p.Confirmation.JKT == "" {
-			lastErr = fmt.Errorf("%w: signature by %q has no cnf", ErrVerifyFailed, addr)
+			errs.add(fmt.Errorf("%w: signature by %q has no cnf", ErrVerifyFailed, addr))
 			continue
 		}
 		valid = append(valid, p)
@@ -416,7 +484,10 @@ func (c *Client) verificationsBy(ctx context.Context, env *gobl.Envelope, addr, 
 	if len(valid) > 0 {
 		return valid, nil
 	}
-	return nil, lastErr
+	if errs.empty() {
+		return nil, nil
+	}
+	return nil, errs.result()
 }
 
 // noVerification reports that an envelope has no countersignature by

@@ -506,3 +506,19 @@ func TestHTTPFetcherRefusesRedirects(t *testing.T) {
 	}
 	assert.False(t, followed)
 }
+
+func TestHTTPFetcherWrapsTransportErrors(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {}))
+	defer srv.Close()
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	f := newHTTPFetcher(true)
+
+	_, err := f.Fetch(ctx, srv.URL+"/.well-known/gobl/keys/k", nil)
+	require.ErrorIs(t, err, ErrUnavailable)
+	assert.ErrorIs(t, err, context.Canceled)
+
+	err = f.Post(ctx, srv.URL+"/.well-known/gobl/inbox", []byte("{}"))
+	require.ErrorIs(t, err, ErrUnavailable)
+	assert.ErrorIs(t, err, context.Canceled)
+}

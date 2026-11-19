@@ -22,3 +22,10 @@
 - `net`: `HTTPFetcher` refuses every IANA special-purpose range that is not globally reachable, and the NAT64, 6to4 and Teredo ranges.
 - `net`: `HTTPFetcher` follows no redirects, and reports one as a definitive `ErrFetchFailed`.
 - `net`: `Client.VerifyDelivery`, `Client.Who`, `Client.VerifyEndorsement` and `Client.FindVerifications` reject an envelope with no document, or whose document does not match its digest.
+- `net`: `Client.VerifyEndorsement` and `Client.FindVerifications` report an unreachable verifier key over an expired or invalid verification.
+- `net`: `Client.VerifySender` accepts a delivery signed with the key bound by any valid endorsement, not only the first found.
+- `net`: deliveries signed as a key becomes valid are accepted from a sender whose clock is up to 30 seconds ahead.
+- `net`: `Client.DeliveryConfirmations` keeps a key's signature naming a successor over a plain one made up to `MaxRequestAge` later.
+- `net`: one `Client.VerifyEndorsement` call checks at most four signatures per issuer.
+- `net`: `SignKeyChange` adds neither signature when one fails.
+- `net`: `HTTPFetcher` tries each resolved address but the last for 2 seconds before the next.

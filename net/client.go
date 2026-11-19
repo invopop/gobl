@@ -28,8 +28,12 @@ const (
 	maxKeyCacheEntries = 1024
 )
 
-// dialTimeout is the per-attempt timeout for the SSRF-safe dialer.
-const dialTimeout = 5 * time.Second
+// Per-attempt timeouts for the SSRF-safe dialer: an address with others
+// left to try gets fallbackDialTimeout, the last one dialTimeout.
+const (
+	dialTimeout         = 5 * time.Second
+	fallbackDialTimeout = 2 * time.Second
+)
 
 // safeDialContext is the SSRF-resistant dialer used by HTTPFetcher. It rejects
 // hosts that resolve to non-public addresses. Tests and local services should
@@ -53,11 +57,15 @@ func safeDialContext(ctx context.Context, network, addr string) (stdnet.Conn, er
 	return dialAddrs(ctx, network, host, ips, port)
 }
 
-// dialAddrs connects to the first of ips that accepts on port.
+// dialAddrs connects to the first of ips that accepts on port, giving
+// each address but the last fallbackDialTimeout.
 func dialAddrs(ctx context.Context, network, host string, ips []stdnet.IP, port string) (stdnet.Conn, error) {
-	d := &stdnet.Dialer{Timeout: dialTimeout}
 	var lastErr error
-	for _, ip := range ips {
+	for i, ip := range ips {
+		d := &stdnet.Dialer{Timeout: dialTimeout}
+		if i < len(ips)-1 {
+			d.Timeout = fallbackDialTimeout
+		}
 		conn, err := d.DialContext(ctx, network, stdnet.JoinHostPort(ip.String(), port))
 		if err == nil {
 			return conn, nil
@@ -188,14 +196,14 @@ func newHTTPFetcher(allowLoopback bool) *HTTPFetcher {
 func (f *HTTPFetcher) Fetch(ctx context.Context, url string, header http.Header) ([]byte, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrFetchFailed, err)
+		return nil, fmt.Errorf("%w: %w", ErrFetchFailed, err)
 	}
 	copyHeader(req.Header, header)
 	req.Header.Set("Accept", "application/json")
 
 	resp, err := f.Client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", transportErr(err), err)
+		return nil, fmt.Errorf("%w: %w", transportErr(err), err)
 	}
 	defer resp.Body.Close() // nolint:errcheck
 
@@ -217,13 +225,11 @@ func (f *HTTPFetcher) Fetch(ctx context.Context, url string, header http.Header)
 
 	body, err := io.ReadAll(io.LimitReader(resp.Body, maxBodySize))
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
+		return nil, fmt.Errorf("%w: %w", ErrUnavailable, err)
 	}
 	return body, nil
 }
 
-// retryable reports whether a response status signals a transient
-// condition worth retrying: 429 or any 5xx.
 // isRedirect reports whether status is a redirection.
 func isRedirect(status int) bool {
 	return status >= 300 && status < 400
@@ -235,6 +241,8 @@ func redirectErr(status int, url string) error {
 	return fmt.Errorf("%w: HTTP %d from %s: redirects are not followed", ErrFetchFailed, status, url)
 }
 
+// retryable reports whether a response status signals a transient
+// condition worth retrying: 429 or any 5xx.
 func retryable(status int) bool {
 	return status == http.StatusTooManyRequests || status >= 500
 }
@@ -256,14 +264,14 @@ func transportErr(err error) error {
 func (f *HTTPFetcher) Post(ctx context.Context, url string, body []byte) error {
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
 	if err != nil {
-		return fmt.Errorf("%w: %v", ErrFetchFailed, err)
+		return fmt.Errorf("%w: %w", ErrFetchFailed, err)
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 
 	resp, err := f.Client.Do(req)
 	if err != nil {
-		return fmt.Errorf("%w: %v", transportErr(err), err)
+		return fmt.Errorf("%w: %w", transportErr(err), err)
 	}
 	defer resp.Body.Close() // nolint:errcheck
 

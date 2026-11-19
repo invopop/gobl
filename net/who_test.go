@@ -358,6 +358,35 @@ func TestVerifySender(t *testing.T) {
 		assert.Contains(t, err.Error(), "endorsed key")
 	})
 
+	t.Run("accepts a delivery signed with the key another endorsement binds", func(t *testing.T) {
+		// During a key change the authority's registration can still bind
+		// the old key while a directly trusted verifier binds the new one.
+		newKey := dsig.NewES256Key()
+		env := new(gobl.Envelope)
+		require.NoError(t, json.Unmarshal(endorsedData, env))
+		require.NoError(t, Sign(env, newKey, subject, testRequester))
+		require.NoError(t, env.Sign(verifierKey, head.WithConfirmation(newKey.JKT()),
+			head.WithIssuer(verifier.String()),
+			head.WithAudience(subject.String())))
+		who, err := json.Marshal(env)
+		require.NoError(t, err)
+		data := map[string][]byte{subject.KeyURL(newKey.ID()): jwkOf(newKey)}
+		for k, v := range endorsed {
+			data[k] = v
+		}
+		data[subject.WhoURL()] = who
+		c := NewClient(
+			WithIdentity(testRequester, testRequesterKey),
+			WithAuthorities(authority),
+			WithVerifiers(verifier),
+			WithFetcher(&mapFetcher{data: data}),
+		)
+		_, err = c.VerifySender(ctx, delivery(t, newKey))
+		require.NoError(t, err)
+		_, err = c.VerifySender(ctx, delivery(t, subjKey))
+		require.NoError(t, err)
+	})
+
 	t.Run("rejects a delivery not for the client", func(t *testing.T) {
 		c := NewClient(
 			WithIdentity("someone-else.example.com", testRequesterKey),

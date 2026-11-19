@@ -169,7 +169,9 @@ func (c *Client) pairConfirmations(ctx context.Context, env *gobl.Envelope, from
 			reason = err
 			continue
 		}
-		if err := pub.Allows(time.Now()); err != nil {
+		// The signature's iat is within the key's validity; the key must
+		// also not have been retired since.
+		if err := stillValid(pub); err != nil {
 			reason = err
 			continue
 		}
@@ -191,18 +193,41 @@ func (c *Client) pairConfirmations(ctx context.Context, env *gobl.Envelope, from
 	return nil, fmt.Errorf("%w: no valid signature from %q to %q", ErrVerifyFailed, from, to)
 }
 
-// addConfirmation adds cs to out, replacing an earlier signature by the
-// same key.
+// addConfirmation adds cs to out, keeping one signature per key: one
+// naming a successor over one that does not, unless that one is more
+// than MaxRequestAge newer, and otherwise the more recent.
 func addConfirmation(out []*ConfirmingSignature, cs *ConfirmingSignature) []*ConfirmingSignature {
 	for i, o := range out {
 		if o.Key.JKT() == cs.Key.JKT() {
-			if cs.IssuedAt.After(o.IssuedAt) {
+			if preferConfirmation(cs, o) {
 				out[i] = cs
 			}
 			return out
 		}
 	}
 	return append(out, cs)
+}
+
+// preferConfirmation reports whether a should be kept over b, two
+// signatures by the same key.
+func preferConfirmation(a, b *ConfirmingSignature) bool {
+	switch {
+	case a.Successor != "" && b.Successor == "":
+		return b.IssuedAt.Sub(a.IssuedAt) <= MaxRequestAge
+	case a.Successor == "" && b.Successor != "":
+		return a.IssuedAt.Sub(b.IssuedAt) > MaxRequestAge
+	case a.IssuedAt.Equal(b.IssuedAt):
+		return a.Successor > b.Successor // independent of signature order
+	}
+	return a.IssuedAt.After(b.IssuedAt)
+}
+
+// stillValid fails when pub's valid_until has passed.
+func stillValid(pub *dsig.PublicKey) error {
+	if pub.ValidUntil != nil && time.Now().After(pub.ValidUntil.Time) {
+		return fmt.Errorf("%w: key %q was retired at %s", ErrVerifyFailed, pub.ID(), pub.ValidUntil)
+	}
+	return nil
 }
 
 // hasKey reports whether keys includes the key with thumbprint jkt.

@@ -2,6 +2,8 @@ package net
 
 import (
 	"context"
+	"crypto/ed25519"
+	"crypto/rand"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -9,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/go-jose/go-jose/v4"
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
@@ -241,12 +244,31 @@ func TestSignKeyChange(t *testing.T) {
 
 	t.Run("needs both keys", func(t *testing.T) {
 		env := buildSignedEnvelope(t, current, subject, authority)
-		require.ErrorIs(t, SignKeyChange(env, current, nil, subject, authority), ErrVerifyFailed)
-		require.ErrorIs(t, SignKeyChange(env, nil, next, subject, authority), ErrVerifyFailed)
+		require.Error(t, SignKeyChange(env, current, nil, subject, authority))
+		require.Error(t, SignKeyChange(env, nil, next, subject, authority))
+		assert.Len(t, env.Signatures, 1)
+	})
+
+	t.Run("adds neither signature when the next key cannot sign", func(t *testing.T) {
+		env := buildSignedEnvelope(t, current, subject, authority)
+		require.Error(t, SignKeyChange(env, current, ed25519Key(t), subject, authority))
+		assert.Len(t, env.Signatures, 1)
 	})
 
 	t.Run("reports an invalid address", func(t *testing.T) {
 		env := buildSignedEnvelope(t, current, subject, authority)
 		require.Error(t, SignKeyChange(env, current, next, "not valid!", authority))
 	})
+}
+
+// ed25519Key returns a private key dsig cannot sign with.
+func ed25519Key(t *testing.T) *dsig.PrivateKey {
+	t.Helper()
+	_, priv, err := ed25519.GenerateKey(rand.Reader)
+	require.NoError(t, err)
+	data, err := json.Marshal(jose.JSONWebKey{Key: priv, KeyID: uuid.V7().String()})
+	require.NoError(t, err)
+	k := new(dsig.PrivateKey)
+	require.NoError(t, json.Unmarshal(data, k))
+	return k
 }

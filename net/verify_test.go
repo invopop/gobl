@@ -438,6 +438,18 @@ func TestVerifyDelivery(t *testing.T) {
 		assert.ErrorContains(t, err, "issued in the future")
 	})
 
+	t.Run("allows clock skew on a new key's valid_from", func(t *testing.T) {
+		// Signed the moment the key became valid, by a sender whose clock
+		// is a few seconds ahead of the receiver's.
+		key := dsig.NewES256Key()
+		env := buildDelivery(t, key, sender, inbox)
+		ahead := time.Now().Add(10 * time.Second).Truncate(time.Second)
+		pairSignature(t, env, key, ahead.Unix())
+		from := cal.TimestampOf(ahead)
+		c := NewClient(WithFetcher(&mockFetcher{data: publishedJWK(t, key, &from, nil)}))
+		require.NoError(t, c.VerifyDelivery(ctx, env, inbox))
+	})
+
 	t.Run("rejects a key retired since signing", func(t *testing.T) {
 		// Signed while the key was valid, but it has since been
 		// retired: a live receiver does not accept it.
@@ -593,6 +605,45 @@ func TestDeliveryConfirmations(t *testing.T) {
 		require.NoError(t, err)
 		require.Len(t, cs, 1)
 		assert.WithinDuration(t, time.Now(), cs[0].IssuedAt, time.Minute)
+	})
+
+	t.Run("keeps a signature naming a successor over a later plain one", func(t *testing.T) {
+		sign := func(env *gobl.Envelope, iat time.Time, cnf string) {
+			p := &head.SigningPayload{UUID: env.Head.UUID, Digest: env.Head.Digest,
+				Iss: sender.String(), Aud: inbox.String(), IssuedAt: iat.Unix()}
+			if cnf != "" {
+				p.Confirmation = &head.Confirmation{JKT: cnf}
+			}
+			sig, err := dsig.NewSignature(oldKey, p)
+			require.NoError(t, err)
+			env.Signatures = append(env.Signatures, sig)
+		}
+		now := time.Now()
+		for _, tc := range []struct {
+			name      string
+			namedAt   time.Time
+			successor string
+		}{
+			{"seconds later", now.Add(-time.Minute), newKey.JKT()},
+			{"at the same time", now, newKey.JKT()},
+			{"more than MaxRequestAge later", now.Add(-MaxRequestAge - time.Minute), ""},
+		} {
+			for _, plainFirst := range []bool{false, true} {
+				env := buildDelivery(t, oldKey, sender, inbox)
+				env.Signatures = nil
+				if plainFirst {
+					sign(env, now, "")
+				}
+				sign(env, tc.namedAt, newKey.JKT())
+				if !plainFirst {
+					sign(env, now, "")
+				}
+				cs, err := c.DeliveryConfirmations(ctx, env, inbox)
+				require.NoError(t, err)
+				require.Len(t, cs, 1)
+				assert.Equal(t, tc.successor, cs[0].Successor, tc.name)
+			}
+		}
 	})
 
 	t.Run("fails like DeliveryKeys", func(t *testing.T) {
