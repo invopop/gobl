@@ -24,9 +24,10 @@
 //	§5.2 deliveries          Client.VerifyDelivery
 //	§6  request tokens       NewToken, Client.VerifyToken,
 //	                         Client.VerifyAuthorization
-//	§7  sender policy        WithAuthorities, WithSandbox
-//	§7.2 sender status       Client.VerifyAuthority, Endorsement,
+//	§7  sender policy        WithAuthorities, WithVerifiers, WithSandbox
+//	§7.2 sender status       Client.VerifyEndorsement, Endorsement,
 //	                         Client.VerifySender
+//	§7.3 key lineage         SignKeyChange, Client.DeliveryConfirmations, Client.FindVerifications, MaxRequestAge
 //	§8.2 /who                Client.Who
 //	§8.3 /inbox              Sign, Client.Send
 //	§9  limits               HTTPFetcher, WithKeyCacheTTL
@@ -38,33 +39,28 @@
 // The specification deliberately has no "endorsement" on the wire. It has
 // countersignatures — a registration countersignature from an authority, a
 // verification countersignature from a verifier — and a sender status that a
-// receiver concludes by evaluating them against its own trust list
+// receiver concludes by evaluating them against its own trust lists
 // (§7.2). Status is never transmitted: two receivers with different trust
 // lists can read the same envelope and reach different conclusions, and both
 // are correct.
 //
-// Endorsement is this package's representation of that conclusion, which is
-// why it is a return value and never something you construct or send:
+// Endorsement is this package's representation of a verified status, which
+// is why it is a return value and never something you construct or send:
 //
-//	end, err := client.VerifyAuthority(ctx, env)
-//	// end.Authority  which trusted authority the conclusion rests on
-//	// end.Verifier   set only when verification was confirmed
-//	// end.Verified() whether the subject is verified rather than
-//	//                merely registered
+//	end, err := client.VerifyEndorsement(ctx, env)
+//	// end.Authority  the trusted authority that named the verifier, or
+//	//                empty when a trusted verifier was accepted directly
+//	// end.Verifier   the verifier that confirmed the subject's identity
+//	// end.Key        the subject key the endorsement is bound to
 //
-// Verified reports a boolean because the status is one: any verifier the
-// authority names satisfies it. A receiver that wants to distinguish between
-// verifiers must read end.Verifier and decide for itself which addresses it
-// accepts.
+// A trusted authority is checked first. Verifiers set with WithVerifiers are
+// accepted without one, for receivers with their own agreements; there are
+// none by default.
 //
-// Unregistered, registered and verified are names for conclusions, not
-// values. Nothing transmits them and no field carries them, so there is no
-// status to parse off the wire and none to put back on it.
+// Client.VerifySender combines delivery verification, the /who lookup and
+// this evaluation, and is usually what an inbox wants:
 //
-// Client.VerifySender combines the /who lookup with this evaluation, and is
-// usually what an application wants:
-//
-//	party, err := client.VerifySender(ctx, addr, requireVerified)
+//	party, err := client.VerifySender(ctx, env)
 //
 // # Clients
 //
@@ -74,6 +70,7 @@
 //	WithIdentity      address and key used to mint request tokens
 //	WithAuthorities   replace the trusted registration authorities
 //	WithSandbox       replace them with the sandbox authorities
+//	WithVerifiers     trust verifiers directly, without an authority
 //	WithKeyCacheTTL   change the key cache lifetime; zero disables it
 //	WithFetcher       replace the HTTP transport
 //
@@ -82,8 +79,8 @@
 //
 // The default HTTPFetcher has a 10-second request timeout, a five-second dial
 // timeout, and the 1 MiB response limit of §9. Its dialer refuses hosts
-// resolving to loopback, private, link-local, multicast or unspecified
-// addresses, as §9 requires. A custom Fetcher takes that obligation on:
+// resolving to non-public addresses, and it follows no redirects, as §9
+// requires. A custom Fetcher takes that obligation on:
 // implement equivalent protection, or confine it to tests and local services.
 //
 // Keys are cached by URL and only on success, with a maximum of 1,024
@@ -107,9 +104,8 @@
 //	ErrTokenInvalid     request token is malformed or invalid
 //	ErrTokenExpired     request token failed freshness checks
 //	ErrVerifyFailed     envelope or signature verification failed
-//	ErrUnknownAuthority no trusted authority countersignature was found
-//	ErrNotVerified      registration is valid but verification was required
-//	ErrSignatureExpired an authority countersignature has expired
+//	ErrNotEndorsed      no trusted authority or verifier countersignature
+//	ErrSignatureExpired a countersignature has expired
 //	ErrPartyMissing     identity envelope has no org.Party
 //	ErrInboxRejected    inbox returned a definitive 4xx
 //

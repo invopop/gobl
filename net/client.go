@@ -28,8 +28,12 @@ const (
 	maxKeyCacheEntries = 1024
 )
 
-// dialTimeout is the per-attempt timeout for the SSRF-safe dialer.
-const dialTimeout = 5 * time.Second
+// Per-attempt timeouts for the SSRF-safe dialer: an address with others
+// left to try gets fallbackDialTimeout, the last one dialTimeout.
+const (
+	dialTimeout         = 5 * time.Second
+	fallbackDialTimeout = 2 * time.Second
+)
 
 // safeDialContext is the SSRF-resistant dialer used by HTTPFetcher. It rejects
 // hosts that resolve to non-public addresses. Tests and local services should
@@ -41,20 +45,43 @@ func safeDialContext(ctx context.Context, network, addr string) (stdnet.Conn, er
 	}
 	ips, err := stdnet.DefaultResolver.LookupIP(ctx, "ip", host)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
+		return nil, fmt.Errorf("%w: %w", ErrUnavailable, err)
 	}
 	for _, ip := range ips {
 		if !isPublicIP(ip) {
 			return nil, fmt.Errorf("%w: refusing to dial non-public address %s (%s)", ErrFetchFailed, host, ip)
 		}
 	}
-	d := &stdnet.Dialer{Timeout: dialTimeout}
-	return d.DialContext(ctx, network, stdnet.JoinHostPort(host, port))
+	// Dial the checked addresses rather than the host name, which would
+	// resolve again and could return a different, non-public address.
+	return dialAddrs(ctx, network, host, ips, port)
 }
 
-// isPublicIP reports whether ip is a routable, non-special address.
-// A loopback, private (RFC 1918 / RFC 6598), link-local, multicast,
-// unspecified, or interface-local-multicast IP is rejected.
+// dialAddrs connects to the first of ips that accepts on port, giving
+// each address but the last fallbackDialTimeout.
+func dialAddrs(ctx context.Context, network, host string, ips []stdnet.IP, port string) (stdnet.Conn, error) {
+	var lastErr error
+	for i, ip := range ips {
+		d := &stdnet.Dialer{Timeout: dialTimeout}
+		if i < len(ips)-1 {
+			d.Timeout = fallbackDialTimeout
+		}
+		conn, err := d.DialContext(ctx, network, stdnet.JoinHostPort(ip.String(), port))
+		if err == nil {
+			return conn, nil
+		}
+		lastErr = err
+	}
+	if lastErr == nil {
+		lastErr = fmt.Errorf("no addresses for %s", host)
+	}
+	return nil, fmt.Errorf("%w: %w", ErrUnavailable, lastErr)
+}
+
+// isPublicIP reports whether ip is globally reachable: not loopback,
+// private, link-local, multicast or unspecified, and in none of the IANA
+// special-purpose ranges that are not globally reachable, nor in a
+// translation range (NAT64, 6to4, Teredo) that can reach them.
 func isPublicIP(ip stdnet.IP) bool {
 	if ip == nil {
 		return false
@@ -69,8 +96,46 @@ func isPublicIP(ip stdnet.IP) bool {
 		ip.IsMulticast():
 		return false
 	}
+	for _, n := range nonPublicNets {
+		if n.Contains(ip) {
+			return false
+		}
+	}
 	return true
 }
+
+// nonPublicNets lists the ranges the net.IP methods miss, from the IANA
+// IPv4 and IPv6 special-purpose address registries.
+var nonPublicNets = func() []*stdnet.IPNet {
+	cidrs := []string{
+		"0.0.0.0/8",       // this network (RFC 791)
+		"100.64.0.0/10",   // shared address space (RFC 6598)
+		"192.0.0.0/24",    // IETF protocol assignments (RFC 6890)
+		"192.0.2.0/24",    // documentation, TEST-NET-1 (RFC 5737)
+		"192.88.99.0/24",  // 6to4 relay anycast (RFC 7526)
+		"198.18.0.0/15",   // benchmarking (RFC 2544)
+		"198.51.100.0/24", // documentation, TEST-NET-2 (RFC 5737)
+		"203.0.113.0/24",  // documentation, TEST-NET-3 (RFC 5737)
+		"240.0.0.0/4",     // reserved, and broadcast (RFC 1112)
+		"64:ff9b::/96",    // NAT64 (RFC 6052)
+		"64:ff9b:1::/48",  // local-use NAT64 (RFC 8215)
+		"100::/64",        // discard-only (RFC 6666)
+		"2001::/23",       // IETF protocol assignments, including Teredo (RFC 2928)
+		"2001:db8::/32",   // documentation (RFC 3849)
+		"2002::/16",       // 6to4 (RFC 3056)
+		"3fff::/20",       // documentation (RFC 9637)
+		"5f00::/16",       // segment routing SIDs (RFC 9602)
+	}
+	nets := make([]*stdnet.IPNet, len(cidrs))
+	for i, c := range cidrs {
+		_, n, err := stdnet.ParseCIDR(c)
+		if err != nil {
+			panic(err)
+		}
+		nets[i] = n
+	}
+	return nets
+}()
 
 // Fetcher is the transport used by a Client: Fetch retrieves
 // well-known resources and Post delivers envelopes to an inbox, as
@@ -88,12 +153,12 @@ type HTTPFetcher struct {
 	Client *http.Client
 }
 
-// NewHTTPFetcher creates an HTTPFetcher with sensible defaults.
-// The fetcher's transport rejects any dial whose resolved IP is
-// loopback, private, link-local, multicast, or unspecified, to
-// prevent SSRF attacks via a signed `iss` URI. There is no public
-// escape hatch for the SSRF guard; in-process test fixtures should
-// inject their own Fetcher via WithFetcher.
+// NewHTTPFetcher creates an HTTPFetcher with sensible defaults. Its
+// transport rejects any dial whose resolved IP is not globally reachable
+// (see isPublicIP), to prevent SSRF attacks via a signed `iss` URI, and
+// it follows no redirects. There is no public escape hatch for the SSRF
+// guard; in-process test fixtures should inject their own Fetcher via
+// WithFetcher.
 func NewHTTPFetcher() *HTTPFetcher {
 	return newHTTPFetcher(false)
 }
@@ -116,6 +181,12 @@ func newHTTPFetcher(allowLoopback bool) *HTTPFetcher {
 		Client: &http.Client{
 			Timeout:   defaultTimeout,
 			Transport: transport,
+			// Redirects are not followed (README.md §9): one could
+			// downgrade a key fetch, a request token or a delivery
+			// to plain HTTP.
+			CheckRedirect: func(*http.Request, []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
 		},
 	}
 }
@@ -125,14 +196,14 @@ func newHTTPFetcher(allowLoopback bool) *HTTPFetcher {
 func (f *HTTPFetcher) Fetch(ctx context.Context, url string, header http.Header) ([]byte, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrFetchFailed, err)
+		return nil, fmt.Errorf("%w: %w", ErrFetchFailed, err)
 	}
 	copyHeader(req.Header, header)
 	req.Header.Set("Accept", "application/json")
 
 	resp, err := f.Client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", transportErr(err), err)
+		return nil, fmt.Errorf("%w: %w", transportErr(err), err)
 	}
 	defer resp.Body.Close() // nolint:errcheck
 
@@ -141,6 +212,9 @@ func (f *HTTPFetcher) Fetch(ctx context.Context, url string, header http.Header)
 	}
 	if resp.StatusCode == http.StatusAccepted {
 		return nil, fmt.Errorf("%w: %s", ErrPending, url)
+	}
+	if isRedirect(resp.StatusCode) {
+		return nil, redirectErr(resp.StatusCode, url)
 	}
 	if retryable(resp.StatusCode) {
 		return nil, fmt.Errorf("%w: HTTP %d from %s", ErrUnavailable, resp.StatusCode, url)
@@ -151,9 +225,20 @@ func (f *HTTPFetcher) Fetch(ctx context.Context, url string, header http.Header)
 
 	body, err := io.ReadAll(io.LimitReader(resp.Body, maxBodySize))
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
+		return nil, fmt.Errorf("%w: %w", ErrUnavailable, err)
 	}
 	return body, nil
+}
+
+// isRedirect reports whether status is a redirection.
+func isRedirect(status int) bool {
+	return status >= 300 && status < 400
+}
+
+// redirectErr reports a redirect that was not followed: a definitive
+// failure.
+func redirectErr(status int, url string) error {
+	return fmt.Errorf("%w: HTTP %d from %s: redirects are not followed", ErrFetchFailed, status, url)
 }
 
 // retryable reports whether a response status signals a transient
@@ -179,20 +264,22 @@ func transportErr(err error) error {
 func (f *HTTPFetcher) Post(ctx context.Context, url string, body []byte) error {
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
 	if err != nil {
-		return fmt.Errorf("%w: %v", ErrFetchFailed, err)
+		return fmt.Errorf("%w: %w", ErrFetchFailed, err)
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 
 	resp, err := f.Client.Do(req)
 	if err != nil {
-		return fmt.Errorf("%w: %v", transportErr(err), err)
+		return fmt.Errorf("%w: %w", transportErr(err), err)
 	}
 	defer resp.Body.Close() // nolint:errcheck
 
 	switch {
 	case resp.StatusCode == http.StatusAccepted:
 		return nil
+	case isRedirect(resp.StatusCode):
+		return redirectErr(resp.StatusCode, url)
 	case resp.StatusCode >= 400 && resp.StatusCode < 500 &&
 		resp.StatusCode != http.StatusTooManyRequests:
 		return fmt.Errorf("%w: HTTP %d from %s", ErrInboxRejected, resp.StatusCode, url)
@@ -217,6 +304,7 @@ func copyHeader(dst, src http.Header) {
 type Client struct {
 	fetcher     Fetcher
 	authorities []Address
+	verifiers   []Address
 	identity    *identity
 
 	keyTTL   time.Duration
@@ -254,6 +342,14 @@ func WithAuthorities(addrs ...Address) ClientOption {
 	}
 }
 
+// WithVerifiers sets verifiers the client accepts directly, without an
+// authority naming them (README.md §7.2). There are none by default.
+func WithVerifiers(addrs ...Address) ClientOption {
+	return func(c *Client) {
+		c.verifiers = append([]Address{}, addrs...)
+	}
+}
+
 // WithKeyCacheTTL overrides how long fetched public keys are reused
 // before being fetched again. Zero disables the cache; the default is
 // five minutes.
@@ -263,7 +359,8 @@ func WithKeyCacheTTL(d time.Duration) ClientOption {
 	}
 }
 
-// WithSandbox replaces the client's trust list with SandboxAuthorities.
+// WithSandbox replaces the client's trusted authorities with
+// SandboxAuthorities.
 // If combined with WithAuthorities, the last option wins.
 func WithSandbox() ClientOption {
 	return func(c *Client) {

@@ -5,6 +5,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -173,6 +174,27 @@ func (k *PrivateKey) Thumbprint() string {
 // Extremely useful for quickly checking that two keys are the same.
 func (k *PublicKey) Thumbprint() string {
 	return keyThumbprint(k.jwk)
+}
+
+// JKT returns the key's RFC 7638 SHA-256 thumbprint, base64url-encoded
+// without padding, as used in an RFC 7800 `cnf` claim's `jkt` member.
+func (k *PrivateKey) JKT() string {
+	return keyJKT(k.jwk)
+}
+
+// JKT returns the key's RFC 7638 SHA-256 thumbprint, base64url-encoded
+// without padding, as used in an RFC 7800 `cnf` claim's `jkt` member.
+func (k *PublicKey) JKT() string {
+	return keyJKT(k.jwk)
+}
+
+func keyJKT(jwk *jose.JSONWebKey) string {
+	pub := jwk.Public()
+	d, err := pub.Thumbprint(crypto.SHA256)
+	if err != nil {
+		return ""
+	}
+	return base64.RawURLEncoding.EncodeToString(d)
 }
 
 func keyThumbprint(jwk *jose.JSONWebKey) string {

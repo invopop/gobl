@@ -3,6 +3,7 @@ package net
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/invopop/gobl"
@@ -29,6 +30,31 @@ func Sign(env *gobl.Envelope, key *dsig.PrivateKey, from, to Address, opts ...he
 	env.Head.From, env.Head.To = from.URI(), to.URI()
 	opts = append(opts, head.WithIssuer(from.String()), head.WithAudience(to.String()))
 	return env.Sign(key, opts...)
+}
+
+// SignKeyChange signs env as from for to with current and next, the
+// current key's signature naming next as its bound key: a registration
+// request changing the subject's key from current to next (README.md
+// §7.3). Options are added to both signatures. On failure env keeps
+// neither signature.
+func SignKeyChange(env *gobl.Envelope, current, next *dsig.PrivateKey, from, to Address, opts ...head.SignOption) error {
+	if current == nil || next == nil {
+		return errors.New("net: a key change needs the current and the next key")
+	}
+	if env == nil || env.Head == nil {
+		return fmt.Errorf("%w: envelope has no header", ErrVerifyFailed)
+	}
+	prev := env.Signatures
+	named := append(opts[:len(opts):len(opts)], head.WithConfirmation(next.JKT()))
+	if err := Sign(env, current, from, to, named...); err != nil {
+		env.Signatures = prev
+		return err
+	}
+	if err := Sign(env, next, from, to, opts...); err != nil {
+		env.Signatures = prev
+		return err
+	}
+	return nil
 }
 
 // Send posts env to the inbox of its to address. A 202 response succeeds,

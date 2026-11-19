@@ -139,3 +139,11 @@ func TestPrivateKeySignAndVerify(t *testing.T) {
 		assert.Equal(t, "hello world", str)
 	})
 }
+
+func TestKeyJKT(t *testing.T) {
+	k := dsig.NewES256Key()
+	jkt := k.JKT()
+	assert.Len(t, jkt, 43, "base64url SHA-256 without padding")
+	assert.Equal(t, jkt, k.Public().JKT())
+	assert.NotEqual(t, jkt, dsig.NewES256Key().JKT())
+}

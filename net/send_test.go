@@ -2,6 +2,8 @@ package net
 
 import (
 	"context"
+	"crypto/ed25519"
+	"crypto/rand"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -9,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/go-jose/go-jose/v4"
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
@@ -211,4 +214,61 @@ func TestHTTPFetcherPost(t *testing.T) {
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrUnavailable))
 	})
+}
+
+func TestSignKeyChange(t *testing.T) {
+	ctx := context.Background()
+	subject := Address("supplier.example.com")
+	authority := Address("lookup.example.org")
+	current, next := dsig.NewES256Key(), dsig.NewES256Key()
+	c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+		subject.KeyURL(current.ID()): jwkFromKey(t, current),
+		subject.KeyURL(next.ID()):    jwkFromKey(t, next),
+	}}))
+
+	t.Run("the current key names the next", func(t *testing.T) {
+		env := buildSignedEnvelope(t, current, subject, authority)
+		env.Signatures = nil
+		require.NoError(t, SignKeyChange(env, current, next, subject, authority))
+		cs, err := c.DeliveryConfirmations(ctx, env, authority)
+		require.NoError(t, err)
+		require.Len(t, cs, 2)
+		for _, s := range cs {
+			if s.Key.JKT() == current.JKT() {
+				assert.Equal(t, next.JKT(), s.Successor)
+			} else {
+				assert.Empty(t, s.Successor)
+			}
+		}
+	})
+
+	t.Run("needs both keys", func(t *testing.T) {
+		env := buildSignedEnvelope(t, current, subject, authority)
+		require.Error(t, SignKeyChange(env, current, nil, subject, authority))
+		require.Error(t, SignKeyChange(env, nil, next, subject, authority))
+		assert.Len(t, env.Signatures, 1)
+	})
+
+	t.Run("adds neither signature when the next key cannot sign", func(t *testing.T) {
+		env := buildSignedEnvelope(t, current, subject, authority)
+		require.Error(t, SignKeyChange(env, current, ed25519Key(t), subject, authority))
+		assert.Len(t, env.Signatures, 1)
+	})
+
+	t.Run("reports an invalid address", func(t *testing.T) {
+		env := buildSignedEnvelope(t, current, subject, authority)
+		require.Error(t, SignKeyChange(env, current, next, "not valid!", authority))
+	})
+}
+
+// ed25519Key returns a private key dsig cannot sign with.
+func ed25519Key(t *testing.T) *dsig.PrivateKey {
+	t.Helper()
+	_, priv, err := ed25519.GenerateKey(rand.Reader)
+	require.NoError(t, err)
+	data, err := json.Marshal(jose.JSONWebKey{Key: priv, KeyID: uuid.V7().String()})
+	require.NoError(t, err)
+	k := new(dsig.PrivateKey)
+	require.NoError(t, json.Unmarshal(data, k))
+	return k
 }
