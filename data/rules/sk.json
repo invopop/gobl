@@ -3,6 +3,53 @@
   "package": "sk",
   "subsets": [
     {
+      "id": "GOBL-SK-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [SK]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-SK-BILL-INVOICE-01",
+                  "desc": "invoice SK supplier must have a tax ID code (DIČ or IČ DPH)",
+                  "tests": "has tax ID code"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-SK-ORG-IDENTITY",
+      "object": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [SK]",
+          "subsets": [
+            {
+              "guard": "type in [ICO]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-SK-ORG-IDENTITY-01",
+                      "desc": "identity code for type ICO (IČO) must be 8 digits",
+                      "tests": "matches ^\\d{8}$"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-SK-TAX-IDENTITY",
       "object": "tax.Identity",
       "subsets": [
