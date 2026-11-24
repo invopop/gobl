@@ -190,4 +190,12 @@ func init() {
 		},
 		Module: "github.com/invopop/gobl.ro.anaf",
 	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "cz-eet-v1",
+		Name: i18n.String{
+			i18n.EN: "Czech Republic EET 2.0",
+			i18n.CS: "Česká republika EET 2.0",
+		},
+		Module: "github.com/invopop/gobl.cz.eet",
+	})
 }

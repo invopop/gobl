@@ -106,6 +106,12 @@ func TestApprovedAddons(t *testing.T) {
 				"ro-efactura-v1": "github.com/invopop/gobl.ro.anaf",
 			},
 		},
+		{
+			name: "CZ EET",
+			modules: map[cbc.Key]string{
+				"cz-eet-v1": "github.com/invopop/gobl.cz.eet",
+			},
+		},
 	}
 
 	for _, group := range groups {

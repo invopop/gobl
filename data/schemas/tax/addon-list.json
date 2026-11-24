@@ -24,6 +24,10 @@
             "title": "Colombia DIAN UBL 2.X"
           },
           {
+            "const": "cz-eet-v1",
+            "title": "Czech Republic EET 2.0"
+          },
+          {
             "const": "de-xrechnung-v3",
             "title": "German XRechnung 3.X"
           },
