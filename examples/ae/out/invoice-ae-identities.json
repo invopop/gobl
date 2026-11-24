@@ -1,0 +1,146 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "7e51f3914d29b90a705366d321a6afcec767683bc87df853406627ee02fa4874"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "AE",
+		"uuid": "0198f3a2-6c1e-7b4d-9a52-3e8f1c2d4b67",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "002",
+		"issue_date": "2026-11-24",
+		"currency": "AED",
+		"supplier": {
+			"name": "Provide One LLC",
+			"tax_id": {
+				"country": "AE",
+				"code": "187654321400003"
+			},
+			"identities": [
+				{
+					"scope": "tax",
+					"type": "TIN",
+					"code": "1876543214"
+				},
+				{
+					"scope": "legal",
+					"type": "TL",
+					"code": "CN-1234567",
+					"description": "Dubai Department of Economy and Tourism"
+				}
+			],
+			"addresses": [
+				{
+					"num": "16",
+					"street": "Sheikh Zayed Road",
+					"locality": "Dubai",
+					"code": "00000",
+					"country": "AE"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.ae"
+				}
+			]
+		},
+		"customer": {
+			"name": "Federal Authority Sample",
+			"tax_id": {
+				"country": "AE",
+				"code": "123456789700003"
+			},
+			"identities": [
+				{
+					"scope": "legal",
+					"type": "CD",
+					"code": "CD-2024-15"
+				}
+			],
+			"addresses": [
+				{
+					"num": "25",
+					"street": "Al Maryah Island",
+					"locality": "Abu Dhabi",
+					"code": "00000",
+					"country": "AE"
+				}
+			],
+			"emails": [
+				{
+					"addr": "procurement@sample.ae"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "2",
+				"item": {
+					"name": "Office chairs",
+					"price": "450.00"
+				},
+				"sum": "900.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "5%"
+					}
+				],
+				"total": "900.00"
+			}
+		],
+		"delivery": {
+			"receiver": {
+				"name": "Sample Consumer",
+				"identities": [
+					{
+						"type": "EID",
+						"code": "784198012345671"
+					}
+				],
+				"addresses": [
+					{
+						"num": "8",
+						"street": "Al Wasl Road",
+						"locality": "Dubai",
+						"code": "00000",
+						"country": "AE"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "900.00",
+			"total": "900.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "900.00",
+								"percent": "5%",
+								"amount": "45.00"
+							}
+						],
+						"amount": "45.00"
+					}
+				],
+				"sum": "45.00"
+			},
+			"tax": "45.00",
+			"total_with_tax": "945.00",
+			"payable": "945.00"
+		}
+	}
+}

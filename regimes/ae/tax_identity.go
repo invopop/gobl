@@ -9,18 +9,18 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// TRNPattern is the TRN format: 15 digits starting with the TIN.
-const TRNPattern = `^1\d{14}$`
+// trnPattern is the TRN format: 15 digits starting with the TIN.
+const trnPattern = `^1\d{14}$`
 
 func taxIdentityRules() *rules.Set {
 	return rules.For(new(tax.Identity),
 		rules.When(tax.IdentityIn("AE"),
 			rules.Field("code",
 				rules.AssertIfPresent("01", "UAE tax identity code must be 15 digits starting with 1",
-					is.Matches(TRNPattern),
+					is.Matches(trnPattern),
 				),
 				rules.When(
-					is.Matches(TRNPattern),
+					is.Matches(trnPattern),
 					rules.AssertIfPresent("02", "UAE tax identity code must start with a TIN with a valid check digit",
 						is.Func("valid TIN check digit", tinCheckDigitIsValid),
 					),

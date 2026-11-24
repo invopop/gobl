@@ -1,0 +1,68 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "0198f3a2-6c1e-7b4d-9a52-3e8f1c2d4b67"
+currency: "AED"
+issue_date: "2026-11-24"
+series: "SAMPLE"
+code: "002"
+
+supplier:
+  tax_id:
+    country: "AE"
+    code: "187654321400003"
+  name: "Provide One LLC"
+  identities:
+    - type: "TIN"
+      scope: "tax"
+      code: "1876543214"
+    - type: "TL"
+      scope: "legal"
+      code: "CN-1234567"
+      description: "Dubai Department of Economy and Tourism"
+  emails:
+    - addr: "billing@example.ae"
+  addresses:
+    - num: "16"
+      street: "Sheikh Zayed Road"
+      locality: "Dubai"
+      code: "00000"
+      country: "AE"
+
+customer:
+  tax_id:
+    country: "AE"
+    code: "123456789700003"
+  name: "Federal Authority Sample"
+  identities:
+    - type: "CD"
+      scope: "legal"
+      code: "CD-2024-15"
+  emails:
+    - addr: "procurement@sample.ae"
+  addresses:
+    - num: "25"
+      street: "Al Maryah Island"
+      locality: "Abu Dhabi"
+      code: "00000"
+      country: "AE"
+
+delivery:
+  receiver:
+    name: "Sample Consumer"
+    identities:
+      - type: "EID"
+        code: "784198012345671"
+    addresses:
+      - num: "8"
+        street: "Al Wasl Road"
+        locality: "Dubai"
+        code: "00000"
+        country: "AE"
+
+lines:
+  - quantity: 2
+    item:
+      name: "Office chairs"
+      price: "450.00"
+    taxes:
+      - cat: VAT
+        rate: standard

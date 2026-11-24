@@ -17,13 +17,9 @@ const (
 	IdentityTypeCabinetDecision cbc.Code = "CD"
 )
 
-// TINScheme is the ISO 6523 ICD the Federal Tax Authority registered for the
-// TIN, which is also the scheme of UAE Peppol endpoints (0235:<TIN>).
-const TINScheme cbc.Code = "0235"
-
 const (
-	// TINPattern is the TIN format: 10 digits starting with 1. Its Luhn check digit is checked apart.
-	TINPattern = `^1\d{9}$`
+	// tinPattern is the TIN format: 10 digits starting with 1. Its Luhn check digit is checked apart.
+	tinPattern = `^1\d{9}$`
 	// emiratesIDPattern is the Emirates ID format; its check digit algorithm isn't published.
 	emiratesIDPattern = `^784\d{12}$`
 )
@@ -96,10 +92,10 @@ func orgIdentityRules() *rules.Set {
 				org.IdentityTypeIn(IdentityTypeTIN),
 				rules.Field("code",
 					rules.Assert("01", "UAE TIN must be 10 digits starting with 1",
-						is.Matches(TINPattern),
+						is.Matches(tinPattern),
 					),
 					rules.When(
-						is.Matches(TINPattern),
+						is.Matches(tinPattern),
 						rules.AssertIfPresent("02", "UAE TIN must end in a valid check digit",
 							is.Func("valid TIN check digit", tinCheckDigitIsValid),
 						),
