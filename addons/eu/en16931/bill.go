@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/catalogues/cef"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
@@ -124,12 +125,14 @@ func billInvoiceRules() *rules.Set {
 				return validateExemptionNotesCheck(inv)
 			}),
 		),
-		// Lines: BR-16, and BR-CO-04 through the VAT category every tax combo carries
+		// Lines: BR-16 and BR-CO-04
 		rules.Field("lines",
 			rules.Assert("03", "at least one line is required (BR-16)", is.Present),
 			rules.Each(
 				rules.Field("taxes",
-					rules.Assert("10", "line taxes are required (BR-CO-04)", is.Present),
+					rules.Assert("10", "line taxes must include VAT, IGIC or IPSI (BR-CO-04)",
+						tax.SetHasOneOf(vatCategories...),
+					),
 				),
 			),
 		),
@@ -151,11 +154,17 @@ func billInvoiceRules() *rules.Set {
 	)
 }
 
+// vatCategories are the tax categories EN 16931 writes as a VAT category code: VAT, and the Spanish
+// IGIC and IPSI as L and M.
+var vatCategories = []cbc.Code{tax.CategoryVAT, es.TaxCategoryIGIC, es.TaxCategoryIPSI}
+
 func billDiscountRules() *rules.Set {
 	return rules.For(new(bill.Discount),
-		// BR-32: taxes are required on document-level discounts
+		// BR-32: document-level discounts need a VAT category
 		rules.Field("taxes",
-			rules.Assert("01", "taxes are required (BR-32)", is.Present),
+			rules.Assert("01", "taxes must include VAT, IGIC or IPSI (BR-32)",
+				tax.SetHasOneOf(vatCategories...),
+			),
 		),
 		// BR-33: either reason or allowance type extension required
 		rules.Assert("02", "either a reason or an allowance type extension is required (BR-33)",
@@ -179,9 +188,11 @@ func billChargeRules() *rules.Set {
 		rules.Assert("01", "either a reason or a charge type extension is required (BR-38)",
 			is.Func("reason or charge", billChargeHasReasonOrExt),
 		),
-		// BR-37: taxes are required on document-level charges
+		// BR-37: document-level charges need a VAT category
 		rules.Field("taxes",
-			rules.Assert("02", "taxes are required (BR-37)", is.Present),
+			rules.Assert("02", "taxes must include VAT, IGIC or IPSI (BR-37)",
+				tax.SetHasOneOf(vatCategories...),
+			),
 		),
 	)
 }
