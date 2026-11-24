@@ -14,6 +14,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -49,7 +50,14 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Lines[0].Taxes = nil
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "line taxes are required (BR-CO-04)")
+		assert.ErrorContains(t, err, "line taxes must include VAT, IGIC or IPSI (BR-CO-04)")
+	})
+	t.Run("line with only a non-VAT tax (BR-CO-04)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		inv.Lines[0].Taxes = tax.Set{{Category: es.TaxCategoryIRPF, Percent: num.NewPercentage(15, 2)}}
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "line taxes must include VAT, IGIC or IPSI (BR-CO-04)")
 	})
 	t.Run("supplier and customer with addresses", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
@@ -545,7 +553,14 @@ func TestValidateBillDiscount(t *testing.T) {
 			Amount: num.MakeAmount(100, 2),
 		}
 		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
-		assert.ErrorContains(t, err, "taxes are required (BR-32)")
+		assert.ErrorContains(t, err, "taxes must include VAT, IGIC or IPSI (BR-32)")
+	})
+
+	t.Run("VAT category required (BR-32)", func(t *testing.T) {
+		d := &bill.Discount{Reason: "Product sample", Amount: num.MakeAmount(100, 2), Taxes: nonVATSet()}
+		assert.ErrorContains(t, rules.Validate(d, tax.AddonContext(en16931.V2017)), "taxes must include VAT, IGIC or IPSI (BR-32)")
+		d.Taxes = igicSet()
+		assert.NoError(t, rules.Validate(d, tax.AddonContext(en16931.V2017)))
 	})
 }
 
@@ -600,7 +615,14 @@ func TestValidateBillCharge(t *testing.T) {
 			Amount: num.MakeAmount(100, 2),
 		}
 		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
-		assert.ErrorContains(t, err, "taxes are required (BR-37)")
+		assert.ErrorContains(t, err, "taxes must include VAT, IGIC or IPSI (BR-37)")
+	})
+
+	t.Run("VAT category required (BR-37)", func(t *testing.T) {
+		c := &bill.Charge{Reason: "Freight", Amount: num.MakeAmount(100, 2), Taxes: nonVATSet()}
+		assert.ErrorContains(t, rules.Validate(c, tax.AddonContext(en16931.V2017)), "taxes must include VAT, IGIC or IPSI (BR-37)")
+		c.Taxes = igicSet()
+		assert.NoError(t, rules.Validate(c, tax.AddonContext(en16931.V2017)))
 	})
 }
 
@@ -616,6 +638,24 @@ func standardVATSet() tax.Set {
 			}),
 		},
 	}
+}
+
+// nonVATSet is a tax set with only a retained Spanish IRPF combo, which EN 16931 has no VAT category for.
+func nonVATSet() tax.Set {
+	return tax.Set{{
+		Category: es.TaxCategoryIRPF,
+		Percent:  num.NewPercentage(15, 2),
+		Ext:      tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTaxCategory: en16931.TaxCategoryOutsideScope}),
+	}}
+}
+
+// igicSet is a tax set with a Canary Islands IGIC combo, the EN 16931 VAT category L.
+func igicSet() tax.Set {
+	return tax.Set{{
+		Category: es.TaxCategoryIGIC,
+		Rate:     "general",
+		Ext:      tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTaxCategory: en16931.TaxCategoryIGIC}),
+	}}
 }
 
 func TestValidateBillLineDiscount(t *testing.T) {
