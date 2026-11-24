@@ -49,6 +49,28 @@ func billInvoiceRules() *rules.Set {
 			rules.Field("tax_id",
 				rules.Assert("04", "supplier tax ID is required", is.Present),
 			),
+			// A supplier address names the store that issued the receipt, so
+			// that merchants with several locations under one tax ID can tell
+			// receipts apart. The AdE prints it instead of the registered
+			// address and needs every part of it.
+			rules.Field("addresses",
+				rules.Each(
+					rules.Field("street",
+						rules.Assert("09", "supplier address street is required", is.Present),
+					),
+					rules.Field("locality",
+						rules.Assert("10", "supplier address locality is required", is.Present),
+					),
+					rules.Field("code",
+						rules.Assert("11", "supplier address code is required", is.Present),
+						rules.Assert("12", "supplier address code must be 5 digits", is.Matches(`^\d{5}$`)),
+					),
+					rules.Field("region",
+						rules.Assert("13", "supplier address region is required", is.Present),
+						rules.Assert("14", "supplier address region must be a 2-letter province code", is.Matches(`^[A-Z]{2}$`)),
+					),
+				),
+			),
 		),
 		rules.When(bill.InvoiceTypeIn(bill.InvoiceTypeCorrective),
 			rules.Field("preceding",
