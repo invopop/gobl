@@ -1,0 +1,32 @@
+{
+  "id": "GOBL-UY",
+  "package": "uy",
+  "subsets": [
+    {
+      "id": "GOBL-UY-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [UY]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-UY-TAX-IDENTITY-01",
+                      "desc": "invalid Uruguay RUT identity code",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
