@@ -25,7 +25,7 @@ func taxIdentityRules() *rules.Set {
 				),
 				rules.When(
 					is.Matches(trnPattern),
-					rules.AssertIfPresent("02", "UAE tax identity code must start with a TIN with a valid check digit",
+					rules.AssertIfPresent("02", "UAE tax identity code must have a valid Luhn check digit in the first 10 digits (TIN)",
 						is.Func("valid TIN check digit", tinCheckDigitIsValid),
 					),
 					rules.AssertIfPresent("03", "UAE tax identity code must end with 03",
