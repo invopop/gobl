@@ -44,23 +44,6 @@
               "desc": "at least one line is required (BR-16)",
               "tests": "present"
             }
-          ],
-          "subsets": [
-            {
-              "each": true,
-              "subsets": [
-                {
-                  "field": "taxes",
-                  "assert": [
-                    {
-                      "id": "GOBL-EU-EN16931-BILL-INVOICE-10",
-                      "desc": "line taxes must include VAT, IGIC or IPSI (BR-CO-04)",
-                      "tests": "one of [VAT, IGIC, IPSI]"
-                    }
-                  ]
-                }
-              ]
-            }
           ]
         },
         {
@@ -121,8 +104,8 @@
           "assert": [
             {
               "id": "GOBL-EU-EN16931-BILL-DISCOUNT-01",
-              "desc": "taxes must include VAT, IGIC or IPSI (BR-32)",
-              "tests": "one of [VAT, IGIC, IPSI]"
+              "desc": "taxes are required (BR-32)",
+              "tests": "present"
             }
           ]
         }
@@ -147,18 +130,6 @@
           "id": "GOBL-EU-EN16931-BILL-CHARGE-01",
           "desc": "either a reason or a charge type extension is required (BR-38)",
           "tests": "reason or charge"
-        }
-      ],
-      "subsets": [
-        {
-          "field": "taxes",
-          "assert": [
-            {
-              "id": "GOBL-EU-EN16931-BILL-CHARGE-02",
-              "desc": "taxes must include VAT, IGIC or IPSI (BR-37)",
-              "tests": "one of [VAT, IGIC, IPSI]"
-            }
-          ]
         }
       ]
     },
