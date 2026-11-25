@@ -1,8 +1,6 @@
 ## Changed
 
-- `eu-en16931-v2017`: **breaking**: document-level charges must have a VAT, IGIC or IPSI tax combo (BR-37), and so must discounts, which only had to have taxes (BR-32). EN 16931 writes these as VAT categories, IGIC and IPSI as L and M. Charges without one now fail with `GOBL-EU-EN16931-BILL-CHARGE-02`, discounts with `GOBL-EU-EN16931-BILL-DISCOUNT-01`. Informative charges fail too, as they can't have taxes and EN 16931 has no way to express them.
 - `eu-en16931-v2017`: **breaking**: an invoice customer must have a name (BR-7), with or without a tax ID. Customers without a name now fail with `GOBL-EU-EN16931-BILL-INVOICE-09`.
-- `eu-en16931-v2017`: **breaking**: every invoice line must have a VAT, IGIC or IPSI tax combo, which gives it the invoiced item VAT category (BR-CO-04). Lines without one now fail with `GOBL-EU-EN16931-BILL-INVOICE-10`.
 
 ## Fixed
 
