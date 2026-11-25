@@ -5,4 +5,4 @@
 
 ## Changed
 
-- `ae`: **breaking**: the tax ID code (TRN) must be 15 digits starting with 1 (`GOBL-AE-TAX-IDENTITY-01`), and its first 10 digits, the TIN, must end in a Luhn check digit (`GOBL-AE-TAX-IDENTITY-02`). Made-up numbers such as `123456789012345` now fail.
+- `ae`: **breaking**: the tax ID code (TRN) must be 15 digits starting with 1 (`GOBL-AE-TAX-IDENTITY-01`), its first 10 digits, the TIN, must end in a Luhn check digit (`GOBL-AE-TAX-IDENTITY-02`), and it must end with `03`, the VAT registration suffix (`GOBL-AE-TAX-IDENTITY-03`). Made-up numbers such as `123456789012345` now fail.

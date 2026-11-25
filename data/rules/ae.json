@@ -34,6 +34,16 @@
                           "tests": "valid TIN check digit"
                         }
                       ]
+                    },
+                    {
+                      "guard": "present",
+                      "assert": [
+                        {
+                          "id": "GOBL-AE-TAX-IDENTITY-03",
+                          "desc": "UAE tax identity code must end with 03",
+                          "tests": "matches 03$"
+                        }
+                      ]
                     }
                   ]
                 }
