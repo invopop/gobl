@@ -251,6 +251,11 @@ The audience stops a verification being reused with a copy of the envelope at
 another address. The expiry limits how long it outlives the subject's control
 of its address (§12).
 
+Nothing else marks a verification: a verifier's signature over a subject's
+party envelope, with the subject as audience and such an expiry, is one. A
+verifier MUST NOT make such a signature for any other reason, and so never
+returns a signed party envelope to a subject it has not verified.
+
 What a verifier asks of a subject to verify it again is its own decision.
 Typically it signs again without new checks, until its own rules call for
 the organization's records to be reviewed.
@@ -333,7 +338,9 @@ verifier, then to the authority. Nobody delivers it on the subject's behalf.
    verifier MUST tie the two together, for example by having the delivery
    made within a verification session it has already authenticated. The
    checks may start before the subject has an address; the countersignature
-   cannot.
+   cannot. The verifier answers the delivery as §8.3 describes, with `403`
+   when it has no session open for the address. A `202` means the envelope
+   was received, not that the subject is verified.
 3. On success the verifier countersigns that exact envelope, unchanged in
    UUID and digest, as issuer, with the subject's address as audience, a
    signing time, and an expiry no more than a year later. It removes any
@@ -341,19 +348,25 @@ verifier, then to the authority. Nobody delivers it on the subject's behalf.
    `verifier`: that is the authority's to write.
 4. The verifier returns the envelope to the subject. Delivering it to the
    subject's inbox, from the verifier's address to the subject's, is
-   RECOMMENDED, and SHOULD be retried on temporary failures (§11). Any other
-   route, such as the verifier's own API or a link in an email, also conforms.
+   RECOMMENDED, and SHOULD be retried on temporary failures (§11). The
+   countersignature already confirms that delivery (§5), so it needs no
+   other signature. Any other route, such as the verifier's own API or a
+   link in an email, also conforms. A verifier that refuses sends no
+   envelope: it tells the subject through the session of step 2, whenever
+   its checks end.
    A countersignature is a statement already made: a verifier MUST NOT treat
    an undeliverable result as a failed verification, and MUST NOT sign again
    on a retry, which would extend the countersignature's life. A subject that
    never received one asks again, at step 2.
 5. The subject delivers the envelope to the authority's inbox, from its own
    address to the authority's, which shows it controls the address. The
-   authority MUST reject the request unless it carries a valid verification
-   countersignature from a verifier the authority accepts. It then
-   countersigns, naming the verifier, removes any earlier registration
-   countersignatures of its own, and delivers the result to the subject's
-   inbox. The subject publishes it at `/who`.
+   authority decides when it receives the request, and answers as §8.3
+   describes. It MUST answer `403` unless the envelope carries a valid
+   verification countersignature from a verifier the authority accepts. A
+   `202` means the subject is registered: the authority countersigns, naming
+   the verifier, removes any earlier registration countersignatures of its
+   own, and delivers the result to the subject's inbox. The subject publishes
+   it at `/who`.
 
 Steps 3 and 5 may be far apart. Another address needs its own verification,
 though a verifier that has already checked the organization need only confirm
