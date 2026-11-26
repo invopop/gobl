@@ -106,6 +106,12 @@ func TestApprovedAddons(t *testing.T) {
 				"ro-efactura-v1": "github.com/invopop/gobl.ro.anaf",
 			},
 		},
+		{
+			name: "HR Fiskal B2C",
+			modules: map[cbc.Key]string{
+				"hr-fiskal-b2c-v1": "github.com/invopop/gobl.hr.fiskal",
+			},
+		},
 	}
 
 	for _, group := range groups {
