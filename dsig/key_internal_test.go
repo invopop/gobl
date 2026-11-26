@@ -124,8 +124,3 @@ func TestPublicKeyValidateInvalidJOSE(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "jose key is invalid")
 }
-
-func TestKeyJKTInvalid(t *testing.T) {
-	k := &PublicKey{jwk: &jose.JSONWebKey{KeyID: "x", Key: "not-a-key"}}
-	assert.Empty(t, k.JKT())
-}

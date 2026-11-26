@@ -47,7 +47,6 @@ func buildPartyEnvelope(t *testing.T, subjKey *dsig.PrivateKey, subject Address,
 			head.WithIssuer(authority.String()),
 			head.WithAudience(subject.String()),
 			head.WithExpiration(time.Now().Add(30 * 24 * time.Hour)),
-			head.WithConfirmation(subjKey.JKT()),
 		}
 		if verifier != "" {
 			opts = append(opts, head.WithVerifier(verifier.String()))
@@ -304,7 +303,7 @@ func TestVerifySender(t *testing.T) {
 		buildPartyEnvelope(t, subjKey, subject, authKey, authority, verifier),
 		endorsedEnvelope,
 	))
-	require.NoError(t, endorsedEnvelope.Sign(verifierKey, head.WithConfirmation(subjKey.JKT()),
+	require.NoError(t, endorsedEnvelope.Sign(verifierKey, head.WithExpiration(time.Now().Add(300*24*time.Hour)),
 		head.WithIssuer(verifier.String()),
 		head.WithAudience(subject.String())))
 	endorsedData, err := json.Marshal(endorsedEnvelope)
@@ -338,53 +337,6 @@ func TestVerifySender(t *testing.T) {
 		party, err := c.VerifySender(ctx, delivery(t, subjKey))
 		require.NoError(t, err)
 		assert.Equal(t, "Test Subject", party.Name)
-	})
-
-	t.Run("rejects a delivery signed with another key", func(t *testing.T) {
-		// After a domain changes hands, the new holder's key is not the
-		// one the registration binds.
-		otherKey := dsig.NewES256Key()
-		data := map[string][]byte{subject.KeyURL(otherKey.ID()): jwkOf(otherKey)}
-		for k, v := range endorsed {
-			data[k] = v
-		}
-		c := NewClient(
-			WithIdentity(testRequester, testRequesterKey),
-			WithAuthorities(authority),
-			WithFetcher(&mapFetcher{data: data}),
-		)
-		_, err := c.VerifySender(ctx, delivery(t, otherKey))
-		require.ErrorIs(t, err, ErrVerifyFailed)
-		assert.Contains(t, err.Error(), "endorsed key")
-	})
-
-	t.Run("accepts a delivery signed with the key another endorsement binds", func(t *testing.T) {
-		// During a key change the authority's registration can still bind
-		// the old key while a directly trusted verifier binds the new one.
-		newKey := dsig.NewES256Key()
-		env := new(gobl.Envelope)
-		require.NoError(t, json.Unmarshal(endorsedData, env))
-		require.NoError(t, Sign(env, newKey, subject, testRequester))
-		require.NoError(t, env.Sign(verifierKey, head.WithConfirmation(newKey.JKT()),
-			head.WithIssuer(verifier.String()),
-			head.WithAudience(subject.String())))
-		who, err := json.Marshal(env)
-		require.NoError(t, err)
-		data := map[string][]byte{subject.KeyURL(newKey.ID()): jwkOf(newKey)}
-		for k, v := range endorsed {
-			data[k] = v
-		}
-		data[subject.WhoURL()] = who
-		c := NewClient(
-			WithIdentity(testRequester, testRequesterKey),
-			WithAuthorities(authority),
-			WithVerifiers(verifier),
-			WithFetcher(&mapFetcher{data: data}),
-		)
-		_, err = c.VerifySender(ctx, delivery(t, newKey))
-		require.NoError(t, err)
-		_, err = c.VerifySender(ctx, delivery(t, subjKey))
-		require.NoError(t, err)
 	})
 
 	t.Run("rejects a delivery not for the client", func(t *testing.T) {
@@ -434,7 +386,7 @@ func TestVerifySender(t *testing.T) {
 	t.Run("accepts a sender endorsed by a trusted verifier directly", func(t *testing.T) {
 		env := new(gobl.Envelope)
 		require.NoError(t, json.Unmarshal(buildPartyEnvelope(t, subjKey, subject, nil, "", ""), env))
-		require.NoError(t, env.Sign(verifierKey, head.WithConfirmation(subjKey.JKT()),
+		require.NoError(t, env.Sign(verifierKey, head.WithExpiration(time.Now().Add(300*24*time.Hour)),
 			head.WithIssuer(verifier.String()),
 			head.WithAudience(subject.String())))
 		data, err := json.Marshal(env)

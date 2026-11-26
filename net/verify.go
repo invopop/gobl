@@ -45,98 +45,40 @@ func routingAddress(field string, uri cbc.URI) (Address, error) {
 }
 
 // VerifyDelivery checks that env is a GOBL Net envelope for self: its
-// document must match its digest, its header's from and to fields must hold gobl: addresses, to must be self,
-// and a valid signature must carry from as its iss and to as its aud, with
-// an iat no later than now, no exp that has passed, and a key that is
-// still valid. The from address
-// is then the sender.
+// document must match its digest, its header's from and to fields must
+// hold gobl: addresses, to must be self, and a valid signature must carry
+// from as its iss and to as its aud, with an iat no later than now, no exp
+// that has passed, and a key that is still valid. The from address is
+// then the sender.
 func (c *Client) VerifyDelivery(ctx context.Context, env *gobl.Envelope, self Address) error {
-	_, err := c.DeliveryKeys(ctx, env, self)
-	return err
-}
-
-// DeliveryKeys makes the checks of VerifyDelivery and returns the keys of
-// every valid signature confirming the envelope's from and to. A sender
-// rotating its key signs with both the old and the new one.
-func (c *Client) DeliveryKeys(ctx context.Context, env *gobl.Envelope, self Address) ([]*dsig.PublicKey, error) {
-	cs, err := c.DeliveryConfirmations(ctx, env, self)
-	if err != nil {
-		return nil, err
-	}
-	return keysOf(cs), nil
-}
-
-// MaxRequestAge is how long after its signing time a confirming
-// signature counts towards a registration request (README.md §7.3): the
-// maximum age of a request token (§6).
-const MaxRequestAge = maxTokenTTL
-
-// ConfirmingSignature is a valid signature confirming an envelope's from
-// and to.
-type ConfirmingSignature struct {
-	// Key is the signer's published key.
-	Key *dsig.PublicKey
-	// IssuedAt is the signature's iat.
-	IssuedAt time.Time
-	// Successor is the thumbprint in the signature's cnf claim, if any:
-	// in a key change, the new key the current key names (README.md
-	// §7.3).
-	Successor string
-}
-
-// DeliveryConfirmations makes the checks of VerifyDelivery and returns
-// the valid signatures confirming the envelope's from and to, one per
-// key: its most recent. Authorities use their signing times and cnf
-// claims to process registration requests (README.md §7.3).
-func (c *Client) DeliveryConfirmations(ctx context.Context, env *gobl.Envelope, self Address) ([]*ConfirmingSignature, error) {
 	if env == nil || env.Head == nil || !env.Signed() {
-		return nil, fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
+		return fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
 	}
 	if err := checkDigest(env); err != nil {
-		return nil, err
+		return err
 	}
 	want, err := ParseAddress(string(self))
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrVerifyFailed, err)
+		return fmt.Errorf("%w: %v", ErrVerifyFailed, err)
 	}
 	from, to, err := routing(env)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if to != want {
-		return nil, fmt.Errorf("%w: to %q is not %q", ErrVerifyFailed, to, want)
+		return fmt.Errorf("%w: to %q is not %q", ErrVerifyFailed, to, want)
 	}
-	return c.pairConfirmations(ctx, env, from, to)
+	return c.confirmed(ctx, env, from, to)
 }
 
-// pairKeys returns the distinct keys of the valid signatures by from with
-// to as their audience.
-func (c *Client) pairKeys(ctx context.Context, env *gobl.Envelope, from, to Address) ([]*dsig.PublicKey, error) {
-	cs, err := c.pairConfirmations(ctx, env, from, to)
-	if err != nil {
-		return nil, err
-	}
-	return keysOf(cs), nil
-}
-
-// keysOf returns the keys of cs.
-func keysOf(cs []*ConfirmingSignature) []*dsig.PublicKey {
-	keys := make([]*dsig.PublicKey, len(cs))
-	for i, c := range cs {
-		keys[i] = c.Key
-	}
-	return keys
-}
-
-// pairConfirmations returns the valid signatures by from with to as their
-// audience, each with an iat no later than now, no exp that has passed,
-// and a key that is still valid, keeping the most recent per key.
-func (c *Client) pairConfirmations(ctx context.Context, env *gobl.Envelope, from, to Address) ([]*ConfirmingSignature, error) {
+// confirmed fails unless env carries a valid signature by from with to as
+// its audience, an iat no later than now, no exp that has passed, and a
+// key that is still valid.
+func (c *Client) confirmed(ctx context.Context, env *gobl.Envelope, from, to Address) error {
 	if len(env.Signatures) > maxEnvelopeSignatures {
-		return nil, fmt.Errorf("%w: envelope carries %d signatures (max %d)",
+		return fmt.Errorf("%w: envelope carries %d signatures (max %d)",
 			ErrVerifyFailed, len(env.Signatures), maxEnvelopeSignatures)
 	}
-	var out []*ConfirmingSignature
 	var unavailable, reason error
 	candidates := 0
 	for _, sig := range env.Signatures {
@@ -181,51 +123,15 @@ func (c *Client) pairConfirmations(ctx context.Context, env *gobl.Envelope, from
 			reason = err
 			continue
 		}
-		cs := &ConfirmingSignature{Key: pub, IssuedAt: time.Unix(p.IssuedAt, 0).UTC()}
-		if p.Confirmation != nil {
-			cs.Successor = p.Confirmation.JKT
-		}
-		out = addConfirmation(out, cs)
-	}
-	if len(out) > 0 {
-		return out, nil
+		return nil
 	}
 	if unavailable != nil {
-		return nil, unavailable
+		return unavailable
 	}
 	if reason != nil {
-		return nil, fmt.Errorf("%w: no valid signature from %q to %q: %w", ErrVerifyFailed, from, to, reason)
+		return fmt.Errorf("%w: no valid signature from %q to %q: %w", ErrVerifyFailed, from, to, reason)
 	}
-	return nil, fmt.Errorf("%w: no valid signature from %q to %q", ErrVerifyFailed, from, to)
-}
-
-// addConfirmation adds cs to out, keeping one signature per key: one
-// naming a successor over one that does not, unless that one is more
-// than MaxRequestAge newer, and otherwise the more recent.
-func addConfirmation(out []*ConfirmingSignature, cs *ConfirmingSignature) []*ConfirmingSignature {
-	for i, o := range out {
-		if o.Key.JKT() == cs.Key.JKT() {
-			if preferConfirmation(cs, o) {
-				out[i] = cs
-			}
-			return out
-		}
-	}
-	return append(out, cs)
-}
-
-// preferConfirmation reports whether a should be kept over b, two
-// signatures by the same key.
-func preferConfirmation(a, b *ConfirmingSignature) bool {
-	switch {
-	case a.Successor != "" && b.Successor == "":
-		return b.IssuedAt.Sub(a.IssuedAt) <= MaxRequestAge
-	case a.Successor == "" && b.Successor != "":
-		return a.IssuedAt.Sub(b.IssuedAt) > MaxRequestAge
-	case a.IssuedAt.Equal(b.IssuedAt):
-		return a.Successor > b.Successor // independent of signature order
-	}
-	return a.IssuedAt.After(b.IssuedAt)
+	return fmt.Errorf("%w: no valid signature from %q to %q", ErrVerifyFailed, from, to)
 }
 
 // stillValid fails when pub's valid_until has passed.
@@ -234,16 +140,6 @@ func stillValid(pub *dsig.PublicKey) error {
 		return fmt.Errorf("%w: key %q was retired at %s", ErrVerifyFailed, pub.ID(), pub.ValidUntil)
 	}
 	return nil
-}
-
-// hasKey reports whether keys includes the key with thumbprint jkt.
-func hasKey(keys []*dsig.PublicKey, jkt string) bool {
-	for _, k := range keys {
-		if k.JKT() == jkt {
-			return true
-		}
-	}
-	return false
 }
 
 // maxIssuerCandidates bounds how many of an envelope's signatures by one

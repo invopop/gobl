@@ -27,7 +27,7 @@
 //	§7  sender policy        WithAuthorities, WithVerifiers, WithSandbox
 //	§7.2 sender status       Client.VerifyEndorsement, Endorsement,
 //	                         Client.VerifySender
-//	§7.3 key lineage         SignKeyChange, Client.DeliveryConfirmations, Client.FindVerifications, MaxRequestAge
+//	§7.1 registration        Client.FindVerifications
 //	§8.2 /who                Client.Who
 //	§8.3 /inbox              Sign, Client.Send
 //	§9  limits               HTTPFetcher, WithKeyCacheTTL
@@ -51,7 +51,7 @@
 //	// end.Authority  the trusted authority that named the verifier, or
 //	//                empty when a trusted verifier was accepted directly
 //	// end.Verifier   the verifier that confirmed the subject's identity
-//	// end.Key        the subject key the endorsement is bound to
+//	// end.VerifiedAt when the verifier signed
 //
 // A trusted authority is checked first. Verifiers set with WithVerifiers are
 // accepted without one, for receivers with their own agreements; there are

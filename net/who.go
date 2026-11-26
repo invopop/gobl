@@ -50,21 +50,19 @@ func (c *Client) Who(ctx context.Context, addr Address) (*gobl.Envelope, error) 
 // VerifySender verifies env as a delivery to the client's identity (see
 // VerifyDelivery) and returns its sender's party, after verifying the
 // sender's identity at /who and its endorsement (see VerifyEndorsement).
-// An endorsement must bind a key that signed env.
 func (c *Client) VerifySender(ctx context.Context, env *gobl.Envelope) (*org.Party, error) {
 	if c.identity == nil {
 		return nil, fmt.Errorf("%w: verifying a sender requires a client identity", ErrFetchFailed)
 	}
-	keys, err := c.DeliveryKeys(ctx, env, c.identity.addr)
-	if err != nil {
+	if err := c.VerifyDelivery(ctx, env, c.identity.addr); err != nil {
 		return nil, err
 	}
-	from, _, _ := routing(env) // checked by DeliveryKeys
+	from, _, _ := routing(env) // checked by VerifyDelivery
 	who, err := c.Who(ctx, from)
 	if err != nil {
 		return nil, err
 	}
-	if _, err := c.endorsement(ctx, who, keys); err != nil {
+	if _, err := c.VerifyEndorsement(ctx, who); err != nil {
 		return nil, err
 	}
 	return who.Extract().(*org.Party), nil

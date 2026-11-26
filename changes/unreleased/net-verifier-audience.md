@@ -1,16 +1,12 @@
 ## Changed
 
-- `net`: **breaking**: verifier countersignatures count only when their `aud` is the envelope's `from` address, so each address needs its own verification, and they need a `cnf` naming the subject key the verifier saw.
+- `net`: **breaking**: verifier countersignatures count only when their `aud` is the envelope's `from` address, so each address needs its own verification, and they need an `iat` no later than the present and an `exp` at most a year after it.
 - `net`: **breaking**: authority countersignatures need an `iat` no later than the present and an `exp` at most 30 days after it.
 - `net`: **breaking**: `Client.VerifyDelivery` and `Client.Who` need an `iat` no later than the present, and a key that is still valid when the envelope is received.
-- `net`: **breaking**: authority countersignatures need a `cnf` naming the key of a signature that confirms the envelope's `from` and `to`; `Endorsement.Key` reports it.
-- `net`: **breaking**: `Client.VerifySender(ctx, env)` takes a delivered envelope, requires a verified sender, and requires the envelope to be signed with the sender's endorsed key.
+- `net`: **breaking**: `Client.VerifySender(ctx, env)` takes a delivered envelope and requires a verified sender.
 - `net`: **breaking**: `Client.VerifyAuthority` is replaced by `Client.VerifyEndorsement`. Authority countersignatures must name a verifier whose countersignature is valid, and there is no registered-only status; `Endorsement.Verified`, `ErrUnknownAuthority` and `ErrNotVerified` are removed in favour of `ErrNotEndorsed`.
-- `net`: `WithVerifiers` sets verifiers a client accepts directly, without an authority, when their `cnf` names the sender's key. There are none by default.
-- `net`: `Client.DeliveryKeys` returns the keys confirming a delivery, `Client.DeliveryConfirmations` adds each signature's signing time and `cnf`, and `Client.FindVerifications` reads the valid countersignatures of a verifier, for authorities tracking key lineage.
-- `net`: in a key change the current key's confirming signature names the new key with `cnf`, which `SignKeyChange` does, and authorities count only confirming signatures made within `MaxRequestAge` (5 minutes) of a registration request. A first registration takes one key, and a key bound before cannot start a lineage again.
-- `head`: `WithConfirmation` sets an RFC 7800 `cnf` claim, read from `SigningPayload.Confirmation`.
-- `dsig`: `JKT` returns a key's RFC 7638 thumbprint in base64url form.
+- `net`: `WithVerifiers` sets verifiers a client accepts directly, without an authority. There are none by default.
+- `net`: `Client.FindVerifications` reads the valid countersignatures of a verifier, for authorities registering a subject.
 - `net`: only the first four signatures by one issuer are checked against its keys.
 - `net`: countersignatures whose `exp` has passed are skipped before their key is fetched, and do not count towards the four checked per issuer.
 - `net`: `Endorsement.VerifiedAt` reports the signing time of the verifier's countersignature.
@@ -26,10 +22,7 @@
 - `net`: `HTTPFetcher` follows no redirects, and reports one as a definitive `ErrFetchFailed`.
 - `net`: `Client.VerifyDelivery`, `Client.Who`, `Client.VerifyEndorsement` and `Client.FindVerifications` reject an envelope with no document, or whose document does not match its digest.
 - `net`: `Client.VerifyEndorsement` and `Client.FindVerifications` report an unreachable verifier key over an expired or invalid verification.
-- `net`: `Client.VerifySender` accepts a delivery signed with the key bound by any valid endorsement, not only the first found.
 - `net`: deliveries signed as a key becomes valid are accepted from a sender whose clock is up to 30 seconds ahead.
-- `net`: `Client.DeliveryConfirmations` keeps a key's signature naming a successor over a plain one made up to `MaxRequestAge` later.
 - `net`: one `Client.VerifyEndorsement` call checks at most four signatures per issuer.
-- `net`: `SignKeyChange` adds neither signature when one fails.
 - `net`: `HTTPFetcher` tries each resolved address but the last for 2 seconds before the next.
 - `net`: `Client.VerifyDelivery`, `Client.Who` and `Client.VerifySender` reject a signature confirming `from` and `to` whose `exp` has passed.

@@ -46,7 +46,7 @@ var twReceiver = testRequester
 
 var (
 	twSupplierKey  = dsig.NewES256Key()
-	twSupplierKey2 = dsig.NewES256Key() // published by the supplier, not bound
+	twSupplierKey2 = dsig.NewES256Key() // a second key the supplier publishes
 	twMalloryKey   = dsig.NewES256Key()
 	twOtherKey     = dsig.NewES256Key()
 	twAuthorityKey = dsig.NewES256Key()
@@ -91,8 +91,8 @@ func (ex *exchange) verifiedParty(name string, subject Address, key *dsig.Privat
 	env, err := gobl.Envelop(party)
 	require.NoError(ex.t, err)
 	require.NoError(ex.t, Sign(env, key, subject, twReceiver))
-	ex.add(env, twVerifierKey, verification(twVerifier, subject, key))
-	ex.add(env, twAuthorityKey, registration(twAuthority, subject, key, twVerifier))
+	ex.add(env, twVerifierKey, verification(twVerifier, subject))
+	ex.add(env, twAuthorityKey, registration(twAuthority, subject, twVerifier))
 	return env
 }
 
@@ -108,18 +108,18 @@ func (ex *exchange) invoice(from, to Address, keys ...*dsig.PrivateKey) *gobl.En
 }
 
 // verification returns the claims of a verification countersignature.
-func verification(iss, subject Address, bound *dsig.PrivateKey) head.SigningPayload {
+func verification(iss, subject Address) head.SigningPayload {
 	return head.SigningPayload{
-		Iss:          iss.String(),
-		Aud:          subject.String(),
-		IssuedAt:     time.Now().Unix(),
-		Confirmation: &head.Confirmation{JKT: bound.JKT()},
+		Iss:       iss.String(),
+		Aud:       subject.String(),
+		IssuedAt:  time.Now().Unix(),
+		ExpiresAt: time.Now().Add(300 * 24 * time.Hour).Unix(),
 	}
 }
 
 // registration returns the claims of a registration countersignature.
-func registration(iss, subject Address, bound *dsig.PrivateKey, verifier Address) head.SigningPayload {
-	p := verification(iss, subject, bound)
+func registration(iss, subject, verifier Address) head.SigningPayload {
+	p := verification(iss, subject)
 	p.ExpiresAt = time.Now().Add(30 * 24 * time.Hour).Unix()
 	p.Verifier = verifier.String()
 	return p
@@ -301,7 +301,7 @@ func TestTampering(t *testing.T) {
 		}},
 		{name: "verification for another address of the subject", edit: func(ex *exchange) {
 			drop(sup(ex), twVerifier)
-			ex.add(sup(ex), twVerifierKey, verification(twVerifier, twShadow, twSupplierKey))
+			ex.add(sup(ex), twVerifierKey, verification(twVerifier, twShadow))
 		}},
 		{name: "invoice sent to another receiver, re-addressed", edit: func(ex *exchange) {
 			ex.delivery = ex.invoice(twSupplier, twOther, twSupplierKey)
@@ -329,61 +329,47 @@ func TestTampering(t *testing.T) {
 		{name: "registration audience in another form", edit: func(ex *exchange) {
 			drop(sup(ex), twAuthority)
 			ex.add(sup(ex), twAuthorityKey,
-				registration(twAuthority, "SUPPLIER.Example.COM.", twSupplierKey, twVerifier))
+				registration(twAuthority, "SUPPLIER.Example.COM.", twVerifier))
 		}, authority: twSupplierName, direct: twSupplierName},
 
-		// Key: countersignatures bind the subject's key, which must
-		// confirm both the party envelope and the delivery.
-		{name: "invoice confirmed with an unbound key of the supplier", edit: func(ex *exchange) {
+		// Key: any key the sender publishes confirms for it, and no
+		// other.
+		{name: "invoice confirmed with another key of the supplier", edit: func(ex *exchange) {
 			ex.delivery = ex.invoice(twSupplier, twReceiver, twSupplierKey2)
-		}},
-		{name: "who confirmed with an unbound key of the supplier", edit: func(ex *exchange) {
+		}, authority: twSupplierName, direct: twSupplierName},
+		{name: "who confirmed with another key of the supplier", edit: func(ex *exchange) {
 			drop(sup(ex), twSupplier)
 			require.NoError(t, Sign(sup(ex), twSupplierKey2, twSupplier, twReceiver))
-		}},
-		{name: "key rotation signs with both keys", edit: func(ex *exchange) {
-			require.NoError(t, Sign(sup(ex), twSupplierKey2, twSupplier, twReceiver))
-			ex.delivery = ex.invoice(twSupplier, twReceiver, twSupplierKey, twSupplierKey2)
 		}, authority: twSupplierName, direct: twSupplierName},
-		{name: "registration binds a key that confirmed nothing", edit: func(ex *exchange) {
-			drop(sup(ex), twAuthority)
-			ex.add(sup(ex), twAuthorityKey, registration(twAuthority, twSupplier, twSupplierKey2, twVerifier))
-		}, direct: twSupplierName},
-		{name: "verification binds a key that confirmed nothing", edit: func(ex *exchange) {
-			drop(sup(ex), twVerifier)
-			ex.add(sup(ex), twVerifierKey, verification(twVerifier, twSupplier, twSupplierKey2))
-		}, authority: twSupplierName},
-		{name: "registration without a bound key", edit: func(ex *exchange) {
-			drop(sup(ex), twAuthority)
-			p := registration(twAuthority, twSupplier, twSupplierKey, twVerifier)
-			p.Confirmation = nil
-			ex.add(sup(ex), twAuthorityKey, p)
-		}, direct: twSupplierName},
-		{name: "verification without a bound key", edit: func(ex *exchange) {
-			drop(sup(ex), twVerifier)
-			p := verification(twVerifier, twSupplier, twSupplierKey)
-			p.Confirmation = nil
-			ex.add(sup(ex), twVerifierKey, p)
+		{name: "invoice confirmed with a key the supplier does not publish", edit: func(ex *exchange) {
+			ex.delivery.Signatures = nil
+			ex.add(ex.delivery, twMalloryKey, head.SigningPayload{
+				Iss: twSupplier.String(), Aud: twReceiver.String(), IssuedAt: now.Unix()})
+		}},
+		{name: "who confirmed with a key the supplier does not publish", edit: func(ex *exchange) {
+			drop(sup(ex), twSupplier)
+			ex.add(sup(ex), twMalloryKey, head.SigningPayload{
+				Iss: twSupplier.String(), Aud: twReceiver.String(), IssuedAt: now.Unix()})
 		}},
 
 		// Trust: only countersignatures by trusted participants count.
 		{name: "registration by an untrusted authority", edit: func(ex *exchange) {
 			drop(sup(ex), twAuthority)
-			ex.add(sup(ex), twMalloryKey, registration(twMallory, twSupplier, twSupplierKey, twVerifier))
+			ex.add(sup(ex), twMalloryKey, registration(twMallory, twSupplier, twVerifier))
 		}, direct: twSupplierName},
 		{name: "sandbox verification and registration", edit: func(ex *exchange) {
 			drop(sup(ex), twAuthority)
 			drop(sup(ex), twVerifier)
-			ex.add(sup(ex), twSbVerKey, verification(twSbVerifier, twSupplier, twSupplierKey))
-			ex.add(sup(ex), twSbAuthKey, registration(twSbAuth, twSupplier, twSupplierKey, twSbVerifier))
+			ex.add(sup(ex), twSbVerKey, verification(twSbVerifier, twSupplier))
+			ex.add(sup(ex), twSbAuthKey, registration(twSbAuth, twSupplier, twSbVerifier))
 		}},
 		{name: "registration naming the authority as verifier", edit: func(ex *exchange) {
 			drop(sup(ex), twAuthority)
-			ex.add(sup(ex), twAuthorityKey, registration(twAuthority, twSupplier, twSupplierKey, twAuthority))
+			ex.add(sup(ex), twAuthorityKey, registration(twAuthority, twSupplier, twAuthority))
 		}, direct: twSupplierName},
 		{name: "registration naming a verifier with no countersignature", edit: func(ex *exchange) {
 			drop(sup(ex), twAuthority)
-			ex.add(sup(ex), twAuthorityKey, registration(twAuthority, twSupplier, twSupplierKey, "kyb2.example.net"))
+			ex.add(sup(ex), twAuthorityKey, registration(twAuthority, twSupplier, "kyb2.example.net"))
 		}, direct: twSupplierName},
 		{name: "verification removed", edit: func(ex *exchange) {
 			drop(sup(ex), twVerifier)
@@ -393,40 +379,53 @@ func TestTampering(t *testing.T) {
 		}, direct: twSupplierName},
 
 		// Time: signing times are not in the future, expiries have not
-		// passed, and registrations last at most 30 days.
+		// passed, registrations last at most 30 days and verifications
+		// at most a year.
+		{name: "verification without an expiry", edit: func(ex *exchange) {
+			drop(sup(ex), twVerifier)
+			p := verification(twVerifier, twSupplier)
+			p.ExpiresAt = 0
+			ex.add(sup(ex), twVerifierKey, p)
+		}},
+		{name: "verification lasting more than a year", edit: func(ex *exchange) {
+			drop(sup(ex), twVerifier)
+			p := verification(twVerifier, twSupplier)
+			p.ExpiresAt = now.Add(367 * 24 * time.Hour).Unix()
+			ex.add(sup(ex), twVerifierKey, p)
+		}},
 		{name: "registration expired", edit: func(ex *exchange) {
 			drop(sup(ex), twAuthority)
-			p := registration(twAuthority, twSupplier, twSupplierKey, twVerifier)
+			p := registration(twAuthority, twSupplier, twVerifier)
 			p.IssuedAt, p.ExpiresAt = now.Add(-2*time.Hour).Unix(), now.Add(-time.Hour).Unix()
 			ex.add(sup(ex), twAuthorityKey, p)
 		}, direct: twSupplierName},
 		{name: "registration lasting more than 30 days", edit: func(ex *exchange) {
 			drop(sup(ex), twAuthority)
-			p := registration(twAuthority, twSupplier, twSupplierKey, twVerifier)
+			p := registration(twAuthority, twSupplier, twVerifier)
 			p.ExpiresAt = now.Add(31 * 24 * time.Hour).Unix()
 			ex.add(sup(ex), twAuthorityKey, p)
 		}, direct: twSupplierName},
 		{name: "registration without an expiry", edit: func(ex *exchange) {
 			drop(sup(ex), twAuthority)
-			p := registration(twAuthority, twSupplier, twSupplierKey, twVerifier)
+			p := registration(twAuthority, twSupplier, twVerifier)
 			p.ExpiresAt = 0
 			ex.add(sup(ex), twAuthorityKey, p)
 		}, direct: twSupplierName},
 		{name: "registration signed in the future", edit: func(ex *exchange) {
 			drop(sup(ex), twAuthority)
-			p := registration(twAuthority, twSupplier, twSupplierKey, twVerifier)
+			p := registration(twAuthority, twSupplier, twVerifier)
 			p.IssuedAt = now.Add(time.Hour).Unix()
 			ex.add(sup(ex), twAuthorityKey, p)
 		}, direct: twSupplierName},
 		{name: "verification expired", edit: func(ex *exchange) {
 			drop(sup(ex), twVerifier)
-			p := verification(twVerifier, twSupplier, twSupplierKey)
+			p := verification(twVerifier, twSupplier)
 			p.IssuedAt, p.ExpiresAt = now.Add(-2*time.Hour).Unix(), now.Add(-time.Hour).Unix()
 			ex.add(sup(ex), twVerifierKey, p)
 		}},
 		{name: "verification signed in the future", edit: func(ex *exchange) {
 			drop(sup(ex), twVerifier)
-			p := verification(twVerifier, twSupplier, twSupplierKey)
+			p := verification(twVerifier, twSupplier)
 			p.IssuedAt = now.Add(time.Hour).Unix()
 			ex.add(sup(ex), twVerifierKey, p)
 		}},
@@ -466,7 +465,6 @@ func TestTampering(t *testing.T) {
 		"aud":      twMallory.String(),
 		"iat":      now.Add(-time.Minute).Unix(),
 		"exp":      now.Add(10 * 24 * time.Hour).Unix(),
-		"cnf":      map[string]any{"jkt": twMalloryKey.JKT()},
 		"verifier": twMallory.String(),
 		"uuid":     uuid.V7().String(),
 		"dig":      map[string]any{"alg": "sha256", "val": strings.Repeat("0", 64)},
