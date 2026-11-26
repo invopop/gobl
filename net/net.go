@@ -120,6 +120,8 @@
 // tell apart from a real one.
 package net
 
+import "regexp"
+
 const (
 	// Scheme is the URI scheme labelling a GOBL Net address in
 	// multi-scheme contexts (org.Endpoint lists, the envelope
@@ -140,6 +142,10 @@ const (
 	// GOBL Net verification uses the per-key endpoint instead.
 	JWKSPath = "/.well-known/jwks.json"
 )
+
+// keyIDPattern matches the key IDs a key is fetched for (README.md §4).
+// A kid is a path segment chosen by whoever made the signature.
+var keyIDPattern = regexp.MustCompile(`^[A-Za-z0-9_-]{1,64}$`)
 
 // KeyPath returns the well-known path serving a single public key by
 // its key ID. Use this to construct lookup URLs.

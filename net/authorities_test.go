@@ -471,7 +471,7 @@ func TestVerifyEndorsement(t *testing.T) {
 		require.NoError(t, env.Sign(authKey, regCnf(), regVerifier(),
 			head.WithAudience(subjectAddr.String()),
 			head.WithIssuer(authorityAddr.String()),
-			head.WithExpiration(time.Now().Add(60*24*time.Hour))))
+			head.WithExpiration(time.Now().Add(20*24*time.Hour))))
 		addVerification(t, env, subjectAddr)
 
 		c := NewClient(
@@ -927,15 +927,15 @@ func TestVerifyEndorsementSubjectBinding(t *testing.T) {
 		assert.Contains(t, err.Error(), "no exp")
 	})
 
-	t.Run("registration lasting more than 90 days is rejected", func(t *testing.T) {
+	t.Run("registration lasting more than 30 days is rejected", func(t *testing.T) {
 		env := newEnv(t)
 		require.NoError(t, env.Sign(authKey, regCnf(),
 			head.WithIssuer(authorityAddr.String()),
 			head.WithAudience(subjectAddr.String()),
-			head.WithExpiration(time.Now().Add(91*24*time.Hour))))
+			head.WithExpiration(time.Now().Add(31*24*time.Hour))))
 		_, err := client().VerifyEndorsement(ctx, env)
 		require.ErrorIs(t, err, ErrVerifyFailed)
-		assert.Contains(t, err.Error(), "more than 90 days")
+		assert.Contains(t, err.Error(), "more than 30 days")
 	})
 
 	t.Run("registration without cnf is rejected", func(t *testing.T) {
@@ -977,6 +977,33 @@ func TestVerifyEndorsementSubjectBinding(t *testing.T) {
 		end, err := client().VerifyEndorsement(ctx, env)
 		require.NoError(t, err)
 		assert.Equal(t, testSubjectKey.JKT(), end.Key)
+	})
+
+	t.Run("endorsement reports when the verifier signed", func(t *testing.T) {
+		env := newEnv(t)
+		require.NoError(t, env.Sign(verifKey, regCnf(),
+			head.WithIssuer(verifierAddr.String()),
+			head.WithAudience(subjectAddr.String())))
+		register(t, env, subjectAddr)
+		end, err := client().VerifyEndorsement(ctx, env)
+		require.NoError(t, err)
+		assert.WithinDuration(t, time.Now(), end.VerifiedAt, time.Minute)
+	})
+
+	t.Run("expired registrations do not use up the authority's checks", func(t *testing.T) {
+		env := newEnv(t)
+		for range maxIssuerCandidates {
+			require.NoError(t, env.Sign(dsig.NewES256Key(), regCnf(), regVerifier(),
+				head.WithIssuer(authorityAddr.String()),
+				head.WithAudience(subjectAddr.String()),
+				head.WithExpiration(time.Now().Add(-time.Hour))))
+		}
+		require.NoError(t, env.Sign(verifKey, regCnf(),
+			head.WithIssuer(verifierAddr.String()),
+			head.WithAudience(subjectAddr.String())))
+		register(t, env, subjectAddr)
+		_, err := client().VerifyEndorsement(ctx, env)
+		require.NoError(t, err)
 	})
 
 	t.Run("checks a bounded number of signatures per authority", func(t *testing.T) {

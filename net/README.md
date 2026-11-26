@@ -63,7 +63,7 @@ described in BCP 14 (RFC 2119 and RFC 8174).
 | **Requester** | A participant asking another for its party envelope at `/who` (§6). |
 | **Countersignature** | A signature added to a subject's party envelope by another participant, saying something about the subject. Its audience is always the subject. There are two kinds, below. |
 | **Verifier** | A participant that confirms who a subject is: that the party details describe a real organization or person (on a live network, by a KYC/KYB process) that controls the subject's address. It says so with a **verification countersignature**. |
-| **Authority** | A registration authority: a participant that registers subjects a verifier has confirmed, and publishes them as a public index. It decides which verifiers it will name, follows the subject's key as it changes (§7.3), and re-confirms control of the address at least every 90 days. It says so with a **registration countersignature** naming the verifier. It does not confirm identity itself, and MUST be a different participant from the verifier it names. |
+| **Authority** | A registration authority: a participant that registers subjects a verifier has confirmed, and publishes them as a public index. It decides which verifiers it will name, follows the subject's key as it changes (§7.3), and re-confirms control of the address at least every 30 days. It says so with a **registration countersignature** naming the verifier. It does not confirm identity itself, and MUST be a different participant from the verifier it names. |
 | **Trust list** | The authorities a receiver relies on, and optionally verifiers it relies on directly (§7). |
 | **Verified** | The receiver can link the subject to a verifier it relies on, through an authority on its trust list or directly (§7.2). |
 | **Unverified** | Anything else. The receiver knows the subject controls its address and key, but the party details are only the subject's own claim. |
@@ -108,8 +108,11 @@ Production endpoints MUST use HTTPS.
 A participant publishes the public keys it signs with at its address. Each key
 MUST be available as a single RFC 7517 JSON Web Key at
 `/.well-known/gobl/keys/<kid>`, where `kid` is the key's ID; unknown or
-removed IDs return `404`. Signatures name their key by ID and do not carry a
-`jku` header. The optional `/.well-known/jwks.json` lists all keys for generic
+removed IDs return `404`. A key ID is 1 to 64 characters from `A-Z`, `a-z`,
+`0-9`, `-` and `_`. It becomes part of a URL chosen by whoever made the
+signature, so a signature naming any other key ID MUST be rejected without
+fetching anything. Signatures name their key by ID and do not carry a `jku`
+header. The optional `/.well-known/jwks.json` lists all keys for generic
 tooling, but is not used by this protocol.
 
 A published key may include `valid_from` and `valid_until`. A signature MUST
@@ -130,7 +133,7 @@ document UUID and digest, plus these fields, called claims:
 | `iss` | issuer | The signer's address. |
 | `aud` | audience | The address the signature is for. Required on the signature confirming `from` and `to`, and on countersignatures. |
 | `iat` | signing time | An RFC 7519 NumericDate. Required, and MUST NOT be later than the present, allowing the clock skew of §6. |
-| `exp` | expiry | Required on registration countersignatures, at most 90 days after the signing time; optional otherwise. A signature whose expiry has passed MUST NOT be relied on. |
+| `exp` | expiry | Required on registration countersignatures, at most 30 days after the signing time; optional otherwise. A signature whose expiry has passed MUST NOT be relied on. |
 | `cnf` | bound key | The key a signature applies to, as RFC 7800 `{"jkt": "<thumbprint>"}`: the key's RFC 7638 SHA-256 thumbprint, base64url-encoded. Required on countersignatures, where it is the subject's key, and on the current key's signature in a key change (§7.3), where it is the new key. |
 | `verifier` | verifier | The verifier's address. Required on registration countersignatures. |
 
@@ -243,7 +246,12 @@ A verification countersignature MUST have the subject's address as its
 audience, and MUST bind the subject's key that the verifier was presented
 with (§7.1). The audience stops a verification being reused with a copy of
 the envelope at another address; the bound key stops it carrying over to a
-new holder of the same address. Its expiry is optional.
+new holder of the same address.
+
+Its expiry is optional, and the protocol sets no limit on its age. Whoever
+relies on a verification, an authority registering the subject or a receiver
+relying on the verifier or on an authority, decides from its signing time
+whether it is recent enough for them.
 
 **Authorities.** An authority registers only verified subjects, and publishes
 them as a public index: the default place for a receiver to look, and the one
@@ -252,7 +260,8 @@ not. A registration countersignature MUST have:
 
 - the subject's address as its audience, once the authority has confirmed the
   subject controls it (§7.1, step 5);
-- a signing time, and an expiry no more than 90 days later;
+- a signing time, and an expiry no more than 30 days later, and no later
+  than the verification's expiry if it has one;
 - a bound key: the subject's key that the authority has registered (§7.3);
   and
 - a `verifier` naming a different participant from the authority, whose
@@ -266,7 +275,26 @@ its address, and how long a leaked, retired authority key could forge one
 with a backdated signing time. Like TLS certificates issued through ACME
 (RFC 8555, the protocol behind Let's Encrypt), registrations are meant to be
 renewed automatically: a subject SHOULD renew once two thirds of the lifetime
-has passed.
+has passed, at a time it picks at random in the days that follow, so that
+renewals do not arrive together. An authority under load answers `429` or
+`503`, and the subject retries (§11).
+
+**Revocation.** An authority withdraws a registration in two ways. It stops
+renewing it, and the registration expires within 30 days. Where that is too
+slow, as when a verification turns out to be wrong, it removes the key that
+signed the registration (§4), and the registration no longer verifies.
+
+Removing a key withdraws every registration signed with it, so an authority
+SHOULD sign with a new key at least every 24 hours, keeping each one
+published until the registrations it signed have expired. Before removing a
+key, the authority signs the other registrations made with it again, with a
+current key and the same expiry, and delivers them to their subjects, who
+publish them in place of the old ones. That is not a renewal, and needs no
+request from the subject. A subject that has not published its new
+registration by the time the key is removed is unverified until it renews.
+
+A subject whose own key leaks needs none of this: it retires the key (§4),
+and changes key at the authority (§7.3).
 
 A subject using one party at several addresses keeps a copy of the envelope
 at each, each with its own countersignatures.
@@ -323,9 +351,13 @@ verifier, then to the authority. Nobody delivers it on the subject's behalf.
    address to the authority's, which shows it controls the address. The
    authority MUST reject the request unless it carries a valid verification
    countersignature from a verifier the authority accepts, binding a key in
-   the subject's lineage (§7.3). It then countersigns, binding the key that
-   confirmed the delivery and naming the verifier, and delivers the result
-   to the subject's inbox. The subject publishes it at `/who`.
+   the subject's lineage (§7.3). The first time it sees a verification, the
+   verifier's key MUST still be valid, as for a delivery (§4): a retired key
+   could have signed it with an earlier signing time. It then countersigns,
+   binding the key that confirmed the delivery and naming the verifier,
+   removes any earlier registration countersignatures of its own, and
+   delivers the result to the subject's inbox. The subject publishes it at
+   `/who`.
 
 Steps 3 and 5 may be far apart. Another address needs its own verification,
 though a verifier that has already checked the organization need only confirm
@@ -333,9 +365,10 @@ it controls the new address. A subject whose receivers rely on its verifier
 directly may stop after step 4 and publish the envelope at `/who`.
 
 **Renewal** repeats step 5 before the registration expires, with the
-verification countersignature still on the envelope. An authority MAY limit
-how old a verification without an expiry it will accept, using its signing
-time, and SHOULD NOT accept one made with a key that is no longer valid.
+verification countersignature still on the envelope. The new registration
+replaces the old one: an envelope carries one registration per authority, so
+renewals do not build up towards the limits in §9. An authority MAY limit how
+old a verification it will accept, using its signing time.
 
 A verifier needs no relationship with any authority: whether and where the
 subject registers is the subject's choice, and whether to accept the verifier
@@ -359,7 +392,7 @@ verification, even when its issuer is also trusted as a verifier.
 
 1. **Through an authority.** Consider each countersignature issued by an
    authority on the trust list. It counts if it is valid, its expiry is no
-   more than 90 days after its signing time, its bound key confirmed the
+   more than 30 days after its signing time, its bound key confirmed the
    envelope (§5), and its `verifier` names a different participant whose
    valid countersignature is on the same envelope. Which key the verifier's
    countersignature binds is the authority's concern (§7.3). The first that
@@ -377,6 +410,10 @@ verification, even when its issuer is also trusted as a verifier.
 A key that cannot be fetched is not a rejection. A receiver MUST NOT report
 unverified because of a temporary failure while a countersignature remains
 unchecked, and SHOULD handle it as §11 describes.
+
+A receiver MAY also require the verifier's countersignature to be no older
+than a limit of its own, by its signing time, and treat the subject as
+unverified otherwise.
 
 A status applies to the holder of the bound key. A receiver applying it to a
 delivery MUST check that the delivery was confirmed with that same key.
@@ -402,25 +439,29 @@ A subject SHOULD change keys at renewal, when it is already making a request.
 
 **What the authority keeps.** For each address, the subject's **lineage**:
 the keys it has bound in turn, by thumbprint, since the lineage last started.
-The last is the current key. The lineage is the authority's own record:
-requests carry only the keys they are signed with, and envelopes only the
-current registration.
+The last is the current key. The authority also keeps every key it has ever
+bound for the address, in this lineage or an earlier one, and never binds one
+of them again: otherwise somebody holding a lost key could start a new
+lineage with it and reuse the verification that binds it. Both are the
+authority's own record: requests carry only the keys they are signed with,
+and envelopes only the current registration.
 
 **How the authority decides.** Only confirming signatures made within the
 past 5 minutes, the maximum age of §6 (allowing its clock skew), count: a
 replayed earlier request does not show that anybody holds its keys now. Then:
 
 - **The current key alone:** a renewal.
-- **One key not in the lineage:** a first registration, a lost key, or a new
-  holder of the address; the authority cannot tell which. A new lineage
-  starts with that key.
-- **The current key and one not in the lineage, the current key's signature
-  naming the other as its bound key:** a key change. The authority adds the
+- **One key never bound for the address:** a first registration, a lost key,
+  or a new holder of the address; the authority cannot tell which. A new
+  lineage starts with that key.
+- **The current key and one never bound for the address, the current key's
+  signature naming the other as its bound key:** a key change. The authority adds the
   new key and binds it. The naming shows that the holder of the current key
   chose its successor, as in an ACME key change (RFC 8555 §7.3.5); two
   signatures alone would not, since neither covers the other's key.
 - **Anything else** MUST be rejected: among others, two keys at a first
-  registration, and a key bound before, which cannot become current again.
+  registration, and a key bound before, in any lineage, which cannot become
+  current again.
 
 An authority MUST NOT register a subject unless a verification
 countersignature binds a key in the current lineage. A key change therefore
@@ -460,8 +501,8 @@ for the requester (§5.1), or one of these empty responses:
 
 A requester MUST check a `200` response as §5.1 describes before using it.
 Responses SHOULD use `Cache-Control: private`. A requester may cache a
-checked identity, but only for a bounded time, so the cache does not outlive
-the countersignatures behind it.
+checked identity, and the status it reached (§7.2), for at most 24 hours, so
+the cache does not outlive the countersignatures behind it or a revocation.
 
 ### 8.3 `POST /.well-known/gobl/inbox`
 
@@ -498,7 +539,8 @@ weakens the implementation, not the protocol.
 An envelope with more signatures than the limit MUST be rejected rather than
 partly checked. Signatures by one issuer beyond the second limit are ignored,
 so an envelope cannot make a receiver fetch more than a few keys from one
-address. Each countersignature adds to an envelope, so a participant about to
+address. A signature whose expiry has passed is skipped before any key is
+fetched, and does not count towards that limit. Each countersignature adds to an envelope, so a participant about to
 countersign SHOULD refuse, and say so, if its signature would reach the
 limit.
 
@@ -514,8 +556,9 @@ Redirects MUST NOT be followed. A redirect could move a key fetch, a request
 token, or a delivery to plain HTTP or to another host, so it is a definitive
 failure (§11), and endpoints MUST answer at the URLs of §3 directly.
 
-Fetched keys MAY be cached, by URL and only on success. A cache SHOULD be
-bounded in entries and lifetime (§12).
+Fetched keys MAY be cached, by URL and only on success, for at most an hour:
+removing a key is how its owner withdraws what it signed (§7). A cache SHOULD
+be bounded in entries (§12).
 
 ## 10. Typical delivery flow
 
@@ -560,9 +603,10 @@ a caller that does not retry can lose a document to a temporary failure.
 - **Key removal:** a cached key may still be accepted after it is withdrawn,
   until the cache entry expires. Key caches SHOULD be short-lived, and an
   implementation SHOULD offer a way to flush them during an incident.
-- **Expiry:** countersignature expiries bound how long they can be relied on.
-  Identity caches must be bounded too, or a cached identity outlives the
-  countersignatures behind it.
+- **Expiry and revocation:** a registration can be relied on until it
+  expires or its authority removes the key that signed it (§7). A removal
+  reaches a receiver once its cached key and cached identity have expired:
+  within 25 hours at the limits of §8.2 and §9.
 - **Verification is not graded:** a subject is verified or not, and any
   verifier a trusted authority names counts. A receiver wanting to
   distinguish verifiers must read the `verifier` and decide which it accepts.
@@ -571,7 +615,11 @@ a caller that does not retry can lose a document to a temporary failure.
 - **Verifier scope:** a verification describes the subject at its address
   when it was signed. It says nothing about documents the subject sends
   later. An expiry, if present, bounds how long it may be relied on; without
-  one, the authority decides how old a verification it accepts.
+  one, authorities and receivers each decide how old a verification they
+  accept (§7). A verifier's key that leaks after it is retired can sign
+  verifications with an earlier signing time: an authority catches these
+  when it first sees them (§7.1, step 5), while a receiver relying on a
+  verifier directly has only its own age limit.
 - **Document content:** this protocol establishes who sent an envelope and
   who that sender is, not that the parties named inside the document are who
   they claim. A verified sender can still issue an invoice naming another
@@ -611,7 +659,7 @@ with each column filled or a reason it need not be.
 | `from` sent this envelope to `to` (§5.2) | The confirming signature | UUID and digest, and the digest matches the document | Issuer is `from`, audience is `to`, and `to` is the receiver | Published by `from` | Signing time not in the future; key valid at receipt |
 | The party at `/who` is what the subject presents to this requester (§5.1) | The confirming signature on the response | As above | Issuer is the address queried, audience is the requester | Published by the subject | As above |
 | A verifier vouches for the party at this address (§7) | A verification countersignature | As above | Audience is the subject | Bound key confirmed the party envelope | Signing time not in the future; expiry, if any, not passed |
-| An authority registered the subject (§7.2) | A registration countersignature | As above | Audience is the subject; the named verifier's countersignature has the same audience | Bound key confirmed the party envelope | Signing time not in the future; expiry present, not passed, at most 90 days later |
+| An authority registered the subject (§7.2) | A registration countersignature | As above | Audience is the subject; the named verifier's countersignature has the same audience | Bound key confirmed the party envelope | Signing time not in the future; expiry present, not passed, at most 30 days later |
 | The holder of the current key chose the new key (§7.3) | The current key's confirming signature on a registration request | As in the first row | Issuer is the subject, audience is the authority | Its bound key is the new key; the current key is the lineage's | Signing time within the past 5 minutes |
 | The verified subject sent this delivery (§7.2) | The delivery's confirming signature | As in the first row | `from` is the subject | The bound key confirmed the delivery | As in the first row |
 | A requester asking `/who` is who it says (§6) | A request token | None | Issuer is the requester, audience is the address queried | Published by the requester | Lifetime and age limits of §6 |

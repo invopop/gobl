@@ -31,7 +31,7 @@ const maxEnvelopeSignatures = 32
 
 // maxRegistrationLifetime bounds how long after its iat an authority
 // countersignature's exp may fall.
-const maxRegistrationLifetime = 90 * 24 * time.Hour
+const maxRegistrationLifetime = 30 * 24 * time.Hour
 
 // RegisterAuthority appends addr to the default authority list.
 func RegisterAuthority(addr Address) {
@@ -62,6 +62,10 @@ type Endorsement struct {
 	// envelope's from and to are confirmed by a signature with this
 	// key, and deliveries from the subject must be signed with it too.
 	Key string
+	// VerifiedAt is the signing time of the verifier's countersignature,
+	// the most recent when there are several. Verifications need no
+	// exp, so the receiver decides how old a one it accepts.
+	VerifiedAt time.Time
 }
 
 // VerifyEndorsement returns the endorsement of the subject of a party
@@ -70,7 +74,7 @@ type Endorsement struct {
 //
 // It first looks for a countersignature from a trusted authority, bound to
 // the subject with aud, with an iat no later than now, an exp that has not
-// passed and is at most 90 days after it, a cnf naming the key of a
+// passed and is at most 30 days after it, a cnf naming the key of a
 // signature that confirms the envelope's from and to, and a verifier,
 // other than the authority, whose own countersignature for the subject is
 // valid. Failing that, it accepts a valid countersignature for the subject
@@ -193,6 +197,10 @@ func (s *endorsementCheck) authorityEndorsement(ctx context.Context) *Endorsemen
 		if aud, err := ParseAddress(p.Aud); err != nil || aud != subject {
 			continue
 		}
+		if expired(p.ExpiresAt) {
+			errs.add(errExpired(p.ExpiresAt))
+			continue
+		}
 		if !s.budget.spend(issuer) {
 			continue
 		}
@@ -214,12 +222,12 @@ func (s *endorsementCheck) authorityEndorsement(ctx context.Context) *Endorsemen
 			errs.add(err)
 			continue
 		}
-		verifier, err := s.confirmVerifier(ctx, issuer, p)
+		verifier, at, err := s.confirmVerifier(ctx, issuer, p)
 		if err != nil {
 			errs.add(err)
 			continue
 		}
-		return &Endorsement{Authority: issuer, Verifier: verifier, Key: p.Confirmation.JKT}
+		return &Endorsement{Authority: issuer, Verifier: verifier, Key: p.Confirmation.JKT, VerifiedAt: at}
 	}
 	return nil
 }
@@ -244,7 +252,7 @@ func (s *endorsementCheck) directEndorsement(ctx context.Context) *Endorsement {
 				s.errs.add(err)
 				continue
 			}
-			return &Endorsement{Verifier: verifier, Key: p.Confirmation.JKT}
+			return &Endorsement{Verifier: verifier, Key: p.Confirmation.JKT, VerifiedAt: issuedAt(p)}
 		}
 	}
 	return nil
@@ -323,7 +331,7 @@ func (s *pairKeySet) require(ctx context.Context, jkt string) error {
 }
 
 // checkRegistration checks the claims of an authority countersignature:
-// an iat no later than now, an exp at most 90 days after it that has not
+// an iat no later than now, an exp at most 30 days after it that has not
 // passed (per RFC 7519, now must be strictly before it), and a cnf.
 func checkRegistration(p *head.SigningPayload) error {
 	if err := checkIssued(p); err != nil {
@@ -333,11 +341,10 @@ func checkRegistration(p *head.SigningPayload) error {
 		return fmt.Errorf("%w: signature by %q has no exp", ErrVerifyFailed, p.Iss)
 	}
 	if time.Unix(p.ExpiresAt, 0).Sub(time.Unix(p.IssuedAt, 0)) > maxRegistrationLifetime {
-		return fmt.Errorf("%w: signature by %q has an exp more than 90 days after its iat", ErrVerifyFailed, p.Iss)
+		return fmt.Errorf("%w: signature by %q has an exp more than 30 days after its iat", ErrVerifyFailed, p.Iss)
 	}
 	if expired(p.ExpiresAt) {
-		return fmt.Errorf("%w: exp %s has passed", ErrSignatureExpired,
-			time.Unix(p.ExpiresAt, 0).UTC().Format(time.RFC3339))
+		return errExpired(p.ExpiresAt)
 	}
 	if p.Confirmation == nil || p.Confirmation.JKT == "" {
 		return fmt.Errorf("%w: signature by %q has no cnf", ErrVerifyFailed, p.Iss)
@@ -347,28 +354,36 @@ func checkRegistration(p *head.SigningPayload) error {
 
 // confirmVerifier returns the verifier an authority countersignature
 // names, after checking that it is a valid address, distinct from the
-// authority, whose own countersignature for subject is valid.
-func (s *endorsementCheck) confirmVerifier(ctx context.Context, authority Address, p *head.SigningPayload) (Address, error) {
+// authority, whose own countersignature for subject is valid, and the
+// signing time of the most recent such countersignature.
+func (s *endorsementCheck) confirmVerifier(ctx context.Context, authority Address, p *head.SigningPayload) (Address, time.Time, error) {
+	var none time.Time
 	if p.Verifier == "" {
-		return "", fmt.Errorf("%w: signature by %q names no verifier", ErrVerifyFailed, authority)
+		return "", none, fmt.Errorf("%w: signature by %q names no verifier", ErrVerifyFailed, authority)
 	}
 	verifier, err := ParseAddress(p.Verifier)
 	if err != nil {
-		return "", fmt.Errorf("%w: signature by %q names an invalid verifier: %v", ErrVerifyFailed, authority, err)
+		return "", none, fmt.Errorf("%w: signature by %q names an invalid verifier: %v", ErrVerifyFailed, authority, err)
 	}
 	// Registration and identity verification must be performed by distinct
 	// participants. A self-referential claim provides no verifier evidence.
 	if verifier == authority {
-		return "", fmt.Errorf("%w: signature by %q names itself as verifier", ErrVerifyFailed, authority)
+		return "", none, fmt.Errorf("%w: signature by %q names itself as verifier", ErrVerifyFailed, authority)
 	}
 	ps, err := s.verifications(ctx, verifier)
 	if err != nil {
-		return "", err
+		return "", none, err
 	}
 	if len(ps) == 0 {
-		return "", noVerification(verifier, s.subject)
+		return "", none, noVerification(verifier, s.subject)
 	}
-	return verifier, nil
+	at := issuedAt(ps[0])
+	for _, v := range ps[1:] {
+		if t := issuedAt(v); t.After(at) {
+			at = t
+		}
+	}
+	return verifier, at, nil
 }
 
 // Verification is a verifier countersignature on a party envelope, as an
@@ -433,7 +448,8 @@ func (c *Client) FindVerifications(ctx context.Context, env *gobl.Envelope, veri
 // verificationsBy returns the payloads of the valid verification
 // countersignatures by addr for subject, those without a verifier claim,
 // each with an iat no later than now (allowing clock skew), no exp that
-// has passed, and a cnf. Each signature checked spends budget for addr.
+// has passed, and a cnf. Each signature checked against a key spends budget
+// for addr; an expired one is skipped first.
 // The error is set only when there are candidates and none is valid,
 // and reports a transient failure over expired evidence over any other.
 func (c *Client) verificationsBy(ctx context.Context, env *gobl.Envelope, addr, subject Address, budget issuerBudget) ([]*head.SigningPayload, error) {
@@ -454,6 +470,10 @@ func (c *Client) verificationsBy(ctx context.Context, env *gobl.Envelope, addr, 
 		if p.Verifier != "" {
 			continue // a registration, not a verification
 		}
+		if expired(p.ExpiresAt) {
+			errs.add(errExpired(p.ExpiresAt))
+			continue
+		}
 		if !budget.spend(issuer) {
 			break
 		}
@@ -468,11 +488,6 @@ func (c *Client) verificationsBy(ctx context.Context, env *gobl.Envelope, addr, 
 		}
 		if err := checkIssued(p); err != nil {
 			errs.add(err)
-			continue
-		}
-		if expired(p.ExpiresAt) {
-			errs.add(fmt.Errorf("%w: exp %s has passed", ErrSignatureExpired,
-				time.Unix(p.ExpiresAt, 0).UTC().Format(time.RFC3339)))
 			continue
 		}
 		if p.Confirmation == nil || p.Confirmation.JKT == "" {
@@ -500,4 +515,15 @@ func noVerification(verifier, subject Address) error {
 // passed.
 func expired(exp int64) bool {
 	return exp != 0 && time.Now().UTC().Unix() >= exp
+}
+
+// errExpired reports that a signed exp claim has passed.
+func errExpired(exp int64) error {
+	return fmt.Errorf("%w: exp %s has passed", ErrSignatureExpired,
+		time.Unix(exp, 0).UTC().Format(time.RFC3339))
+}
+
+// issuedAt returns a signature's iat as a time.
+func issuedAt(p *head.SigningPayload) time.Time {
+	return time.Unix(p.IssuedAt, 0).UTC()
 }

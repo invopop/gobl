@@ -393,17 +393,17 @@ func TestTampering(t *testing.T) {
 		}, direct: twSupplierName},
 
 		// Time: signing times are not in the future, expiries have not
-		// passed, and registrations last at most 90 days.
+		// passed, and registrations last at most 30 days.
 		{name: "registration expired", edit: func(ex *exchange) {
 			drop(sup(ex), twAuthority)
 			p := registration(twAuthority, twSupplier, twSupplierKey, twVerifier)
 			p.IssuedAt, p.ExpiresAt = now.Add(-2*time.Hour).Unix(), now.Add(-time.Hour).Unix()
 			ex.add(sup(ex), twAuthorityKey, p)
 		}, direct: twSupplierName},
-		{name: "registration lasting more than 90 days", edit: func(ex *exchange) {
+		{name: "registration lasting more than 30 days", edit: func(ex *exchange) {
 			drop(sup(ex), twAuthority)
 			p := registration(twAuthority, twSupplier, twSupplierKey, twVerifier)
-			p.ExpiresAt = now.Add(91 * 24 * time.Hour).Unix()
+			p.ExpiresAt = now.Add(31 * 24 * time.Hour).Unix()
 			ex.add(sup(ex), twAuthorityKey, p)
 		}, direct: twSupplierName},
 		{name: "registration without an expiry", edit: func(ex *exchange) {

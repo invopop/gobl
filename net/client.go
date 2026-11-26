@@ -414,8 +414,8 @@ func (c *Client) FetchKey(ctx context.Context, addr Address, kid string) (*dsig.
 	if err != nil {
 		return nil, err
 	}
-	if kid == "" {
-		return nil, fmt.Errorf("%w: kid is required", ErrFetchFailed)
+	if !keyIDPattern.MatchString(kid) {
+		return nil, fmt.Errorf("%w: invalid kid %q", ErrFetchFailed, kid)
 	}
 	url := addr.KeyURL(kid)
 	if pk := c.cachedKey(url); pk != nil {

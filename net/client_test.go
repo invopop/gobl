@@ -63,6 +63,17 @@ func TestFetchPublicKey(t *testing.T) {
 		assert.True(t, errors.Is(err, ErrFetchFailed))
 	})
 
+	t.Run("invalid kid is not fetched", func(t *testing.T) {
+		for _, kid := range []string{"", "../who", "a/b", "a?b=1", "a%2Fb", strings.Repeat("a", 65)} {
+			mock := &mockFetcher{data: pubData}
+			c := NewClient(WithFetcher(mock))
+
+			_, err := c.FetchPublicKey(ctx, Address("billing.invopop.com"), kid)
+			require.ErrorIs(t, err, ErrFetchFailed, kid)
+			assert.Empty(t, mock.url, kid)
+		}
+	})
+
 	t.Run("invalid JSON", func(t *testing.T) {
 		mock := &mockFetcher{data: []byte("not json")}
 		c := NewClient(WithFetcher(mock))
