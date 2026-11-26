@@ -130,7 +130,7 @@ document UUID and digest, plus these fields, called claims:
 | `iss` | issuer | The signer's address. |
 | `aud` | audience | The address the signature is for. Required on the signature confirming `from` and `to`, and on countersignatures. |
 | `iat` | signing time | An RFC 7519 NumericDate. Required, and MUST NOT be later than the present, allowing the clock skew of §6. |
-| `exp` | expiry | Required on registration countersignatures, at most 90 days after the signing time; optional otherwise. |
+| `exp` | expiry | Required on registration countersignatures, at most 90 days after the signing time; optional otherwise. A signature whose expiry has passed MUST NOT be relied on. |
 | `cnf` | bound key | The key a signature applies to, as RFC 7800 `{"jkt": "<thumbprint>"}`: the key's RFC 7638 SHA-256 thumbprint, base64url-encoded. Required on countersignatures, where it is the subject's key, and on the current key's signature in a key change (§7.3), where it is the new key. |
 | `verifier` | verifier | The verifier's address. Required on registration countersignatures. |
 

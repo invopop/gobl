@@ -29,3 +29,4 @@
 - `net`: one `Client.VerifyEndorsement` call checks at most four signatures per issuer.
 - `net`: `SignKeyChange` adds neither signature when one fails.
 - `net`: `HTTPFetcher` tries each resolved address but the last for 2 seconds before the next.
+- `net`: `Client.VerifyDelivery`, `Client.Who` and `Client.VerifySender` reject a signature confirming `from` and `to` whose `exp` has passed.

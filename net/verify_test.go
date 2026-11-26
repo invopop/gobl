@@ -438,6 +438,26 @@ func TestVerifyDelivery(t *testing.T) {
 		assert.ErrorContains(t, err, "issued in the future")
 	})
 
+	t.Run("rejects a signature whose exp has passed", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := buildDelivery(t, key, sender, inbox)
+		env.Signatures = nil
+		require.NoError(t, Sign(env, key, sender, inbox, head.WithExpiration(time.Now().Add(-time.Minute))))
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		err := c.VerifyDelivery(ctx, env, inbox)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.ErrorIs(t, err, ErrSignatureExpired)
+	})
+
+	t.Run("accepts a signature whose exp has not passed", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := buildDelivery(t, key, sender, inbox)
+		env.Signatures = nil
+		require.NoError(t, Sign(env, key, sender, inbox, head.WithExpiration(time.Now().Add(time.Minute))))
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		require.NoError(t, c.VerifyDelivery(ctx, env, inbox))
+	})
+
 	t.Run("allows clock skew on a new key's valid_from", func(t *testing.T) {
 		// Signed the moment the key became valid, by a sender whose clock
 		// is a few seconds ahead of the receiver's.

@@ -47,7 +47,8 @@ func routingAddress(field string, uri cbc.URI) (Address, error) {
 // VerifyDelivery checks that env is a GOBL Net envelope for self: its
 // document must match its digest, its header's from and to fields must hold gobl: addresses, to must be self,
 // and a valid signature must carry from as its iss and to as its aud, with
-// an iat no later than now and a key that is still valid. The from address
+// an iat no later than now, no exp that has passed, and a key that is
+// still valid. The from address
 // is then the sender.
 func (c *Client) VerifyDelivery(ctx context.Context, env *gobl.Envelope, self Address) error {
 	_, err := c.DeliveryKeys(ctx, env, self)
@@ -128,8 +129,8 @@ func keysOf(cs []*ConfirmingSignature) []*dsig.PublicKey {
 }
 
 // pairConfirmations returns the valid signatures by from with to as their
-// audience, each with an iat no later than now and a key that is still
-// valid, keeping the most recent per key.
+// audience, each with an iat no later than now, no exp that has passed,
+// and a key that is still valid, keeping the most recent per key.
 func (c *Client) pairConfirmations(ctx context.Context, env *gobl.Envelope, from, to Address) ([]*ConfirmingSignature, error) {
 	if len(env.Signatures) > maxEnvelopeSignatures {
 		return nil, fmt.Errorf("%w: envelope carries %d signatures (max %d)",
@@ -151,6 +152,11 @@ func (c *Client) pairConfirmations(ctx context.Context, env *gobl.Envelope, from
 		}
 		if err := checkIssued(p); err != nil {
 			reason = err
+			continue
+		}
+		if expired(p.ExpiresAt) {
+			reason = fmt.Errorf("%w: exp %s has passed", ErrSignatureExpired,
+				time.Unix(p.ExpiresAt, 0).UTC().Format(time.RFC3339))
 			continue
 		}
 		if candidates++; candidates > maxIssuerCandidates {
@@ -188,7 +194,7 @@ func (c *Client) pairConfirmations(ctx context.Context, env *gobl.Envelope, from
 		return nil, unavailable
 	}
 	if reason != nil {
-		return nil, fmt.Errorf("%w: no valid signature from %q to %q: %v", ErrVerifyFailed, from, to, reason)
+		return nil, fmt.Errorf("%w: no valid signature from %q to %q: %w", ErrVerifyFailed, from, to, reason)
 	}
 	return nil, fmt.Errorf("%w: no valid signature from %q to %q", ErrVerifyFailed, from, to)
 }
