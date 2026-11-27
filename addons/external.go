@@ -190,4 +190,12 @@ func init() {
 		},
 		Module: "github.com/invopop/gobl.ro.anaf",
 	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "hr-fiskal-b2c-v1",
+		Name: i18n.String{
+			i18n.EN: "Croatia Fiskal B2C invoices",
+			i18n.HR: "Hrvatska fiskalizacija računa u krajnjoj potrošnji",
+		},
+		Module: "github.com/invopop/gobl.hr.fiskal",
+	})
 }
