@@ -1,0 +1,38 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: IS
+uuid: 35c8070e-689e-47ed-bb56-8f92f0b5d493
+currency: ISK
+series: "2026"
+code: "0001"
+issue_date: "2026-09-15"
+
+supplier:
+  name: Norðurljós Software ehf.
+  tax_id:
+    country: IS
+    code: "5012031220"
+  addresses:
+    - street: Laugavegur 22
+      locality: Reykjavík
+      country: IS
+      code: "101"
+
+customer:
+  name: Bláfjall Ráðgjöf ehf.
+  tax_id:
+    country: IS
+    code: "6012843160"
+  addresses:
+    - street: Borgartún 35
+      locality: Reykjavík
+      country: IS
+      code: "105"
+
+lines:
+  - quantity: "2"
+    item:
+      name: Software Engineering Services
+      price: "150000"
+    taxes:
+      - cat: VAT
+        rate: standard
