@@ -26,6 +26,7 @@ func init() {
 		LineDiscount{},
 		Ordering{},
 		PaymentDetails{},
+		PaymentLine{},
 		Reason{},
 		StatusLine{},
 		Tax{},
@@ -74,6 +75,7 @@ const (
 	ShortSchemaLine              = "bill/line"
 	ShortSchemaLineCharge        = "bill/line-charge"
 	ShortSchemaLineDiscount      = "bill/line-discount"
+	ShortSchemaPaymentLine       = "bill/payment-line"
 	ShortSchemaReason            = "bill/reason"
 	ShortSchemaStatusLine        = "bill/status-line"
 	ShortSchemaTax               = "bill/tax"

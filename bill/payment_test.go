@@ -72,6 +72,20 @@ func TestPaymentCalculate(t *testing.T) {
 		assert.Equal(t, "-50.00", pmt.Total.String(), "should balance")
 	})
 
+	t.Run("with line extensions", func(t *testing.T) {
+		pmt := testPaymentMinimal(t)
+		pmt.Lines[0].Ext = tax.ExtensionsOf(cbc.CodeMap{
+			"test-flag":  "true",
+			"test-empty": "",
+		})
+		require.NoError(t, pmt.Calculate())
+		assert.Equal(t, tax.ExtensionsOf(cbc.CodeMap{"test-flag": "true"}), pmt.Lines[0].Ext)
+
+		data, err := json.Marshal(pmt.Lines[0])
+		require.NoError(t, err)
+		assert.Contains(t, string(data), `"ext":{"test-flag":"true"}`)
+	})
+
 	t.Run("with taxes", func(t *testing.T) {
 		p := testPaymentWithTax(t)
 		require.NoError(t, p.Calculate())
