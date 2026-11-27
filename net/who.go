@@ -47,20 +47,23 @@ func (c *Client) Who(ctx context.Context, addr Address) (*gobl.Envelope, error) 
 	return env, nil
 }
 
-// VerifySender returns addr's party after verifying its identity and a trusted
-// authority endorsement. If requireVerified is true, the endorsement must also
-// include confirmed verifier evidence.
-func (c *Client) VerifySender(ctx context.Context, addr Address, requireVerified bool) (*org.Party, error) {
-	env, err := c.Who(ctx, addr)
+// VerifySender verifies env as a delivery to the client's identity (see
+// VerifyDelivery) and returns its sender's party, after verifying the
+// sender's identity at /who and its endorsement (see VerifyEndorsement).
+func (c *Client) VerifySender(ctx context.Context, env *gobl.Envelope) (*org.Party, error) {
+	if c.identity == nil {
+		return nil, fmt.Errorf("%w: verifying a sender requires a client identity", ErrFetchFailed)
+	}
+	if err := c.VerifyDelivery(ctx, env, c.identity.addr); err != nil {
+		return nil, err
+	}
+	from, _, _ := routing(env) // checked by VerifyDelivery
+	who, err := c.Who(ctx, from)
 	if err != nil {
 		return nil, err
 	}
-	end, err := c.VerifyAuthority(ctx, env)
-	if err != nil {
+	if _, err := c.VerifyEndorsement(ctx, who); err != nil {
 		return nil, err
 	}
-	if requireVerified && !end.Verified() {
-		return nil, fmt.Errorf("%w: %s", ErrNotVerified, addr)
-	}
-	return env.Extract().(*org.Party), nil
+	return who.Extract().(*org.Party), nil
 }

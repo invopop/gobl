@@ -4,7 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/dsig"
@@ -43,7 +45,8 @@ func buildPartyEnvelope(t *testing.T, subjKey *dsig.PrivateKey, subject Address,
 	if authKey != nil {
 		opts := []head.SignOption{
 			head.WithIssuer(authority.String()),
-			head.WithAudience(subject.String()),
+			head.WithSubject(subject.String()),
+			head.WithExpiration(time.Now().Add(30 * 24 * time.Hour)),
 		}
 		if verifier != "" {
 			opts = append(opts, head.WithVerifier(verifier.String()))
@@ -77,6 +80,19 @@ func TestWho(t *testing.T) {
 		party, ok := env.Extract().(*org.Party)
 		require.True(t, ok)
 		assert.Equal(t, "Test Subject", party.Name)
+	})
+
+	t.Run("rejects party details changed after signing", func(t *testing.T) {
+		raw := buildPartyEnvelope(t, subjKey, subject, nil, "", "")
+		changed := strings.Replace(string(raw), `"Test Subject"`, `"Somebody Else"`, 1)
+		require.NotEqual(t, string(raw), changed)
+		c := NewClient(WithIdentity(testRequester, testRequesterKey), WithFetcher(&mapFetcher{data: map[string][]byte{
+			subject.WhoURL():             []byte(changed),
+			subject.KeyURL(subjKey.ID()): jwkOf(subjKey),
+		}}))
+		_, err := c.Who(ctx, subject)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.Contains(t, err.Error(), "digest does not match")
 	})
 
 	t.Run("canonicalizes a non-canonical address", func(t *testing.T) {
@@ -151,7 +167,7 @@ func TestWho(t *testing.T) {
 		authKey := dsig.NewES256Key()
 		require.NoError(t, env.Sign(authKey,
 			head.WithIssuer("lookup.example.com"),
-			head.WithAudience(subject.String())))
+			head.WithSubject(subject.String())))
 		require.NoError(t, env.Sign(subjKey,
 			head.WithIssuer(subject.String()),
 			head.WithAudience(testRequester.String())))
@@ -164,7 +180,7 @@ func TestWho(t *testing.T) {
 		}}))
 		got, err := c.Who(ctx, subject)
 		require.NoError(t, err)
-		require.Len(t, got.Signatures, 3, "countersignatures preserved for VerifyAuthority")
+		require.Len(t, got.Signatures, 3, "countersignatures preserved for VerifyEndorsement")
 	})
 
 	t.Run("rejects a non-party document", func(t *testing.T) {
@@ -287,11 +303,23 @@ func TestVerifySender(t *testing.T) {
 		buildPartyEnvelope(t, subjKey, subject, authKey, authority, verifier),
 		endorsedEnvelope,
 	))
-	require.NoError(t, endorsedEnvelope.Sign(verifierKey,
+	require.NoError(t, endorsedEnvelope.Sign(verifierKey, head.WithExpiration(time.Now().Add(300*24*time.Hour)),
 		head.WithIssuer(verifier.String()),
-		head.WithAudience(subject.String())))
+		head.WithSubject(subject.String())))
 	endorsedData, err := json.Marshal(endorsedEnvelope)
 	require.NoError(t, err)
+
+	// delivery returns an invoice-like envelope from subject to the
+	// test requester, signed with key.
+	delivery := func(t *testing.T, key *dsig.PrivateKey) *gobl.Envelope {
+		t.Helper()
+		msg := &note.Message{Content: "invoice"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, Sign(env, key, subject, testRequester))
+		return env
+	}
 
 	endorsed := map[string][]byte{
 		subject.WhoURL():                  endorsedData,
@@ -306,9 +334,25 @@ func TestVerifySender(t *testing.T) {
 			WithAuthorities(authority),
 			WithFetcher(&mapFetcher{data: endorsed}),
 		)
-		party, err := c.VerifySender(ctx, subject, true)
+		party, err := c.VerifySender(ctx, delivery(t, subjKey))
 		require.NoError(t, err)
 		assert.Equal(t, "Test Subject", party.Name)
+	})
+
+	t.Run("rejects a delivery not for the client", func(t *testing.T) {
+		c := NewClient(
+			WithIdentity("someone-else.example.com", testRequesterKey),
+			WithAuthorities(authority),
+			WithFetcher(&mapFetcher{data: endorsed}),
+		)
+		_, err := c.VerifySender(ctx, delivery(t, subjKey))
+		require.ErrorIs(t, err, ErrVerifyFailed)
+	})
+
+	t.Run("requires a client identity", func(t *testing.T) {
+		c := NewClient(WithAuthorities(authority), WithFetcher(&mapFetcher{data: endorsed}))
+		_, err := c.VerifySender(ctx, delivery(t, subjKey))
+		require.ErrorIs(t, err, ErrFetchFailed)
 	})
 
 	t.Run("rejects a self-signed sender", func(t *testing.T) {
@@ -320,29 +364,44 @@ func TestVerifySender(t *testing.T) {
 				subject.KeyURL(subjKey.ID()): jwkOf(subjKey),
 			}}),
 		)
-		_, err := c.VerifySender(ctx, subject, false)
+		_, err := c.VerifySender(ctx, delivery(t, subjKey))
 		require.Error(t, err)
-		assert.True(t, errors.Is(err, ErrUnknownAuthority))
+		assert.True(t, errors.Is(err, ErrNotEndorsed))
 	})
 
-	t.Run("rejects an unverified sender when verification is required", func(t *testing.T) {
-		registered := map[string][]byte{
-			subject.WhoURL():               buildPartyEnvelope(t, subjKey, subject, authKey, authority, ""),
-			subject.KeyURL(subjKey.ID()):   jwkOf(subjKey),
-			authority.KeyURL(authKey.ID()): jwkOf(authKey),
-		}
+	t.Run("rejects a sender whose authority names no verifier", func(t *testing.T) {
 		c := NewClient(
 			WithIdentity(testRequester, testRequesterKey),
 			WithAuthorities(authority),
-			WithFetcher(&mapFetcher{data: registered}),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				subject.WhoURL():               buildPartyEnvelope(t, subjKey, subject, authKey, authority, ""),
+				subject.KeyURL(subjKey.ID()):   jwkOf(subjKey),
+				authority.KeyURL(authKey.ID()): jwkOf(authKey),
+			}}),
 		)
-		_, err := c.VerifySender(ctx, subject, true)
-		require.Error(t, err)
-		assert.True(t, errors.Is(err, ErrNotVerified))
+		_, err := c.VerifySender(ctx, delivery(t, subjKey))
+		require.ErrorIs(t, err, ErrVerifyFailed)
+	})
 
-		// Registration alone satisfies a caller that does not require
-		// verification.
-		party, err := c.VerifySender(ctx, subject, false)
+	t.Run("accepts a sender endorsed by a trusted verifier directly", func(t *testing.T) {
+		env := new(gobl.Envelope)
+		require.NoError(t, json.Unmarshal(buildPartyEnvelope(t, subjKey, subject, nil, "", ""), env))
+		require.NoError(t, env.Sign(verifierKey, head.WithExpiration(time.Now().Add(300*24*time.Hour)),
+			head.WithIssuer(verifier.String()),
+			head.WithSubject(subject.String())))
+		data, err := json.Marshal(env)
+		require.NoError(t, err)
+		c := NewClient(
+			WithIdentity(testRequester, testRequesterKey),
+			WithAuthorities(),
+			WithVerifiers(verifier),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				subject.WhoURL():                  data,
+				subject.KeyURL(subjKey.ID()):      jwkOf(subjKey),
+				verifier.KeyURL(verifierKey.ID()): jwkOf(verifierKey),
+			}}),
+		)
+		party, err := c.VerifySender(ctx, delivery(t, subjKey))
 		require.NoError(t, err)
 		assert.Equal(t, "Test Subject", party.Name)
 	})
@@ -351,9 +410,12 @@ func TestVerifySender(t *testing.T) {
 		c := NewClient(
 			WithIdentity(testRequester, testRequesterKey),
 			WithAuthorities(authority),
-			WithFetcher(&mockFetcher{err: ErrNoContent}),
+			WithFetcher(&mapFetcher{
+				data: map[string][]byte{subject.KeyURL(subjKey.ID()): jwkOf(subjKey)},
+				errs: map[string]error{subject.WhoURL(): ErrNoContent},
+			}),
 		)
-		_, err := c.VerifySender(ctx, subject, true)
+		_, err := c.VerifySender(ctx, delivery(t, subjKey))
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrNoContent))
 	})

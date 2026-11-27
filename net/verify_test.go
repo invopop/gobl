@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 
@@ -42,6 +43,19 @@ func partyEnvelopeFor(t *testing.T, key *dsig.PrivateKey, addr Address, opts ...
 	env = new(gobl.Envelope)
 	require.NoError(t, json.Unmarshal(data, env))
 	return env
+}
+
+// tamper returns a copy of env with the first match of was replaced by
+// is in its JSON, leaving its header and signatures as they were.
+func tamper(t *testing.T, env *gobl.Envelope, was, is string) *gobl.Envelope {
+	t.Helper()
+	data, err := json.Marshal(env)
+	require.NoError(t, err)
+	changed := strings.Replace(string(data), was, is, 1)
+	require.NotEqual(t, string(data), changed)
+	out := new(gobl.Envelope)
+	require.NoError(t, json.Unmarshal([]byte(changed), out))
+	return out
 }
 
 // buildTestEnvelope envelopes a plain document (not a party), signed
@@ -123,6 +137,17 @@ func TestVerifyDelivery(t *testing.T) {
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
 		require.NoError(t, c.VerifyDelivery(ctx, env, testRequester))
+	})
+
+	t.Run("a countersignature does not confirm a delivery", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := partyEnvelopeFor(t, key, sender,
+			head.WithIssuer(sender.String()),
+			head.WithAudience(testRequester.String()),
+			head.WithSubject(testRequester.String()))
+
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		require.ErrorIs(t, c.VerifyDelivery(ctx, env, testRequester), ErrVerifyFailed)
 	})
 
 	t.Run("non-canonical routing is canonicalized", func(t *testing.T) {
@@ -369,6 +394,99 @@ func TestVerifyDelivery(t *testing.T) {
 		require.NoError(t, c.VerifyDelivery(ctx, env, inbox))
 	})
 
+	// pairSignature appends a signature by sender for inbox with the
+	// given iat, bypassing Sign's own timestamp.
+	pairSignature := func(t *testing.T, env *gobl.Envelope, key *dsig.PrivateKey, iat int64) {
+		t.Helper()
+		sig, err := dsig.NewSignature(key, &head.SigningPayload{
+			UUID:     env.Head.UUID,
+			Digest:   env.Head.Digest,
+			Iss:      sender.String(),
+			Aud:      inbox.String(),
+			IssuedAt: iat,
+		})
+		require.NoError(t, err)
+		env.Signatures = []*dsig.Signature{sig}
+	}
+
+	t.Run("rejects a signature without iat", func(t *testing.T) {
+		// Without an iat a retired key's validity window would never
+		// be checked.
+		key := dsig.NewES256Key()
+		env := buildDelivery(t, key, sender, inbox)
+		pairSignature(t, env, key, 0)
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		err := c.VerifyDelivery(ctx, env, inbox)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.ErrorContains(t, err, "has no iat")
+	})
+
+	t.Run("rejects a signature issued in the future", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := buildDelivery(t, key, sender, inbox)
+		pairSignature(t, env, key, time.Now().Add(time.Hour).Unix())
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		err := c.VerifyDelivery(ctx, env, inbox)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.ErrorContains(t, err, "issued in the future")
+	})
+
+	t.Run("rejects a signature whose exp has passed", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := buildDelivery(t, key, sender, inbox)
+		env.Signatures = nil
+		require.NoError(t, Sign(env, key, sender, inbox, head.WithExpiration(time.Now().Add(-time.Minute))))
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		err := c.VerifyDelivery(ctx, env, inbox)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.ErrorIs(t, err, ErrSignatureExpired)
+	})
+
+	t.Run("accepts a signature whose exp has not passed", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := buildDelivery(t, key, sender, inbox)
+		env.Signatures = nil
+		require.NoError(t, Sign(env, key, sender, inbox, head.WithExpiration(time.Now().Add(time.Minute))))
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		require.NoError(t, c.VerifyDelivery(ctx, env, inbox))
+	})
+
+	t.Run("allows clock skew on a new key's valid_from", func(t *testing.T) {
+		// Signed the moment the key became valid, by a sender whose clock
+		// is a few seconds ahead of the receiver's.
+		key := dsig.NewES256Key()
+		env := buildDelivery(t, key, sender, inbox)
+		ahead := time.Now().Add(10 * time.Second).Truncate(time.Second)
+		pairSignature(t, env, key, ahead.Unix())
+		from := cal.TimestampOf(ahead)
+		c := NewClient(WithFetcher(&mockFetcher{data: publishedJWK(t, key, &from, nil)}))
+		require.NoError(t, c.VerifyDelivery(ctx, env, inbox))
+	})
+
+	t.Run("rejects a key retired since signing", func(t *testing.T) {
+		// Signed while the key was valid, but it has since been
+		// retired: a live receiver does not accept it.
+		key := dsig.NewES256Key()
+		env := buildDelivery(t, key, sender, inbox)
+		pairSignature(t, env, key, time.Now().Add(-2*time.Hour).Unix())
+		until := cal.TimestampOf(time.Now().Add(-time.Hour))
+		c := NewClient(WithFetcher(&mockFetcher{data: publishedJWK(t, key, nil, &until)}))
+		require.ErrorIs(t, c.VerifyDelivery(ctx, env, inbox), ErrVerifyFailed)
+	})
+
+	t.Run("checks a bounded number of signatures", func(t *testing.T) {
+		// Signatures under unknown kids each cost a key fetch from the
+		// sender: only the first few are tried.
+		env := buildDelivery(t, dsig.NewES256Key(), sender, inbox)
+		for range 2 * maxIssuerCandidates {
+			require.NoError(t, Sign(env, dsig.NewES256Key(), sender, inbox))
+		}
+		f := &countingFetcher{inner: &mapFetcher{}, n: map[string]int{}}
+		c := NewClient(WithFetcher(f))
+		require.ErrorIs(t, c.VerifyDelivery(ctx, env, inbox), ErrVerifyFailed)
+		assert.Len(t, f.n, maxIssuerCandidates)
+	})
+
 	t.Run("invalid self address", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		env := buildDelivery(t, key, sender, inbox)
@@ -379,6 +497,35 @@ func TestVerifyDelivery(t *testing.T) {
 	t.Run("not signed", func(t *testing.T) {
 		c := NewClient()
 		require.ErrorIs(t, c.VerifyDelivery(ctx, new(gobl.Envelope), inbox), ErrVerifyFailed)
+	})
+
+	t.Run("rejects a document changed after signing", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := tamper(t, buildDelivery(t, key, sender, inbox), "test message content", "changed")
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		err := c.VerifyDelivery(ctx, env, inbox)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.Contains(t, err.Error(), "digest does not match")
+	})
+
+	t.Run("rejects an envelope without a document", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := buildDelivery(t, key, sender, inbox)
+		env.Document = nil
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		err := c.VerifyDelivery(ctx, env, inbox)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.Contains(t, err.Error(), "no document")
+	})
+
+	t.Run("rejects an envelope without a digest", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := buildDelivery(t, key, sender, inbox)
+		env.Head.Digest = nil
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		err := c.VerifyDelivery(ctx, env, inbox)
+		require.ErrorIs(t, err, ErrVerifyFailed)
+		assert.Contains(t, err.Error(), "no digest")
 	})
 
 	t.Run("rejects an envelope with too many signatures", func(t *testing.T) {

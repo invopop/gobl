@@ -33,14 +33,11 @@ var (
 	ErrTokenExpired = errors.New("net: request token expired")
 	// ErrVerifyFailed is returned when verification fails.
 	ErrVerifyFailed = errors.New("net: verification failed")
-	// ErrUnknownAuthority is returned when no trusted authority endorsement is found.
-	ErrUnknownAuthority = errors.New("net: endorser is not a recognised authority")
-	// ErrNotVerified is returned when a sender's endorsement is valid but
-	// carries no confirmed verifier and the caller required identity
-	// verification.
-	ErrNotVerified = errors.New("net: sender identity is not verified")
-	// ErrSignatureExpired is returned when an authority countersignature
-	// verifies but its exp claim is in the past.
+	// ErrNotEndorsed is returned when a party envelope carries no
+	// countersignature from a trusted authority or verifier.
+	ErrNotEndorsed = errors.New("net: no trusted authority or verifier endorses the party")
+	// ErrSignatureExpired is returned when a countersignature verifies
+	// but its exp claim is in the past.
 	ErrSignatureExpired = errors.New("net: signature expired")
 	// ErrPartyMissing is returned when an identity envelope has no org.Party.
 	ErrPartyMissing = errors.New("net: /who response did not contain a party document")

@@ -170,6 +170,9 @@ func (h *Header) Link(category, key cbc.Key) *Link {
 // ExpiresAt (optional, set via head.WithExpiration) is the
 // JWT-standard `exp` claim (RFC 7519 §4.1.4): the time after which
 // the signature's assertions should no longer be relied upon.
+// Sub (optional, set via head.WithSubject) is the JWT-standard `sub`
+// claim: the GOBL Net address of the party the signature vouches
+// for, which marks it as a countersignature.
 // Verifier (optional, set via head.WithVerifier) names the GOBL Net
 // address of the participant that performed identity verification
 // (KYC/KYB) of the party; it is asserted by a registration
@@ -182,6 +185,7 @@ type SigningPayload struct {
 	Digest    *dsig.Digest `json:"dig"`
 	Iss       string       `json:"iss,omitempty"`
 	Aud       string       `json:"aud,omitempty"`
+	Sub       string       `json:"sub,omitempty"`
 	IssuedAt  int64        `json:"iat,omitempty"`
 	ExpiresAt int64        `json:"exp,omitempty"`
 	Verifier  string       `json:"verifier,omitempty"`
@@ -193,6 +197,7 @@ type SignOption func(*signOptions)
 type signOptions struct {
 	iss      string
 	aud      string
+	sub      string
 	exp      int64
 	verifier string
 	signer   []dsig.SignerOption
@@ -210,6 +215,12 @@ func WithIssuer(iss string) SignOption {
 // is bound to as the `aud` claim of the signed payload.
 func WithAudience(aud string) SignOption {
 	return func(o *signOptions) { o.aud = aud }
+}
+
+// WithSubject sets the GOBL Net address (a bare FQDN) of the party the
+// signature vouches for as the `sub` claim of the signed payload.
+func WithSubject(sub string) SignOption {
+	return func(o *signOptions) { o.sub = sub }
 }
 
 // WithVerifier sets the `verifier` claim in the signed payload: the
@@ -236,24 +247,13 @@ func WithSignerOption(opts ...dsig.SignerOption) SignOption {
 	return func(o *signOptions) { o.signer = append(o.signer, opts...) }
 }
 
-func (h *Header) payload(iss, aud string, iat, exp int64, verifier string) *SigningPayload {
-	return &SigningPayload{
-		UUID:      h.UUID,
-		Digest:    h.Digest,
-		Iss:       iss,
-		Aud:       aud,
-		IssuedAt:  iat,
-		ExpiresAt: exp,
-		Verifier:  verifier,
-	}
-}
-
 // Sign creates a JWS signature over the header's document identity
 // (UUID + Digest) together with the current UTC time as a
 // JWT-standard `iat` claim (Unix seconds), and any optional claims
 // configured via options: the signer's GOBL Net identity
 // (head.WithIssuer), the audience it is bound to (head.WithAudience),
-// and a verifier assertion (head.WithVerifier). Generic JWT verifiers
+// the party it vouches for (head.WithSubject), and a verifier
+// assertion (head.WithVerifier). Generic JWT verifiers
 // resolve the public keys by fetching `<iss>/.well-known/jwks.json`
 // from the HTTPS iss URL — no `jku` header is needed.
 func (h *Header) Sign(key *dsig.PrivateKey, opts ...SignOption) (*dsig.Signature, error) {
@@ -261,8 +261,17 @@ func (h *Header) Sign(key *dsig.PrivateKey, opts ...SignOption) (*dsig.Signature
 	for _, opt := range opts {
 		opt(so)
 	}
-	iat := time.Now().UTC().Unix()
-	return dsig.NewSignature(key, h.payload(so.iss, so.aud, iat, so.exp, so.verifier), so.signer...)
+	p := &SigningPayload{
+		UUID:      h.UUID,
+		Digest:    h.Digest,
+		Iss:       so.iss,
+		Aud:       so.aud,
+		Sub:       so.sub,
+		IssuedAt:  time.Now().UTC().Unix(),
+		ExpiresAt: so.exp,
+		Verifier:  so.verifier,
+	}
+	return dsig.NewSignature(key, p, so.signer...)
 }
 
 // Verify checks that the signature covers this header's document
