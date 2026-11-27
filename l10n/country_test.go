@@ -112,7 +112,7 @@ func TestTaxCountryCodeSchema(t *testing.T) {
 	s := l10n.TaxCountryCode("").JSONSchema()
 	assert.Equal(t, "Tax Country Code", s.Title)
 	assert.Equal(t, "string", s.Type)
-	assert.Equal(t, 252, len(s.OneOf))
+	assert.Equal(t, 253, len(s.OneOf))
 	assert.Equal(t, l10n.AF, s.OneOf[0].Const)
 	assert.Equal(t, "Afghanistan", s.OneOf[0].Title)
 }
@@ -143,10 +143,13 @@ func TestCountryCodeRules(t *testing.T) {
 		assert.ErrorContains(t, rules.Validate(l10n.ISOCountryCode("XX")), "GOBL-L10N-ISOCOUNTRYCODE-01")
 		// Northern Ireland is a tax country, not an ISO one.
 		assert.ErrorContains(t, rules.Validate(l10n.ISOCountryCode("XI")), "GOBL-L10N-ISOCOUNTRYCODE-01")
+		// Kosovo has no official ISO code, so XK is only a tax country.
+		assert.ErrorContains(t, rules.Validate(l10n.ISOCountryCode("XK")), "GOBL-L10N-ISOCOUNTRYCODE-01")
 	})
 	t.Run("tax country code", func(t *testing.T) {
 		assert.NoError(t, rules.Validate(l10n.TaxCountryCode("US")))
 		assert.NoError(t, rules.Validate(l10n.TaxCountryCode("XI")))
+		assert.NoError(t, rules.Validate(l10n.TaxCountryCode("XK")))
 		assert.NoError(t, rules.Validate(l10n.TaxCountryCode("")))
 		assert.ErrorContains(t, rules.Validate(l10n.TaxCountryCode("de")), "GOBL-L10N-TAXCOUNTRYCODE-01")
 		assert.ErrorContains(t, rules.Validate(l10n.TaxCountryCode("XX")), "GOBL-L10N-TAXCOUNTRYCODE-01")
