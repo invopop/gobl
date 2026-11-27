@@ -71,8 +71,8 @@ type Endorsement struct {
 // The envelope's document must match its digest, and a valid signature by
 // the subject must confirm its from and to.
 //
-// It first looks for a countersignature from a trusted authority, bound to
-// the subject with aud, with an iat no later than now, an exp that has not
+// It first looks for a countersignature from a trusted authority, naming
+// the subject as its sub, with an iat no later than now, an exp that has not
 // passed and is at most 30 days after it, and a verifier, other than the
 // authority, whose own countersignature for the subject is valid: an iat
 // no later than now, and an exp that has not passed and is at most a year
@@ -185,7 +185,7 @@ func (s *endorsementCheck) authorityEndorsement(ctx context.Context) *Endorsemen
 		if err != nil || !auths[issuer] {
 			continue
 		}
-		if aud, err := ParseAddress(p.Aud); err != nil || aud != subject {
+		if sub, err := ParseAddress(p.Sub); err != nil || sub != subject {
 			continue
 		}
 		if expired(p.ExpiresAt) {
@@ -355,9 +355,10 @@ type Verification struct {
 }
 
 // FindVerifications returns the valid countersignatures by verifier for
-// subject: each with an iat no later than now (allowing clock skew), and
-// an exp that has not passed and is at most a year after it. An authority
-// sets its own exp no later than theirs. It returns an error when there are none, or when the envelope's document
+// subject: each naming subject as its sub, with an iat no later than now
+// (allowing clock skew), and an exp that has not passed and is at most a
+// year after it. An authority sets its own exp no later than theirs. It
+// returns an error when there are none, or when the envelope's document
 // does not match its digest.
 func (c *Client) FindVerifications(ctx context.Context, env *gobl.Envelope, verifier, subject Address) ([]*Verification, error) {
 	if env == nil || env.Head == nil || !env.Signed() {
@@ -397,7 +398,8 @@ func (c *Client) FindVerifications(ctx context.Context, env *gobl.Envelope, veri
 }
 
 // verificationsBy returns the payloads of the valid verification
-// countersignatures by addr for subject, those without a verifier claim,
+// countersignatures by addr for subject, those naming it as their sub
+// without a verifier claim,
 // each with an iat no later than now (allowing clock skew), and an exp
 // that has not passed and is at most a year after it. Each signature
 // checked against a key spends budget for addr; an expired one is skipped
@@ -416,7 +418,7 @@ func (c *Client) verificationsBy(ctx context.Context, env *gobl.Envelope, addr, 
 		if err != nil || issuer != addr {
 			continue
 		}
-		if aud, err := ParseAddress(p.Aud); err != nil || aud != subject {
+		if sub, err := ParseAddress(p.Sub); err != nil || sub != subject {
 			continue
 		}
 		if p.Verifier != "" {

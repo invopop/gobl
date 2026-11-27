@@ -56,12 +56,12 @@ described in BCP 14 (RFC 2119 and RFC 8174).
 | **Envelope** | A GOBL envelope: a document, a header, and signatures. The header's `from` and `to` fields hold the sending and receiving addresses. |
 | **Signature** | A signature over an envelope's document. It also signs a few fields (§5) saying who made it, who it is for, and when. |
 | **Issuer** | The participant that made a signature. |
-| **Audience** | The participant a signature is for. A signature counts only for its audience. |
+| **Audience** | The participant a signature is addressed to, when it confirms an envelope's `from` and `to`. |
 | **Sender**, **Receiver** | An envelope's `from` and `to`. They count only when a signature by the sender, with the receiver as its audience, confirms them (§5). |
 | **Party envelope** | An envelope whose document is an `org.Party`: a participant's name, tax identities, and other details. |
 | **Subject** | The participant a party envelope describes: its `from` address. |
 | **Requester** | A participant asking another for its party envelope at `/who` (§6). |
-| **Countersignature** | A signature added to a subject's party envelope by another participant, saying something about the subject. Its audience is always the subject. There are two kinds, below. |
+| **Countersignature** | A signature added to a subject's party envelope by another participant, saying something about the subject, which it names (§5). There are two kinds, below. |
 | **Verifier** | A participant that confirms who a subject is: that the party details describe a real organization or person (on a live network, by a KYC/KYB process) that controls the subject's address. It says so with a **verification countersignature**. |
 | **Authority** | A registration authority: a participant that registers subjects a verifier has confirmed, and publishes them as a public index. It decides which verifiers it will name, and re-confirms control of the address at least every 30 days. It says so with a **registration countersignature** naming the verifier. It does not confirm identity itself, and MUST be a different participant from the verifier it names. |
 | **Trust list** | The authorities a receiver relies on, and optionally verifiers it relies on directly (§7). |
@@ -135,7 +135,8 @@ document UUID and digest, plus these fields, called claims:
 | Claim | Name used in this document | Meaning |
 |---|---|---|
 | `iss` | issuer | The signer's address. |
-| `aud` | audience | The address the signature is for. Required on the signature confirming `from` and `to`, and on countersignatures. |
+| `aud` | audience | The address the signature is addressed to. Required on the signature confirming `from` and `to`. A countersignature has none. |
+| `sub` | subject | The address the signature vouches for. Required on countersignatures, and what marks a signature as one. No other signature has it. |
 | `iat` | signing time | An RFC 7519 NumericDate. Required, and MUST NOT be later than the present, allowing the clock skew of §6. |
 | `exp` | expiry | Required on countersignatures: at most 30 days after the signing time on a registration, and at most a year (366 days) on a verification. Optional otherwise. A signature whose expiry has passed MUST NOT be relied on. |
 | `verifier` | verifier | The verifier's address. Required on registration countersignatures. |
@@ -145,8 +146,9 @@ MUST reject an envelope with no document, or whose document does not match
 its digest, before relying on any of its signatures.
 
 Every GOBL Net envelope MUST carry `from` and `to` header fields holding
-`gobl:` addresses, and a valid signature whose issuer is `from` and whose
-audience is `to`: the signature that **confirms** the envelope. The fields
+`gobl:` addresses, and a valid signature whose issuer is `from`, whose
+audience is `to`, and which has no `sub`: the signature that **confirms**
+the envelope. The fields
 themselves are not signed, so that signature is what makes them evidence. A
 participant MUST reject an envelope missing either field, using another
 scheme in either, or with no confirming signature.
@@ -246,15 +248,17 @@ A verifier SHOULD publish what it checks, because its address is all a
 receiver learns about how thorough the check was (§12).
 
 A verification countersignature MUST have the subject's address as its
-audience, a signing time, and an expiry no more than a year (366 days) later.
-The audience stops a verification being reused with a copy of the envelope at
+`sub`, a signing time, and an expiry no more than a year (366 days) later.
+The `sub` stops a verification being reused with a copy of the envelope at
 another address. The expiry limits how long it outlives the subject's control
 of its address (§12).
 
-Nothing else marks a verification: a verifier's signature over a subject's
-party envelope, with the subject as audience and such an expiry, is one. A
-verifier MUST NOT make such a signature for any other reason, and so never
-returns a signed party envelope to a subject it has not verified.
+A countersignature says one thing and a confirming signature another, and
+neither stands in for the other. A signature with a `sub` never confirms an
+envelope's `from` and `to` (§5), and one without never vouches for anybody:
+a verifier's confirming signature on an envelope it delivers to a subject
+says nothing about that subject. A countersignature MUST NOT have an
+audience, and a receiver ignores one that does.
 
 What a verifier asks of a subject to verify it again is its own decision.
 Typically it signs again without new checks, until its own rules call for
@@ -265,7 +269,7 @@ them as a public index: the default place for a receiver to look, and the one
 that decides which verifiers are worth relying on, so that receivers need
 not. A registration countersignature MUST have:
 
-- the subject's address as its audience, once the authority has confirmed the
+- the subject's address as its `sub`, once the authority has confirmed the
   subject controls it (§7.1, step 5);
 - a signing time, and an expiry no more than 30 days later, and no later
   than the verification's expiry; and
@@ -342,15 +346,15 @@ verifier, then to the authority. Nobody delivers it on the subject's behalf.
    when it has no session open for the address. A `202` means the envelope
    was received, not that the subject is verified.
 3. On success the verifier countersigns that exact envelope, unchanged in
-   UUID and digest, as issuer, with the subject's address as audience, a
+   UUID and digest, as issuer, with the subject's address as `sub`, a
    signing time, and an expiry no more than a year later. It removes any
    earlier verification countersignature of its own. It does not set a
    `verifier`: that is the authority's to write.
 4. The verifier returns the envelope to the subject. Delivering it to the
    subject's inbox, from the verifier's address to the subject's, is
-   RECOMMENDED, and SHOULD be retried on temporary failures (§11). The
-   countersignature already confirms that delivery (§5), so it needs no
-   other signature. Any other route, such as the verifier's own API or a
+   RECOMMENDED, and SHOULD be retried on temporary failures (§11). Like any
+   delivery it carries the verifier's confirming signature (§5), separate
+   from the countersignature, which the subject removes. Any other route, such as the verifier's own API or a
    link in an email, also conforms. A verifier that refuses sends no
    envelope: it tells the subject through the session of step 2, whenever
    its checks end.
@@ -365,8 +369,8 @@ verifier, then to the authority. Nobody delivers it on the subject's behalf.
    verification countersignature from a verifier the authority accepts. A
    `202` means the subject is registered: the authority countersigns, naming
    the verifier, removes any earlier registration countersignatures of its
-   own, and delivers the result to the subject's inbox. The subject publishes
-   it at `/who`.
+   own, and delivers the result to the subject's inbox, with its own confirming
+   signature as in step 4. The subject publishes it at `/who`.
 
 Steps 3 and 5 may be far apart. Another address needs its own verification,
 though a verifier that has already checked the organization need only confirm
@@ -397,7 +401,7 @@ envelope and its own trust lists. The procedure is normative: receivers with
 the same trust lists MUST reach the same status for the same envelope.
 
 A countersignature is **valid** when it verifies against its issuer's
-published key, its audience is the subject, its signing time is no later
+published key, its `sub` is the subject, its signing time is no later
 than the present (allowing the clock skew of §6), and it has an expiry that
 has not passed. A verification's expiry is no more than a year (366 days)
 after its signing time. The party envelope itself MUST be confirmed by the
@@ -618,8 +622,8 @@ with each column filled or a reason it need not be.
 |---|---|---|---|---|---|
 | `from` sent this envelope to `to` (§5.2) | The confirming signature | UUID and digest, and the digest matches the document | Issuer is `from`, audience is `to`, and `to` is the receiver | Published by `from` | Signing time not in the future; key valid at receipt |
 | The party at `/who` is what the subject presents to this requester (§5.1) | The confirming signature on the response | As above | Issuer is the address queried, audience is the requester | Published by the subject | As above |
-| A verifier vouches for the party at this address (§7) | A verification countersignature | As above | Audience is the subject | Published by the verifier | Signing time not in the future; expiry present, not passed, at most a year later |
-| An authority registered the subject (§7.2) | A registration countersignature | As above | Audience is the subject; the named verifier's countersignature has the same audience | Published by the authority | Signing time not in the future; expiry present, not passed, at most 30 days later |
+| A verifier vouches for the party at this address (§7) | A verification countersignature | As above | `sub` is the subject | Published by the verifier | Signing time not in the future; expiry present, not passed, at most a year later |
+| An authority registered the subject (§7.2) | A registration countersignature | As above | `sub` is the subject; the named verifier's countersignature has the same `sub` | Published by the authority | Signing time not in the future; expiry present, not passed, at most 30 days later |
 | A requester asking `/who` is who it says (§6) | A request token | None | Issuer is the requester, audience is the address queried | Published by the requester | Lifetime and age limits of §6 |
 
 Whose signatures count is never read from the envelope: only the trust lists

@@ -139,6 +139,17 @@ func TestVerifyDelivery(t *testing.T) {
 		require.NoError(t, c.VerifyDelivery(ctx, env, testRequester))
 	})
 
+	t.Run("a countersignature does not confirm a delivery", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := partyEnvelopeFor(t, key, sender,
+			head.WithIssuer(sender.String()),
+			head.WithAudience(testRequester.String()),
+			head.WithSubject(testRequester.String()))
+
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		require.ErrorIs(t, c.VerifyDelivery(ctx, env, testRequester), ErrVerifyFailed)
+	})
+
 	t.Run("non-canonical routing is canonicalized", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		env := buildDelivery(t, key, sender, inbox)

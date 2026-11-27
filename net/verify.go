@@ -47,9 +47,9 @@ func routingAddress(field string, uri cbc.URI) (Address, error) {
 // VerifyDelivery checks that env is a GOBL Net envelope for self: its
 // document must match its digest, its header's from and to fields must
 // hold gobl: addresses, to must be self, and a valid signature must carry
-// from as its iss and to as its aud, with an iat no later than now, no exp
-// that has passed, and a key that is still valid. The from address is
-// then the sender.
+// from as its iss and to as its aud, with no sub, an iat no later than now,
+// no exp that has passed, and a key that is still valid. The from address
+// is then the sender.
 func (c *Client) VerifyDelivery(ctx context.Context, env *gobl.Envelope, self Address) error {
 	if env == nil || env.Head == nil || !env.Signed() {
 		return fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
@@ -72,7 +72,8 @@ func (c *Client) VerifyDelivery(ctx context.Context, env *gobl.Envelope, self Ad
 }
 
 // confirmed fails unless env carries a valid signature by from with to as
-// its audience, an iat no later than now, no exp that has passed, and a
+// its audience, no sub (a countersignature confirms nothing), an iat no
+// later than now, no exp that has passed, and a
 // key that is still valid.
 func (c *Client) confirmed(ctx context.Context, env *gobl.Envelope, from, to Address) error {
 	if len(env.Signatures) > maxEnvelopeSignatures {
@@ -90,6 +91,9 @@ func (c *Client) confirmed(ctx context.Context, env *gobl.Envelope, from, to Add
 			continue
 		}
 		if aud, err := ParseAddress(p.Aud); err != nil || aud != to {
+			continue
+		}
+		if p.Sub != "" {
 			continue
 		}
 		if err := checkIssued(p); err != nil {

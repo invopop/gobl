@@ -45,7 +45,7 @@ func buildPartyEnvelope(t *testing.T, subjKey *dsig.PrivateKey, subject Address,
 	if authKey != nil {
 		opts := []head.SignOption{
 			head.WithIssuer(authority.String()),
-			head.WithAudience(subject.String()),
+			head.WithSubject(subject.String()),
 			head.WithExpiration(time.Now().Add(30 * 24 * time.Hour)),
 		}
 		if verifier != "" {
@@ -167,7 +167,7 @@ func TestWho(t *testing.T) {
 		authKey := dsig.NewES256Key()
 		require.NoError(t, env.Sign(authKey,
 			head.WithIssuer("lookup.example.com"),
-			head.WithAudience(subject.String())))
+			head.WithSubject(subject.String())))
 		require.NoError(t, env.Sign(subjKey,
 			head.WithIssuer(subject.String()),
 			head.WithAudience(testRequester.String())))
@@ -305,7 +305,7 @@ func TestVerifySender(t *testing.T) {
 	))
 	require.NoError(t, endorsedEnvelope.Sign(verifierKey, head.WithExpiration(time.Now().Add(300*24*time.Hour)),
 		head.WithIssuer(verifier.String()),
-		head.WithAudience(subject.String())))
+		head.WithSubject(subject.String())))
 	endorsedData, err := json.Marshal(endorsedEnvelope)
 	require.NoError(t, err)
 
@@ -388,7 +388,7 @@ func TestVerifySender(t *testing.T) {
 		require.NoError(t, json.Unmarshal(buildPartyEnvelope(t, subjKey, subject, nil, "", ""), env))
 		require.NoError(t, env.Sign(verifierKey, head.WithExpiration(time.Now().Add(300*24*time.Hour)),
 			head.WithIssuer(verifier.String()),
-			head.WithAudience(subject.String())))
+			head.WithSubject(subject.String())))
 		data, err := json.Marshal(env)
 		require.NoError(t, err)
 		c := NewClient(

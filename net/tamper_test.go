@@ -111,7 +111,7 @@ func (ex *exchange) invoice(from, to Address, keys ...*dsig.PrivateKey) *gobl.En
 func verification(iss, subject Address) head.SigningPayload {
 	return head.SigningPayload{
 		Iss:       iss.String(),
-		Aud:       subject.String(),
+		Sub:       subject.String(),
 		IssuedAt:  time.Now().Unix(),
 		ExpiresAt: time.Now().Add(300 * 24 * time.Hour).Unix(),
 	}
@@ -283,7 +283,7 @@ func TestTampering(t *testing.T) {
 			replace(sup(ex), twAuthority, by(ex.who[twMallory], twAuthority)...)
 		}, direct: twSupplierName},
 
-		// Address: countersignatures name their subject as audience,
+		// Address: countersignatures name their subject as sub,
 		// and the confirming signature names sender and receiver.
 		{name: "verified party served at another address with the same key", edit: func(ex *exchange) {
 			env := ex.clone(sup(ex))
@@ -326,7 +326,7 @@ func TestTampering(t *testing.T) {
 		{name: "invoice forwarded by mallory as its own", edit: func(ex *exchange) {
 			require.NoError(t, Sign(ex.delivery, twMalloryKey, twMallory, twReceiver))
 		}, authority: twMalloryName, direct: twMalloryName},
-		{name: "registration audience in another form", edit: func(ex *exchange) {
+		{name: "registration subject in another form", edit: func(ex *exchange) {
 			drop(sup(ex), twAuthority)
 			ex.add(sup(ex), twAuthorityKey,
 				registration(twAuthority, "SUPPLIER.Example.COM.", twVerifier))
@@ -463,6 +463,7 @@ func TestTampering(t *testing.T) {
 	edits := map[string]any{
 		"iss":      twMallory.String(),
 		"aud":      twMallory.String(),
+		"sub":      twMallory.String(),
 		"iat":      now.Add(-time.Minute).Unix(),
 		"exp":      now.Add(10 * 24 * time.Hour).Unix(),
 		"verifier": twMallory.String(),

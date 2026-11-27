@@ -1,6 +1,9 @@
 ## Changed
 
-- `net`: **breaking**: verifier countersignatures count only when their `aud` is the envelope's `from` address, so each address needs its own verification, and they need an `iat` no later than the present and an `exp` at most a year after it.
+- `net`: **breaking**: verifier and authority countersignatures count only when their `sub` is the envelope's `from` address, so each address needs its own verification. Their `aud` is ignored.
+- `net`: **breaking**: verifier countersignatures need an `iat` no later than the present and an `exp` at most a year after it.
+- `net`: **breaking**: a signature with a `sub` does not confirm an envelope's `from` and `to`.
+- `head`: `WithSubject` sets the `sub` claim of a signature, read from `SigningPayload.Sub`.
 - `net`: **breaking**: authority countersignatures need an `iat` no later than the present and an `exp` at most 30 days after it.
 - `net`: **breaking**: `Client.VerifyDelivery` and `Client.Who` need an `iat` no later than the present, and a key that is still valid when the envelope is received.
 - `net`: **breaking**: `Client.VerifySender(ctx, env)` takes a delivered envelope and requires a verified sender.

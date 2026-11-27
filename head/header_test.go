@@ -341,13 +341,15 @@ func TestHeaderSignWithVerifier(t *testing.T) {
 
 	sig, err := h.Sign(priv,
 		head.WithIssuer("authority.example"),
-		head.WithAudience("subject.example"),
+		head.WithSubject("subject.example"),
 		head.WithVerifier("verify.example"))
 	require.NoError(t, err)
 
 	p, err := head.SignedPayload(sig)
 	require.NoError(t, err)
 	assert.Equal(t, "verify.example", p.Verifier)
+	assert.Equal(t, "subject.example", p.Sub)
+	assert.Empty(t, p.Aud)
 	assert.Equal(t, "authority.example", p.Iss)
 }
 
