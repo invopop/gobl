@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/bill/payment-line",
+  "$ref": "#/$defs/bill.PaymentLine",
+  "$defs": {
+    "bill.PaymentLine": {
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "i": {
+          "type": "integer",
+          "title": "Index",
+          "description": "Line number within the parent document (calculated).",
+          "calculated": true
+        },
+        "refund": {
+          "type": "boolean",
+          "title": "Refund",
+          "description": "Indicates whether this payment is a refund of a previous payment, effectively reversing\nthe flow of funds between the supplier and customer or their representatives."
+        },
+        "document": {
+          "$ref": "https://gobl.org/draft-0/org/document-ref",
+          "title": "Document",
+          "description": "Reference to the document being paid."
+        },
+        "installment": {
+          "type": "integer",
+          "title": "Installment",
+          "description": "When making multiple payments for a single document, this specifies the\ninstallment number for this payment line."
+        },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "description": "Additional human readable description of the payment line which may be useful for\nexplaining the purpose or special conditions. Notes should be used for more\nformal comments."
+        },
+        "payable": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Payable",
+          "description": "Amount of the referenced document that is payable. Calculated automatically from\nthe embedded document's amount and converted to the currency of this document."
+        },
+        "advances": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Advances",
+          "description": "Amount already paid in previous installments, which may be required\nby some tax regimes or specific use cases."
+        },
+        "amount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Amount",
+          "description": "Amount of the total payment allocated to the referenced document."
+        },
+        "due": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Due",
+          "description": "Amount that still needs to be paid."
+        },
+        "tax": {
+          "$ref": "https://gobl.org/draft-0/tax/total",
+          "title": "Tax",
+          "description": "Breakdown of the taxes applied to this payment line after taking into account\ncurrency conversion and the relative amounts."
+        },
+        "notes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/note"
+          },
+          "type": "array",
+          "title": "Notes",
+          "description": "Additional notes specific to this line item for clarification purposes."
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Extension codes that apply to the line."
+        }
+      },
+      "type": "object",
+      "required": [
+        "i",
+        "amount"
+      ],
+      "description": "PaymentLine defines the details of a line item in a payment document."
+    }
+  }
+}

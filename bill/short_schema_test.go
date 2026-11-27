@@ -24,6 +24,7 @@ func TestShortSchemas(t *testing.T) {
 		bill.ShortSchemaLine:              bill.Line{},
 		bill.ShortSchemaLineCharge:        bill.LineCharge{},
 		bill.ShortSchemaLineDiscount:      bill.LineDiscount{},
+		bill.ShortSchemaPaymentLine:       bill.PaymentLine{},
 		bill.ShortSchemaReason:            bill.Reason{},
 		bill.ShortSchemaStatusLine:        bill.StatusLine{},
 		bill.ShortSchemaTax:               bill.Tax{},

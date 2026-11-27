@@ -56,6 +56,9 @@ type PaymentLine struct {
 
 	// Additional notes specific to this line item for clarification purposes.
 	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
+
+	// Extension codes that apply to the line.
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
 func paymentLineRules() *rules.Set {
