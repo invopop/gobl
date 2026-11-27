@@ -17,7 +17,10 @@ const CountryCode = "AE"
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("ae", rules.GOBL.Add(CountryCode), taxIdentityRules())
+	rules.Register("ae", rules.GOBL.Add(CountryCode),
+		taxIdentityRules(),
+		orgIdentityRules(),
+	)
 	norm.Register(
 		norm.When(tax.IdentityIn(CountryCode),
 			norm.For(func(id *tax.Identity) {
@@ -47,10 +50,9 @@ func New() *tax.RegimeDef {
 				available above AED 187,500. Registered businesses receive a Tax
 				Registration Number (TRN) which must be included on all tax invoices.
 
-				Simplified VAT invoices may be used when the recipient is not VAT
-				registered, or when the transaction value does not exceed AED 10,000
-				for VAT-registered recipients. Credit notes are supported for
-				correcting invoices.
+				Credit notes are supported for correcting invoices. Electronic
+				invoicing is being phased in through PINT AE, the UAE's Peppol
+				specification.
 			`),
 		},
 		Sources: []*cbc.Source{
@@ -58,11 +60,10 @@ func New() *tax.RegimeDef {
 				Title: i18n.NewString("Federal Tax Authority - VAT"),
 				URL:   "https://tax.gov.ae/en/taxes/Vat/vat.topics/registration.for.vat.aspx",
 			},
+			mofMandatoryFieldsSource,
 		},
-		TimeZone: "Asia/Dubai",
-		Scenarios: []*tax.ScenarioSet{
-			invoiceScenarios,
-		},
+		TimeZone:   "Asia/Dubai",
+		Identities: identityDefinitions,
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,

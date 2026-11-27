@@ -302,6 +302,12 @@
           }
         },
         {
+          "code": "480",
+          "name": {
+            "en": "Invoice out of scope of tax"
+          }
+        },
+        {
           "code": "527",
           "name": {
             "en": "Self billed debit note"
