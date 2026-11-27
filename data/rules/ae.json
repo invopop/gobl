@@ -30,7 +30,7 @@
                       "assert": [
                         {
                           "id": "GOBL-AE-TAX-IDENTITY-02",
-                          "desc": "UAE tax identity code must start with a TIN with a valid check digit",
+                          "desc": "UAE tax identity code must have a valid Luhn check digit in the first 10 digits (TIN)",
                           "tests": "valid TIN check digit"
                         }
                       ]

@@ -5,7 +5,7 @@
     "en": "United Arab Emirates"
   },
   "description": {
-    "en": "The UAE tax system is administered by the Federal Tax Authority (FTA).\nVAT was introduced on January 1, 2018, with standard, zero, and\nexempt rate categories.\n\nBusinesses must register for VAT if taxable supplies and imports\nexceed AED 375,000 in a 12-month period, with voluntary registration\navailable above AED 187,500. Registered businesses receive a Tax\nRegistration Number (TRN) which must be included on all tax invoices.\n\nSimplified VAT invoices may be used when the recipient is not VAT\nregistered, or when the transaction value does not exceed AED 10,000\nfor VAT-registered recipients. Credit notes are supported for\ncorrecting invoices. Electronic invoicing is being phased in through\nPINT AE, the UAE's Peppol specification."
+    "en": "The UAE tax system is administered by the Federal Tax Authority (FTA).\nVAT was introduced on January 1, 2018, with standard, zero, and\nexempt rate categories.\n\nBusinesses must register for VAT if taxable supplies and imports\nexceed AED 375,000 in a 12-month period, with voluntary registration\navailable above AED 187,500. Registered businesses receive a Tax\nRegistration Number (TRN) which must be included on all tax invoices.\n\nCredit notes are supported for correcting invoices. Electronic\ninvoicing is being phased in through PINT AE, the UAE's Peppol\nspecification."
   },
   "sources": [
     {
@@ -25,23 +25,6 @@
   "country": "AE",
   "currency": "AED",
   "tax_scheme": "VAT",
-  "tags": [
-    {
-      "schema": "bill/invoice",
-      "list": [
-        {
-          "key": "margin-scheme",
-          "name": {
-            "ar": "آلية هامش الربح",
-            "en": "Profit Margin Scheme"
-          },
-          "desc": {
-            "en": "Supply of eligible goods, such as second-hand goods, antiques or\ncollectors' items, under the profit margin scheme. Margin scheme\nlines use the \"exempt\" VAT key. VAT is due on the margin and\nreported in the VAT return, so the invoice shows no VAT amount."
-          }
-        }
-      ]
-    }
-  ],
   "identities": [
     {
       "code": "TIN",
@@ -118,52 +101,6 @@
             "en": "Ministry of Finance - UAE Electronic Invoice Mandatory Field Requirements"
           },
           "url": "https://mof.gov.ae/wp-content/uploads/2026/10/UAE-Electronic-Invoice-Mandatory-Field-Requirements.pdf"
-        }
-      ]
-    }
-  ],
-  "scenarios": [
-    {
-      "schema": "bill/invoice",
-      "list": [
-        {
-          "tags": [
-            "reverse-charge"
-          ],
-          "cat": [
-            "VAT"
-          ],
-          "note": {
-            "cat": "VAT",
-            "key": "reverse-charge",
-            "text": "Reverse Charge"
-          }
-        },
-        {
-          "tags": [
-            "simplified"
-          ],
-          "cat": [
-            "VAT"
-          ],
-          "note": {
-            "cat": "VAT",
-            "key": "simplified",
-            "text": "Simplified Tax Invoice"
-          }
-        },
-        {
-          "tags": [
-            "margin-scheme"
-          ],
-          "cat": [
-            "VAT"
-          ],
-          "note": {
-            "cat": "VAT",
-            "key": "margin-scheme",
-            "text": "VAT charged under the Profit Margin Scheme"
-          }
         }
       ]
     }
