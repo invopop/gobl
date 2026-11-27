@@ -106,6 +106,12 @@ func TestApprovedAddons(t *testing.T) {
 				"ro-efactura-v1": "github.com/invopop/gobl.ro.anaf",
 			},
 		},
+		{
+			name: "HR eRačun",
+			modules: map[cbc.Key]string{
+				"hr-eracun-v1": "github.com/invopop/gobl.hr.eracun",
+			},
+		},
 	}
 
 	for _, group := range groups {
