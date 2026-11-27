@@ -506,6 +506,7 @@ const (
 const (
 	EL Code = "EL" // Greece
 	XI Code = "XI" // Northern Ireland
+	XK Code = "XK" // Kosovo
 	XU Code = "XU" // United Kingdom except Northern Ireland
 )
 
@@ -770,6 +771,7 @@ var countries = CountryDefs{
 	// Extensions
 	{EL, "GRC", "Greece", "gr", false, true, GR},
 	{XI, "GBR", "United Kingdom (Northern Ireland)", "ie", false, true, GB},
+	{XK, "XKX", "Kosovo", "", false, true, ""},
 	{XU, "GBR", "United Kingdom (excluding Northern Ireland)", "uk", false, true, GB},
 	{EU, "EUE", "European Union", "eu", false, true, ""}, // ISO/IEC 7501-1 extension
 }

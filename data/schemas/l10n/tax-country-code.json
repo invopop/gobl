@@ -1006,6 +1006,10 @@
           "title": "United Kingdom (Northern Ireland)"
         },
         {
+          "const": "XK",
+          "title": "Kosovo"
+        },
+        {
           "const": "XU",
           "title": "United Kingdom (excluding Northern Ireland)"
         },
